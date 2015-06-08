@@ -1,4 +1,12 @@
 #include "gtest/gtest.h"
+#include "logging/logmanager.h"
+
+// used logs
+#include "logging/consolelog.h"
+#include "logging/htmllog.h"
+#include "logging/textlog.h"
+
+using namespace ghoul::logging;
 
 namespace {
 
@@ -18,7 +26,20 @@ namespace {
 
     TEST_F(StringToolsTest, StringTokenizerTest) {
         {
+            /*
+            LogManager::initialize(LogManager::LogLevel::Info, true);
+            
+            Log* html = new HTMLLog("blubbla.html");
+            Log* text = new TextLog("blubbla.txt");
+            Log* console = new ConsoleLog();
+            LogMgr.addLog(html);
+            LogMgr.addLog(text);
+            LogMgr.addLog(console);
+            
+            LINFOC("bla log", "blub");
+            
             ASSERT_EQ(4, 4);
+             */
         }
     }
 
