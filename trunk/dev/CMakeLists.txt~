@@ -1,0 +1,5 @@
+add_subdirectory(Tools)
+add_subdirectory(Externals)
+add_subdirectory(Renderer)
+add_subdirectory(Basics)
+add_subdirectory(IO)

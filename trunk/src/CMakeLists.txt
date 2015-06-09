@@ -7,6 +7,11 @@ include_directories(
 					${TRINITY_ROOT_DIR}/ext/ghoul/include/
 					${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/)
 
+add_subdirectory(Tools)
+add_subdirectory(Renderer)
+add_subdirectory(IO)
+add_subdirectory(Core)
+
 
 ########## Ghoul Objects +++++++++++>
 

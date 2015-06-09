@@ -70,3 +70,5 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 add_subdirectory(src)
+add_subdirectory(ext)
+add_subdirectory(dev)
