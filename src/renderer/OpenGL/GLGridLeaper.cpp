@@ -16,7 +16,6 @@
 
 #include <renderer/ShaderDescriptor.h>
 #include <renderer/VisibilityState.h>
-//#include <IO/IDataIO.h>
 
 #include <tools/DebugOutHandler.h>
 
@@ -27,6 +26,8 @@
 
 #include <iostream>
 #include <fstream>
+
+#include <core/FileFinder.h>
 
 using namespace Tuvok;
 using namespace Tuvok::Renderer;
@@ -313,10 +314,10 @@ bool GLGridLeaper::LoadTraversalShader(MissingBrickStrategy brickStrategy){
 	//! \todo -> add FindFileInDirs
 	//! 1D TransferFunction Shader---------------------------
 	std::vector<std::string> vs, fs;
-	vs.push_back("GLGridLeaper-entry-VS.glsl");
-	fs.push_back("GLGridLeaper-blend.glsl");
-	fs.push_back("GLGridLeaper-Method-1D.glsl");
-	fs.push_back("Compositing.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-entry-VS.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-blend.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-Method-1D.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"Compositing.glsl"));
 	ShaderDescriptor sd(vs, fs);
 	//sd.AddDefines(vDefines);
 	sd.AddFragmentShaderString(poolFragment);
@@ -338,10 +339,10 @@ bool GLGridLeaper::LoadTraversalShader(MissingBrickStrategy brickStrategy){
 
 	//! 1D TransferFunction Color Shader----------------------
 	vs.clear(); fs.clear();
-	vs.push_back("GLGridLeaper-entry-VS.glsl");
-	fs.push_back("GLGridLeaper-blend.glsl");
-	fs.push_back("GLGridLeaper-Method-1D-color.glsl");
-	fs.push_back("Compositing.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-entry-VS.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-blend.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-Method-1D-color.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"Compositing.glsl"));
 	sd = ShaderDescriptor(vs, fs);
 	//sd.AddDefines(vDefines);
 	sd.AddFragmentShaderString(poolFragment);
@@ -353,12 +354,12 @@ bool GLGridLeaper::LoadTraversalShader(MissingBrickStrategy brickStrategy){
 
 	//! 1D TransferFunction Lighting Shader--------------------
 	vs.clear(); fs.clear();
-	vs.push_back("GLGridLeaper-entry-VS.glsl");
-	fs.push_back("GLGridLeaper-blend.glsl");
-	fs.push_back("GLGridLeaper-Method-1D-L.glsl");
-	fs.push_back("GLGridLeaper-GradientTools.glsl");
-	fs.push_back("lighting.glsl");
-	fs.push_back("Compositing.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-entry-VS.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-blend.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-Method-1D-L.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-GradientTools.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"lighting.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"Compositing.glsl"));
 	sd = ShaderDescriptor(vs, fs);
 	//sd.AddDefines(vDefines);
 	sd.AddFragmentShaderString(poolFragment);
@@ -370,10 +371,10 @@ bool GLGridLeaper::LoadTraversalShader(MissingBrickStrategy brickStrategy){
 
 	//! IsoSurface Shader-------------------------------------
 	vs.clear(); fs.clear();
-	vs.push_back("GLGridLeaper-entry-VS.glsl");
-	fs.push_back("GLGridLeaper-iso.glsl");
-	fs.push_back("GLGridLeaper-Method-iso.glsl");
-	fs.push_back("GLGridLeaper-GradientTools.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-entry-VS.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-iso.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-Method-iso.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-GradientTools.glsl"));
 	sd = ShaderDescriptor(vs, fs);
 	//sd.AddDefines(vDefines);
 	sd.AddFragmentShaderString(poolFragment);
@@ -385,10 +386,10 @@ bool GLGridLeaper::LoadTraversalShader(MissingBrickStrategy brickStrategy){
 
 
 	vs.clear(); fs.clear();
-	vs.push_back("GLGridLeaper-entry-VS.glsl");
-	fs.push_back("GLGridLeaper-iso.glsl");
-	fs.push_back("GLGridLeaper-Method-iso-color.glsl");
-	fs.push_back("GLGridLeaper-GradientTools.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-entry-VS.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-iso.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-Method-iso-color.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-GradientTools.glsl"));
 	sd = ShaderDescriptor(vs, fs);
 	//sd.AddDefines(vDefines);
 	sd.AddFragmentShaderString(poolFragment);
@@ -399,10 +400,10 @@ bool GLGridLeaper::LoadTraversalShader(MissingBrickStrategy brickStrategy){
 	if (!LoadCheckShader(m_pProgramRayCastISOColor, sd, "Color Isosurface")) return false;
 
 	vs.clear(); fs.clear();
-	vs.push_back("GLGridLeaper-entry-VS.glsl");
-	fs.push_back("GLGridLeaper-iso-lighting.glsl");
-	fs.push_back("GLGridLeaper-Method-iso.glsl");
-	fs.push_back("GLGridLeaper-GradientTools.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-entry-VS.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-iso-lighting.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-Method-iso.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"GLGridLeaper-GradientTools.glsl"));
 	sd = ShaderDescriptor(vs, fs);
 	//sd.AddDefines(vDefines);
 	sd.AddFragmentShaderString(poolFragment);
@@ -421,15 +422,15 @@ bool GLGridLeaper::LoadTraversalShader(MissingBrickStrategy brickStrategy){
 
 bool GLGridLeaper::LoadFrontFaceShader(){
 	std::vector<std::string> vs, fs;
-	vs.push_back("CubeVertex.glsl");
-	fs.push_back("CubeFragment.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"CubeVertex.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"CubeFragment.glsl"));
 	ShaderDescriptor sdCube(vs, fs);
 	if (!LoadCheckShader(m_pProgramRenderFrontFaces, sdCube, "CubeFrontFaces")) return false;
 
 	vs.clear();
 	fs.clear();
-	vs.push_back("NearPlaneVS.glsl");
-	fs.push_back("NearPlaneFS.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"NearPlaneVS.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"NearPlaneFS.glsl"));
 	ShaderDescriptor sdNear(vs, fs);
 	if (!LoadCheckShader(m_pProgramRenderFrontFacesNearPlane, sdNear, "NearFrontFace")) return false;
 
@@ -440,24 +441,24 @@ bool GLGridLeaper::LoadFrontFaceShader(){
 
 bool GLGridLeaper::LoadComposeShader(){
 	std::vector<std::string> vs, fs;
-	vs.push_back("ComposeVS.glsl");
-	fs.push_back("ComposeFS.glsl");
+	vs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"ComposeVS.glsl"));
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"ComposeFS.glsl"));
 	ShaderDescriptor sdCube(vs, fs);
 	if (!LoadCheckShader(m_pProgramCompose, sdCube, "ComposeShader")) return false;
 
 
 	fs.clear();
-	fs.push_back("ComposeFSColorDebug.glsl");
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"ComposeFSColorDebug.glsl"));
 	ShaderDescriptor sdComposeFinalColorDebug(vs, fs);
 	if (!LoadCheckShader(m_pProgramComposeColorDebugMix, sdComposeFinalColorDebug, "ComposeShaderColorDebug")) return false;
 
 	fs.clear();
-	fs.push_back("ComposeFSColorDebugAlpha.glsl");
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"ComposeFSColorDebugAlpha.glsl"));
 	ShaderDescriptor sdComposeFinalColorDebugAlpha(vs, fs);
 	if (!LoadCheckShader(m_pProgramComposeColorDebugMixAlpha, sdComposeFinalColorDebugAlpha, "ComposeShaderColorDebugAlpha")) return false;
 
     fs.clear();
-	fs.push_back("ComposeFS_CViso.glsl");
+	fs.push_back(Core::FileFinder::getInstance().findFilePath(m_vSearchPathes,"ComposeFS_CViso.glsl"));
 	ShaderDescriptor sdComposeFinalCViso(vs, fs);
 	if (!LoadCheckShader(m_pProgramComposeClearViewIso, sdComposeFinalCViso, "ComposeShaderCViso")) return false;
 

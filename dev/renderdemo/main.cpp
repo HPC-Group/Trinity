@@ -30,6 +30,7 @@
 #include <renderer/Context/XContext.h>
 #include <renderer/Service/RenderServer.h>
 
+#include <core/FileFinder.h>
 
 using namespace Tuvok::Renderer::OpenGL::GLCore;
 using namespace Tuvok::Renderer::OpenGL;
@@ -44,6 +45,25 @@ using std::shared_ptr;
 
 static float f = 0.01;
 static float zoom = 1.5f;
+
+void listFiles(std::vector<std::string> &ds, std::vector<std::string> &tf){
+    Core::FileFinder::getInstance().readFilesWithEnding("DataSets/",ds,".uvf");
+    Core::FileFinder::getInstance().readFilesWithEnding("",ds,".uvf");
+    Core::FileFinder::getInstance().readFilesWithEnding("datasets/",ds,".uvf");
+
+    Core::FileFinder::getInstance().readFilesWithEnding("DataSets/",tf,".1dt");
+    Core::FileFinder::getInstance().readFilesWithEnding("",tf,".1dt");
+    Core::FileFinder::getInstance().readFilesWithEnding("datasets/",tf,".1dt");
+    tf.push_back("none");
+    std::cout << "Datasets found : "<< ds.size()<<std::endl;
+    for(int i = 0; i < ds.size();++i){
+        std::cout << i <<" - " << ds[i] << std::endl;
+    }
+    std::cout << "Transferfunctions found : "<< tf.size()<<std::endl;
+    for(int i = 0; i < tf.size();++i){
+        std::cout << i <<" - " << tf[i] << std::endl;
+    }
+}
 
 void glfwHanldeKeyboard(GLFWwindow* window, uint16_t renderHandle){
 
@@ -137,20 +157,29 @@ int main(int argc, char* argv[]){
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowWarnings(true);
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowOther(true);
 
+    std::cout << "LIST DS, TF" << std::endl;
+    std::vector<std::string> ds;
+    std::vector<std::string> tf;
+    listFiles(ds,tf);
+
+    int dsid,tfid;
+    std::cout << "Enter DS id" << std::endl;
+    std::cin >> dsid;
+    std::cout << "Enter TF id" << std::endl;
+    std::cin >> tfid;
+
 
 	RenderServer& r = RenderServer::getInstance();
 
-	int renderTestCount = 1;
 	std::vector<uint16_t> renderHandles;
+    renderHandles.push_back(r.createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),ds[dsid],tf[tfid]));
 
-	for(int i = 0; i < renderTestCount;++i){
-        //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),"Mandelbulb1k-SCANLINE-132-lz4.uvf","Mandelbulb1k-SCANLINE-64-lz4_10.1dt"));
-		//renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "WholeBody-SCANLINE-68-lz4.uvf", "WholeBody-SCANLINE-68-lz4.1dt"));
-		//renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "RichtmyerMeshkov-SCANLINE-36-lz4.uvf", "RichtmyerMeshkov-SCANLINE-36-lz4.1dt"));
-		renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "VisibleHumanFullColor-SCANLINE-36-lz4.uvf", "VisibleHumanFullColor-SCANLINE-36-lz4.1dt"));
-        //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed,Vec2ui(640,480),"walnut.uvf","none"));
-        std::this_thread::sleep_for(std::chrono::milliseconds(4000));
-	}
+    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),"Mandelbulb1k-SCANLINE-132-lz4.uvf","Mandelbulb1k-SCANLINE-64-lz4_10.1dt"));
+    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "WholeBody-SCANLINE-68-lz4.uvf", "WholeBody-SCANLINE-68-lz4.1dt"));
+    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "RichtmyerMeshkov-SCANLINE-36-lz4.uvf", "RichtmyerMeshkov-SCANLINE-36-lz4.1dt"));
+    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "VisibleHumanFullColor-SCANLINE-36-lz4.uvf", "VisibleHumanFullColor-SCANLINE-36-lz4.1dt"));
+    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed,Vec2ui(640,480),"walnut.uvf","none"));
+    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
 
     //wait for renderer to load everything needed
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

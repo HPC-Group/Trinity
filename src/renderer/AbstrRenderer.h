@@ -144,6 +144,7 @@ namespace Tuvok{
 
 	protected:
 		Tuvok::IOPtr 				m_pToCDataset;
+		std::vector<std::string>    m_vSearchPathes;
     };
 
   };

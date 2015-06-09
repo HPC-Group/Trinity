@@ -12,6 +12,8 @@
 #include <tools/DebugOutHandler.h>
 #include <IO/TuvokIOError.h>
 
+#include <core/FileFinder.h>
+
 using namespace std;
 using namespace Core::Math;
 
@@ -49,14 +51,20 @@ shared_ptr<LinearIndexDataset> IOLocal::getDataset(uint16_t datasetHandle){
 }
 
 vector<string> IOLocal::getFileList() {
-    vector<string> ret(0);
-    ret.push_back("Brain.uvf");
-    ret.push_back("Test.blub");
-    ret.push_back("Ahoi.uvf");
-    return ret;
+    std::vector<std::string> files;
+    Core::FileFinder::getInstance().readFiles("DataSets/",files);
+    Core::FileFinder::getInstance().readFiles("",files);
+    Core::FileFinder::getInstance().readFiles("datasets/",files);
+    std::cout << "FOUND FILES : "<< files.size();
+    for(std::string s : files){
+        std::cout << s << std::endl;
+    }
+    return files;
 }
 
 uint16_t IOLocal::openFile(string filename) {
+
+
     std::lock_guard<std::recursive_mutex> _lock(_dsMutex);
 
     auto datasetIt = _filenameToDs.find(filename);
