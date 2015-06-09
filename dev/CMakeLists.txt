@@ -1,1 +1,1 @@
-add_subdirectory(RenderDemo)
+add_subdirectory(renderdemo)

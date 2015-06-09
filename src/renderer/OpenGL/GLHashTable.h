@@ -4,7 +4,7 @@
 #define GLHASHTABLE_H
 
 #include "OpenGLDefines.h"
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 #include <memory>
 #include <string>
 

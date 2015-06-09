@@ -14,7 +14,7 @@
 #include "../AbstrRenderer.h"
 #include "../Context/Context.h"
 
-#include <Core/Time/Timer.h>
+#include <core/Time/Timer.h>
 
 #include "../RenderEnums.h"
 #include "RenderStatev2.h"

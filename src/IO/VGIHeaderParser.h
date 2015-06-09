@@ -39,7 +39,7 @@
 #ifndef VGIHEADERPARSER_H
 #define VGIHEADERPARSER_H
 
-#include <Core/IO/KeyValueFileParser.h>
+#include <core/IO/KeyValueFileParser.h>
 using Core::IO::KeyValueFileParser;
 
 /** \class VGIHeaderParser

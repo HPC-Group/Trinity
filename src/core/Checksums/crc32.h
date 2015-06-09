@@ -44,7 +44,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 
 typedef unsigned long DWORD;
 

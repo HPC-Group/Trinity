@@ -40,7 +40,7 @@
 #include <vector>
 #include <string>
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "../TransferFunction1D.h"
 using namespace Core::Math;
 

@@ -37,7 +37,7 @@
 #ifndef OBJGEOCONVERTER_H
 #define OBJGEOCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "AbstrGeoConverter.h"
 
 namespace Tuvok {

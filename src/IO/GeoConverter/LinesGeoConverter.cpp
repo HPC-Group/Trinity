@@ -23,10 +23,10 @@
    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    DEALINGS IN THE SOFTWARE.
 */
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <fstream>
 #include <memory>
-#include <Core/Other/Mesh.h>
+#include <core/Other/Mesh.h>
 
 #include "LinesGeoConverter.h"
 #include "../TuvokIOError.h"

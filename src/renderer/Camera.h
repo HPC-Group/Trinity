@@ -9,7 +9,7 @@
 #ifndef __TNG__Camera__
 #define __TNG__Camera__
 
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 
 namespace Tuvok{
   namespace Renderer{

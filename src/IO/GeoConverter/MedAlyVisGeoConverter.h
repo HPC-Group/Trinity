@@ -37,7 +37,7 @@
 #ifndef MEDALYVISGEOCONVERTER_H
 #define MEDALYVISGEOCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "AbstrGeoConverter.h"
 
 namespace Tuvok {

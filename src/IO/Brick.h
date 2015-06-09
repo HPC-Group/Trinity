@@ -35,14 +35,14 @@
 #ifndef TUVOK_BRICK_H
 #define TUVOK_BRICK_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 
 #include <functional>
 #include <memory>
 #include <tuple>
 #include <unordered_map>
 #include <utility>
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3f;
 using Core::Math::Vec3ui;
 

@@ -37,7 +37,7 @@
 #ifndef SCIO_IO_EXCEPTION_H
 #define SCIO_IO_EXCEPTION_H
 
-#include <Core/TuvokException.h>
+#include <core/TuvokException.h>
 
 namespace Tuvok { namespace io {
 

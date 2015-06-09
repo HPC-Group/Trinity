@@ -39,8 +39,8 @@
   struct TIFF;
 #endif
 #include "TiffVolumeConverter.h"
-#include <Core/StdTuvokDefines.h>
-#include <Core/IO/FileTools.h>
+#include <core/StdTuvokDefines.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 
 #ifdef __GNUC__

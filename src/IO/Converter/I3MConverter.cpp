@@ -37,9 +37,9 @@
 #include <fstream>
 #include "I3MConverter.h"
 
-#include <Core/IO/KeyValueFileParser.h>
+#include <core/IO/KeyValueFileParser.h>
 #include "../TuvokIOError.h"
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 
 using namespace std;

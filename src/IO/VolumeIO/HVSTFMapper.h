@@ -1,7 +1,7 @@
 #ifndef HVSTFMAPPER_H
 #define HVSTFMAPPER_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "TextfileTFMapper.h"
 
 namespace DataIO {

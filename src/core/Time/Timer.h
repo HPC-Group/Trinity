@@ -1,7 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 #ifndef DETECTED_OS_WINDOWS
 #include <sys/time.h>

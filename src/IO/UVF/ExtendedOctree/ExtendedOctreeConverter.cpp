@@ -28,10 +28,10 @@
 #include <map>
 #include <unordered_map>
 #include <stdexcept>
-#include <Core/Math/MathTools.h>
-#include <Core/Time/ProgressTimer.h>
-#include <Core/PerfCounter.h>
-#include <Core/nonstd.h>
+#include <core/Math/MathTools.h>
+#include <core/Time/ProgressTimer.h>
+#include <core/PerfCounter.h>
+#include <core/nonstd.h>
 #include "DebugOut/AbstrDebugOut.h"
 #include "ExtendedOctreeConverter.h"
 #include "ZlibCompression.h"
@@ -40,8 +40,8 @@
 #include "BzlibCompression.h"
 //#include "Controller/Controller.h"
 //#include "Basics/Timer.h"
-#include <Core/StdTuvokDefines.h>
-#include <Core/Time/Timer.h>
+#include <core/StdTuvokDefines.h>
+#include <core/Time/Timer.h>
 using Core::Time::Timer;
 using namespace Core::Math;
 

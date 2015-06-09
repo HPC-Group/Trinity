@@ -63,7 +63,7 @@
 */
 #endif
 
-#include "Core/StdDefines.h"
+#include "core/StdDefines.h"
 
 // Make sure windows doesn't give us stupid macros.
 #define NOMINMAX

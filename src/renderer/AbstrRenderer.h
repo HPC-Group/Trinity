@@ -3,7 +3,7 @@
 
 #include "IRenderer.h"
 
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 #include <memory.h>
 #include "CullingLOD.h"
 

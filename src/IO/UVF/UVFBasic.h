@@ -11,10 +11,10 @@
   #endif
 #endif
 
-#include <Core/StdDefines.h>
+#include <core/StdDefines.h>
 #define UVF_INVALID UINT64_INVALID
 
-#include <Core/Other/LargeRAWFile.h>
+#include <core/Other/LargeRAWFile.h>
 
 class DataBlock;
 

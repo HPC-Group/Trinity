@@ -34,11 +34,11 @@
 
 #include "XML3DGeoConverter.h"
 
-#include <Core/Math/MathTools.h>
-#include <Core/Other/Mesh.h>
+#include <core/Math/MathTools.h>
+#include <core/Other/Mesh.h>
 #include <fstream>
 #include "../TuvokIOError.h"
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 using namespace Core::Math;
 using namespace Tuvok;

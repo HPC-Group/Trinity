@@ -40,7 +40,7 @@
 #include <functional>
 #include <fstream>
 
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 

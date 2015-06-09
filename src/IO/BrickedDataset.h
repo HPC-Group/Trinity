@@ -35,7 +35,7 @@
 #ifndef TUVOK_BRICKED_DATASET_H
 #define TUVOK_BRICKED_DATASET_H
 
-#include "Core/Math/MinMaxBlock.h"
+#include "core/Math/MinMaxBlock.h"
 #include "Dataset.h"
 
 namespace Tuvok {

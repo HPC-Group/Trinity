@@ -30,7 +30,7 @@
 #ifndef GLSTATEMANAGER_H
 #define GLSTATEMANAGER_H
 
-#include <Renderer/StateManager.h>
+#include <renderer/StateManager.h>
 
 namespace Tuvok {
 	namespace Renderer {
@@ -43,7 +43,7 @@ namespace Tuvok {
   class GLStateManager : public StateManager {
     public:
       GLStateManager();
-     
+
       virtual void Apply(const GPUState& state, bool bForce=false);
 
       virtual void SetEnableDepthTest(const bool& value, bool bForce=false);

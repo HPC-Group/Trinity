@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <string>
 #include "DataBlock.h"
-#include <Core/Math/Vectors.h>
-#include <Tools/DebugOutHandler.h>
+#include <core/Math/Vectors.h>
+#include <tools/DebugOutHandler.h>
 using IVDA::AbstrDebugOut;
 using Core::Math::Vec4d;
 using Core::Math::Vec3ui64;

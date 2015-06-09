@@ -41,8 +41,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <Core/StdTuvokDefines.h>
-#include <Core/Math/Vectors.h>
+#include <core/StdTuvokDefines.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3ui;
 using Core::Math::Vec3f;
 

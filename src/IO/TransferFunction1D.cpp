@@ -41,11 +41,11 @@
 #include <memory.h>
 #include <algorithm>
 #include <sstream>
-#include <Core/Math/MathTools.h>
+#include <core/Math/MathTools.h>
 #include "TransferFunction1D.h"
 
-#include <Core/StdDefines.h>
-#include <Tools/DebugOutHandler.h>
+#include <core/StdDefines.h>
+#include <tools/DebugOutHandler.h>
 
 
 using namespace Core::Math;

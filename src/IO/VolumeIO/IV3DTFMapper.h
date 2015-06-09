@@ -1,7 +1,7 @@
 #ifndef IV3DTFMAPPER_H
 #define IV3DTFMAPPER_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "TextfileTFMapper.h"
 #include "Volume.h"
 

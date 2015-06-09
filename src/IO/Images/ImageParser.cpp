@@ -40,8 +40,8 @@
 # include <QtGui/QImage>
 # include <QtGui/QColor>
 #endif
-#include <Tools/DebugOutHandler.h>
-#include <Core/IO/FileTools.h>
+#include <tools/DebugOutHandler.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 
 //using namespace boost;

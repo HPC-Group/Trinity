@@ -7,7 +7,7 @@
 //
 
 #include "ShaderDescriptor.h"
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 #include <iostream>
 #include <utility>
 #include <fstream>

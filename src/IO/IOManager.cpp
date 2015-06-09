@@ -34,7 +34,7 @@
   \date    August 2008
 */
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 
 #include <algorithm>
 #include <cstring>
@@ -49,10 +49,10 @@
 
 #include "IOManager.h"
 
-#include <Core/Other/MC.h>
-#include <Core/SystemInfo.h>
+#include <core/Other/MC.h>
+#include <core/SystemInfo.h>
 
-#include <Core/Controller/BasicsController.h>
+#include <core/Controller/BasicsController.h>
 #include "DSFactory.h"
 #include "DynamicBrickingDS.h"
 #include "exception/UnmergeableDatasets.h"
@@ -93,7 +93,7 @@
 #include "Converter/VGStudioConverter.h"
 #include "Converter/VTKConverter.h"
 
-#include <Core/Other/Mesh.h>
+#include <core/Other/Mesh.h>
 #include "GeoConverter/AbstrGeoConverter.h"
 #include "GeoConverter/GeomViewConverter.h"
 #include "GeoConverter/LinesGeoConverter.h"
@@ -105,8 +105,8 @@
 #include "GeoConverter/XML3DGeoConverter.h"
 #include "GeoConverter/StLGeoConverter.h"
 
-#include <Core/IO/FileTools.h>
-#include <Core/StringTools.h>
+#include <core/IO/FileTools.h>
+#include <core/StringTools.h>
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 

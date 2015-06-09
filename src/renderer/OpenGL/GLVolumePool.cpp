@@ -16,20 +16,20 @@
 #endif
 #include <iostream>
 
-#include <Core/Math/MathTools.h>
-#include <Core/TuvokException.h>
-#include <Core/Threads.h>
+#include <core/Math/MathTools.h>
+#include <core/TuvokException.h>
+#include <core/Threads.h>
 #include <IO/IDataIO.h>
 #include <IO/VolumeTools.h>
 //#include "Controller/StackTimer.h"
-#include <Renderer/VisibilityState.h>
-//#include "Renderer/writebrick.h"
+#include <renderer/VisibilityState.h>
+//#include "renderer/writebrick.h"
 #include "GLCore/GLProgram.h"
 #include "GLVolumePool.h"
-#include <Core/TuvokException.h>
-#include <Core/MinMaxBlock.h>
+#include <core/TuvokException.h>
+#include <core/MinMaxBlock.h>
 
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 
 enum BrickIDFlags {
   BI_MISSING = 0,

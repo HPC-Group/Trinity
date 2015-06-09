@@ -24,16 +24,16 @@
 
 #include <stdexcept>
 #include "ExtendedOctree.h"
-#include <Core/nonstd.h>
+#include <core/nonstd.h>
 //#include "Controller/Controller.h"
 #include "ZlibCompression.h"
 #include "LzmaCompression.h"
 #include "Lz4Compression.h"
 #include "BzlibCompression.h"
 //#include "Basics/Timer.h"
-#include <Core/Controller/StackTimer.h>
-#include <Core/Time/Timer.h>
-#include <Core/Controller/GlobalPerfCounter.h>
+#include <core/Controller/StackTimer.h>
+#include <core/Time/Timer.h>
+#include <core/Controller/GlobalPerfCounter.h>
 using Core::Time::Timer;
 
 ExtendedOctree::ExtendedOctree() :

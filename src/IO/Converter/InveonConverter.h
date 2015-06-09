@@ -37,7 +37,7 @@
 #ifndef TUVOK_IO_INVEON_CONVERTER_H
 #define TUVOK_IO_INVEON_CONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 /** A converter for `hdr' and `img' files, which seems to come out of an

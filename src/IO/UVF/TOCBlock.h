@@ -5,7 +5,7 @@
 
 #include "DataBlock.h"
 #include "ExtendedOctree/ExtendedOctree.h"
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 using IVDA::AbstrDebugOut;
 class MaxMinDataBlock;
 

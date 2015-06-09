@@ -1,9 +1,9 @@
 #ifndef SILVERBULLETBASE_H
 #define SILVERBULLETBASE_H
 
-#include "Core/DetectEnv.h"
-#include "Core/Streamable.h"
-#include <Core/StdDefines.h>
+#include "core/DetectEnv.h"
+#include "core/Streamable.h"
+#include <core/StdDefines.h>
 
 #ifdef _MSC_VER
   #if _MSC_VER == 1700

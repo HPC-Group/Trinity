@@ -38,7 +38,7 @@
 
 #pragma once
 
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3i;
 using Core::Math::Vec3f;
 using Core::Math::Vec3d;

@@ -9,7 +9,7 @@
 #ifndef TNG_IDataIO_h
 #define TNG_IDataIO_h
 
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 #include <tuple>
 
 typedef std::tuple<size_t, size_t, size_t> BrickKey; ///< timestep + LOD + 1D brick index

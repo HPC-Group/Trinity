@@ -4,9 +4,9 @@
 #include <fstream>
 #include "VolumeError.h"
 
-#include <Core/StringTools.h>
-#include <Core/IO/FileTools.h>
-#include <Core/IO/KeyValueFileParser.h>
+#include <core/StringTools.h>
+#include <core/IO/FileTools.h>
+#include <core/IO/KeyValueFileParser.h>
 
 using namespace Core::IO;
 

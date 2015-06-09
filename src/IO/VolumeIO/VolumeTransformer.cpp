@@ -2,7 +2,7 @@
 
 #include <sstream>
 #include <limits>
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 #include <algorithm>
 
 using namespace Core::Math;

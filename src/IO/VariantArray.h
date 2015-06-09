@@ -36,7 +36,7 @@
 #ifndef TUVOK_VARIANT_ARRAY_H
 #define TUVOK_VARIANT_ARRAY_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <memory>
 
 namespace Tuvok {

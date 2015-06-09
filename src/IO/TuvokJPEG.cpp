@@ -42,7 +42,7 @@
 #include <jpeglib/jpeglib.h>
 #include "TuvokJPEG.h"
 
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 
 /// To read from something with a JPEG embedded, like a DICOM, we need to be
 /// able to read from an arbitrary buffer.  We support a typical file

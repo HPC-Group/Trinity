@@ -1,7 +1,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
-#include <Core/nonstd.h>
+#include <core/nonstd.h>
 #include "LzmaCompression.h"
 
 extern "C" {

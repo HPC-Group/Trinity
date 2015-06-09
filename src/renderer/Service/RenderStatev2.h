@@ -6,9 +6,9 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <Core/Math/Vectors.h>
-#include <Renderer/RenderEnums.h>
-#include <Renderer/Camera.h>
+#include <core/Math/Vectors.h>
+#include <renderer/RenderEnums.h>
+#include <renderer/Camera.h>
 
 namespace Tuvok{
     namespace Renderer{

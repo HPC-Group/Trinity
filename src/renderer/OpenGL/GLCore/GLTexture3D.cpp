@@ -43,7 +43,7 @@
 #include <cstdio>
 #include <iostream>
 
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 using namespace Tuvok::Renderer::OpenGL::GLCore;
 using namespace Core::Math;
 

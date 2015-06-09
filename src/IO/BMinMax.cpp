@@ -1,8 +1,8 @@
 #include <algorithm>
 #include "BMinMax.h"
-#include <Core/Math/MinMaxBlock.h>
+#include <core/Math/MinMaxBlock.h>
 #include "BrickedDataset.h"
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 
 
 namespace {

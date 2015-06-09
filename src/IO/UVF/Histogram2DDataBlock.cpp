@@ -1,8 +1,8 @@
 #include "Histogram2DDataBlock.h"
 #include "RasterDataBlock.h"
 #include "TOCBlock.h"
-#include <Core/Time/ProgressTimer.h>
-#include <Tools/DebugOutHandler.h>
+#include <core/Time/ProgressTimer.h>
+#include <tools/DebugOutHandler.h>
 
 using Core::Math::Vec3f;
 

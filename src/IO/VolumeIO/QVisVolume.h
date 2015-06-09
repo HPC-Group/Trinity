@@ -3,7 +3,7 @@
 
 #include <string>
 #include <cassert>
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 #include "Volume.h"
 #include "RawVolume.h"

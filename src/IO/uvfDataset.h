@@ -30,7 +30,7 @@
 #define TUVOK_UVF_DATASET_H
 
 #include <vector>
-#include <Core/Math/MinMaxBlock.h>
+#include <core/Math/MinMaxBlock.h>
 
 #include "UVF/RasterDataBlock.h"
 #include "UVF/MaxMinDataBlock.h"

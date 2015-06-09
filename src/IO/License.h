@@ -3,7 +3,7 @@
 
 #include <string>
 #include <memory>
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 class License : public Core::Streamable {
 public:

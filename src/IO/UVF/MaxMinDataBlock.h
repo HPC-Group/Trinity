@@ -5,9 +5,9 @@
 
 #include <algorithm>
 #include "DataBlock.h"
-#include <Core/Math/MinMaxBlock.h>
+#include <core/Math/MinMaxBlock.h>
 #include "ExtendedOctree/ExtendedOctreeConverter.h"
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec4d;
 
 typedef std::vector<Tuvok::MinMaxBlock> MinMaxComponent;

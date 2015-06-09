@@ -36,7 +36,7 @@
 
 #include "GLTargetBinder.h"
 #include "GLCore/GLFrameBufferObject.h"
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 
 using namespace Tuvok::Renderer::OpenGL::GLCore;
 using namespace Tuvok::Renderer::OpenGL;

@@ -52,9 +52,9 @@
   #include <Basics/Console.h>
 #endif
 
-#include <Tools/DebugOutHandler.h>
-#include <Core/IO/FileTools.h>
-#include <Core/Math/EndianConvert.h>
+#include <tools/DebugOutHandler.h>
+#include <core/IO/FileTools.h>
+#include <core/Math/EndianConvert.h>
 using namespace Core::IO::FileTools;
 using namespace Core::Math::EndianConvert;
 

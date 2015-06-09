@@ -37,7 +37,7 @@
 #ifndef UVFMESH_H
 #define UVFMESH_H
 
-#include <Core/Other/Mesh.h>
+#include <core/Other/Mesh.h>
 
 class GeometryDataBlock;
 

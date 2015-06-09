@@ -36,7 +36,7 @@
 #ifndef G3D_H
 #define G3D_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <fstream>
 #include <vector>
 

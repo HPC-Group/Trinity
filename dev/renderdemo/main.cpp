@@ -13,22 +13,22 @@
 
 #include <iostream>
 #include <fstream>
-#include <Renderer/OpenGL/OpenGLDefines.h>
+#include <renderer/OpenGL/OpenGLDefines.h>
 #include "GLFWDefines.h"
 
-#include <Renderer/OpenGL/GLGridLeaper.h>
+#include <renderer/OpenGL/GLGridLeaper.h>
 
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 
-#include <Core/TuvokException.h>
+#include <core/TuvokException.h>
 
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 
-#include <Renderer/RenderEnums.h>
+#include <renderer/RenderEnums.h>
 
-#include <Renderer/Context/GLFWContext.h>
-#include <Renderer/Context/XContext.h>
-#include <Renderer/Service/RenderServer.h>
+#include <renderer/Context/GLFWContext.h>
+#include <renderer/Context/XContext.h>
+#include <renderer/Service/RenderServer.h>
 
 
 using namespace Tuvok::Renderer::OpenGL::GLCore;

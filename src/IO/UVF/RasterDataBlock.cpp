@@ -5,11 +5,11 @@
 #include "RasterDataBlock.h"
 #include "MaxMinDataBlock.h"
 #include "DebugOut/AbstrDebugOut.h"
-#include <Core/Math/MathTools.h>
+#include <core/Math/MathTools.h>
 
-#include "Core/nonstd.h"
+#include "core/nonstd.h"
 
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 using namespace Core::Math;
 

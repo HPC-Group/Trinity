@@ -36,7 +36,7 @@
 #ifndef TUVOK_IO_ERROR_H
 #define TUVOK_IO_ERROR_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <stdexcept>
 #include "exception/IOException.h"
 

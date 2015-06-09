@@ -41,7 +41,7 @@
 #ifndef KITWARECONVERTER_H
 #define KITWARECONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 class KitwareConverter : public RAWConverter {

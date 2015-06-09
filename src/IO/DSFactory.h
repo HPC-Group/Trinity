@@ -36,7 +36,7 @@
 #ifndef TUVOK_DS_FACTORY_H
 #define TUVOK_DS_FACTORY_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 
 #include <list>
 #include <memory>

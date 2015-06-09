@@ -1,8 +1,8 @@
 #ifndef RESIZEPARAMS_H
 #define RESIZEPARAMS_H
 
-#include <Core/SilverBulletBase.h>
-#include <Core/Math/Vectors.h>
+#include <core/SilverBulletBase.h>
+#include <core/Math/Vectors.h>
 
 namespace DataIO {
   namespace VolumeIO {

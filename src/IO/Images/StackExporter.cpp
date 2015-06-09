@@ -32,7 +32,7 @@
         SCI Institute
         University of Utah
 */
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <memory>
 
 #ifndef TUVOK_NO_QT
@@ -41,10 +41,10 @@
 #endif
 
 #include "StackExporter.h"
-#include <Core/Other/LargeRAWFile.h>
-#include <Core/nonstd.h>
-#include <Tools/DebugOutHandler.h>
-#include <Core/IO/FileTools.h>
+#include <core/Other/LargeRAWFile.h>
+#include <core/nonstd.h>
+#include <tools/DebugOutHandler.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 

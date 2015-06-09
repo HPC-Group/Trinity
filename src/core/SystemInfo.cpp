@@ -49,7 +49,7 @@
     #include <sys/resource.h>
     #include <sys/sysinfo.h>
     #include <sys/time.h>
-    #include <Core/IO/KeyValueFileParser.h>
+    #include <core/IO/KeyValueFileParser.h>
     using Core::IO::KeyValueFileParser;
     using Core::IO::KeyValPair;
   #endif

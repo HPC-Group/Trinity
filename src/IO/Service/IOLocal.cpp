@@ -9,7 +9,7 @@
 #include "IOLocal.h"
 
 #include <IO/IOManager.h>
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 #include <IO/TuvokIOError.h>
 
 using namespace std;

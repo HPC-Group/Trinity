@@ -10,7 +10,7 @@
 #define __TNG__NoneBrickedQvisIO__
 
 #include "IDataIO.h"
-#include <Core/MinMaxBlock.h>
+#include <core/MinMaxBlock.h>
 #include <memory>
 
 namespace DataIO{

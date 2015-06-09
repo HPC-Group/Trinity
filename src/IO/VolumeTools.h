@@ -3,10 +3,10 @@
 #ifndef VOLUMETOOLS_H
 #define VOLUMETOOLS_H
 
-#include <Core/StdDefines.h>
+#include <core/StdDefines.h>
 
 // for the small fixed size vectors
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3d;
 using Core::Math::VECTOR3;
 

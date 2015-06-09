@@ -39,18 +39,18 @@
 #ifndef ABSTRCONVERTER_H
 #define ABSTRCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 
 #include <map>
 #include <list>
 #include <sstream>
 
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3ui64;
 using Core::Math::Vec3f;
 
 
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 #include "../UVF/UVFTables.h"
 #include "../UVF/Histogram1DDataBlock.h"
 

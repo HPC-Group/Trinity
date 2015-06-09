@@ -17,7 +17,7 @@
 #include <mutex>
 #include <atomic>
 #include <string>
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 
 #include "DSEntry.h"
 

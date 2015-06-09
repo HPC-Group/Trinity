@@ -33,8 +33,8 @@
            University of Utah
   \date    December 2008
 */
-#include <Core/StdDefines.h>
-#include <Core/Controller/BasicsController.h>
+#include <core/StdDefines.h>
+#include <core/Controller/BasicsController.h>
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
@@ -43,8 +43,8 @@
 #include <bzip2/bzlib.h>
 
 #include "RAWConverter.h"
-#include <Core/nonstd.h>
-#include <Core/SystemInfo.h>
+#include <core/nonstd.h>
+#include <core/SystemInfo.h>
 #include "IO/gzio.h"
 #include "../UVF/Histogram1DDataBlock.h"
 #include "../UVF/Histogram2DDataBlock.h"
@@ -56,7 +56,7 @@
 #include "../TuvokIOError.h"
 #include "../Quantize.h"
 
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 using namespace std;

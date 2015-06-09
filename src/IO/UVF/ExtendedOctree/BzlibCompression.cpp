@@ -1,7 +1,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
-#include <Core/nonstd.h>
+#include <core/nonstd.h>
 #include "BzlibCompression.h"
 
 extern "C" {

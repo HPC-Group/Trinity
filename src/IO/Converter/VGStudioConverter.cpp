@@ -37,8 +37,8 @@
 #include <fstream>
 #include "VGStudioConverter.h"
 #include "../VGIHeaderParser.h"
-#include <Core/IO/KeyValueFileParser.h>
-#include <Core/IO/FileTools.h>
+#include <core/IO/KeyValueFileParser.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 using Core::IO::KeyValueFileParser;
 using Core::IO::KeyValPair;

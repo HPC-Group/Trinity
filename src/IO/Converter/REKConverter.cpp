@@ -37,7 +37,7 @@
 #include <cstring>
 #include "REKConverter.h"
 
-#include <Core/Math/EndianConvert.h>
+#include <core/Math/EndianConvert.h>
 
 using namespace std;
 
