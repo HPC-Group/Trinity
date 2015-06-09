@@ -41,7 +41,7 @@
 #ifndef RAWCONVERTER_H
 #define RAWCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <list>
 #include "AbstrConverter.h"
 

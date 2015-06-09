@@ -1,9 +1,9 @@
 #ifndef VTKGEOMETRY_H
 #define VTKGEOMETRY_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "Geometry.h"
-#include <Core/IO/MemMappedFile.h>
+#include <core/IO/MemMappedFile.h>
 
 namespace DataIO {
   namespace GeometryIO {

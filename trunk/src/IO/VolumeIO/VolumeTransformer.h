@@ -1,7 +1,7 @@
 #ifndef VOLUMETRANSFORMER_H
 #define VOLUMETRANSFORMER_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "Volume.h"
 #include "ResizeParams.h"
 

@@ -34,10 +34,10 @@
 #include "MobileGeoConverter.h"
 
 #include "G3D.h"
-#include <Core/Other/Mesh.h>
+#include <core/Other/Mesh.h>
 #include "../TuvokIOError.h"
 
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 using namespace Tuvok;
 using namespace std;

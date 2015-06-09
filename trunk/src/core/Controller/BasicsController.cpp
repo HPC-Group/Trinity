@@ -38,7 +38,7 @@
 #include <sstream>
 #include <functional>
 #include "BasicsController.h"
-#include <Core/SystemInfo.h>
+#include <core/SystemInfo.h>
 
 using namespace Tuvok;
 

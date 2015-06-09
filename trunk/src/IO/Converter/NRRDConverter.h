@@ -41,7 +41,7 @@
 #ifndef NRRDCONVERTER_H
 #define NRRDCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 class NRRDConverter : public RAWConverter {

@@ -2,7 +2,7 @@
 #define VOLUME_H
 
 #include <string>
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "VolumeMetadata.h"
 #include "VolumeError.h"
 #include <cassert>

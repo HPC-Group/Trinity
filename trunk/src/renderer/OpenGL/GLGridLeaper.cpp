@@ -14,14 +14,14 @@
 #include "GLCore/GLFrameBufferObject.h"
 #include "GLCore/GLProgram.h"
 
-#include <Renderer/ShaderDescriptor.h>
-#include <Renderer/VisibilityState.h>
+#include <renderer/ShaderDescriptor.h>
+#include <renderer/VisibilityState.h>
 //#include <IO/IDataIO.h>
 
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 
 #include <IO/TransferFunction1D.h>
-#include <Renderer/Camera.h>
+#include <renderer/Camera.h>
 
 #include <IO/Service/IOLocal.h>
 

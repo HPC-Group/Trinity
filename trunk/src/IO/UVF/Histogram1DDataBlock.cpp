@@ -1,9 +1,9 @@
 #include "Histogram1DDataBlock.h"
 
 #include "RasterDataBlock.h"
-#include <Core/Math/MathTools.h>
+#include <core/Math/MathTools.h>
 //#include "../../Controller/Controller.h"
-#include <Core/Time/ProgressTimer.h>
+#include <core/Time/ProgressTimer.h>
 
 // simple/generic progress update message
 

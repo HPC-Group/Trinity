@@ -32,7 +32,7 @@
 #include "uvfDataset.h"
 
 #include "Converter/RAWConverter.h"
-#include <Core/Math/MathTools.h>
+#include <core/Math/MathTools.h>
 
 #include "TuvokIOError.h"
 #include "TuvokSizes.h"
@@ -43,8 +43,8 @@
 #include "UVF/GeometryDataBlock.h"
 #include "uvfMesh.h"
 
-#include <Core/IO/FileTools.h>
-#include <Core/Math/Vectors.h>
+#include <core/IO/FileTools.h>
+#include <core/Math/Vectors.h>
 using namespace Core::IO::FileTools;
 using namespace Core::Math;
 

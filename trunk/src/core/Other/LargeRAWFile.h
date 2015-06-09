@@ -9,9 +9,9 @@
 
 #include <string>
 #include <vector>
-#include <Core/StdDefines.h>
+#include <core/StdDefines.h>
 
-#include <Core/Math/EndianConvert.h>
+#include <core/Math/EndianConvert.h>
 using namespace Core::Math::EndianConvert;
 
 #ifdef _WIN32

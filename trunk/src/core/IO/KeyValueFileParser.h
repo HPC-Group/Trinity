@@ -1,7 +1,7 @@
 #ifndef KEYVALUEFILEPARSER_H
 #define KEYVALUEFILEPARSER_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 #include <string>
 #include <vector>

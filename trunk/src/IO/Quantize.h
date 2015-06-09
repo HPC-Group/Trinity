@@ -36,9 +36,9 @@
 #include <functional>
 #include <limits>
 #include <type_traits>
-#include <Core/Other/BStream.h>
-#include <Core/Other/LargeRAWFile.h>
-#include <Core/Other/ctti.h>
+#include <core/Other/BStream.h>
+#include <core/Other/LargeRAWFile.h>
+#include <core/Other/ctti.h>
 #include "UVF/Histogram1DDataBlock.h"
 #include "TuvokSizes.h"
 #include "Converter/AbstrConverter.h"

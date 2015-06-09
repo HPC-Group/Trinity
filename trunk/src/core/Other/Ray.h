@@ -39,7 +39,7 @@
 #define BASICS_RAY_H
 
 #include "StdDefines.h"
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3d;
 
 namespace Tuvok {

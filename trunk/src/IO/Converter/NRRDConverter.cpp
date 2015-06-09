@@ -39,8 +39,8 @@
 //#include <Controller/Controller.h>
 #include <cctype>
 #include "../TuvokIOError.h"
-#include <Core/IO/KeyValueFileParser.h>
-#include <Core/IO/FileTools.h>
+#include <core/IO/KeyValueFileParser.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 using Core::IO::KeyValueFileParser;

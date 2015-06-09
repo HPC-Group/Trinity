@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <cassert>
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 #include "Volume.h"
 

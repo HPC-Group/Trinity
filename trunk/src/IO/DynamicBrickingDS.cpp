@@ -11,9 +11,9 @@
 #include <string>
 #include <unordered_map>
 #include "BMinMax.h"
-#include <Core/IO/FileTools.h>
-#include <Core/Controller/GlobalPerfCounter.h>
-#include <Core/Controller/StackTimer.h>
+#include <core/IO/FileTools.h>
+#include <core/Controller/GlobalPerfCounter.h>
+#include <core/Controller/StackTimer.h>
 #include "BrickCache.h"
 #include "DynamicBrickingDS.h"
 #include "FileBackedDataset.h"

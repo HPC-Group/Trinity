@@ -9,7 +9,7 @@
 #include "GLProgram.h"
 #include "GLTexture.h"
 
-#include <Renderer/ShaderDescriptor.h>
+#include <renderer/ShaderDescriptor.h>
 
 #include <iostream>
 #include <cstdio>
@@ -27,16 +27,16 @@ bool GLProgram::CompileShader(GLuint& handle, const char* source, GLenum type ){
   handle = glCreateShader(type);
   glShaderSource(handle, 1, &source, NULL);
   glCompileShader(handle);
-    
-    
-    
+
+
+
   if (WriteInfoLog("shader\n", handle, false))
   {
     std::cout << type << std::endl;
     std::cout << "Could not compile shader" << std::endl;
     return false;
   }
-    
+
   return true;
 }
 
@@ -46,16 +46,16 @@ bool GLProgram::CheckProgramStatus(){
     if (status != 1)
     {
         std::cout << "Could not create programm " << std::endl;
-        
+
         GLint maxLength = 0;
         glGetProgramiv(m_ShaderProgramm, GL_INFO_LOG_LENGTH, &maxLength);
-        
-        
+
+
         std::cout << maxLength<< std::endl;
         //The maxLength includes the NULL character
         std::vector<GLchar> infoLog(maxLength);
         glGetProgramInfoLog(m_ShaderProgramm, maxLength, &maxLength, &infoLog[0]);
-        
+
         for(int i = 0; i < maxLength;++i){
             std::cout << infoLog[i];
         }
@@ -86,10 +86,10 @@ bool GLProgram::Load(ShaderDescriptor& sd){
 
     // Link the shader program
     glLinkProgram(m_ShaderProgramm);
-    
-    
+
+
     if(WriteInfoLog("programm\n", m_ShaderProgramm, true)) return false;
-    
+
     GLenum err = glGetError();
     if(err == GL_OUT_OF_MEMORY) {
       //throw OUT_OF_MEMORY("allocating 3d texture");
@@ -164,7 +164,7 @@ void GLProgram::SetTexture3D(const char *name, const GLuint value, const uint8_t
 
 void GLProgram::SetTexture(const string& name,
                            const GLTexture& pTexture) {
-  
+
   if (m_mBindings.find(name) == m_mBindings.end ()) {
     // find a free texture unit
     int iUnusedTexUnit = 0;
@@ -180,10 +180,10 @@ void GLProgram::SetTexture(const string& name,
 }
 
 void GLProgram::SetTexture(const std::string& name, const std::shared_ptr<GLTexture> pTexture) {
-  
+
   if (m_mBindings.find(name) == m_mBindings.end ()) {
     // find a free texture unit
-    
+
     int iUnusedTexUnit = m_mBindings.size();
     /*int iUnusedTexUnit = 0;
     for (texMap::iterator i = m_mBindings.begin();i != m_mBindings.end();++i){
@@ -200,7 +200,7 @@ void GLProgram::SetTexture(const std::string& name, const std::shared_ptr<GLText
 }
 
 void GLProgram::SetTexture(const std::string& name, const GLuint value) {
-  
+
   if (m_mBindings.find(name) == m_mBindings.end ()) {
     // find a free texture unit
     int iUnusedTexUnit = 0;
@@ -210,12 +210,12 @@ void GLProgram::SetTexture(const std::string& name, const GLuint value) {
     }
     ConnectTextureID(name, iUnusedTexUnit);
 	std::cout << "ID FOR : " << name << " - " << iUnusedTexUnit << std::endl;
-    
+
     m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name.c_str());
     glUniform1i(m_currentVariableLocation, iUnusedTexUnit);
     glActiveTexture(GLenum(GL_TEXTURE0 + iUnusedTexUnit));
     glBindTexture(GL_TEXTURE_2D, value);
-   
+
   } else {
     m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name.c_str());
     glUniform1i(m_currentVariableLocation, m_mBindings[name]);
@@ -244,7 +244,7 @@ void GLProgram::ConnectTextureID(const string& name,
                                    const int iUnit) {
   Enable();
   m_mBindings[name] = iUnit;
-  
+
   GLint location = GetLocation(name.c_str());
   CheckSamplerType(name.c_str());
   glUniform1i(location,iUnit);
@@ -253,7 +253,7 @@ void GLProgram::ConnectTextureID(const string& name,
 #ifdef GLSL_DEBUG
 void GLProgram::CheckSamplerType(const char *name) const {
   GLenum eTypeInShader = get_type(name);
-  
+
   if (eTypeInShader != GL_SAMPLER_1D &&
       eTypeInShader != GL_SAMPLER_2D &&
       eTypeInShader != GL_SAMPLER_3D &&
@@ -283,12 +283,12 @@ bool GLProgram::WriteInfoLog(const char* shaderdesc, GLuint hObject,
         glGetProgramiv(hObject,GL_INFO_LOG_LENGTH,&iLength);
     else
         glGetShaderiv(hObject,GL_INFO_LOG_LENGTH,&iLength);
-    
+
 #ifdef _DEBUG
     GLenum err = glGetError();
     assert(GL_NO_ERROR == err);
 #endif
-    
+
     GLboolean bAtMostWarnings = GL_TRUE;
     if (iLength > 1) {
         char *pcLogInfo=new char[iLength];

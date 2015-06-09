@@ -40,7 +40,7 @@
 #ifndef CULLINGLOD_H
 #define CULLINGLOD_H
 
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 
 namespace tuvok {
 

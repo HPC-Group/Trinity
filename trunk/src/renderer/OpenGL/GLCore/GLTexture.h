@@ -39,8 +39,8 @@
 #ifndef TUVOK_GLTEXTURE_H
 #define TUVOK_GLTEXTURE_H
 
-#include <Core/StdDefines.h>
-#include <Renderer/OpenGL/OpenGLDefines.h>
+#include <core/StdDefines.h>
+#include <renderer/OpenGL/OpenGLDefines.h>
 #include <string>
 #include <memory>
 

@@ -32,8 +32,8 @@
            University of Utah
 */
 #include "Dataset.h"
-#include <Core/Math/MathTools.h>
-#include <Core/Other/Mesh.h>
+#include <core/Math/MathTools.h>
+#include <core/Other/Mesh.h>
 
 using namespace Core::Math;
 

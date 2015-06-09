@@ -2,8 +2,8 @@
 #include <fstream>
 #include <stdexcept>
 #include "VTKConverter.h"
-#include <Core/Other/BStream.h>
-#include <Core/Math/EndianConvert.h>
+#include <core/Other/BStream.h>
+#include <core/Math/EndianConvert.h>
 
 
 VTKConverter::VTKConverter() {

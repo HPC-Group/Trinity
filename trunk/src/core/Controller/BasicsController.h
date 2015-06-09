@@ -30,8 +30,8 @@
 #ifndef TUVOK_MASTERCONTROLLER_H
 #define TUVOK_MASTERCONTROLLER_H
 
-#include <Core/StdTuvokDefines.h>
-#include <Tools/Singleton.h>
+#include <core/StdTuvokDefines.h>
+#include <tools/Singleton.h>
 #include <functional>
 #include <list>
 #include <memory>

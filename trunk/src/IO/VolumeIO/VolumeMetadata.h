@@ -3,11 +3,11 @@
 
 #include <string>
 #include <type_traits>
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 #include <IO/Metadata.h>
 #include <IO/DataType.h>
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 
 namespace DataIO {
   namespace VolumeIO {

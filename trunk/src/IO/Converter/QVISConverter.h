@@ -41,7 +41,7 @@
 #ifndef QVISCONVERTER_H
 #define QVISCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 class QVISConverter : public RAWConverter {

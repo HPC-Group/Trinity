@@ -35,14 +35,14 @@
 #ifndef TUVOK_DATASET_H
 #define TUVOK_DATASET_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 
 #include <cstdlib>
 #include <functional>
 #include <memory>
 #include <unordered_map>
 #include <utility>
-#include <Core/Math/Grids.h>
+#include <core/Math/Grids.h>
 #include "Brick.h"
 using Core::Math::Vec3d;
 using Core::Math::Vec3ui64;

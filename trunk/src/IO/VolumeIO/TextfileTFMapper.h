@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "Mapper.h"
 
 namespace DataIO {

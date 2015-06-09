@@ -1,7 +1,7 @@
 #ifndef MESSAGETIMER_H
 #define MESSAGETIMER_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include <string>
 #include "Timer.h"
 

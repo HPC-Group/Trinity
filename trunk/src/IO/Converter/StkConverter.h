@@ -36,7 +36,7 @@
 #ifndef STKCONVERTER_H
 #define STKCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 /** A converter for `stk' files, created by the Metamorph software.  These are

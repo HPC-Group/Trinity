@@ -35,7 +35,7 @@
 */
 #pragma once
 
-#include <Core/StdDefines.h>
+#include <core/StdDefines.h>
 
 #ifndef MATHTOOLS_H
 #define MATHTOOLS_H

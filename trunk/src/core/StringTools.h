@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 namespace Core {
   namespace StringTools {

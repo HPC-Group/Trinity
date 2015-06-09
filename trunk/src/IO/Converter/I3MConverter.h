@@ -38,7 +38,7 @@
 #ifndef I3MCONVERTER_H
 #define I3MCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 class I3MConverter : public RAWConverter {

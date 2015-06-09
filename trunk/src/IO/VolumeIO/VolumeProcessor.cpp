@@ -2,8 +2,8 @@
 
 #include <sstream>
 #include <limits>
-#include <Core/Math/Vectors.h>
-#include <Core/IO/FileTools.h>
+#include <core/Math/Vectors.h>
+#include <core/IO/FileTools.h>
 #include "RawVolume.h"
 
 using namespace Core::Math;

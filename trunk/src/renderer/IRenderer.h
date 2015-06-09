@@ -9,7 +9,7 @@
 #ifndef TNG_IRenderer_h
 #define TNG_IRenderer_h
 
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 #include <memory.h>
 
 namespace Tuvok{

@@ -38,7 +38,7 @@
 #include <GL/glew.h>
 #include "GLFrameBufferObject.h"
 #include "GLCommon.h"
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 
 #ifdef WIN32
   #ifndef DEBUG
@@ -60,7 +60,7 @@ bool  GLFBOTex::m_bInitialized = true;
 
 GLFBOTex::GLFBOTex( GLenum minfilter,
                    GLenum magfilter, GLenum wrapmode, GLsizei width,
-                   GLsizei height, GLenum intformat, GLenum format, GLenum type, 
+                   GLsizei height, GLenum intformat, GLenum format, GLenum type,
                    bool bHaveDepth, int iNumBuffers) :
   m_iSizeX(width),
   m_iSizeY(height),
@@ -110,7 +110,7 @@ GLFBOTex::GLFBOTex( GLenum minfilter,
   }
 
   while(glGetError() != GL_NO_ERROR) { ; } // clear error state.
-  if (!initTextures(minfilter,magfilter,wrapmode,width,height,intformat, format, type)) 
+  if (!initTextures(minfilter,magfilter,wrapmode,width,height,intformat, format, type))
   {
       T_ERROR("GL Error during texture creation!");
       glDeleteTextures(m_iNumBuffers,m_hTexture);
@@ -440,7 +440,7 @@ void GLFBOTex::SetData(const Core::Math::Vec2ui& offset, const Core::Math::Vec2u
   if (bRestoreBinding) glGetIntegerv(GL_TEXTURE_BINDING_2D, &prevTex);
 
   glBindTexture(GL_TEXTURE_2D, m_hTexture[iBuffer]);
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 
+  glTexSubImage2D(GL_TEXTURE_2D, 0,
     offset.x, offset.y,
     size.x, size.y,
     m_format, m_type, (GLvoid*)pixels);

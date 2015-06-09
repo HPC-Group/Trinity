@@ -3,8 +3,8 @@
 
 #include "../RenderEnums.h"
 
-#include <Core/Math/Vectors.h>
-#include <Tools/DebugOutHandler.h>
+#include <core/Math/Vectors.h>
+#include <tools/DebugOutHandler.h>
 
 #include <vector>
 #include <unordered_map>

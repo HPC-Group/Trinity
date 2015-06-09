@@ -19,7 +19,7 @@
 #include "GLCore/GLFrameBufferObject.h"
 
 #include "GLVolume/GLVolume3DTex.h"
-#include <Renderer/ShaderDescriptor.h>
+#include <renderer/ShaderDescriptor.h>
 #include <IO/VolumeIO/RawVolume.h>
 
 

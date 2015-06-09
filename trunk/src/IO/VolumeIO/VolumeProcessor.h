@@ -1,7 +1,7 @@
 #ifndef VOLUMEPROCESSOR_H
 #define VOLUMEPROCESSOR_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "VolumeTransformer.h"
 #include "Mapper.h"
 

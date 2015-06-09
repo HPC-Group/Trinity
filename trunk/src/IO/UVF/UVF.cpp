@@ -1,11 +1,11 @@
 #include <sstream>
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 #include "UVF.h"
-#include <Core/Checksums/crc32.h>
-#include <Core/IO/MD5.h>
-#include <Core/nonstd.h>
+#include <core/Checksums/crc32.h>
+#include <core/IO/MD5.h>
+#include <core/nonstd.h>
 #include "DataBlock.h"
-#include <Core/Time/ProgressTimer.h>
+#include <core/Time/ProgressTimer.h>
 
 using Core::IO::MD5;
 

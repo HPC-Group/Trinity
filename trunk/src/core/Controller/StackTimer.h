@@ -1,9 +1,9 @@
 #ifndef TUVOK_STACK_TIMER_H
 #define TUVOK_STACK_TIMER_H
 
-#include <Core/PerfCounter.h>
-#include <Core/Time/Timer.h>
-#include <Core/Controller/GlobalPerfCounter.h>
+#include <core/PerfCounter.h>
+#include <core/Time/Timer.h>
+#include <core/Controller/GlobalPerfCounter.h>
 
 namespace Tuvok {
 

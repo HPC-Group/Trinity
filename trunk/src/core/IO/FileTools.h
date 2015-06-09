@@ -1,7 +1,7 @@
 #ifndef FILETOOLS_H
 #define FILETOOLS_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 #include "../StringTools.h"
 

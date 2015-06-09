@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <limits>
 #include <zlib.h>
-#include <Core/nonstd.h>
+#include <core/nonstd.h>
 #include "ZlibCompression.h"
 
 /** if you call 'inflateInit' on a stream, you must cause inflateEnd (even if

@@ -37,12 +37,12 @@
 #ifndef TUVOK_ABSTRGEOCONVERTER_H
 #define TUVOK_ABSTRGEOCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <string>
 #include <memory>
 #include <vector>
-#include <Tools/DebugOutHandler.h>
-#include <Core/Math/Vectors.h>
+#include <tools/DebugOutHandler.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3f;
 using Core::Math::Vec2ui;
 using Core::Math::Vec3ui;

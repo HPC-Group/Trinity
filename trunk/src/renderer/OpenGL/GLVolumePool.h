@@ -8,7 +8,7 @@
 #include <list>
 #include "OpenGLDefines.h"
 
-#include <Core/Time/Timer.h>
+#include <core/Time/Timer.h>
 #include "GLCore/GLTexture2D.h"
 #include "GLCore/GLTexture3D.h"
 #include <IO/IDataIO.h>

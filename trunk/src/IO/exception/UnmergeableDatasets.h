@@ -33,7 +33,7 @@
 #define SCIO_IO_UNMERGEABLE_DATASETS_H_H
 
 #include <stdexcept>
-#include <Core/TuvokException.h>
+#include <core/TuvokException.h>
 
 namespace Tuvok { namespace io {
 

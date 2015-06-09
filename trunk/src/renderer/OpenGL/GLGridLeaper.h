@@ -1,7 +1,7 @@
 #ifndef __TNG__GLGridleaper__
 #define __TNG__GLGridleaper__
 
-#include <Renderer/AbstrRenderer.h>
+#include <renderer/AbstrRenderer.h>
 #include "OpenGLDefines.h"
 
 #define GLGRIDLEAPER_DEBUGVIEW

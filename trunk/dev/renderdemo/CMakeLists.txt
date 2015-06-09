@@ -1,7 +1,7 @@
 file(GLOB DEMOREN2_SOURCE *.cpp)
 file(GLOB DEMOREN2_HEADER *.h)
 
-file(GLOB REND_SHADERS ${CMAKE_SOURCE_DIR}/src/Renderer/Shader/*.glsl)
+file(GLOB REND_SHADERS ${CMAKE_SOURCE_DIR}/src/renderer/Shader/*.glsl)
 file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
 
@@ -11,6 +11,5 @@ include_directories(../src/Externals/glm)
 target_link_libraries(RenderDemo LINK_PUBLIC Renderer)
 target_link_libraries(RenderDemo LINK_PUBLIC glfw ${GLFW_LIBRARIES})
 target_link_libraries(RenderDemo LINK_PUBLIC ${OPENGL_LIBRARIES})
-target_link_libraries(RenderDemo LINK_PUBLIC tuvokIO)
 target_link_libraries(RenderDemo LINK_PUBLIC Core)
 target_link_libraries(RenderDemo LINK_PUBLIC IO)

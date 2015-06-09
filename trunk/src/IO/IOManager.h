@@ -38,7 +38,7 @@
 #ifndef IOMANAGER_H
 #define IOMANAGER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 
 #include <functional>
 #include <list>
@@ -46,9 +46,9 @@
 #include <string>
 #include <tuple>
 #include <vector>
-#include <Core/TuvokException.h>
-#include <Core/Math/Vectors.h>
-#include <Tools/Singleton.h>
+#include <core/TuvokException.h>
+#include <core/Math/Vectors.h>
+#include <tools/Singleton.h>
 using Core::Math::Vec4f;
 using Core::Math::Vec3ui;
 

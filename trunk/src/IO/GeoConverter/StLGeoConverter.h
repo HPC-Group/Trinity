@@ -3,7 +3,7 @@
 #ifndef STLGEOCONVERTER_H
 #define STLGEOCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "AbstrGeoConverter.h"
 
 namespace Tuvok {

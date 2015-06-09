@@ -31,8 +31,8 @@
 #include <functional>
 #include "ExtendedOctree.h"
 #include "VolumeTools.h"
-#include <Core/Math/MathTools.h>
-#include <Tools/DebugOutHandler.h>
+#include <core/Math/MathTools.h>
+#include <tools/DebugOutHandler.h>
 using IVDA::AbstrDebugOut;
 using namespace Core::Math;
 

@@ -3,7 +3,7 @@
 #ifndef TUVOK_VISIBILITYSTATE_H
 #define TUVOK_VISIBILITYSTATE_H
 
-#include "Renderer/AbstrRenderer.h"
+#include "renderer/AbstrRenderer.h"
 
 namespace Tuvok{
   namespace Renderer{

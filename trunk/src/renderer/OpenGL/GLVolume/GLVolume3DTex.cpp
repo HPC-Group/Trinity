@@ -7,8 +7,8 @@
 //
 
 #include "GLVolume3DTex.h"
-#include <Renderer/OpenGL/GLCore/GLTexture3D.h>
-#include <Renderer/OpenGL/GLCore/GLProgram.h>
+#include <renderer/OpenGL/GLCore/GLTexture3D.h>
+#include <renderer/OpenGL/GLCore/GLProgram.h>
 
 using namespace Tuvok::Renderer::OpenGL::GLVolume;
 using namespace Tuvok::Renderer::OpenGL::GLCore;
@@ -78,7 +78,7 @@ uint64_t GLVolume3DTex::GetGPUSize() const {
 
 void GLVolume3DTex::SetFilter(GLint iMagFilter, GLint iMinFilter) {
   GLVolume::SetFilter(iMagFilter, iMinFilter);
-  
+
   if (m_pTexture) m_pTexture->SetFilter(m_iMagFilter, m_iMinFilter);
 }
 

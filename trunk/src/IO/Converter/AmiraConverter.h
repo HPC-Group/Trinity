@@ -29,7 +29,7 @@
 #define TUVOK_AMIRA_CONVERTER_H
 
 #include "RAWConverter.h"
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3f;
 using Core::Math::Vec3ui64;
 

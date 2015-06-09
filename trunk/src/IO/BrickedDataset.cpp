@@ -35,7 +35,7 @@
 #include <stdexcept>
 #include "BrickedDataset.h"
 
-#include <Tools/DebugOutHandler.h>
+#include <tools/DebugOutHandler.h>
 
 namespace Tuvok {
 

@@ -37,7 +37,7 @@
 #ifndef TUVOK_IASSCONVERTER_H
 #define TUVOK_IASSCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 /** A converter for Fraunhofer MAVI volume images.  */

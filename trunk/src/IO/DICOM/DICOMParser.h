@@ -49,10 +49,10 @@
   //#define DEBUG_DICOM
 #endif
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <IO/DirectoryParser.h>
-#include <Core/Math/EndianConvert.h>
-#include <Core/Math/Vectors.h>
+#include <core/Math/EndianConvert.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec3ui;
 using Core::Math::Vec3f;
 

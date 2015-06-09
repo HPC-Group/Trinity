@@ -7,7 +7,7 @@
  #endif
  #include <sstream>
  #include <stdexcept>
- #include <Core/nonstd.h>
+ #include <core/nonstd.h>
  #include <IO/VolumeTools.h>
 
  #include "GLCore/GLProgram.h"
@@ -15,7 +15,7 @@
  #include "GLCore/GLTexture1D.h"
  #include "GLCore/GLTexture2D.h"
 
- #include <Renderer/ShaderDescriptor.h>
+ #include <renderer/ShaderDescriptor.h>
 
  using namespace Tuvok::Renderer::OpenGL;
  using namespace Tuvok::Renderer::OpenGL::GLCore;

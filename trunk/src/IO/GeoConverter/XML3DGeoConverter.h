@@ -37,7 +37,7 @@
 #ifndef XML3DGEOCONVERTER_H
 #define XML3DGEOCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "AbstrGeoConverter.h"
 
 namespace Tuvok {

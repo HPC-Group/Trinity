@@ -39,7 +39,7 @@
 #ifndef TIFFVOLUMECONVERTER_H
 #define TIFFVOLUMECONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 /** A converter for TIFF volumes.  These are basically just TIFFs which

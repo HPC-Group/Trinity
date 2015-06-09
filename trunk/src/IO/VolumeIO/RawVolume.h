@@ -3,10 +3,10 @@
 
 #include <string>
 #include <cassert>
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 #include "FileBasedVolume.h"
-#include <Core/IO/MemMappedFile.h>
+#include <core/IO/MemMappedFile.h>
 
 namespace DataIO {
   namespace VolumeIO {

@@ -1,7 +1,7 @@
 #ifndef QVISVOLUMEMETADATA_H
 #define QVISVOLUMEMETADATA_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 #include "VolumeMetadata.h"
 

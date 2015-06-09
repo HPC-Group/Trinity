@@ -37,7 +37,7 @@
 #ifndef REKCONVERTER_H
 #define REKCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 /** A converter for REK volumes used by Frauenhofer EZRT.  */

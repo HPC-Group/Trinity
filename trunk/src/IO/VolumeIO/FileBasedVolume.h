@@ -2,7 +2,7 @@
 #define FILEBASEDVOLUMEM_H
 
 #include <string>
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "Volume.h"
 
 namespace DataIO {

@@ -40,7 +40,7 @@
 
 #include <memory>
 #include "GLTexture.h"
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 
 namespace Tuvok {
   namespace Renderer {

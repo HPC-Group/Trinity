@@ -40,9 +40,9 @@
 #define IMAGEPARSER_H
 
 #include <string>
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <IO/DirectoryParser.h>
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 using Core::Math::Vec2ui;
 
 // if the following define is set, the DICOM parser putputs detailed parsing information

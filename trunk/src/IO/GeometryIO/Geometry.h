@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
-#include <Core/SilverBulletBase.h>
-#include <Core/Math/Vectors.h>
+#include <core/SilverBulletBase.h>
+#include <core/Math/Vectors.h>
 #include "GeometryMetadata.h"
 #include "GeometryError.h"
 

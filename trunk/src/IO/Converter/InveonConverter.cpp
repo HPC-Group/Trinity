@@ -32,7 +32,7 @@
            SCI Institute
            University of Utah
 */
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -41,8 +41,8 @@
 #include <string>
 #include <unordered_map>
 #include "InveonConverter.h"
-#include <Core/Math/EndianConvert.h>
-#include <Core/IO/FileTools.h>
+#include <core/Math/EndianConvert.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 
 InveonConverter::InveonConverter()

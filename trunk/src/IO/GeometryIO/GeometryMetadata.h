@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 #include "../Metadata.h"
 #include <IO/DataType.h>
 

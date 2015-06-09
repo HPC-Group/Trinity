@@ -40,7 +40,7 @@
 #include <vector>
 #include <string>
 #include "StdDefines.h"
-#include <Core/Math/Vectors.h>
+#include <core/Math/Vectors.h>
 #include "Ray.h"
 
 using Core::Math::Vec2f;

@@ -1,7 +1,7 @@
 #ifndef MAPPER_H
 #define MAPPER_H
 
-#include <Core/SilverBulletBase.h>
+#include <core/SilverBulletBase.h>
 
 namespace DataIO {
   namespace VolumeIO {

@@ -37,7 +37,7 @@
 #include <fstream>
 #include "VFFConverter.h"
 //#include <Controller/Controller.h>
-#include <Core/IO/KeyValueFileParser.h>
+#include <core/IO/KeyValueFileParser.h>
 using Core::IO::KeyValueFileParser;
 using Core::IO::KeyValPair;
 

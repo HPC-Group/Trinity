@@ -8,7 +8,7 @@
 
 #ifndef __TNG__GLVolume__
 #define __TNG__GLVolume__
-#include <Renderer/OpenGL/OpenGLDefines.h>
+#include <renderer/OpenGL/OpenGLDefines.h>
 
 namespace Tuvok{
   namespace Renderer{
@@ -30,7 +30,7 @@ namespace Tuvok{
           virtual void SetData(const void *voxels) = 0;
           virtual void SetFilter(GLint iMagFilter = GL_NEAREST,
                                  GLint iMinFilter = GL_NEAREST);
-          
+
         protected:
           GLint  m_iMagFilter;
           GLint  m_iMinFilter;

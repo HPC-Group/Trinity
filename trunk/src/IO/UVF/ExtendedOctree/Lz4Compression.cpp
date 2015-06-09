@@ -1,9 +1,9 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
-#include <Core/nonstd.h>
+#include <core/nonstd.h>
 #include "Lz4Compression.h"
-#include <Core/StringTools.h>
+#include <core/StringTools.h>
 using namespace Core::StringTools;
 
 extern "C" {

@@ -3,7 +3,7 @@
 #include "QVisVolume.h"
 #include "QVisVolumeMetadata.h"
 #include "VolumeError.h"
-#include <Core/StringTools.h>
+#include <core/StringTools.h>
 
 namespace DataIO {
   namespace VolumeIO {

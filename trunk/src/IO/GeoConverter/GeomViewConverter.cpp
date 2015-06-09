@@ -25,7 +25,7 @@
    DEALINGS IN THE SOFTWARE.
 */
 #define __STDC_FORMAT_MACROS
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <fstream>
 // MSVC 2010 does not include this c99/posix 2001 feature, so we implement it manually for now.
 #ifndef _MSC_VER
@@ -36,11 +36,11 @@
 #include <memory>
 #include "GeomViewConverter.h"
 
-#include <Core/Other/Mesh.h>
+#include <core/Other/Mesh.h>
 
 #include "../TuvokIOError.h"
 
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 
 

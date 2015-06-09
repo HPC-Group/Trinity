@@ -41,8 +41,8 @@
 #include <vector>
 
 #include "OpenGLDefines.h"
-#include "Core/Time/Timer.h"
-#include "Renderer/AbstrRenderer.h"
+#include "core/Time/Timer.h"
+#include "renderer/AbstrRenderer.h"
 #include "GLTargetBinder.h"
 #include "GLStateManager.h"
 #include "../AbstrRenderer.h"
@@ -57,15 +57,15 @@ class GLSLProgram;
 
 class GLRenderer : public AbstrRenderer{
   public:
-    /** Constructs a VRer 
-     * \param pMasterController message routing object 
+    /** Constructs a VRer
+     * \param pMasterController message routing object
      * \param bUseOnlyPowerOfTwo force power of two textures (compatibility)
      * \param bDownSampleTo8Bits force 8bit textures (compatibility) */
     GLRenderer(bool bUseOnlyPowerOfTwo,
-               bool bDownSampleTo8Bits, 
+               bool bDownSampleTo8Bits,
                bool bDisableBorder);
     virtual ~GLRenderer();
-    virtual bool Initialize();    
+    virtual bool Initialize();
     virtual void Set1DTrans(const std::vector<unsigned char>& rgba);
     virtual void Changed1DTrans();
     virtual void Changed2DTrans();
@@ -101,12 +101,12 @@ class GLRenderer : public AbstrRenderer{
     virtual void NewFrameClear(const RenderRegion& renderRegion);
 
     GLFBOTex* GetLastFBO() const { return m_pFBO3DImageLast; }
-    
+
     virtual void ScanForNewMeshes();
 
     virtual void FixedFunctionality() const;
     virtual void SyncStateManager();
-   
+
     void CopyImageToDisplayBuffer();
   protected:
     GLTargetBinder  m_TargetBinder;

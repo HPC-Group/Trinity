@@ -37,7 +37,7 @@
 #ifndef PLYGEOCONVERTER_H
 #define PLYGEOCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include <tuple>
 #include "AbstrGeoConverter.h"
 

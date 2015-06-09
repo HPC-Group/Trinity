@@ -31,8 +31,8 @@
 #define TUVOK_MASTERCONTROLLER_H
 
 #include "../StdTuvokDefines.h"
-#include <Core/PerfCounter.h>
-#include <Tools/Singleton.h>
+#include <core/PerfCounter.h>
+#include <tools/Singleton.h>
 
 namespace Tuvok {
 

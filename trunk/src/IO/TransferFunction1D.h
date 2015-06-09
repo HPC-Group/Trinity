@@ -42,13 +42,11 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <Core/Math/Vectors.h>
-#include <Core/Math/Grids.h>
+#include <core/Math/Vectors.h>
+#include <core/Math/Grids.h>
 using namespace Core::Math;
 
 typedef Core::Math::VECTOR2<uint64_t> UINT64VECTOR2;
-//typedef Core::Math::Grid1D<uint32_t> Histogram1D; //! \todo fix
-//typedef Core::Math::Grid1D<float> NormalizedHistogram1D; //! \todo fix
 
 namespace DataIO{
 class TransferFunction1D

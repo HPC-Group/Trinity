@@ -4,7 +4,7 @@
 #define PROGRESSTIMER_H
 
 #include "StdDefines.h"
-#include <Core/Time/Timer.h>
+#include <core/Time/Timer.h>
 #include <string>
 
 using Core::Time::Timer;

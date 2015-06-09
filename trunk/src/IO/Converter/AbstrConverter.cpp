@@ -34,7 +34,7 @@
   \date    December 2008
 */
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 
 #include <algorithm>
 #include <cctype>
@@ -49,7 +49,7 @@
 #include "../TuvokSizes.h"
 #include "../UVF/Histogram1DDataBlock.h"
 
-#include <Core/IO/FileTools.h>
+#include <core/IO/FileTools.h>
 using namespace Core::IO::FileTools;
 
 using namespace Tuvok;

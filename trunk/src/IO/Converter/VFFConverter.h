@@ -39,7 +39,7 @@
 #ifndef VFFCONVERTER_H
 #define VFFCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 class VFFConverter : public RAWConverter {

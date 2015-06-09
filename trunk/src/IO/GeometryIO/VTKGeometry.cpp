@@ -1,8 +1,8 @@
 #include <sstream>
 
 #include "VTKGeometry.h"
-#include <Core/StringTools.h>
-#include <Core/Math/EndianConvert.h>
+#include <core/StringTools.h>
+#include <core/Math/EndianConvert.h>
 
 using namespace Core::Math;
 

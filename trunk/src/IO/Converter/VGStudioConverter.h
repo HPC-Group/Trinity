@@ -39,7 +39,7 @@
 #ifndef VGSTUDIOCONVERTER_H
 #define VGSTUDIOCONVERTER_H
 
-#include <Core/StdTuvokDefines.h>
+#include <core/StdTuvokDefines.h>
 #include "RAWConverter.h"
 
 class VGStudioConverter : public RAWConverter {
