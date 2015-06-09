@@ -8,7 +8,6 @@ using namespace Core::Math;
 AbstrRenderer::AbstrRenderer(Vec2ui vWinSize, ERenderMode mode) :
 m_pRenderRegion(nullptr),
 m_pClipplane(nullptr),
-
 m_pDatasetIO(nullptr),
 m_bCompleteRedraw(true)
 {
@@ -16,6 +15,15 @@ m_bCompleteRedraw(true)
   m_pRenderState->m_vLightDir = m_pRenderState->m_pCameraPtr.GetWorldPosition();
   m_pRenderState->m_vLightDir.normalize();
   m_pRenderState->m_resolution = vWinSize;
+
+  //default search pathes for shaders
+  m_vSearchPathes.push_back("");
+  m_vSearchPathes.push_back("Shaders/");
+  m_vSearchPathes.push_back("shaders/");
+  m_vSearchPathes.push_back("Release/");
+  m_vSearchPathes.push_back("release/");
+  m_vSearchPathes.push_back("Debug/");
+  m_vSearchPathes.push_back("debug/");
 }
 
 AbstrRenderer::~AbstrRenderer(){
