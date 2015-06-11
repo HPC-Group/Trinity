@@ -181,15 +181,7 @@ void RenderServer::singleRenderThreadLoop(uint16_t serviceHandle, Visibility vis
             e.getRenderer()->Paint();
             e.getContext()->frameFinished();
 
-            if(e.getThreadCommands()->m_bShouldPick){
-                e.getRenderer()->readVolumePosition(e.getThreadCommands()->m_cv_picking);
-                e.getThreadCommands()->m_bShouldPick = false;
-            }
-
-            if(e.getThreadCommands()->m_bSetCamera){
-                e.getRenderer()->SetCamera(e.getRenderState()->m_pCameraPtr);
-                e.getThreadCommands()->m_bSetCamera = false;
-            }
+            e.handleCommandQueue();
 
            /* if(visibility == Visibility::hidden){
                 if((numb % 100) == 0){
@@ -216,6 +208,44 @@ void RenderServer::singleRenderThreadLoop(uint16_t serviceHandle, Visibility vis
 
     it = m_ServiceMap.find(serviceHandle);
     m_ServiceMap.erase(it);
+}
+
+void ServiceEntry::handleCommandQueue(){
+
+    int maxCom = m_pCommandList->size();
+    for(int i = 0; i < maxCom;++i){
+        Command cmd = m_pCommandList->front();
+        m_pCommandList->pop();
+
+        //IVDA_MESSAGE(cmd.m_sCommand );
+
+        if(cmd.m_sCommand == RenderCmd::SET_RENDERMODE){
+            m_pRenderer->SetRenderMode( *static_cast<Tuvok::Renderer::ERenderMode*>(cmd.m_data));
+        }
+        else if(cmd.m_sCommand == RenderCmd::SET_COMPOSITING){
+            m_pRenderer->SetCompositeMode( *static_cast<Tuvok::Renderer::ECompositeDisplay*>(cmd.m_data));
+        }
+        else if(cmd.m_sCommand == RenderCmd::SET_CLEARVIEW){
+
+        }
+        else if(cmd.m_sCommand == RenderCmd::SET_CLEARVIEW){
+
+        }
+        else if(cmd.m_sCommand == RenderCmd::ROT_CAMERA){
+            m_pRenderer->RotateCamera( *static_cast<Core::Math::Vec3f*>(cmd.m_data));
+        }
+        else if(cmd.m_sCommand == RenderCmd::MOV_CAMERA){
+            m_pRenderer->MoveCamera( *static_cast<Core::Math::Vec3f*>(cmd.m_data));
+        }
+        else if(cmd.m_sCommand == RenderCmd::ZOM_CAMERA){
+            m_pRenderer->SetCameraZoom( *static_cast<float*>(cmd.m_data));
+        }
+        else if(cmd.m_sCommand == RenderCmd::SET_CVPICK){
+            m_pRenderer->readVolumePosition( *static_cast<Core::Math::Vec2ui*>(cmd.m_data));
+        }
+
+    }
+    //m_pCommandList->erase(m_pCommandList->begin(),m_pCommandList->begin()+maxCom);
 }
 
 std::shared_ptr<Tuvok::Renderer::Context::Context> RenderServer::getContextPtr(uint16_t handle){
@@ -250,40 +280,44 @@ void RenderServer::stopRenderThread(uint16_t handle){
 
 void RenderServer::rotateCamera(uint16_t handle, Core::Math::Vec3f rotate){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    e.getRenderState()->m_pCameraPtr.rotateCamera(rotate);
-    e.getThreadCommands()->m_bSetCamera = true;
+    Command c(RenderCmd::ROT_CAMERA,(void*)&rotate);
+    e.addCommand(c);
 }
 void RenderServer::moveCamera(uint16_t handle, Core::Math::Vec3f direction){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    e.getRenderState()->m_pCameraPtr.moveCamera(direction);
-    e.getThreadCommands()->m_bSetCamera = true;
+    Command c(RenderCmd::MOV_CAMERA,(void*)&direction);
+    e.addCommand(c);
 }
-void RenderServer::toogleFirstPerson(uint16_t handle, bool toggle){
+void RenderServer::toogleFirstPerson(uint16_t handle, bool toggle){ //TODO
     ServiceEntry e = m_ServiceMap.find(handle)->second;
     e.getRenderer()->SetFirstPersonMode(toggle);
 }
 void RenderServer::zoomCamera(uint16_t handle, float zoom){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    e.getRenderState()->m_pCameraPtr.setZoom(zoom);
-    e.getThreadCommands()->m_bSetCamera = true;
+    Command c(RenderCmd::ZOM_CAMERA,(void*)&zoom);
+    e.addCommand(c);
 }
 
 void RenderServer::setRenderMode(uint16_t handle, Tuvok::Renderer::ERenderMode mode){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-
-    e.getRenderer()->SetRenderMode(mode);
+    Command c(RenderCmd::SET_RENDERMODE,(void*)&mode);
+    e.addCommand(c);
 }
 
 void RenderServer::setCompositeMode(uint16_t handle, Tuvok::Renderer::ECompositeDisplay mode){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-
-    e.getRenderer()->SetCompositeMode(mode);
+    Command c(RenderCmd::SET_COMPOSITING,(void*)&mode);
+    e.addCommand(c);
 }
 
 void RenderServer::clearViewPicking(uint16_t handle, Core::Math::Vec2ui pixelposition){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    e.getThreadCommands()->m_bShouldPick = true;
-    e.getThreadCommands()->m_cv_picking = pixelposition;
+    //e.getThreadCommands()->m_bShouldPick = true;
+   // e.getThreadCommands()->m_cv_picking = pixelposition;
+
+    Command c(RenderCmd::SET_CVPICK,(void*)&pixelposition);
+    e.addCommand(c);
+
 }
 
 void RenderServer::setClearViewEnabled(uint16_t handle,bool b){
