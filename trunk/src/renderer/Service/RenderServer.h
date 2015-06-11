@@ -18,10 +18,26 @@
 
 #include "../RenderEnums.h"
 #include "RenderStatev2.h"
+#include "RenderCmd.h"
+
+#include <queue>
+
 
 namespace Tuvok{
     namespace Renderer{
         namespace Service{
+
+            struct Command{
+
+                Command(std::string cmd, void* data): m_sCommand(cmd), m_data(data){};
+                Command(std::string cmd): m_sCommand(cmd), m_data(NULL){};
+                Command(): m_sCommand("nocmd"), m_data(NULL){};
+
+                std::string             m_sCommand;
+                void*                 m_data;
+            };
+            typedef std::queue<Command> CommandQueue;
+
 
             struct ThreadCommands{
                 ThreadCommands():m_bShouldPick(false),m_cv_picking(0,0){};
@@ -33,11 +49,12 @@ namespace Tuvok{
             class ServiceEntry{
             public:
                 ServiceEntry(uint16_t identifier, std::shared_ptr<AbstrRenderer> renderer, std::shared_ptr<Context::Context> context = nullptr):
-                m_uiIdentifier(identifier), m_pRenderer(renderer), m_pContext(context),m_pRenderState(){
+                m_uiIdentifier(identifier), m_pRenderer(renderer), m_pContext(context),m_pRenderState(),m_pCommandList(){
 					m_bCanceled = new bool();
 					*m_bCanceled = true;
                     m_pThreadCommands = std::make_shared<ThreadCommands>();
                     m_pRenderState = std::make_shared<State>();
+                    m_pCommandList = std::make_shared<CommandQueue>();
                 }
 
                 std::shared_ptr<AbstrRenderer> getRenderer() const{
@@ -62,17 +79,25 @@ namespace Tuvok{
                     return m_pThreadCommands;
                 }
 
+                void addCommand(Command c){
+                    m_pCommandList->push(c);
+                }
 
                 void setRenderState(State s){
                     m_pRenderState.reset();
                     m_pRenderState = std::make_shared<State>(s);
                 }
+
+                void handleCommandQueue();
             private:
                 uint16_t                            m_uiIdentifier;
                 std::shared_ptr<Context::Context>   m_pContext;
                 std::shared_ptr<AbstrRenderer>      m_pRenderer;
                 std::shared_ptr<ThreadCommands>     m_pThreadCommands;
                 std::shared_ptr<State>              m_pRenderState;
+
+                std::shared_ptr<CommandQueue>       m_pCommandList;
+
                 bool*                               m_bCanceled;
             };
 
@@ -96,6 +121,7 @@ namespace Tuvok{
                 std::shared_ptr<AbstrRenderer> initNewRenderer(std::shared_ptr<Context::Context> context, Core::Math::Vec2ui resolution,std::string dataset,std::string tf, std::string ioHost, uint16_t ioPort);
 
                 void singleRenderThreadLoop(uint16_t serviceHandle, Visibility visibility, Core::Math::Vec2ui resolution,std::string dataset,std::string tf, std::string ioHost, uint16_t ioPort);
+
 
                 RenderServer(){
                     #if defined __APPLE__

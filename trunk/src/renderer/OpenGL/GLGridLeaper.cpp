@@ -26,6 +26,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <thread>
+
 
 #include <core/FileFinder.h>
 
@@ -1240,15 +1242,14 @@ Core::Math::Vec4f GLGridLeaper::readVolumePosition(Core::Math::Vec2ui v){
 		m_pFBORayStartMAIN);
     #endif
 
-    screenshot(0);
-
 
     glReadBuffer((GLenum)GL_COLOR_ATTACHMENT0);
     glReadPixels(v.x, GetSize().y - v.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)&data);
-    m_pTargetBinder->Unbind();
 
     if(data.x != 0 && data.y != 0 && data.z != 0)
         m_vVolumePicking = Vec4f((float)data.x/255.0f,(float)data.y/255.0f,(float)data.z/255.0f,(float)data.w/255.0f);
 
+
+    m_pTargetBinder->Unbind();
     return m_vVolumePicking;
 }
