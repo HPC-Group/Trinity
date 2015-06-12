@@ -35,8 +35,8 @@ add_library (IO ${IO_SOURCE} ${IO_HEADER})
 find_package(zlib QUIET)
 if(ZLIB_FOUND)
 else(ZLIB_FOUND)
-	set(ZLIB_INCLUDE_DIRS	${CMAKE_BINARY_DIR}/src/Externals/zlib 
-							${CMAKE_SOURCE_DIR}/src/Externals/zlib)
+	set(ZLIB_INCLUDE_DIRS	${CMAKE_BINARY_DIR}/ext/zlib 
+							${CMAKE_SOURCE_DIR}/ext/zlib)
 	set(ZLIB_LIBRARIES zlibstatic)
 endif(ZLIB_FOUND)
 

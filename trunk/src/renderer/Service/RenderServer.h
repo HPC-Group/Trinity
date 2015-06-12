@@ -22,8 +22,6 @@
 
 #include <queue>
 #include <core/CmdQueue.h>
-#include <communication/protocols/protocol_renderer.h>
-
 namespace Tuvok{
     namespace Renderer{
         namespace Service{
@@ -79,7 +77,7 @@ namespace Tuvok{
             };
 
 
-            class RenderServer : public Communication::ProtocolRenderer{
+            class RenderServer{
             public:
                 static RenderServer& getInstance(){
                     static RenderServer    instance;
