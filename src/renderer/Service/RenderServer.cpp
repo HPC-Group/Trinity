@@ -29,6 +29,7 @@ uint64_t RenderServer::createNewRenderer(Visibility visibility, Core::Math::Vec2
     m_runThreads.push_back(std::make_shared<std::thread>(&RenderServer::singleRenderThreadLoop, this,entry.getIdentifier(),visibility, resolution, dataset, tf, ioHost, ioPort));
 
     IVDA_MESSAGE("have to return the handle");
+     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     return entry.getIdentifier();
 }
 
@@ -130,7 +131,7 @@ std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuv
 
     //make it look fancy
     renderer->SetUseLighting(true);
-    renderer->SwitchPagingStrategy(MissingBrickStrategy::OnlyNeeded);
+    renderer->SwitchPagingStrategy(MissingBrickStrategy::RequestAll);
     renderer->SetCameraZoom(1.5f);
 
     renderer->SetIsoValue(0.01f);
@@ -213,39 +214,36 @@ void RenderServer::singleRenderThreadLoop(uint16_t serviceHandle, Visibility vis
 void ServiceEntry::handleCommandQueue(){
 
     int maxCom = m_pCommandList->size();
+
     for(int i = 0; i < maxCom;++i){
-        Command cmd = m_pCommandList->front();
-        m_pCommandList->pop();
+        std::shared_ptr<Core::AbstrCmd> cmd = m_pCommandList->pop();
 
-        //IVDA_MESSAGE(cmd.m_sCommand );
-
-        if(cmd.m_sCommand == RenderCmd::SET_RENDERMODE){
-            m_pRenderer->SetRenderMode( *static_cast<Tuvok::Renderer::ERenderMode*>(cmd.m_data));
+        if(cmd->getCmd() == RenderCmd::SET_RENDERMODE){
+            m_pRenderer->SetRenderMode( (Tuvok::Renderer::ERenderMode)std::dynamic_pointer_cast<Core::ShortCmd>(cmd)->getData());
         }
-        else if(cmd.m_sCommand == RenderCmd::SET_COMPOSITING){
-            m_pRenderer->SetCompositeMode( *static_cast<Tuvok::Renderer::ECompositeDisplay*>(cmd.m_data));
+        else if(cmd->getCmd() == RenderCmd::SET_COMPOSITING){
+            m_pRenderer->SetCompositeMode( (Tuvok::Renderer::ECompositeDisplay)std::dynamic_pointer_cast<Core::ShortCmd>(cmd)->getData());
         }
-        else if(cmd.m_sCommand == RenderCmd::SET_CLEARVIEW){
+        else if(cmd->getCmd() == RenderCmd::SET_CLEARVIEW){
 
         }
-        else if(cmd.m_sCommand == RenderCmd::SET_CLEARVIEW){
+        else if(cmd->getCmd() == RenderCmd::SET_CLEARVIEW){
 
         }
-        else if(cmd.m_sCommand == RenderCmd::ROT_CAMERA){
-            m_pRenderer->RotateCamera( *static_cast<Core::Math::Vec3f*>(cmd.m_data));
+        else if(cmd->getCmd() == RenderCmd::ROT_CAMERA){
+            m_pRenderer->RotateCamera(  std::dynamic_pointer_cast<Core::Vec3fCmd>(cmd)->getData());
         }
-        else if(cmd.m_sCommand == RenderCmd::MOV_CAMERA){
-            m_pRenderer->MoveCamera( *static_cast<Core::Math::Vec3f*>(cmd.m_data));
+        else if(cmd->getCmd() == RenderCmd::MOV_CAMERA){
+            m_pRenderer->MoveCamera(    std::dynamic_pointer_cast<Core::Vec3fCmd>(cmd)->getData());
         }
-        else if(cmd.m_sCommand == RenderCmd::ZOM_CAMERA){
-            m_pRenderer->SetCameraZoom( *static_cast<float*>(cmd.m_data));
+        else if(cmd->getCmd() == RenderCmd::ZOM_CAMERA){
+           m_pRenderer->SetCameraZoom(  std::dynamic_pointer_cast<Core::FloatCmd>(cmd)->getData());
         }
-        else if(cmd.m_sCommand == RenderCmd::SET_CVPICK){
-            m_pRenderer->readVolumePosition( *static_cast<Core::Math::Vec2ui*>(cmd.m_data));
+        else if(cmd->getCmd() == RenderCmd::SET_CVPICK){
+            m_pRenderer->readVolumePosition( std::dynamic_pointer_cast<Core::Vec2uiCmd>(cmd)->getData());
         }
 
     }
-    //m_pCommandList->erase(m_pCommandList->begin(),m_pCommandList->begin()+maxCom);
 }
 
 std::shared_ptr<Tuvok::Renderer::Context::Context> RenderServer::getContextPtr(uint16_t handle){
@@ -280,13 +278,11 @@ void RenderServer::stopRenderThread(uint16_t handle){
 
 void RenderServer::rotateCamera(uint16_t handle, Core::Math::Vec3f rotate){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    Command c(RenderCmd::ROT_CAMERA,(void*)&rotate);
-    e.addCommand(c);
+    e.addCommand( std::make_shared< Core::Vec3fCmd>(RenderCmd::ROT_CAMERA,rotate));
 }
 void RenderServer::moveCamera(uint16_t handle, Core::Math::Vec3f direction){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    Command c(RenderCmd::MOV_CAMERA,(void*)&direction);
-    e.addCommand(c);
+    e.addCommand(  std::make_shared< Core::Vec3fCmd>(RenderCmd::MOV_CAMERA,direction));
 }
 void RenderServer::toogleFirstPerson(uint16_t handle, bool toggle){ //TODO
     ServiceEntry e = m_ServiceMap.find(handle)->second;
@@ -294,30 +290,22 @@ void RenderServer::toogleFirstPerson(uint16_t handle, bool toggle){ //TODO
 }
 void RenderServer::zoomCamera(uint16_t handle, float zoom){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    Command c(RenderCmd::ZOM_CAMERA,(void*)&zoom);
-    e.addCommand(c);
+    e.addCommand( std::make_shared< Core::FloatCmd>(RenderCmd::ZOM_CAMERA,zoom));
 }
 
 void RenderServer::setRenderMode(uint16_t handle, Tuvok::Renderer::ERenderMode mode){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    Command c(RenderCmd::SET_RENDERMODE,(void*)&mode);
-    e.addCommand(c);
+    e.addCommand( std::make_shared< Core::ShortCmd>(RenderCmd::SET_RENDERMODE,mode));
 }
 
 void RenderServer::setCompositeMode(uint16_t handle, Tuvok::Renderer::ECompositeDisplay mode){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    Command c(RenderCmd::SET_COMPOSITING,(void*)&mode);
-    e.addCommand(c);
+    e.addCommand(std::make_shared< Core::ShortCmd>(RenderCmd::SET_COMPOSITING,mode));
 }
 
 void RenderServer::clearViewPicking(uint16_t handle, Core::Math::Vec2ui pixelposition){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
-    //e.getThreadCommands()->m_bShouldPick = true;
-   // e.getThreadCommands()->m_cv_picking = pixelposition;
-
-    Command c(RenderCmd::SET_CVPICK,(void*)&pixelposition);
-    e.addCommand(c);
-
+    e.addCommand(std::make_shared< Core::Vec2uiCmd>(RenderCmd::SET_CVPICK,pixelposition));
 }
 
 void RenderServer::setClearViewEnabled(uint16_t handle,bool b){

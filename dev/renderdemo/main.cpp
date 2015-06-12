@@ -6,34 +6,33 @@
 //  Copyright (c) 2015 CoViDaG. All rights reserved.
 //
 
-#include <memory>
 #include <chrono>
 #include <thread>
 
 
 #include <iostream>
 #include <fstream>
+
+//because we use glfw here
 #include <renderer/OpenGL/OpenGLDefines.h>
 #include "GLFWDefines.h"
 
-#include <renderer/OpenGL/GLGridLeaper.h>
 
 #include <core/Math/Vectors.h>
 
-#include <core/TuvokException.h>
 
-#include <tools/DebugOutHandler.h>
+#include <communication/protocols/protocol_renderer.h>
+#include <renderer/Service/RenderServer.h>
 
 #include <renderer/RenderEnums.h>
 
-#include <renderer/Context/GLFWContext.h>
-#include <renderer/Context/XContext.h>
-#include <renderer/Service/RenderServer.h>
-
 #include <core/FileFinder.h>
 
-using namespace Tuvok::Renderer::OpenGL::GLCore;
-using namespace Tuvok::Renderer::OpenGL;
+//logger, use sweden logger later ! will remove debugouthandle
+#include <tools/DebugOutHandler.h>
+
+
+
 using namespace Tuvok::Renderer::Service;
 using namespace Tuvok::Renderer;
 using namespace Tuvok;
@@ -46,6 +45,7 @@ using std::shared_ptr;
 static float f = 0.01;
 static float zoom = 1.5f;
 
+//This function lists all datasets and transferfunction in the folders <root>, /DataSets, /datasets
 void listFiles(std::vector<std::string> &ds, std::vector<std::string> &tf){
     Core::FileFinder::getInstance().readFilesWithEnding("DataSets/",ds,".uvf");
     Core::FileFinder::getInstance().readFilesWithEnding("",ds,".uvf");
@@ -65,6 +65,24 @@ void listFiles(std::vector<std::string> &ds, std::vector<std::string> &tf){
     }
 }
 
+void selectDataSetAndTransferFunction(std::string& sDataSet, std::string& sTF){
+    //Select DataSet and TransferFunction
+    std::cout << "LIST DS, TF" << std::endl;
+    std::vector<std::string> ds;
+    std::vector<std::string> tf;
+    listFiles(ds,tf);
+
+    int dsid,tfid;
+    std::cout << "Enter DS id" << std::endl;
+    std::cin >> dsid;
+    std::cout << "Enter TF id" << std::endl;
+    std::cin >> tfid;
+
+    sDataSet = ds[dsid];
+    sTF = tf[tfid];
+}
+
+//interaction with the renderer
 void glfwHanldeKeyboard(GLFWwindow* window, uint16_t renderHandle){
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
@@ -151,56 +169,38 @@ void glfwHanldeKeyboard(GLFWwindow* window, uint16_t renderHandle){
 }
 
 int main(int argc, char* argv[]){
-//-----MORPHABLE UI INIT -------------------------------------------------------------
+    //DebugOut remove as soon as possible
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowErrors(true);
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowMessages(true);
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowWarnings(true);
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowOther(true);
 
-    std::cout << "LIST DS, TF" << std::endl;
-    std::vector<std::string> ds;
-    std::vector<std::string> tf;
-    listFiles(ds,tf);
 
-    int dsid,tfid;
-    std::cout << "Enter DS id" << std::endl;
-    std::cin >> dsid;
-    std::cout << "Enter TF id" << std::endl;
-    std::cin >> tfid;
+    std::string dataset;
+    std::string transferfunction;
+
+    selectDataSetAndTransferFunction(dataset,transferfunction);
+
+    //Get RenderServer Instance
+	Communication::ProtocolRenderer& r = RenderServer::getInstance();
+
+    //create a new renderer and store the id of the renderer
+    uint16_t renderHandle = r.createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),dataset,transferfunction);
 
 
-	RenderServer& r = RenderServer::getInstance();
 
-	std::vector<uint16_t> renderHandles;
-    renderHandles.push_back(r.createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),ds[dsid],tf[tfid]));
-
-    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),"Mandelbulb1k-SCANLINE-132-lz4.uvf","Mandelbulb1k-SCANLINE-64-lz4_10.1dt"));
-    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "WholeBody-SCANLINE-68-lz4.uvf", "WholeBody-SCANLINE-68-lz4.1dt"));
-    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "RichtmyerMeshkov-SCANLINE-36-lz4.uvf", "RichtmyerMeshkov-SCANLINE-36-lz4.1dt"));
-    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed, Vec2ui(1280, 720), "VisibleHumanFullColor-SCANLINE-36-lz4.uvf", "VisibleHumanFullColor-SCANLINE-36-lz4.1dt"));
-    //renderHandles.push_back(r.createNewRenderer(Visibility::Windowed,Vec2ui(640,480),"walnut.uvf","none"));
-    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
-
-    //wait for renderer to load everything needed
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     bool keppRunning = true;
     while(keppRunning){
-        //send each renderthread a rotate command
-        for(int c = 0; c < renderHandles.size();++c){
-			uint16_t i = renderHandles[c];
-            if(r.checkIfRenderThreadIsRunning(i) != 0){
-                std::this_thread::sleep_for(std::chrono::milliseconds(20));
-                //RenderServer::getInstance().rotateCamera(i,Vec3f(0,0.1f*(i+1),0));
-                GLFWwindow* w = static_cast<GLFWwindow*>(RenderServer::getInstance().getContextPtr(i)->getContextItem());
-                if(w != nullptr){
-                    glfwHanldeKeyboard(w,i);
-                }
-            }else{
-                renderHandles.erase(renderHandles.begin()+c);
-                c--;
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        //if the renderer is still running
+        if(r.checkIfRenderThreadIsRunning(renderHandle) != 0){
+            //get pointer to the glfwWindow (only works if renderer is using glfw -> later we will just send the commands without glfw windows etc)
+            GLFWwindow* w = static_cast<GLFWwindow*>(RenderServer::getInstance().getContextPtr(renderHandle)->getContextItem());
+            if(w != nullptr){
+                //Handle inputs
+                glfwHanldeKeyboard(w,renderHandle);
             }
-        }
-		if (renderHandles.size() == 0){
+        }else{
 			keppRunning = false;
 		}
     }
