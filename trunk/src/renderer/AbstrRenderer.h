@@ -122,6 +122,8 @@ namespace Tuvok{
             m_pRenderState = std::make_shared<State>(renderState);
 		}
 
+		virtual void makeScreenshot() = 0;
+
       protected:
         virtual void ScheduleCompleteRedraw();
         void BuildProjectionMatrix();

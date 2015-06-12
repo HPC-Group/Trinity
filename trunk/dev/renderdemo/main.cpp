@@ -30,6 +30,8 @@
 #include <tools/DebugOutHandler.h>
 
 
+#include <communication/RenderService.h>
+
 using namespace Tuvok::Renderer::Service;
 using namespace Tuvok::Renderer;
 using namespace Tuvok;
@@ -182,7 +184,7 @@ int main(int argc, char* argv[]){
 	RenderServer& r = RenderServer::getInstance();
 
     //create a new renderer and store the id of the renderer
-    uint16_t renderHandle = r.createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),dataset,transferfunction);
+    uint16_t renderHandle = r.createNewRenderer(Visibility::Fullscreen,Vec2ui(1280,720),dataset,transferfunction);
 
 
 

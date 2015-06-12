@@ -25,11 +25,9 @@ uint64_t RenderServer::createNewRenderer(Visibility visibility, Core::Math::Vec2
     ServiceEntry entry(++m_servieIdentifierSource, nullptr, nullptr);
     m_ServiceMap.insert({ entry.getIdentifier(), entry });
 
-    IVDA_MESSAGE("creating new thread");
     m_runThreads.push_back(std::make_shared<std::thread>(&RenderServer::singleRenderThreadLoop, this,entry.getIdentifier(),visibility, resolution, dataset, tf, ioHost, ioPort));
 
-    IVDA_MESSAGE("have to return the handle");
-     std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
     return entry.getIdentifier();
 }
 
@@ -52,34 +50,13 @@ std::shared_ptr<Tuvok::Renderer::Context::Context> RenderServer::initNewContext(
 
 	if (context == nullptr) return nullptr;
     if(!context->initContext()) return nullptr;
-    IVDA_MESSAGE("CREATED A NEW \"THREADSAFE\" OPENGL CONTEXT");
+    IVDA_MESSAGE("created a new context for this thread");
 
 
     return context;
 }
 
 std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuvok::Renderer::Context::Context> context, Core::Math::Vec2ui resolution, std::string dataset, std::string tf, std::string ioHost, uint16_t ioPort){
-   /* //create handle to IOProtocol
-    std::shared_ptr<Tuvok::IOSender> ioProt;
-
-    if(ioHost == "localhost" || "127.0.0.1"){
-        IVDA_MESSAGE("WILL USE LOCAL IO");
-        auto io = make_shared<Tuvok::IOService>();
-
-        LocalRegistry& local = LocalRegistry::Instance();
-        shared_ptr<Sender> ioSender = local.getSender(Tuvok::IOService::defaultName);
-
-        ioProt = std::make_shared<Tuvok::IOSender>(ioSender);
-
-    }else{
-        IVDA_MESSAGE("TODO REMOTE IO!!");
-        return nullptr;
-    }
-
-    //load dataset
-	IVDA_MESSAGE("LOAD THE TEST DATASET");
-	uint16_t handle = 0;
-	handle = ioProt->openFile(dataset);*/
 
     //THIS IS PURE LOCAL FOR FIRST
 	std::shared_ptr<IOLocal> ioLocal = std::make_shared<IOLocal>("LOCALIO");
@@ -103,29 +80,28 @@ std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuv
     uint64_t gpumemorysize = 500 * 1024*1024;
 
     std::string vendor = (char*)glGetString(GL_VENDOR);
-    IVDA_MESSAGE("GRAPHICS CARD VENDOR: " << vendor);
+    IVDA_MESSAGE("gpu vendor: " << vendor);
     if(vendor == "NVIDIA Corporation"){
 
         int currentavailable = 0;
         // get the currently AVAILABLE!! free gpu memory
         glGetIntegerv(0x9049, &currentavailable);
 
-        IVDA_MESSAGE("AVAILABLE KB ON VRAM: "<< currentavailable);
+        IVDA_MESSAGE("available vram in kb: "<< currentavailable);
         uint64_t willusemax = currentavailable - (200*1024);
         if(willusemax < 200*1024){
-            IVDA_MESSAGE("NOT ENOUGH FREE VRAM TO CREATE A SUITABLE RENDERER");
+            IVDA_MESSAGE("not enough free vram.");
             return nullptr;
         }
-        IVDA_MESSAGE("WILL USE (200MB LESS): "<< willusemax);
-        IVDA_MESSAGE("NO ERRORS ? " << glGetError());
+        IVDA_MESSAGE("will use 200MB less vram: "<< willusemax);
+        IVDA_MESSAGE("read errorcodes: " << glGetError());
 
         gpumemorysize = willusemax * 1024;
     }
 
-    IVDA_MESSAGE("WILL NOW START THE AWESOME INIT !!!");
-    //third: try init
+    IVDA_MESSAGE("initialize renderer");
     if (!renderer->Initialize(gpumemorysize)){
-		IVDA_MESSAGE("ERROR IN GRIDLEAPER INIT");
+		IVDA_MESSAGE("-- ERROR IN RENDER INIT");
 		return nullptr;
     }
 
@@ -162,46 +138,21 @@ void RenderServer::singleRenderThreadLoop(uint16_t serviceHandle, Visibility vis
     //reload entry to be safe to use the right one!
     e = m_ServiceMap.find(serviceHandle)->second;
 
-
-    int numb = 0;
-    string name;
-    Core::Time::Timer timer;
-
-    timer.start();
-    double startTime = timer.elapsed();
-    double el = startTime;
-
-    std::cout << timer.elapsed() << std::endl;
-
     while(!e.getIsCanceled()){
         {
             std::lock_guard<recursive_mutex> lock(m_rsMutex);
-
 
             e.getContext()->activateContext();
             e.getRenderer()->Paint();
             e.getContext()->frameFinished();
 
             e.handleCommandQueue();
-
-           /* if(visibility == Visibility::hidden){
-                if((numb % 100) == 0){
-                    name = "hidden_ser"+std::to_string(serviceHandle)+"_"+ std::to_string(numb);
-                    e.getContext()->storeFinalFrameToTNG(name);
-                }
-                numb++;
-            }*/
         }
-       /* ++numb;
-        if(numb % 10 == 0){
-            el = timer.elapsed();
-            std::cout <<  ((el-startTime)/10.0) << std::endl;
-            startTime = el;
+        std::this_thread::sleep_for(std::chrono::milliseconds(33));
+        if(visibility == Visibility::hidden){
+            e.getRenderer()->makeScreenshot();
+            e.getRenderer()->RotateCamera(Vec3f(0,0.1f,0));
         }
-*/
-
-         std::this_thread::sleep_for(std::chrono::milliseconds(33));
-         //std::this_thread::sleep_for(std::chrono::nanoseconds(500));
     }
 
     e.getRenderer()->Cleanup();
