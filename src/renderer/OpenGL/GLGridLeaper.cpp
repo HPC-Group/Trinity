@@ -1226,6 +1226,9 @@ void GLGridLeaper::readFB(){
 
 }
 
+void GLGridLeaper::makeScreenshot(){
+    screenshot(0);
+}
 
 Core::Math::Vec4f GLGridLeaper::readVolumePosition(Core::Math::Vec2ui v){
     Vec4ui8 data(255,255,255,255);

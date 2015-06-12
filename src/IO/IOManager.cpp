@@ -229,7 +229,7 @@ IOManager::ScanDirectory(string strDirectory) const {
 
   // Sort out DICOMs with embedded images that we can't read.
   for (size_t stack=0; stack < parseDICOM.m_FileStacks.size(); ++stack) {
-    std::auto_ptr<DICOMStackInfo> f = std::auto_ptr<DICOMStackInfo>(
+    std::shared_ptr<DICOMStackInfo> f = std::shared_ptr<DICOMStackInfo>(
       new DICOMStackInfo((DICOMStackInfo*)parseDICOM.m_FileStacks[stack])
     );
 
