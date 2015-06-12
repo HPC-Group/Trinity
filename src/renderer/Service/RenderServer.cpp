@@ -29,7 +29,7 @@ uint64_t RenderServer::createNewRenderer(Visibility visibility, Core::Math::Vec2
     m_runThreads.push_back(std::make_shared<std::thread>(&RenderServer::singleRenderThreadLoop, this,entry.getIdentifier(),visibility, resolution, dataset, tf, ioHost, ioPort));
 
     IVDA_MESSAGE("have to return the handle");
-     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+     std::this_thread::sleep_for(std::chrono::milliseconds(4000));
     return entry.getIdentifier();
 }
 

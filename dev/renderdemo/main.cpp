@@ -20,8 +20,6 @@
 
 #include <core/Math/Vectors.h>
 
-
-#include <communication/protocols/protocol_renderer.h>
 #include <renderer/Service/RenderServer.h>
 
 #include <renderer/RenderEnums.h>
@@ -30,7 +28,6 @@
 
 //logger, use sweden logger later ! will remove debugouthandle
 #include <tools/DebugOutHandler.h>
-
 
 
 using namespace Tuvok::Renderer::Service;
@@ -182,7 +179,7 @@ int main(int argc, char* argv[]){
     selectDataSetAndTransferFunction(dataset,transferfunction);
 
     //Get RenderServer Instance
-	Communication::ProtocolRenderer& r = RenderServer::getInstance();
+	RenderServer& r = RenderServer::getInstance();
 
     //create a new renderer and store the id of the renderer
     uint16_t renderHandle = r.createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),dataset,transferfunction);
