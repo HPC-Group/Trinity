@@ -6,6 +6,11 @@
 //  Copyright (c) 2015 CoViDaG. All rights reserved.
 //
 
+#include "logging/logmanager.h"
+#include "logging/consolelog.h"
+#include "logging/htmllog.h"
+#include "logging/textlog.h"
+
 #include <chrono>
 #include <thread>
 
@@ -30,12 +35,15 @@
 #include <tools/DebugOutHandler.h>
 
 
-#include <communication/RenderService.h>
+#include <communication/protocols/protocol_renderer.h>
+#include <communication/protocols/LocalRenderer.h>
 
 using namespace Tuvok::Renderer::Service;
 using namespace Tuvok::Renderer;
 using namespace Tuvok;
 using namespace Core::Math;
+using namespace ghoul::logging;
+
 
 using std::cout;
 using std::endl;
@@ -81,89 +89,91 @@ void selectDataSetAndTransferFunction(std::string& sDataSet, std::string& sTF){
     sTF = tf[tfid];
 }
 
+bool endAll = false;
 //interaction with the renderer
-void glfwHanldeKeyboard(GLFWwindow* window, uint16_t renderHandle){
+void glfwHanldeKeyboard(GLFWwindow* window, Communication::ProtocolRenderer* renderer){
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
       double x =0;
       double y = 0;
       glfwGetCursorPos(window,&x,&y);
 
-      RenderServer::getInstance().clearViewPicking(renderHandle,Vec2ui((uint32_t)x,(uint32_t)y));
+      renderer->clearViewPicking(Vec2ui((uint32_t)x,(uint32_t)y));
     }
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
-		RenderServer::getInstance().rotateCamera(renderHandle, Vec3f(0, 0.5f, 0));
+		renderer->rotateCamera(Vec3f(0, 0.5f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-		RenderServer::getInstance().rotateCamera(renderHandle, Vec3f(0, -0.5f, 0));
+		renderer->rotateCamera(Vec3f(0, -0.5f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-		RenderServer::getInstance().rotateCamera(renderHandle, Vec3f(0.5f, 0, 0));
+		renderer->rotateCamera(Vec3f(0.5f, 0, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-		RenderServer::getInstance().rotateCamera(renderHandle, Vec3f(-0.5f, 0, 0));
+		renderer->rotateCamera(Vec3f(-0.5f, 0, 0));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS){
-		RenderServer::getInstance().moveCamera(renderHandle, Vec3f(0, 0.01f, 0));
+		renderer->moveCamera(Vec3f(0, 0.01f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS){
-		RenderServer::getInstance().moveCamera(renderHandle, Vec3f(0, -0.01f, 0));
+		renderer->moveCamera(Vec3f(0, -0.01f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS){
-		RenderServer::getInstance().moveCamera(renderHandle, Vec3f(0.01f, 0, 0));
+		renderer->moveCamera(Vec3f(0.01f, 0, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
-		RenderServer::getInstance().moveCamera(renderHandle, Vec3f(-0.01f, 0, 0));
+		renderer->moveCamera(Vec3f(-0.01f, 0, 0));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS){
 		zoom += 0.01f;
-		RenderServer::getInstance().zoomCamera(renderHandle, zoom);
+		renderer->zoomCamera(zoom);
 	}
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS){
 		zoom -= 0.01f;
-		RenderServer::getInstance().zoomCamera(renderHandle, zoom);
+		renderer->zoomCamera(zoom);
 	}
 
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
-        RenderServer::getInstance().setRenderMode(renderHandle,Tuvok::Renderer::ERenderMode::RM_1DTRANS);
+        renderer->setRenderMode(Tuvok::Renderer::ERenderMode::RM_1DTRANS);
     }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-        RenderServer::getInstance().setRenderMode(renderHandle,Tuvok::Renderer::ERenderMode::RM_ISOSURFACE);
+        renderer->setRenderMode(Tuvok::Renderer::ERenderMode::RM_ISOSURFACE);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-        RenderServer::getInstance().setCompositeMode(renderHandle, Tuvok::Renderer::ECompositeDisplay::D_FINALCOLOR);
+        renderer->setCompositeMode(Tuvok::Renderer::ECompositeDisplay::D_FINALCOLOR);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-        RenderServer::getInstance().setCompositeMode(renderHandle, Tuvok::Renderer::ECompositeDisplay::D_RESUMECOLOR);
+        renderer->setCompositeMode(Tuvok::Renderer::ECompositeDisplay::D_RESUMECOLOR);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-        RenderServer::getInstance().setCompositeMode(renderHandle, Tuvok::Renderer::ECompositeDisplay::D_RESUMEPOSITION);
+        renderer->setCompositeMode(Tuvok::Renderer::ECompositeDisplay::D_RESUMEPOSITION);
     }
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS){
-        RenderServer::getInstance().setCompositeMode(renderHandle, Tuvok::Renderer::ECompositeDisplay::D_DEBUGVIEW);
+        renderer->setCompositeMode(Tuvok::Renderer::ECompositeDisplay::D_DEBUGVIEW);
     }
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS){
-        RenderServer::getInstance().setClearViewEnabled(renderHandle,true);
+        renderer->setClearViewEnabled(true);
     }
 	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS){
-		RenderServer::getInstance().setClearViewEnabled(renderHandle, false);
+		renderer->setClearViewEnabled(false);
 	}
 
 
 	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS){
 		f += 0.01f;
-		RenderServer::getInstance().setClearViewRadius(renderHandle, f);
+		renderer->setClearViewRadius(f);
 	}
 	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS){
 		f -= 0.01f;
-		RenderServer::getInstance().setClearViewRadius(renderHandle, f);
+		renderer->setClearViewRadius(f);
 	}
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
-		f -= 0.01f;
-		RenderServer::getInstance().stopRenderThread(renderHandle);
+        std::cout << "escape pressed"<< std::endl;
+		renderer->stopRenderThread();
+		endAll = true;
 	}
 }
 
@@ -175,32 +185,36 @@ int main(int argc, char* argv[]){
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowOther(true);
 
 
+    LogManager::initialize(LogManager::LogLevel::Debug, true);
+
+    Log* html = new HTMLLog("RenderDemoLog.html");
+    Log* text = new TextLog("RenderDemoLog.txt");
+    Log* console = new ConsoleLog();
+    LogMgr.addLog(html);
+    LogMgr.addLog(text);
+    LogMgr.addLog(console);
+
+    LINFOC("bla log", "blub");
+
+
     std::string dataset;
     std::string transferfunction;
 
     selectDataSetAndTransferFunction(dataset,transferfunction);
 
-    //Get RenderServer Instance
-	RenderServer& r = RenderServer::getInstance();
+    Communication::ProtocolRenderer* renderer = new Communication::LocalRenderer();
+    renderer->createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),dataset,transferfunction);
 
-    //create a new renderer and store the id of the renderer
-    uint16_t renderHandle = r.createNewRenderer(Visibility::Fullscreen,Vec2ui(1280,720),dataset,transferfunction);
-
-
-
-    bool keppRunning = true;
-    while(keppRunning){
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-        //if the renderer is still running
-        if(r.checkIfRenderThreadIsRunning(renderHandle) != 0){
-            //get pointer to the glfwWindow (only works if renderer is using glfw -> later we will just send the commands without glfw windows etc)
-            GLFWwindow* w = static_cast<GLFWwindow*>(RenderServer::getInstance().getContextPtr(renderHandle)->getContextItem());
-            if(w != nullptr){
+    while(!endAll && renderer->checkIfRenderThreadIsRunning()){
+        //THIS IS ONLY FOR OUR LOCAL GLFW TEST! DO NOT DO THIS LATER!!
+        GLFWwindow* w = static_cast<GLFWwindow*>(RenderServer::getInstance().getContextPtr(renderer->getRenderHandle())->getContextItem());
+        if(w != nullptr){
                 //Handle inputs
-                glfwHanldeKeyboard(w,renderHandle);
-            }
-        }else{
-			keppRunning = false;
-		}
+                glfwHanldeKeyboard(w,renderer);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
+
+    //wait for every other thread to detach
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }

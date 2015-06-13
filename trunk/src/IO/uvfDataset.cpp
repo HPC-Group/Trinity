@@ -25,7 +25,7 @@
    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    DEALINGS IN THE SOFTWARE.
 */
-
+#include "logging/logmanager.h"
 #include <cstring>
 #include <sstream>
 
@@ -98,21 +98,21 @@ void UVFDataset::Open(bool bVerify, bool bReadWrite, bool bMustBeSameVersion) {
             m_pDatasetFile->GetGlobalHeader().ulFileVersion) {
         // bMustBeSameVersion must not be set otherwise Open would have thrown an error
         assert(!bMustBeSameVersion && "Open should have failed!");
-        IVDA_WARNINGV("Opening UVF file with a version (%u) "
-                     "different from this program's (%u)!",
-                     unsigned(m_pDatasetFile->GetGlobalHeader().ulFileVersion),
-                     unsigned(m_pDatasetFile->ms_ulReaderVersion));
+        LWARNINGC("uvfDataset","Opening UVF file with a version ("
+        <<unsigned(m_pDatasetFile->GetGlobalHeader().ulFileVersion)
+        <<") different from this program's ("
+        << unsigned(m_pDatasetFile->ms_ulReaderVersion)<<")!");
         if (m_pDatasetFile->ms_ulReaderVersion < 4)
-            IVDA_WARNING("Opening UVF file with a version"
-                         " older than 4 without TOCBlock support, "
-                         "some features may not be available.");
+            LWARNINGC("uvfDataset","Opening UVF file with a version"
+                         <<" older than 4 without TOCBlock support, "
+                         <<"some features may not be available.");
     }
 
     m_timesteps.clear();
     size_t n_timesteps = DetermineNumberOfTimesteps();
     if (n_timesteps == 0) {
-        IVDA_ERROR("No suitable volume block found in UVF file.  Check previous "
-                   "messages for rejected blocks.");
+        LERRORC("uvfDataset","No suitable volume block found in UVF file.  Check previous "
+                   <<"messages for rejected blocks.");
         Close();
         throw Exception("No volume data", _func_, __LINE__);
     }
@@ -133,9 +133,8 @@ void UVFDataset::Open(bool bVerify, bool bReadWrite, bool bMustBeSameVersion) {
     // analyze the main data blocks
     FindSuitableDataBlocks();
 
-    IVDA_MESSAGEV("Open successfully found %u suitable data block in the UVF file.",
-                 static_cast<unsigned>(n_timesteps));
-    IVDA_MESSAGE("Analyzing data...");
+    LDEBUGC("uvfDataset","Open successfully found "<<static_cast<unsigned>(n_timesteps)<<" suitable data block in the UVF file.");
+    LDEBUGC("uvfDataset","Analyzing data...");
 
     m_bIsSameEndianness = m_pDatasetFile->GetGlobalHeader().bIsBigEndian ==
             IsBigEndian();
@@ -150,8 +149,7 @@ void UVFDataset::Open(bool bVerify, bool bReadWrite, bool bMustBeSameVersion) {
     ComputeRange();
 
     // print out data statistics
-    IVDA_MESSAGEV("  %u timesteps found in the UVF.",
-                 static_cast<unsigned>(n_timesteps));
+    LDEBUGC("uvfDataset",static_cast<unsigned>(n_timesteps)<<" timesteps found in the UVF.");
     for(size_t tsi=0; tsi < n_timesteps; ++tsi) {
         ostringstream stats;
         if (m_bToCBlock) {
@@ -193,11 +191,11 @@ void UVFDataset::Open(bool bVerify, bool bReadWrite, bool bMustBeSameVersion) {
                     << ts->m_vaBrickCount[ts->m_vaBrickCount.size()-1].z
                     << " bricks found.";
         }
-        IVDA_MESSAGEV("%s", stats.str().c_str());
+        LDEBUGC("uvfDataset",stats.str());
     }
 
     if (m_TriSoupBlocks.size()) {
-        IVDA_MESSAGE("Extracting Meshes.");
+        LDEBUGC("uvfDataset","Extracting Meshes.");
         for(auto tsb = m_TriSoupBlocks.begin(); tsb != m_TriSoupBlocks.end();
             tsb++) {
             shared_ptr<uvfMesh> m(new uvfMesh(**tsb));
@@ -213,7 +211,7 @@ void UVFDataset::Open(bool bVerify, bool bReadWrite, bool bMustBeSameVersion) {
             << "  Normal Index count:"    << m->GetNormalIndices().size() << "\n  "
             << "  TexCoords Index count:" << m->GetTexCoordIndices().size() << "\n  "
             << "  Color Index count:"     << m->GetColorIndices().size();
-      IVDA_MESSAGE("%s", stats.str().c_str());*/
+      LINFOC("uvfDataset","%s", stats.str().c_str());*/
         }
     }
 }
@@ -472,12 +470,17 @@ size_t UVFDataset::DetermineNumberOfTimesteps()
         default: break;
         }
     }
-    IVDA_MESSAGEV("Block counts (toc, raster, hist1, hist2, accel): (%u, %u, %u, %u, %u)",
-                 static_cast<unsigned>(toc),
-                 static_cast<unsigned>(raster),
-                 static_cast<unsigned>(hist1d),
-                 static_cast<unsigned>(hist2d),
-                 static_cast<unsigned>(accel));
+    LINFOC("uvfDataset","Block counts (toc, raster, hist1, hist2, accel): ("
+    <<static_cast<unsigned>(toc)
+    <<","
+    <<static_cast<unsigned>(raster)
+    <<","
+    <<static_cast<unsigned>(hist1d)
+    <<", "
+    <<static_cast<unsigned>(hist2d)
+    <<", "
+    <<static_cast<unsigned>(accel)
+    <<")");
 
     if (toc > raster) m_bToCBlock = true;
 
@@ -489,14 +492,17 @@ size_t UVFDataset::DetermineNumberOfTimesteps()
         return std::max(raster,toc);
     }
     // if the number of blocks don't match, say we have 0 valid timesteps.
-    IVDA_ERRORV("UVF Block combinations do not match; "
-               "do not know how to interpret data.  "
-               "Block counts (toc, raster, hist1, hist2, accel): (%u, %u, %u, %u, %u)",
-               static_cast<unsigned>(toc),
-               static_cast<unsigned>(raster),
-               static_cast<unsigned>(hist1d),
-               static_cast<unsigned>(hist2d),
-               static_cast<unsigned>(accel));
+    LERRORC("uvfDataset","UVF Block combinations do not match; Block counts (toc, raster, hist1, hist2, accel): ("
+               <<static_cast<unsigned>(toc)
+               <<", "
+               <<static_cast<unsigned>(raster)
+               <<", "
+               <<static_cast<unsigned>(hist1d)
+               <<", "
+               <<static_cast<unsigned>(hist2d)
+               <<", "
+               <<static_cast<unsigned>(accel)
+               <<")");
     throw Tuvok::io::DSParseFailed("No valid timesteps in UVF!");
 }
 
@@ -658,7 +664,7 @@ void UVFDataset::FindSuitableDataBlocks() {
             break;
         case UVFTables::BS_KEY_VALUE_PAIRS:
             if(m_pKVDataBlock != NULL) {
-                IVDA_WARNING("Multiple Key-Value pair blocks; using first!");
+                LWARNINGC("uvfDataset","Multiple Key-Value pair blocks; using first!");
                 continue;
             }
             m_pKVDataBlock = static_cast<const KeyValuePairDataBlock*>
@@ -675,7 +681,7 @@ void UVFDataset::FindSuitableDataBlocks() {
                         (m_pDatasetFile->GetDataBlock(iBlocks).get());
 
                 if(!VerifyTOCBlock(pVolumeDataBlock)) {
-                    IVDA_WARNING("A TOCBlock failed verification; skipping it");
+                    LWARNINGC("uvfDataset","A TOCBlock failed verification; skipping it");
                     continue;
                 }
                 Vec3ui bsize = pVolumeDataBlock->GetMaxBrickSize();
@@ -703,7 +709,7 @@ void UVFDataset::FindSuitableDataBlocks() {
                         (m_pDatasetFile->GetDataBlock(iBlocks).get());
 
                 if(!VerifyRasterDataBlock(pVolumeDataBlock)) {
-                    IVDA_WARNING("A RasterDataBlock failed verification; skipping it");
+                    LWARNINGC("uvfDataset","A RasterDataBlock failed verification; skipping it");
                     continue;
                 }
 
@@ -718,7 +724,7 @@ void UVFDataset::FindSuitableDataBlocks() {
                         large << "Brick size used in UVF file is too large ("
                               << vMaxBrickSizes[i] << " > " << m_iMaxAcceptableBricksize
                               << "); rebricking necessary.";
-                        IVDA_WARNINGV("%s", large.str().c_str());
+                        LWARNINGC("uvfDataset",large.str());
                         throw Tuvok::io::DSBricksOversized(
                                     large.str().c_str(),
                                     static_cast<size_t>(m_iMaxAcceptableBricksize), _func_, __LINE__
@@ -731,14 +737,14 @@ void UVFDataset::FindSuitableDataBlocks() {
             }
             break;
         case UVFTables::BS_GEOMETRY: {
-            IVDA_MESSAGEV("Found triangle mesh.");
+            LINFOC("uvfDataset","Found triangle mesh.");
             m_TriSoupBlocks.push_back(
                         static_cast<const GeometryDataBlock*>
                         (m_pDatasetFile->GetDataBlock(iBlocks).get())
                         );
         }
         default:
-            IVDA_MESSAGE("Non-volume block found in UVF file, skipping.");
+            LINFOC("uvfDataset","Non-volume block found in UVF file, skipping.");
             break;
         }
     }
@@ -759,7 +765,7 @@ void UVFDataset::GetHistograms(size_t) {
                                                                           1<<GetBitWidth()))));
 
         if (m_pHist1D->GetSize() != vHist1D.size()) {
-            IVDA_MESSAGE("1D Histogram too big to be drawn efficiently, resampling.");
+            LINFOC("uvfDataset","1D Histogram too big to be drawn efficiently, resampling.");
             // "resample" the histogram
 
             float sampleFactor = static_cast<float>(vHist1D.size()) /
@@ -826,7 +832,7 @@ void UVFDataset::GetHistograms(size_t) {
         m_pHist2D.reset(new Histogram2D(vSize));
 
         if (vSize.x != vHist2D.size() || vSize.y != vHist2D[0].size() ) {
-            IVDA_MESSAGE("2D Histogram too big to be drawn efficiently, resampling.");
+            LINFOC("uvfDataset","2D Histogram too big to be drawn efficiently, resampling.");
 
             // TODO: implement the same linear resampling as above
             //       for now we just clear the histogram with ones
@@ -1132,8 +1138,7 @@ void UVFDataset::ComputeRange() {
     bool have_maxmin_data = true;
     for(size_t tsi=0; tsi < m_timesteps.size(); ++tsi) {
         if(m_timesteps[tsi]->m_pMaxMinData == NULL) {
-            IVDA_WARNINGV("Missing acceleration structure for timestep %u",
-                         static_cast<unsigned>(tsi));
+            LWARNINGC("uvfDataset","Missing acceleration structure for timestep "<<static_cast<unsigned>(tsi));
             have_maxmin_data = false;
         }
     }
@@ -1249,11 +1254,11 @@ bool UVFDataset::GeometryTransformToFile(size_t iMeshIndex,
                                          const Mat4f& m) {
     Close();
 
-    IVDA_MESSAGE("Attempting to reopen file in readwrite mode.");
+    LINFOC("uvfDataset","Attempting to reopen file in readwrite mode.");
 
     try {
         Open(false,true,false);
-        IVDA_MESSAGE("Successfully reopened file in readwrite mode.");
+        LINFOC("uvfDataset","Successfully reopened file in readwrite mode.");
 
         // turn meshindex into block index, those are different as the
         // uvf file most likely also contains data other than meshes
@@ -1274,8 +1279,7 @@ bool UVFDataset::GeometryTransformToFile(size_t iMeshIndex,
         }
 
         if (!bFound) {
-            IVDA_ERRORV("Unable to locate mesh data block %u",
-                       static_cast<unsigned>(iBlockIndex));
+            LERRORC("uvfDataset","Unable to locate mesh data block "<< static_cast<unsigned>(iBlockIndex));
             return false;
         }
 
@@ -1284,16 +1288,14 @@ bool UVFDataset::GeometryTransformToFile(size_t iMeshIndex,
                     );
 
         if (!block) {
-            IVDA_ERRORV("Inconsistent UVF block at index %u",
-                       static_cast<unsigned>(iBlockIndex));
+            LERRORC("uvfDataset","Inconsistent UVF block at index "<<static_cast<unsigned>(iBlockIndex));
             return false;
         }
 
-        IVDA_MESSAGE("Transforming Vertices ...");
+        LINFOC("uvfDataset","Transforming Vertices ...");
         std::vector<float> vertices  = block->GetVertices();
         if (vertices.size() % 3) {
-            IVDA_ERRORV("Inconsistent data vertex in UVF block at index %u",
-                       static_cast<unsigned>(iBlockIndex));
+            LERRORC("uvfDataset","Inconsistent data vertex in UVF block at index "<<static_cast<unsigned>(iBlockIndex));
             return false;
         }
         for (size_t i = 0;i<vertices.size();i+=3) {
@@ -1305,15 +1307,14 @@ bool UVFDataset::GeometryTransformToFile(size_t iMeshIndex,
         }
         block->SetVertices(vertices);
 
-        IVDA_MESSAGE("Transforming Normals ...");
+        LINFOC("uvfDataset","Transforming Normals ...");
         Mat4f invTranspose(m);
         invTranspose = invTranspose.inverse();
         invTranspose = invTranspose.Transpose();
 
         std::vector< float > normals  = block->GetNormals();
         if (normals.size() % 3) {
-            IVDA_ERRORV("Inconsistent normal data in UVF block at index %u",
-                       static_cast<unsigned>(iBlockIndex));
+            LERRORC("uvfDataset","Inconsistent normal data in UVF block at index "<<static_cast<unsigned>(iBlockIndex));
             return false;
         }
         for (size_t i = 0;i<normals.size();i+=3) {
@@ -1326,14 +1327,14 @@ bool UVFDataset::GeometryTransformToFile(size_t iMeshIndex,
         }
         block->SetNormals(normals);
 
-        IVDA_MESSAGE("Writing changes to disk");
+        LINFOC("uvfDataset","Writing changes to disk");
         Close();
-        IVDA_MESSAGE("Reopening in read-only mode");
+        LINFOC("uvfDataset","Reopening in read-only mode");
 
         Open(false,false,false);
         return true;
     } catch(const Tuvok::Exception&) {
-        IVDA_ERROR("Readwrite mode failed, maybe file is write protected?");
+        LERRORC("uvfDataset","Readwrite mode failed, maybe file is write protected?");
         Open(false,false,false);
         return false;
     }
@@ -1342,16 +1343,16 @@ bool UVFDataset::GeometryTransformToFile(size_t iMeshIndex,
 bool UVFDataset::RemoveMesh(size_t iMeshIndex) {
     Close();
 
-    IVDA_MESSAGE("Attempting to reopen file in read/write mode.");
+    LINFOC("uvfDataset","Attempting to reopen file in read/write mode.");
 
     try {
         Open(false, true, false);
     } catch(const Exception&) {
-        IVDA_ERROR("Read/write mode failed, maybe file is write protected?");
+        LERRORC("uvfDataset","Read/write mode failed, maybe file is write protected?");
         Open(false,false,false);
         return false;
     }
-    IVDA_MESSAGE("Successfully reopened file in readwrite mode.");
+    LINFOC("uvfDataset","Successfully reopened file in readwrite mode.");
 
     // turn meshindex into block index, those are different as the
     // uvf file most likely also contains data other than meshes
@@ -1372,16 +1373,15 @@ bool UVFDataset::RemoveMesh(size_t iMeshIndex) {
     }
 
     if (!bFound) {
-        IVDA_ERRORV("Unable to locate mesh data block %u",
-                   static_cast<unsigned>(iMeshIndex));
+        LERRORC("uvfDataset","Unable to locate mesh data block "<<static_cast<unsigned>(iMeshIndex));
         return false;
     }
 
     bool bResult = m_pDatasetFile->DropBlockFromFile(iBlockIndex);
 
-    IVDA_MESSAGE("Writing changes to disk");
+    LINFOC("uvfDataset","Writing changes to disk");
     Close();
-    IVDA_MESSAGE("Reopening in read-only mode");
+    LINFOC("uvfDataset","Reopening in read-only mode");
 
     Open(false,false,false);
     return bResult;
@@ -1392,16 +1392,16 @@ bool UVFDataset::AppendMesh(std::shared_ptr<const Mesh> meshIn) {
 
     Close();
 
-    IVDA_MESSAGE("Attempting to reopen file in readwrite mode.");
+    LINFOC("uvfDataset","Attempting to reopen file in readwrite mode.");
 
     try {
         Open(false,true,false);
     } catch(const Exception&) {
-        IVDA_ERROR("Read/write mode failed, maybe file is write protected?");
+        LERRORC("uvfDataset","Read/write mode failed, maybe file is write protected?");
         Open(false,false,false);
         return false;
     }
-    IVDA_MESSAGE("Successfully reopened file in readwrite mode.");
+    LINFOC("uvfDataset","Successfully reopened file in readwrite mode.");
 
     // now create a GeometryDataBlock ...
     std::shared_ptr<GeometryDataBlock> tsb(new GeometryDataBlock());
@@ -1461,9 +1461,9 @@ bool UVFDataset::AppendMesh(std::shared_ptr<const Mesh> meshIn) {
 
     m_pDatasetFile->AppendBlockToFile(tsb);
 
-    IVDA_MESSAGE("Writing changes to disk");
+    LINFOC("uvfDataset","Writing changes to disk");
     Close();
-    IVDA_MESSAGE("Reopening in read-only mode");
+    LINFOC("uvfDataset","Reopening in read-only mode");
 
     Open(false,false,false);
     return true;
@@ -1474,14 +1474,21 @@ bool UVFDataset::AppendMesh(std::shared_ptr<const Mesh> meshIn) {
 bool UVFDataset::Crop(const PLANE<float>& plane, const std::string& strTempDir,
                       bool bKeepOldData, bool bUseMedianFilter, bool bClampToEdge)
 {
-    IVDA_MESSAGE("Flattening dataset");
+    LINFOC("uvfDataset","Flattening dataset");
     string strTempRawFilename = FindNextSequenceName(
                 strTempDir + "crop-tmp.raw"
                 );
     Export(0, strTempRawFilename , false);
 
-    IVDA_MESSAGEV("Cropping at plane (%g %g %g %g)", plane.x, plane.y, plane.z,
-                 plane.w);
+    LINFOC("uvfDataset","Cropping at plane ("
+    <<plane.x
+    <<" "
+    <<plane.y
+    <<" "
+    <<plane.z
+    <<" "
+    <<plane.w
+    <<")");
     Mat4f m;
     m.Scaling(Vec3f(GetScale()/GetScale().maxVal()) *
               Vec3f(GetDomainSize()) /float(GetDomainSize().maxVal()));
@@ -1490,7 +1497,7 @@ bool UVFDataset::Crop(const PLANE<float>& plane, const std::string& strTempDir,
 
     TempFile dataFile(strTempRawFilename);
     if (!dataFile.Open(true)) {
-        IVDA_ERROR("Unable to open flattened data.");
+        LERRORC("uvfDataset","Unable to open flattened data.");
         return false;
     }
 
@@ -1552,7 +1559,7 @@ bool UVFDataset::Crop(const PLANE<float>& plane, const std::string& strTempDir,
     // TODO shrink volume to the largest non-zero aabb
     dataFile.Close();
 
-    IVDA_MESSAGE("Rebuilding UVF data");
+    LINFOC("uvfDataset","Rebuilding UVF data");
     string strTempFilename = FindNextSequenceName(Filename());
 
     std::string strDesc = std::string("Cropped ") + std::string(Name());
@@ -1572,7 +1579,7 @@ bool UVFDataset::Crop(const PLANE<float>& plane, const std::string& strTempDir,
         return false;
     }
 
-    IVDA_MESSAGE("Replacing original UVF by the new one");
+    LINFOC("uvfDataset","Replacing original UVF by the new one");
     Close();
 
     if (bKeepOldData) {
@@ -1595,7 +1602,7 @@ bool UVFDataset::Crop(const PLANE<float>& plane, const std::string& strTempDir,
 
     rename(strTempFilename.c_str(), Filename().c_str());
 
-    IVDA_MESSAGE("Opening new file");
+    LINFOC("uvfDataset","Opening new file");
     Open(false,false,false);
 
     return true;
@@ -1606,7 +1613,7 @@ bool UVFDataset::SaveRescaleFactors() {
     Vec3d saveUserScale = m_UserScale;
     Close();
 
-    IVDA_MESSAGE("Attempting to reopen file in readwrite mode.");
+    LINFOC("uvfDataset","Attempting to reopen file in readwrite mode.");
 
     try {
         Open(false,true,false);
@@ -1615,7 +1622,7 @@ bool UVFDataset::SaveRescaleFactors() {
         Open(false,false,false);
         return false;
     }
-    IVDA_MESSAGE("Successfully reopened file in readwrite mode.");
+    LINFOC("uvfDataset","Successfully reopened file in readwrite mode.");
 
     if (m_bToCBlock) {
         for(size_t tsi=0; tsi < m_timesteps.size(); ++tsi) {
@@ -1643,9 +1650,9 @@ bool UVFDataset::SaveRescaleFactors() {
         }
     }
 
-    IVDA_MESSAGE("Writing changes to disk");
+    LINFOC("uvfDataset","Writing changes to disk");
     Close();
-    IVDA_MESSAGE("Reopening in read-only mode");
+    LINFOC("uvfDataset","Reopening in read-only mode");
     Open(false,false,false);
 
     return true;

@@ -2,6 +2,7 @@
 //      DynBrickingDS a(ds, {{128, 128, 128}});
 //      DynBrickingDS b(a, {{16, 16, 16}});
 // * ContainsData: deal with new metadata appropriately
+#include "logging/logmanager.h"
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -471,13 +472,13 @@ BrickKey DynamicBrickingDS::dbinfo::SourceBrickKey(const BrickKey& k) const {
     assert(std::get<0>(skey) < bds->GetNumberOfTimesteps());
     assert(std::get<2>(skey) < bds->GetTotalBrickCount());
 #endif
-    IVDA_MESSAGEV("keymap query: <%u,%u,%u> -> <%u,%u,%u>",
-            static_cast<unsigned>(std::get<0>(k)),
-            static_cast<unsigned>(std::get<1>(k)),
-            static_cast<unsigned>(std::get<2>(k)),
-            static_cast<unsigned>(std::get<0>(skey)),
-            static_cast<unsigned>(std::get<1>(skey)),
-            static_cast<unsigned>(std::get<2>(skey)));
+    LINFOC("DynamicBrickingDS","keymap query: <"
+            <<static_cast<unsigned>(std::get<0>(k))<<","
+            <<static_cast<unsigned>(std::get<1>(k))<<","
+            <<static_cast<unsigned>(std::get<2>(k))<<"> -> <"
+            <<static_cast<unsigned>(std::get<0>(skey))<<","
+            <<static_cast<unsigned>(std::get<1>(skey))<<","
+            <<static_cast<unsigned>(std::get<2>(skey))<<">");
     return skey;
 }
 
@@ -581,10 +582,10 @@ bool DynamicBrickingDS::dbinfo::Brick(const DynamicBrickingDS& ds,
     }
     // first: check the cache and see if we can get the data easy.
     if(NULL != lookup) {
-        IVDA_MESSAGEV("found <%u,%u,%u> in the cache!",
-                static_cast<unsigned>(std::get<0>(pre.skey)),
-                static_cast<unsigned>(std::get<1>(pre.skey)),
-                static_cast<unsigned>(std::get<2>(pre.skey)));
+        LINFOC("DynamicBrickingDS","found <"<<
+                static_cast<unsigned>(std::get<0>(pre.skey)) <<","<<
+                static_cast<unsigned>(std::get<1>(pre.skey)) <<","<<
+                static_cast<unsigned>(std::get<2>(pre.skey))<< "> in the cache! ");
         Tuvok::GlobalPerfCounter::Instance().IncrementPerfCounter(PERF_DY_BRICK_COPIED, 1.0);
         StackTimer copies(PERF_DY_BRICK_COPY);
         const T* srcdata = static_cast<const T*>(lookup);

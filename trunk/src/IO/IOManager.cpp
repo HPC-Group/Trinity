@@ -33,7 +33,7 @@
            University of Utah
   \date    August 2008
 */
-
+#include "logging/logmanager.h"
 #include <core/StdTuvokDefines.h>
 
 #include <algorithm>
@@ -1332,7 +1332,7 @@ Dataset* IOManager::LoadRebrickedDataset(const std::string& filename,
 
 Dataset* IOManager::CreateDataset(const string& filename,
                                   uint64_t max_brick_size, bool verify) const {
-  IVDA_MESSAGEV("Searching for appropriate DS for '%s'", filename.c_str());
+  LINFOC("IOManager","Searching for appropriate DS for "<<filename);
   return m_dsFactory->Create(filename, max_brick_size, verify);
 }
 

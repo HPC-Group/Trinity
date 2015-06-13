@@ -1,14 +1,12 @@
 #include "RenderServer.h"
 
-
-
+#include "logging/logmanager.h"
 
 #include "../Context/GLFWContext.h"
 #ifdef LINUXOS
 #include "../Context/XContext.h"
 #endif
 #include "../OpenGL/GLGridLeaper.h"
-
 
 #include <IO/Service/IOLocal.h>
 #include <IO/TransferFunction1D.h>
@@ -20,6 +18,7 @@ using namespace Tuvok::Renderer::Context;
 using namespace Core::Math;
 using namespace std;
 
+
 uint64_t RenderServer::createNewRenderer(Visibility visibility, Core::Math::Vec2ui resolution,std::string dataset,std::string tf, std::string ioHost, uint16_t ioPort){
     //create a prox entry to get the final map identifier;
     ServiceEntry entry(++m_servieIdentifierSource, nullptr, nullptr);
@@ -27,8 +26,18 @@ uint64_t RenderServer::createNewRenderer(Visibility visibility, Core::Math::Vec2
 
     m_runThreads.push_back(std::make_shared<std::thread>(&RenderServer::singleRenderThreadLoop, this,entry.getIdentifier(),visibility, resolution, dataset, tf, ioHost, ioPort));
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+    ServiceEntry e = m_ServiceMap.find(entry.getIdentifier())->second;
+    while(e.getIsCanceled()){
+        e = m_ServiceMap.find(entry.getIdentifier())->second;
+    }
     return entry.getIdentifier();
+}
+
+void RenderServer::killAllThreads(){
+    for(std::shared_ptr<std::thread> t : m_runThreads){
+        t->detach();
+        t.reset();
+    }
 }
 
 //***** IMPORTANT  IMPORTANT  IMPORTANT  IMPORTANT  *****
@@ -50,11 +59,12 @@ std::shared_ptr<Tuvok::Renderer::Context::Context> RenderServer::initNewContext(
 
 	if (context == nullptr) return nullptr;
     if(!context->initContext()) return nullptr;
-    IVDA_MESSAGE("created a new context for this thread");
-
+    LINFOC("RenderServer", "created a new context for this thread");
 
     return context;
 }
+
+
 
 std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuvok::Renderer::Context::Context> context, Core::Math::Vec2ui resolution, std::string dataset, std::string tf, std::string ioHost, uint16_t ioPort){
 
@@ -80,28 +90,28 @@ std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuv
     uint64_t gpumemorysize = 500 * 1024*1024;
 
     std::string vendor = (char*)glGetString(GL_VENDOR);
-    IVDA_MESSAGE("gpu vendor: " << vendor);
+    LINFOC("RenderServer", "gpu vendor: " << vendor);
     if(vendor == "NVIDIA Corporation"){
 
         int currentavailable = 0;
         // get the currently AVAILABLE!! free gpu memory
         glGetIntegerv(0x9049, &currentavailable);
 
-        IVDA_MESSAGE("available vram in kb: "<< currentavailable);
+        LINFOC("RenderServer", "available vram in kb: "<< currentavailable);
         uint64_t willusemax = currentavailable - (200*1024);
         if(willusemax < 200*1024){
-            IVDA_MESSAGE("not enough free vram.");
+            LWARNINGC("RenderServer", "not enough free vram.");
             return nullptr;
         }
-        IVDA_MESSAGE("will use 200MB less vram: "<< willusemax);
-        IVDA_MESSAGE("read errorcodes: " << glGetError());
+        LINFOC("RenderServer", "will use 200MB less vram: "<< willusemax);
+        LINFOC("RenderServer", "read errorcodes: " << glGetError());
 
         gpumemorysize = willusemax * 1024;
     }
 
-    IVDA_MESSAGE("initialize renderer");
+    LINFOC("RenderServer", "initialize renderer");
     if (!renderer->Initialize(gpumemorysize)){
-		IVDA_MESSAGE("-- ERROR IN RENDER INIT");
+        LWARNINGC("RenderServer", "ERROR IN RENDER INIT");
 		return nullptr;
     }
 
@@ -121,12 +131,13 @@ std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuv
     return absrend;
 }
 
+
+
 void RenderServer::singleRenderThreadLoop(uint16_t serviceHandle, Visibility visibility, Core::Math::Vec2ui resolution,std::string dataset,std::string tf, std::string ioHost, uint16_t ioPort){
 	std::shared_ptr<Tuvok::Renderer::Context::Context> context = initNewContext(visibility, resolution);
     if(context == nullptr) return;
     std::shared_ptr<AbstrRenderer> absrend = initNewRenderer(context, resolution, dataset, tf, ioHost, ioPort);
     if(absrend == nullptr) return;
-
 
     //set final entry
     ServiceEntry e(serviceHandle, absrend, context);
@@ -137,6 +148,9 @@ void RenderServer::singleRenderThreadLoop(uint16_t serviceHandle, Visibility vis
 
     //reload entry to be safe to use the right one!
     e = m_ServiceMap.find(serviceHandle)->second;
+
+    //save handle to thread
+    std::shared_ptr<std::thread> selfThread =  m_runThreads[ m_runThreads.size()-1];
 
     while(!e.getIsCanceled()){
         {
@@ -157,10 +171,14 @@ void RenderServer::singleRenderThreadLoop(uint16_t serviceHandle, Visibility vis
 
     e.getRenderer()->Cleanup();
     e.getContext()->deleteContext();
-
     it = m_ServiceMap.find(serviceHandle);
     m_ServiceMap.erase(it);
+
+    selfThread->detach(); // change this later ! \todo
+    selfThread.reset();
 }
+
+
 
 void ServiceEntry::handleCommandQueue(){
 
@@ -197,6 +215,8 @@ void ServiceEntry::handleCommandQueue(){
     }
 }
 
+
+
 std::shared_ptr<Tuvok::Renderer::Context::Context> RenderServer::getContextPtr(uint16_t handle){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
     if(!e.getIsCanceled()){
@@ -205,6 +225,8 @@ std::shared_ptr<Tuvok::Renderer::Context::Context> RenderServer::getContextPtr(u
     return nullptr;
 }
 
+
+
 std::shared_ptr<AbstrRenderer> RenderServer::getRendererPtr(uint16_t handle){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
     if(!e.getIsCanceled()){
@@ -212,6 +234,8 @@ std::shared_ptr<AbstrRenderer> RenderServer::getRendererPtr(uint16_t handle){
     }
     return nullptr;
 }
+
+
 
 //! Below this line you find interaction methods with the renderer -------------------------------------------
 uint8_t RenderServer::checkIfRenderThreadIsRunning(uint16_t handle){
@@ -222,11 +246,12 @@ uint8_t RenderServer::checkIfRenderThreadIsRunning(uint16_t handle){
         return 1;
     }
 }
+
+
 void RenderServer::stopRenderThread(uint16_t handle){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
     e.setCanceled(true);
 }
-
 void RenderServer::rotateCamera(uint16_t handle, Core::Math::Vec3f rotate){
     ServiceEntry e = m_ServiceMap.find(handle)->second;
     e.addCommand( std::make_shared< Core::Vec3fCmd>(RenderCmd::ROT_CAMERA,rotate));

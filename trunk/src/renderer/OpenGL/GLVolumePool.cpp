@@ -1,4 +1,4 @@
-//#include "StdTuvokDefines.h"
+#include "logging/logmanager.h"
 #include <GL/glew.h>
 
 #include <IO/Service/IOLocal.h>
@@ -28,8 +28,6 @@
 #include "GLVolumePool.h"
 #include <core/TuvokException.h>
 #include <core/MinMaxBlock.h>
-
-#include <tools/DebugOutHandler.h>
 
 enum BrickIDFlags {
   BI_MISSING = 0,
@@ -723,16 +721,9 @@ void GLVolumePool::UploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, void
   uint32_t iPoolCoordinate = slot.PositionInPool().x +
                              slot.PositionInPool().y * m_vPoolCapacity.x +
                              slot.PositionInPool().z * m_vPoolCapacity.x * m_vPoolCapacity.y;
-#ifdef DEBUG_OUTS
- printf("Loading brick %i at queue position %i (pool coord: %i=[%i, %i, %i]) at time %llu \n",
-		  int(m_vPoolSlotData[iInsertPos].m_iBrickID),
-          int(iInsertPos),
-          int(iPoolCoordinate),
-		  int(m_vPoolSlotData[iInsertPos].PositionInPool().x),
-		  int(m_vPoolSlotData[iInsertPos].PositionInPool().y),
-		  int(m_vPoolSlotData[iInsertPos].PositionInPool().z),
-          iTimeOfCreation);
-#endif
+
+ //LDEBUGC("GLVolumePool","Loading brick  "<<int(m_vPoolSlotData[iInsertPos].m_iBrickID)<<" at queue position "<<int(iInsertPos)<<" (pool coord: "<<int(iPoolCoordinate)<< "="<<m_vPoolSlotData[iInsertPos].PositionInPool()<<") at time "<<iTimeOfCreation);
+
 
 
   // update metadata (does NOT update the texture on the GPU)
@@ -895,23 +886,11 @@ void GLVolumePool::CreateGLResources() {
   m_vPoolCapacity = Vec3ui(m_pPoolDataTexture->GetSize().x/m_maxTotalBrickSize.x,
                                 m_pPoolDataTexture->GetSize().y/m_maxTotalBrickSize.y,
                                 m_pPoolDataTexture->GetSize().z/m_maxTotalBrickSize.z);
-#ifdef DEBUG_OUTS
-  printf("[GLGridLeaper] Creating brick pool of size [%u,%u,%u] to hold a "
-          "max of [%u,%u,%u] bricks of size [%u,%u,%u] ("
-          "addressable size [%u,%u,%u]) and smaller.\n",
-           m_pPoolDataTexture->GetSize().x,
-           m_pPoolDataTexture->GetSize().y,
-           m_pPoolDataTexture->GetSize().z,
-           m_vPoolCapacity.x,
-           m_vPoolCapacity.y,
-           m_vPoolCapacity.z,
-           m_maxTotalBrickSize.x,
-           m_maxTotalBrickSize.y,
-           m_maxTotalBrickSize.z,
-           m_maxInnerBrickSize.x,
-           m_maxInnerBrickSize.y,
-           m_maxInnerBrickSize.z);
-#endif
+//#ifdef DEBUG_OUTS
+  LDEBUGC("GLVolumePool" ,"Creating brick pool of size "<<m_pPoolDataTexture->GetSize()<<" to hold a "
+          "max of "<<m_vPoolCapacity<<" bricks of size "<<m_maxTotalBrickSize<<" ("
+          "addressable size "<<m_maxInnerBrickSize<<") and smaller.");
+//#endif
 
   int gpumax;
   glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE_EXT, &gpumax);
@@ -925,7 +904,7 @@ void GLVolumePool::CreateGLResources() {
     vTexSize = Fit1DIndexTo3DArray(m_iTotalBrickCount, gpumax);
   } catch (std::runtime_error const& e) {
     // this is very unlikely but not impossible
-    T_ERROR(e.what());
+    LERRORC("GLVolumePool",e.what());
     throw;
   }
   m_vBrickMetadata.resize(vTexSize.volume());
@@ -1707,7 +1686,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, size
     RecomputeVisibilityForBrickPool<RM_ISOSURFACE>(visibility, *this, m_vBrickMetadata, m_vPoolSlotData, m_vMinMaxScalar, m_vMinMaxGradient);
     break;
   default:
-    T_ERROR("Unhandled rendering mode.");
+    LERRORC("GLVolumePool","Unhandled rendering mode.");
     return vEmptyBrickCount;
   }
 #ifdef GLVOLUMEPOOL_PROFILE
@@ -1726,7 +1705,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, size
       vEmptyBrickCount = RecomputeVisibilityForOctree<false, RM_ISOSURFACE>(visibility, *this, m_vBrickMetadata, m_vMinMaxScalar, m_vMinMaxGradient);
       break;
     default:
-      T_ERROR("Unhandled rendering mode.");
+      LERRORC("GLVolumePool","Unhandled rendering mode.");
       return vEmptyBrickCount;
     }
     m_bVisibilityUpdated = true; // will be true after we uploaded the metadata texture in the next line
@@ -1736,32 +1715,39 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, size
     uint32_t const iLeafBrickCount = m_pDataset->GetBrickLayout(0, 0).volume();
     uint32_t const iInternalBrickCount = m_iTotalBrickCount - iLeafBrickCount;
 
-	/*
-    //MESSAGE("Synchronously recomputed brick visibility for %u bricks",
-      vEmptyBrickCount.x);
-    //MESSAGE("%u inner bricks are EMPTY (%.2f%% of inner bricks, %.2f%% of all bricks)",
-      vEmptyBrickCount.y,
-      (static_cast<float>(vEmptyBrickCount.y)/iInternalBrickCount)*100.0f,
-      (static_cast<float>(vEmptyBrickCount.y)/m_iTotalBrickCount)*100.0f);
-    //MESSAGE("%u inner bricks are CHILD_EMPTY (%.2f%% of inner bricks, %.2f%% of all bricks)",
-      vEmptyBrickCount.z,
-      (static_cast<float>(vEmptyBrickCount.z)/iInternalBrickCount)*100.0f,
-      (static_cast<float>(vEmptyBrickCount.z)/m_iTotalBrickCount)*100.0f);
-    //MESSAGE("%u leaf bricks are empty  (%.2f%% of leaf bricks, %.2f%% of all bricks)",
-      vEmptyBrickCount.w,
-      (static_cast<float>(vEmptyBrickCount.w)/iLeafBrickCount)*100.0f,
-      (static_cast<float>(vEmptyBrickCount.w)/m_iTotalBrickCount)*100.0f);
-	  */
+
+    LDEBUGC("GLVolumePool","Synchronously recomputed brick visibility for "
+    <<vEmptyBrickCount.x<<" bricks");
+
+    LDEBUGC("GLVolumePool",vEmptyBrickCount.y<<" inner bricks are EMPTY ("
+    << ((static_cast<float>(vEmptyBrickCount.y)/iInternalBrickCount)*100.0f)
+    <<" of inner bricks,"
+    <<((static_cast<float>(vEmptyBrickCount.y)/m_iTotalBrickCount)*100.0f)
+    <<" of all bricks)");
+
+
+    LDEBUGC("GLVolumePool",vEmptyBrickCount.z<<" inner bricks are CHILD_EMPTY ("
+    <<(static_cast<float>(vEmptyBrickCount.z)/iInternalBrickCount)*100.0f
+    <<" of inner bricks, "
+    <<(static_cast<float>(vEmptyBrickCount.z)/m_iTotalBrickCount)*100.0f
+    <<" of all bricks)");
+
+    LDEBUGC("GLVolumePool",vEmptyBrickCount.w<<" leaf bricks are empty  ("
+    <<(static_cast<float>(vEmptyBrickCount.w)/iLeafBrickCount)*100.0f
+    <<" of leaf bricks, "
+    <<(static_cast<float>(vEmptyBrickCount.w)/m_iTotalBrickCount)*100.0f
+    <<" of all bricks)");
+
   }
   // upload new metadata to GPU
-  printf("[GLVolumePool] will upload metadatatexture\n");
+  LDEBUGC("GLVolumePool","will upload metadatatexture");
   UploadMetadataTexture();
 
   // restart async updater because visibility changed
   if (m_pUpdater && !bForceSynchronousUpdate) {
     m_pUpdater->Restart(visibility);
     m_bVisibilityUpdated = false;
-    OTHER("computed visibility for %d bricks in volume pool and started async visibility update for the entire hierarchy", m_vPoolSlotData.size());
+    LDEBUGC("GLVolumePool","computed visibility for "<< m_vPoolSlotData.size() <<" bricks in volume pool and started async visibility update for the entire hierarchy");
   }
 #ifdef GLVOLUMEPOOL_PROFILE
   m_TimesRecomputeVisibility.Push(static_cast<float>(m_Timer.Elapsed()));
@@ -1815,7 +1801,7 @@ uint32_t GLVolumePool::UploadBricks(const std::vector<Vec4ui>& vBrickIDs,
           );
         break;
       default:
-        T_ERROR("Unhandled rendering mode.");
+        LERRORC("GLVolumePool","Unhandled rendering mode.");
         return iPagedBricks;
       }
     } else {
@@ -1839,7 +1825,7 @@ uint32_t GLVolumePool::UploadBricks(const std::vector<Vec4ui>& vBrickIDs,
       OTHER("async visibility update completed for %d bricks in %.2f ms excluding %d interruptions that cost %.3f ms (%.2f bricks/ms)"
         , m_iTotalBrickCount, stats.fTimeTotal - stats.fTimeInterruptions, stats.iInterruptions, stats.fTimeInterruptions, m_iTotalBrickCount/(stats.fTimeTotal - stats.fTimeInterruptions));
 #else
-      OTHER("async visibility update completed for %d bricks", m_iTotalBrickCount);
+      LDEBUGC("GLVolumePool","async visibility update completed for "<< m_iTotalBrickCount << " bricks");
 #endif
     }
   }
@@ -1956,7 +1942,7 @@ void Tuvok::AsyncVisibilityUpdater::ThreadMain(void*)
       RecomputeVisibilityForOctree<true, RM_ISOSURFACE>(m_Visibility, m_Pool, m_Pool.m_vBrickMetadata, m_Pool.m_vMinMaxScalar, m_Pool.m_vMinMaxGradient, pContinue);
       break;
     default:
-      assert(false); T_ERROR("Unhandled rendering mode.");
+      assert(false); LERRORC("GLVolumePool","Unhandled rendering mode.");
       break;
     }
 

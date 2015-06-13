@@ -71,7 +71,7 @@ namespace Tuvok{
                 std::shared_ptr<AbstrRenderer>      m_pRenderer;
                 std::shared_ptr<State>              m_pRenderState;
 
-                std::shared_ptr<Core::CmdQueue>       m_pCommandList;
+                std::shared_ptr<Core::CmdQueue>     m_pCommandList;
 
                 bool*                               m_bCanceled;
             };
@@ -90,6 +90,8 @@ namespace Tuvok{
 
                 std::shared_ptr<Context::Context> getContextPtr(uint16_t handle);
                 std::shared_ptr<AbstrRenderer> getRendererPtr(uint16_t handle);
+
+                void killAllThreads();
 
             private:
                 std::shared_ptr<Context::Context> initNewContext(Visibility visibility, Core::Math::Vec2ui resolution);

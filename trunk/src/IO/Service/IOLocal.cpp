@@ -5,11 +5,10 @@
 //  Created by Andre Waschk on 24/10/14.
 //  Copyright (c) 2014 CoViDaG. All rights reserved.
 //
-
+#include "logging/logmanager.h"
 #include "IOLocal.h"
 
 #include <IO/IOManager.h>
-#include <tools/DebugOutHandler.h>
 #include <IO/TuvokIOError.h>
 
 #include <core/FileFinder.h>
@@ -81,7 +80,7 @@ uint16_t IOLocal::openFile(string filename) {
                 return 0;
                 //throw DatasetCreationException("Unknown error occured.");
             }
-            IVDA_MESSAGE("Load successful, initializing renderer!");
+            LINFOC("LocalIO","Load successful, initializing renderer!");
 
 
             shared_ptr<Dataset> ds_p = shared_ptr<Dataset>(ds);
