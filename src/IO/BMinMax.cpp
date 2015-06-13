@@ -1,8 +1,8 @@
+#include "logging/logmanager.h"
 #include <algorithm>
 #include "BMinMax.h"
 #include <core/Math/MinMaxBlock.h>
 #include "BrickedDataset.h"
-#include <tools/DebugOutHandler.h>
 
 
 namespace {
@@ -41,7 +41,7 @@ MinMaxBlock minmax_brick(const BrickKey& bk, const BrickedDataset& ds) {
   } else if(sign && fp && size == 4) {
     return mm<float>(bk, ds);
   } else {
-    IVDA_ERROR("unsupported type.");
+    LERRORC("BMinMax","unsupported type.");
     assert(false);
   }
   return MinMaxBlock();

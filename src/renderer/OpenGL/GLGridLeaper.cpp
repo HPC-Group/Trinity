@@ -1,4 +1,8 @@
+#include "logging/logmanager.h"
+
 #include "GLGridLeaper.h"
+
+
 
 #include "GLCore/GLVolumeBox.h"
 #include "GLCore/GLRenderPlane.h"
@@ -16,8 +20,6 @@
 
 #include <renderer/ShaderDescriptor.h>
 #include <renderer/VisibilityState.h>
-
-#include <tools/DebugOutHandler.h>
 
 #include <IO/TransferFunction1D.h>
 #include <renderer/Camera.h>
@@ -82,7 +84,8 @@ static int screenshot(int i)
 static void CheckGLError(std::string comment){
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
-		printf("[GLGridLeaper] Unknown error (%x) occurred | Comment : %s \n", static_cast<unsigned int>(err), comment.c_str());
+        LWARNINGC("GLGridLeaper"," Error occured (" << static_cast<unsigned int>(err) <<") comment: " << comment );
+		//printf("[GLGridLeaper] Unknown error (%x) occurred | Comment : %s \n", static_cast<unsigned int>(err), comment.c_str());
 	}
 }
 
@@ -574,7 +577,7 @@ void GLGridLeaper::InitHashTable() {
 		const float rmax = m_pToCDataset->GetMaxBrickSize().volume() / 32768.;
 		unsigned ht_size = std::max<unsigned>(512, static_cast<unsigned>(509 / rmax));
 	}
-	printf("Using %u-element hash table.", ht_size);
+	LDEBUGC("GLGridLeaper" , "Using " << ht_size <<"-element hash table.");
 
 	uint32_t rehashcount = 10; // default taken out of old mastercontroller
 	m_pglHashTable = std::make_shared<GLHashTable>(finestBrickLayout, uint32_t(ht_size), rehashcount);
@@ -981,7 +984,7 @@ Vec4ui GLGridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
 							}
 							break; }
 	default:
-		T_ERROR("Unhandled rendering mode.");
+        LERRORC("GLGridLeaper", "Unhandled rendering mode.");
 		break;
 	}
 	return vEmptyBrickCount;

@@ -14,3 +14,10 @@ target_link_libraries(RenderDemo LINK_PUBLIC ${OPENGL_LIBRARIES})
 target_link_libraries(RenderDemo LINK_PUBLIC Core)
 target_link_libraries(RenderDemo LINK_PUBLIC IO)
 target_link_libraries(RenderDemo LINK_PUBLIC Communication)
+target_link_libraries(RenderDemo LINK_PUBLIC ghoul)
+
+#GHOUL
+include_directories(
+					${TRINITY_ROOT_DIR}/ext/ghoul/include/
+					${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/)
+

@@ -14,11 +14,11 @@ void XserverContext::activateContext(){
     }
 }
 bool XserverContext::initContext() {
-    IVDA_MESSAGE("[XCONTEXT] checking for glx extensions");
+    LINFOC("XCONTEXT","checking for glx extensions");
     glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc) glXGetProcAddressARB( (const GLubyte *) "glXCreateContextAttribsARB" );
     glXMakeContextCurrentARB   = (glXMakeContextCurrentARBProc)   glXGetProcAddressARB( (const GLubyte *) "glXMakeContextCurrent"      );
 
-    IVDA_MESSAGE("[XCONTEXT] finding displays");
+    LINFOC("XCONTEXT","finding displays");
     const char *displayName = NULL;
     display = XOpenDisplay( displayName );
 
@@ -26,7 +26,7 @@ bool XserverContext::initContext() {
     int numberOfFramebufferConfigurations = 0;
     GLXFBConfig* fbConfigs = glXChooseFBConfig( display, DefaultScreen(display), visualAttribs, &numberOfFramebufferConfigurations );
 
-    IVDA_MESSAGE("[XCONTEXT] define context");
+    LINFOC("XCONTEXT","define context");
     int context_attribs[] = {
         GLX_CONTEXT_MAJOR_VERSION_ARB, 4,
         GLX_CONTEXT_MINOR_VERSION_ARB, 3,
@@ -35,7 +35,7 @@ bool XserverContext::initContext() {
         None
     };
 
-    IVDA_MESSAGE("[XCONTEXT] creating context");
+    LINFOC("XCONTEXT","creating context");
     openGLContext = glXCreateContextAttribsARB( display, fbConfigs[0], 0, True, context_attribs);
 
 
@@ -86,7 +86,7 @@ bool XserverContext::initContext() {
 
         }
 
-        IVDA_MESSAGE("[XCONTEXT] OpenGL version: " << glGetString(GL_VERSION));
+        LINFOC("XCONTEXT","OpenGL version: " << glGetString(GL_VERSION));
     }
     glGetError();
     return true;

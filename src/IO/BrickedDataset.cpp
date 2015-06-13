@@ -31,11 +31,11 @@
            SCI Institute
            University of Utah
 */
+#include "logging/logmanager.h"
 #include <cassert>
 #include <stdexcept>
 #include "BrickedDataset.h"
 
-#include <tools/DebugOutHandler.h>
 
 namespace Tuvok {
 
@@ -54,7 +54,7 @@ void BrickedDataset::AddBrick(const BrickKey& bk,
                               const BrickMD& brick)
 {
 #if 0
-  IVDA_MESSAGE("adding brick <%u,%u,%u> -> ((%g,%g,%g), (%g,%g,%g), (%u,%u,%u))",
+/*  LINFOC("BrickedDataset","adding brick <%u,%u,%u> -> ((%g,%g,%g), (%g,%g,%g), (%u,%u,%u))",
           static_cast<unsigned>(std::get<0>(bk)),
           static_cast<unsigned>(std::get<1>(bk)),
           static_cast<unsigned>(std::get<2>(bk)),
@@ -62,7 +62,7 @@ void BrickedDataset::AddBrick(const BrickKey& bk,
           brick.extents[0], brick.extents[1], brick.extents[2],
           static_cast<unsigned>(brick.n_voxels[0]),
           static_cast<unsigned>(brick.n_voxels[1]),
-          static_cast<unsigned>(brick.n_voxels[2]));
+          static_cast<unsigned>(brick.n_voxels[2]));*/
 #endif
   this->bricks.insert(std::make_pair(bk, brick));
 }
@@ -72,10 +72,13 @@ Vec3f BrickedDataset::GetBrickExtents(const BrickKey &bk) const
 {
   BrickTable::const_iterator iter = this->bricks.find(bk);
   if(iter == this->bricks.end()) {
-    IVDA_ERRORV("Unknown brick (%u, %u, %u)",
-            static_cast<unsigned>(std::get<0>(bk)),
-            static_cast<unsigned>(std::get<1>(bk)),
-            static_cast<unsigned>(std::get<2>(bk)));
+    LERRORC("BrickedDataset","Unknown brick ("
+    <<static_cast<unsigned>(std::get<0>(bk))
+    <<", "
+    <<static_cast<unsigned>(std::get<1>(bk))
+    <<", "
+    <<static_cast<unsigned>(std::get<2>(bk))
+    <<")");
     return Vec3f(0.0f, 0.0f, 0.0f);
   }
   return iter->second.extents;
@@ -174,7 +177,7 @@ BrickedDataset::BrickIsLastInDimension(size_t dim, const BrickKey& k) const
 }
 
 void BrickedDataset::Clear() {
-  IVDA_MESSAGE("Clearing brick metadata.");
+  LINFOC("BrickedDataset","Clearing brick metadata.");
   bricks.clear();
 }
 

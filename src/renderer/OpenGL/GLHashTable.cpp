@@ -1,3 +1,5 @@
+#include "logging/logmanager.h"
+
 #include <GL/glew.h>
 #include "GLHashTable.h"
 #define GLHASHTABLE_PROFILE
@@ -45,7 +47,7 @@
 
  try {
  m_texSize = VolumeTools::Fit1DIndexTo2DArray(m_iTableSize, gpumax);
- std::cout << m_texSize << std::endl;
+  LDEBUGC("GLHashTable", "Hashtable texture size "<< m_texSize);
  } catch (std::runtime_error const& e) {
  // this is very unlikely but not impossible
  //T_ERROR(e.what());
@@ -55,11 +57,11 @@
  // try to use 1D texture if possible because it appears to be slightly faster than a 2D texture
  if (Is2DTexture()) {
  m_pHashTableTex = std::make_shared<GLTexture2D>(m_texSize.x, m_texSize.y, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
- std::cout << "[GLHashTable] 2d hash GL_id" << m_pHashTableTex->GetGLID() << std::endl;
+ LDEBUGC("GLHashTable", "using a 2D hashtable : textureID" << m_pHashTableTex->GetGLID());
  } else {
  assert(m_texSize.x == m_iTableSize);
  m_pHashTableTex = std::make_shared<GLTexture1D>(m_texSize.x, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
- std::cout << "[GLHashTable] 1d hash GL_id" << m_pHashTableTex->GetGLID() << std::endl;
+ LDEBUGC("GLHashTable", "using a 1D hashtable : textureID" << m_pHashTableTex->GetGLID());
  }
 
  m_pRawData = std::shared_ptr<uint32_t>(

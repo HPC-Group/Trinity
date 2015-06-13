@@ -1,10 +1,10 @@
 #ifndef TUVOK_CONTEXT
 #define TUVOK_CONTEXT
 
+#include "logging/logmanager.h"
 #include "../RenderEnums.h"
 
 #include <core/Math/Vectors.h>
-#include <tools/DebugOutHandler.h>
 
 #include <vector>
 #include <unordered_map>

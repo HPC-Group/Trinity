@@ -48,7 +48,7 @@ bool GLFWContext::initContext() {
 
         glfwSetInputMode(m_windowContext, GLFW_STICKY_KEYS, GL_TRUE);
 
-        IVDA_MESSAGE("[GLFWContext] OpenGL version: "<< glGetString(GL_VERSION));
+        LINFOC("GLFWContext","OpenGL version: "<< glGetString(GL_VERSION));
         // ## Finished GLFW Init, got a working context at this point. Now Tuvok.
 
         // ---------------- AFTER CONTEXT CREATION INITS ------------------------------------

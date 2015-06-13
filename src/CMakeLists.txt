@@ -16,12 +16,12 @@ add_subdirectory(communication)
 
 ########## Ghoul Objects +++++++++++>
 
-#file(GLOB GHOUL_SOURCE ${TRINITY_ROOT_DIR}/ext/ghoul/src/logging/*.cpp
-#					   ${TRINITY_ROOT_DIR}/ext/ghoul/src/cmdparser/*.cpp)
-#file(GLOB GHOUL_HEADER ${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/logging/*.h
-#					   ${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/cmdparser/*.h)
-#
-#add_library(ghoul OBJECT ${GHOUL_SOURCE} ${GHOUL_HEADER})
+file(GLOB GHOUL_SOURCE ${TRINITY_ROOT_DIR}/ext/ghoul/src/logging/*.cpp
+					   ${TRINITY_ROOT_DIR}/ext/ghoul/src/cmdparser/*.cpp)
+file(GLOB GHOUL_HEADER ${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/logging/*.h
+					   ${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/cmdparser/*.h)
+
+add_library(ghoul ${GHOUL_SOURCE} ${GHOUL_HEADER})
 
 
 ########## Tests +++++++++++>
