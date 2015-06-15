@@ -9,6 +9,9 @@
 #include <vector>
 #include <unordered_map>
 
+#include "ContextMutex.h"
+
+
 namespace Tuvok{
     namespace Renderer{
         namespace Context{
@@ -42,7 +45,8 @@ namespace Tuvok{
 
         class Context{
         public:
-            virtual void activateContext() = 0;
+            virtual void lockContext() = 0;
+            virtual void unlockContext() = 0;
             virtual bool initContext() = 0;
             virtual bool deleteContext() = 0;
 

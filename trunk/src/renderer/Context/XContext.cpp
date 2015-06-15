@@ -8,10 +8,14 @@ XserverContext::XserverContext(Core::Math::Vec2ui resolution):
 Context("XRenderer",System::Linux,Visibility::hidden,resolution){}
 XserverContext::~XserverContext(){}
 
-void XserverContext::activateContext(){
+void XserverContext::lockContext(){
     if(!glXMakeContextCurrent( display, pbuffer, pbuffer, openGLContext )){
         std::cout << "somehting is wrong" <<std::endl;
     }
+}
+
+void XserverContext::unlockContext(){
+
 }
 bool XserverContext::initContext() {
     LINFOC("XCONTEXT","checking for glx extensions");

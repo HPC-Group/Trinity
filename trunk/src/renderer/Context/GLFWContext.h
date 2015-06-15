@@ -20,7 +20,8 @@ namespace Tuvok{
                             Core::Math::Vec2ui resolution = Core::Math::Vec2ui(640,480));
                 ~GLFWContext();
 
-                void activateContext() override;
+                void lockContext() override;
+                void unlockContext() override;
                 bool initContext() override;
                 bool deleteContext() override;
 
