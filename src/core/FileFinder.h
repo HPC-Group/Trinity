@@ -65,7 +65,7 @@ namespace Core{
 							WideCharToMultiByte(CP_ACP, 0, fd.cFileName, -1, ch, 260, &DefChar, NULL);
 
 							std::string s(ch);
-							files.push_back(s);
+							files.push_back(dir+s);
 							
 						}
 					}while (::FindNextFile(hFind, &fd));
@@ -111,7 +111,7 @@ namespace Core{
 
 							std::string s(ch);
 							if (s.find(ending) != std::string::npos){
-								files.push_back(s);
+								files.push_back(dir+s);
 							}
 						}
 					}while(::FindNextFile(hFind, &fd)); 

@@ -128,10 +128,11 @@ GLGridLeaper::~GLGridLeaper(){
 //! initializes the renderer \todo more parameters like resolution etc
 bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
 	//create the target binder
-
+	LDEBUGC("GLGRIDLEAPER", "Creating Target Binder");
 	m_pTargetBinder = std::make_shared<GLTargetBinder>();
 
 	//check if the dataset and transferfunction is set
+	LDEBUGC("GLGRIDLEAPER", "checking for datasethandle");
 	if (m_pToCDataset == nullptr || m_pTransferFunction == nullptr) return false;
 
 	//! cache reused datasetinfos \todo move to io!
@@ -146,14 +147,21 @@ bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
 	computeMathMember();
 
 	//inititalize parts of the gridleaper
+	LDEBUGC("GLGRIDLEAPER", "Init offscreen buffers");
 	InitOffScreenBuffers();
+	LDEBUGC("GLGRIDLEAPER", "Init volume geometry");
 	InitGeometry();
+	LDEBUGC("GLGRIDLEAPER", "Init hashtbale");
 	InitHashTable();
+	LDEBUGC("GLGRIDLEAPER", "Init volumepool");
 	InitVolumePool(gpuMemorySizeInByte);
 
 	//try to load the shaders
+	LDEBUGC("GLGRIDLEAPER", "Load compose shader");
 	if (!LoadComposeShader()) return false;
+	LDEBUGC("GLGRIDLEAPER", "Load frontface shaders");
 	if (!LoadFrontFaceShader()) return false;
+	LDEBUGC("GLGRIDLEAPER", "Load traversel shaders");
 	if (!LoadTraversalShader(MissingBrickStrategy::OnlyNeeded)) return false;
 
 	//relocate this

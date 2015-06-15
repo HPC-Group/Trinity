@@ -22,10 +22,12 @@ uint64_t LocalRenderer::createNewRenderer( Tuvok::Renderer::Visibility visibilit
                                                     std::string                 ioHost,
                                                     uint16_t                    ioPort){
     m_iRenderHandle = RenderServer::getInstance().createNewRenderer(visibility, resolution,dataset,tf,ioHost,ioPort);
+	return m_iRenderHandle;
 }
 
 uint8_t LocalRenderer::checkIfRenderThreadIsRunning(){
     RenderServer::getInstance().checkIfRenderThreadIsRunning(m_iRenderHandle);
+	return 1;
 }
 void LocalRenderer::stopRenderThread(){
     RenderServer::getInstance().stopRenderThread(m_iRenderHandle);
