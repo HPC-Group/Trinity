@@ -38,8 +38,16 @@
 #include <communication/protocols/protocol_renderer.h>
 #include <communication/protocols/LocalRenderer.h>
 
+//NEW STUFF
+#include <renderer/Context/ContextManager.h>
+
+#include <IO/Service/IOLocal.h>
+#include <IO/TransferFunction1D.h>
+#include <renderer/OpenGL/GLGridLeaper_v2.h>
+
 using namespace Tuvok::Renderer::Service;
 using namespace Tuvok::Renderer;
+using namespace Tuvok::Renderer::OpenGL;
 using namespace Tuvok;
 using namespace Core::Math;
 using namespace ghoul::logging;
@@ -201,9 +209,9 @@ int main(int argc, char* argv[]){
     std::string transferfunction;
 
     selectDataSetAndTransferFunction(dataset,transferfunction);
-
+/*
     Communication::ProtocolRenderer* renderer = new Communication::LocalRenderer();
-    renderer->createNewRenderer(Visibility::Windowed,Vec2ui(1280,720),dataset,transferfunction);
+    renderer->createNewRenderer(Visibility::Windowed,Vec2ui(640,480),dataset,transferfunction);
 
     while(!endAll && renderer->checkIfRenderThreadIsRunning()){
         //THIS IS ONLY FOR OUR LOCAL GLFW TEST! DO NOT DO THIS LATER!!
@@ -216,5 +224,62 @@ int main(int argc, char* argv[]){
     }
 
     //wait for every other thread to detach
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));*/
+
+    //NEW STUFF TESTING MAKE NICE LATER!!
+
+//CONTEXT CREATION
+    std::shared_ptr<Context::Context> context = Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640,480));
+
+//RENDER INIT!!
+//THIS IS PURE LOCAL FOR FIRST
+	std::shared_ptr<IOLocal> ioLocal = std::make_shared<IOLocal>("LOCALIO");
+	uint16_t handleLocal = ioLocal->openFile(dataset);
+
+	std::shared_ptr<GLGridLeaper2> renderer = std::make_shared<OpenGL::GLGridLeaper2>(context,Vec2ui(640,480), ERenderMode::RM_1DTRANS);
+
+    //first: set the transferfunction
+    DataIO::TransferFunction1D stdtf(255);
+    if(transferfunction == "none"){
+        stdtf.SetStdFunction(0.3f,0.6f);
+    }else{
+        stdtf.Load(transferfunction);
+    }
+    renderer->Set1DTransferFunction( *(stdtf.GetColorData().get()));
+
+    //second: set the dataset
+    renderer->SetDataset(ioLocal);
+
+    uint64_t gpumemorysize = 500 * 1024*1024;
+
+    std::string vendor = (char*)glGetString(GL_VENDOR);
+    LINFOC("RenderServer", "gpu vendor: " << vendor);
+    if(vendor == "NVIDIA Corporation"){
+
+        int currentavailable = 0;
+        // get the currently AVAILABLE!! free gpu memory
+        glGetIntegerv(0x9049, &currentavailable);
+
+        LINFOC("RenderServer", "available vram in kb: "<< currentavailable);
+        uint64_t willusemax = currentavailable - (200*1024);
+        if(willusemax < 200*1024){
+            LWARNINGC("RenderServer", "not enough free vram.");
+            return 0;
+        }
+        LINFOC("RenderServer", "will use 200MB less vram: "<< willusemax);
+        LINFOC("RenderServer", "read errorcodes: " << glGetError());
+
+        gpumemorysize = willusemax * 1024;
+    }
+
+    LINFOC("RenderServer", "initialize renderer");
+    if (!renderer->Initialize(gpumemorysize)){
+        LWARNINGC("RenderServer", "ERROR IN RENDER INIT");
+		return 0;
+    }
+
+
+
+    while(true){
+    }
 }

@@ -72,7 +72,7 @@ std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuv
 	std::shared_ptr<IOLocal> ioLocal = std::make_shared<IOLocal>("LOCALIO");
 	uint16_t handleLocal = ioLocal->openFile(dataset);
 
-    context->activateContext();
+    context->lockContext();
 	std::shared_ptr<OpenGL::GLGridLeaper> renderer = std::make_shared<OpenGL::GLGridLeaper>(resolution, ERenderMode::RM_1DTRANS);
 
     //first: set the transferfunction
@@ -114,7 +114,7 @@ std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuv
         LWARNINGC("RenderServer", "ERROR IN RENDER INIT");
 		return nullptr;
     }
-
+/*
     //make it look fancy
     renderer->SetUseLighting(true);
     renderer->SwitchPagingStrategy(MissingBrickStrategy::RequestAll);
@@ -125,8 +125,10 @@ std::shared_ptr<AbstrRenderer> RenderServer::initNewRenderer(std::shared_ptr<Tuv
 
     renderer->SetCompositeMode(Tuvok::Renderer::ECompositeDisplay::D_FINALCOLOR);
     renderer->setClearViewEnabled(true);
-
+*/
     std::shared_ptr<AbstrRenderer> absrend = renderer;
+
+    context->unlockContext();
 
     return absrend;
 }
@@ -154,15 +156,18 @@ void RenderServer::singleRenderThreadLoop(uint16_t serviceHandle, Visibility vis
 
     while(!e.getIsCanceled()){
         {
-            std::lock_guard<recursive_mutex> lock(m_rsMutex);
+            //std::lock_guard<recursive_mutex> lock(m_rsMutex);
 
-            e.getContext()->activateContext();
+            e.getContext()->lockContext();
+
             e.getRenderer()->Paint();
             e.getContext()->frameFinished();
 
             e.handleCommandQueue();
+
+            e.getContext()->unlockContext();
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(33));
+        std::this_thread::sleep_for(std::chrono::milliseconds(15));
         if(visibility == Visibility::hidden){
             e.getRenderer()->makeScreenshot();
             e.getRenderer()->RotateCamera(Vec3f(0,0.1f,0));

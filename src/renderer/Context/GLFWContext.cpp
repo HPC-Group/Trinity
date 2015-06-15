@@ -10,8 +10,14 @@ GLFWContext::GLFWContext(std::string windowname,
 Context(windowname,system,visibility,resolution){}
 GLFWContext::~GLFWContext(){}
 
-void GLFWContext::activateContext(){
+void GLFWContext::lockContext(){
+    ContextMutex::getInstance().lockContext();
     glfwMakeContextCurrent(m_windowContext);
+}
+
+void GLFWContext::unlockContext(){
+    glfwMakeContextCurrent(NULL);
+    ContextMutex::getInstance().unlockContext();
 }
 bool GLFWContext::initContext() {
         // ## Init a GLFW window to get a opengl context
