@@ -1,5 +1,5 @@
 #include "XContext.h"
-#define LINUXOS
+
 #ifdef LINUXOS
 using namespace Tuvok::Renderer::Context;
 using namespace Tuvok::Renderer;
