@@ -5,11 +5,12 @@ using namespace Tuvok::Renderer;
 using namespace Tuvok;
 using namespace Core::Math;
 
-AbstrRenderer::AbstrRenderer(Vec2ui vWinSize, ERenderMode mode) :
+AbstrRenderer::AbstrRenderer(std::shared_ptr<Tuvok::Renderer::Context::Context> context,Vec2ui vWinSize, ERenderMode mode) :
 m_pRenderRegion(nullptr),
 m_pClipplane(nullptr),
 m_pDatasetIO(nullptr),
-m_bCompleteRedraw(true)
+m_bCompleteRedraw(true),
+m_pContext(context)
 {
   m_pRenderState = std::make_shared<State>();
   m_pRenderState->m_vLightDir = m_pRenderState->m_pCameraPtr.GetWorldPosition();
@@ -250,4 +251,39 @@ const Vec4f AbstrRenderer::GetDiffuseColor(){
 }
 const Vec4f AbstrRenderer::GetSpecularColor(){
 	return m_pRenderState->m_cSpecular;
+}
+
+
+void AbstrRenderer::setClearViewEnabled(bool b){
+    m_pRenderState->m_bClearViewEnabled = b;
+    this->ScheduleCompleteRedraw();
+}
+
+void AbstrRenderer::setClearViewRadius(float f){
+    m_pRenderState->m_fClearViewRadius = f;
+    this->ScheduleCompleteRedraw();
+}
+
+State AbstrRenderer::getRenderState(){
+    return *(m_pRenderState.get());
+}
+
+void AbstrRenderer::setRenderState(State renderState){
+    m_pRenderState.reset();
+    m_pRenderState = std::make_shared<State>(renderState);
+}
+
+void AbstrRenderer::SetColorDataset(bool isColor){
+			m_pRenderState->m_bIsColor = isColor;
+};
+
+//*************THREADING
+void AbstrRenderer::startRenderThread(){
+    //start runthread;
+	LINFOC("GLGridLeaper","try to start new renderthread");
+	m_pRenderThread = std::make_shared<std::thread>(&AbstrRenderer::run, this);
+}
+void AbstrRenderer::pauseRenderThread(){}
+void AbstrRenderer::stopRenderThread(){
+    m_pRenderThread->detach();
 }

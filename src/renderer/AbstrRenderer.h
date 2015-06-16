@@ -10,6 +10,10 @@
 #include "RenderEnums.h"
 #include "Service/RenderStatev2.h"
 
+#include <renderer/Context/Context.h>
+
+#include <thread>
+
 namespace Tuvok{
   class IOLocal;
   typedef std::shared_ptr<IOLocal> IOPtr;
@@ -20,7 +24,9 @@ namespace Tuvok{
 	  public:
 
       public:
-		  AbstrRenderer(Core::Math::Vec2ui vWinSize = Core::Math::Vec2ui(640, 480), ERenderMode mode = RM_ISOSURFACE);
+		  AbstrRenderer(                    std::shared_ptr<Tuvok::Renderer::Context::Context> context,
+                                            Core::Math::Vec2ui vWinSize = Core::Math::Vec2ui(640, 480),
+                                            ERenderMode mode = RM_ISOSURFACE);
         virtual ~AbstrRenderer();
 
         virtual bool Initialize();
@@ -55,9 +61,7 @@ namespace Tuvok{
         virtual float GetIsoValue() const;
         virtual void SetIsosurfaceColor(const Core::Math::Vec3f& vColor);
         virtual Core::Math::Vec3f GetIsosurfaceColor() const;
-		void SetColorDataset(bool isColor){
-			m_pRenderState->m_bIsColor = isColor;
-		};
+		void SetColorDataset(bool isColor);
 
         virtual Core::Math::Vec2ui GetSize() const;
 
@@ -103,26 +107,19 @@ namespace Tuvok{
 
 		virtual Core::Math::Vec4f readVolumePosition(Core::Math::Vec2ui v) = 0;
 
-		void setClearViewEnabled(bool b){
-            		m_pRenderState->m_bClearViewEnabled = b;
-            		this->ScheduleCompleteRedraw();
-		}
+		void setClearViewEnabled(bool b);
 
-		void setClearViewRadius(float f){
-			m_pRenderState->m_fClearViewRadius = f;
-			this->ScheduleCompleteRedraw();
-		}
+		void setClearViewRadius(float f);
 
-		State getRenderState(){
-			return *(m_pRenderState.get());
-		}
+		State getRenderState();
 
-		void setRenderState(State renderState){
-            m_pRenderState.reset();
-            m_pRenderState = std::make_shared<State>(renderState);
-		}
+		void setRenderState(State renderState);
 
 		virtual void makeScreenshot() = 0;
+
+		void startRenderThread();
+		void pauseRenderThread();
+		void stopRenderThread();
 
       protected:
         virtual void ScheduleCompleteRedraw();
@@ -145,8 +142,11 @@ namespace Tuvok{
 
 
 	protected:
-		Tuvok::IOPtr 				m_pToCDataset;
-		std::vector<std::string>    m_vSearchPathes;
+		Tuvok::IOPtr 				        m_pToCDataset;
+		std::vector<std::string>            m_vSearchPathes;
+		std::shared_ptr<Context::Context>   m_pContext;
+        std::shared_ptr<std::thread>        m_pRenderThread;
+        virtual void run() = 0;
     };
 
   };
