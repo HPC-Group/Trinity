@@ -35,6 +35,7 @@
 
 using namespace Tuvok;
 using namespace Tuvok::Renderer;
+using namespace Tuvok::Renderer::Context;
 using namespace Tuvok::Renderer::OpenGL;
 using namespace Tuvok::Renderer::OpenGL::GLCore;
 using namespace Tuvok;
@@ -90,8 +91,8 @@ static void CheckGLError(std::string comment){
 }
 
 //! initializes a opengl based gridleaper with default values
-GLGridLeaper::GLGridLeaper(Vec2ui vWinSize, ERenderMode mode) :
-AbstrRenderer(vWinSize, mode),
+GLGridLeaper::GLGridLeaper(std::shared_ptr<Context::Context> context,Vec2ui vWinSize, ERenderMode mode) :
+AbstrRenderer(context,vWinSize, mode),
 m_pFBORayStart(nullptr),
 m_pFBORayStartNext(nullptr),
 m_pFBOStartColor(nullptr),
@@ -127,6 +128,8 @@ GLGridLeaper::~GLGridLeaper(){
 
 //! initializes the renderer \todo more parameters like resolution etc
 bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
+    LDEBUGC("GLGRIDLEAPER","will lock the context");
+    m_pContext->lockContext();
 	//create the target binder
 	LDEBUGC("GLGRIDLEAPER", "Creating Target Binder");
 	m_pTargetBinder = std::make_shared<GLTargetBinder>();
@@ -178,6 +181,14 @@ bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
 	CheckGLError("ERROR AFTER INIT!");
 
 	CalculateUsedGPUMemory();
+
+	m_pContext->unlockContext();
+
+	//start runthread;
+	//LINFOC("GLGridLeaper","try to start new renderthread");
+	//m_pRenderThread = std::make_shared<std::thread>(&GLGridLeaper::run, this);
+
+    LINFOC("GLGridLeaper","return");
 	return true;
 }
 
@@ -235,7 +246,6 @@ void GLGridLeaper::SwitchPagingStrategy(MissingBrickStrategy brickStrategy){
 
 //! \brief main paint function for the renderpath
 bool GLGridLeaper::Paint(){
-
     //! check for new framestart
 	RecreateAfterResize();
 	if (m_bCompleteRedraw){
@@ -278,6 +288,7 @@ bool GLGridLeaper::Paint(){
 
 	}
 	return true;
+
 }
 
 
@@ -1266,4 +1277,14 @@ Core::Math::Vec4f GLGridLeaper::readVolumePosition(Core::Math::Vec2ui v){
 
     m_pTargetBinder->Unbind();
     return m_vVolumePicking;
+}
+
+
+void GLGridLeaper::run(){
+    while(true){
+        m_pContext->lockContext();
+        Paint();
+        m_pContext->frameFinished();
+        m_pContext->unlockContext();
+    }
 }

@@ -1,8 +1,12 @@
-#ifndef __TNG__GLGridleaper__
-#define __TNG__GLGridleaper__
+#ifndef __TNG__GLGridleaper2__
+#define __TNG__GLGridleaper2__
 
 #include <renderer/AbstrRenderer.h>
 #include "OpenGLDefines.h"
+
+#include <renderer/Context/Context.h>
+
+#include <thread>
 
 #define GLGRIDLEAPER_DEBUGVIEW
 
@@ -56,7 +60,7 @@ namespace Tuvok{
 					Core::Math::Vec3d	  m_Scale;
 				};
 
-				GLGridLeaper(Core::Math::Vec2ui vWinSize = Core::Math::Vec2ui(640, 480), ERenderMode mode = RM_1DTRANS);
+				GLGridLeaper(std::shared_ptr<Context::Context> context,Core::Math::Vec2ui vWinSize = Core::Math::Vec2ui(640, 480), ERenderMode mode = RM_1DTRANS);
 				~GLGridLeaper();
 
 				//! initializes the renderer \todo more parameters like resolution etc
@@ -223,6 +227,9 @@ namespace Tuvok{
 
 				//cebit hack
 				bool							m_bTFRescale;
+
+                void run() override;
+
 			};
 		}
 	}
