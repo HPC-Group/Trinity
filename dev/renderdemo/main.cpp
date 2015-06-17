@@ -96,38 +96,38 @@ bool endAll = false;
 //interaction with the renderer
 void glfwHanldeKeyboard(GLFWwindow* window, std::shared_ptr<AbstrRenderer> renderer){
 
- /*   if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+  /*  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
       double x =0;
       double y = 0;
       glfwGetCursorPos(window,&x,&y);
 
       renderer->clearViewPicking(Vec2ui((uint32_t)x,(uint32_t)y));
     }
-
+*/
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
-		renderer->rotateCamera(Vec3f(0, 0.5f, 0));
+		renderer->RotateCamera(Vec3f(0, 0.5f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-		renderer->rotateCamera(Vec3f(0, -0.5f, 0));
+		renderer->RotateCamera(Vec3f(0, -0.5f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-		renderer->rotateCamera(Vec3f(0.5f, 0, 0));
+		renderer->RotateCamera(Vec3f(0.5f, 0, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-		renderer->rotateCamera(Vec3f(-0.5f, 0, 0));
+		renderer->RotateCamera(Vec3f(-0.5f, 0, 0));
 	}
-
+  /*
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS){
-		renderer->moveCamera(Vec3f(0, 0.01f, 0));
+		renderer->MoveCamera(Vec3f(0, 0.01f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS){
-		renderer->moveCamera(Vec3f(0, -0.01f, 0));
+		renderer->MoveCamera(Vec3f(0, -0.01f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS){
-		renderer->moveCamera(Vec3f(0.01f, 0, 0));
+		renderer->MoveCamera(Vec3f(0.01f, 0, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
-		renderer->moveCamera(Vec3f(-0.01f, 0, 0));
+		renderer->MoveCamera(Vec3f(-0.01f, 0, 0));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS){
@@ -180,6 +180,31 @@ void glfwHanldeKeyboard(GLFWwindow* window, std::shared_ptr<AbstrRenderer> rende
 	}*/
 }
 
+int test(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){
+    FILE *image;
+
+    char tempstring[50];
+	sprintf(tempstring, "screenshot_%i.tga", 1);
+	if ((image = fopen(tempstring, "wb")) == NULL) return 1;
+
+	unsigned char TGAheader[12] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+	unsigned char header[6] = { static_cast<unsigned char>(((int)(width % 256))),
+		static_cast<unsigned char>(((int)(width / 256))),
+		static_cast<unsigned char>(((int)(height % 256))),
+		static_cast<unsigned char>(((int)(height / 256))), 24, 0 };
+
+	// TGA header schreiben
+	fwrite(TGAheader, sizeof(unsigned char), 12, image);
+	// Header schreiben
+	fwrite(header, sizeof(unsigned char), 6, image);
+
+	fwrite(&(pixels[0]), sizeof(unsigned char),
+		width * height * 3, image);
+
+	fclose(image);
+}
+
 int main(int argc, char* argv[]){
     //DebugOut remove as soon as possible
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowErrors(true);
@@ -230,8 +255,51 @@ int main(int argc, char* argv[]){
     std::shared_ptr<AbstrRenderer> renderer = RenderManager::getInstance().createRenderer(context,dataset,transferfunction);
     renderer->startRenderThread();
 
+    std::shared_ptr<Context::Context> display = Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640,480),4,5);
+
+    std::vector<uint8_t> pixels;
+    int width;
+    int height;
+    int componentCount;
+
     while(true){
         GLFWwindow* w = static_cast<GLFWwindow*>(context->getContextItem());
+        glfwHanldeKeyboard(w,renderer);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+
+        context->ReadBackBuffer(pixels,width,height,componentCount);
+        display->lockContext();
+        test(pixels,width,height,componentCount);
+
+        LINFOC("MAIN", pixels.size());
+
+        LINFOC("MAIN-",(width*height*componentCount));
+
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+            std::cout << "error at start "<< static_cast<unsigned int>(err) <<std::endl;
+        }
+
+
+        err = glGetError();
+        if (err != GL_NO_ERROR) {
+            std::cout << "error atfter clear "<< static_cast<unsigned int>(err) <<std::endl;
+        }
+
+        glDrawPixels((GLsizei)width,(GLsizei)height, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+
+        err = glGetError();
+        if (err != GL_NO_ERROR) {
+            std::cout << "error atfter draw pixels "<< static_cast<unsigned int>(err) <<std::endl;
+        }
+        std::cout << (char*)gluErrorString(err)<<std::endl;;
+
+        display->frameFinished();
+        display->unlockContext();
+
+
+
     }
 
     renderer->stopRenderThread();

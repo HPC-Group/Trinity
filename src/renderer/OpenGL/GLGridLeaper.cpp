@@ -1248,9 +1248,6 @@ void GLGridLeaper::readFB(){
 
 }
 
-void GLGridLeaper::makeScreenshot(){
-    screenshot(0);
-}
 
 Core::Math::Vec4f GLGridLeaper::readVolumePosition(Core::Math::Vec2ui v){
     Vec4ui8 data(255,255,255,255);
@@ -1286,5 +1283,6 @@ void GLGridLeaper::run(){
         Paint();
         m_pContext->frameFinished();
         m_pContext->unlockContext();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }

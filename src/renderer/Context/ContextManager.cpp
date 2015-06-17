@@ -10,7 +10,7 @@ using namespace Tuvok::Renderer;
 using namespace Tuvok;
 using std::shared_ptr;
 
-std::shared_ptr<Tuvok::Renderer::Context::Context> ContextManager::createContext(Tuvok::Renderer::Visibility visibility, Core::Math::Vec2ui resolution){
+std::shared_ptr<Tuvok::Renderer::Context::Context> ContextManager::createContext(Tuvok::Renderer::Visibility visibility, Core::Math::Vec2ui resolution, uint8_t major, uint8_t minor){
 
  std::shared_ptr<Tuvok::Renderer::Context::Context> context;
  System m_eServerSystem;
@@ -26,13 +26,13 @@ std::shared_ptr<Tuvok::Renderer::Context::Context> ContextManager::createContext
     if(visibility == Visibility::hidden){
         if(m_eServerSystem == System::Linux){
 #ifdef LINUXOS
-            context = std::make_shared<Tuvok::Renderer::Context::XserverContext>(resolution);
+            context = std::make_shared<Tuvok::Renderer::Context::XserverContext>(resolution,major,minor);
 #endif
         }else{
-            context = std::make_shared<Tuvok::Renderer::Context::GLFWContext>("Window",m_eServerSystem,visibility,resolution);
+            context = std::make_shared<Tuvok::Renderer::Context::GLFWContext>("Window",m_eServerSystem,visibility,resolution,major,minor);
         }
     }else{
-        context = std::make_shared<Tuvok::Renderer::Context::GLFWContext>("Window",m_eServerSystem,visibility,resolution);
+        context = std::make_shared<Tuvok::Renderer::Context::GLFWContext>("Window",m_eServerSystem,visibility,resolution,major,minor);
     }
 
 	if (context == nullptr) return 0;

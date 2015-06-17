@@ -128,20 +128,6 @@ void AbstrRenderer::Resize(const Core::Math::Vec2ui& vWinSize){
   ScheduleCompleteRedraw();
 }
 
-bool AbstrRenderer::LoadFile(const std::string& filename) {
-
-  return true;
-}
-
-void AbstrRenderer::ClearBricks() {
-}
-bool AbstrRenderer::LoadRebricked(const std::string& strFilename,
-                           const Core::Math::Vec3ui bsize,
-                           size_t minmaxMode) {
-
-  return true;
-}
-
 void AbstrRenderer::GetVolumeAABB(Core::Math::Vec3f& vCenter, Core::Math::Vec3f& vExtend) const {
   vCenter = Vec3f(0,0,0);
   vExtend = Vec3f(1,1,1);
@@ -154,7 +140,6 @@ void AbstrRenderer::SetDataset(DataIOPtr dio){
 //! function to set a pointer to a dataio object \todo should later communicate over the network
 void AbstrRenderer::SetDataset(IOPtr dio){
 	m_pToCDataset = dio;
-
 }
 
 DataIOPtr AbstrRenderer::GetDataIO() const{
@@ -174,12 +159,16 @@ void AbstrRenderer::SetFirstPersonMode(bool mode){
   m_pRenderState->m_pCameraPtr.setCameraMode(mode);
 }
 void AbstrRenderer::RotateCamera(Core::Math::Vec3f rotation){
+  m_pContext->lockContext();
   m_pRenderState->m_pCameraPtr.rotateCamera(rotation);
   BuildViewMatrix();
+  m_pContext->unlockContext();
 }
 void AbstrRenderer::MoveCamera(Core::Math::Vec3f direction){
+  m_pContext->lockContext();
   m_pRenderState->m_pCameraPtr.moveCamera(direction);
   BuildViewMatrix();
+  m_pContext->unlockContext();
 }
 
 void AbstrRenderer::ResetCamera(){
