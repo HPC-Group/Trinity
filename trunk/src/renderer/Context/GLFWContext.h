@@ -17,7 +17,9 @@ namespace Tuvok{
                 GLFWContext(std::string windowname = "renderer",
                             System system = System::Windows,
                             Visibility visibility = Visibility::Windowed,
-                            Core::Math::Vec2ui resolution = Core::Math::Vec2ui(640,480));
+                            Core::Math::Vec2ui resolution = Core::Math::Vec2ui(640,480),
+                            uint8_t MajorVersion = 4,
+                            uint8_t MinorVersion = 3);
                 ~GLFWContext();
 
                 void lockContext() override;
@@ -31,8 +33,12 @@ namespace Tuvok{
 
                 int storeFinalFrameToTNG(std::string name) override;
 
+                void ReadBackBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount) override;
+
             private:
                 GLFWwindow*             m_windowContext;
+                uint8_t                 m_uiMajor;
+                uint8_t                 m_uiMinor;
             };
 
         };

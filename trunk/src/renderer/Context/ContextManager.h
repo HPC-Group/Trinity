@@ -20,7 +20,7 @@ namespace Tuvok{
              return instance;
             }
 
-            std::shared_ptr<Tuvok::Renderer::Context::Context> createContext(Tuvok::Renderer::Visibility visibility, Core::Math::Vec2ui resolution);
+            std::shared_ptr<Tuvok::Renderer::Context::Context> createContext(Tuvok::Renderer::Visibility visibility, Core::Math::Vec2ui resolution, uint8_t major = 4, uint8_t minor = 3);
 
         private:
             ContextManager(){};

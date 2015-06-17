@@ -19,7 +19,9 @@ namespace Tuvok{
 
             class XserverContext: public Context{
             public:
-                XserverContext(Core::Math::Vec2ui resolution = Core::Math::Vec2ui(640,480));
+                XserverContext(Core::Math::Vec2ui resolution = Core::Math::Vec2ui(640,480),
+                            uint8_t MajorVersion = 4,
+                            uint8_t MinorVersion = 3);
                 ~XserverContext();
 
                 void lockContext() override;
@@ -33,10 +35,15 @@ namespace Tuvok{
 
                 int storeFinalFrameToTNG(std::string name) override;
 
+                void ReadBackBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount) override;
+
             private:
                 Display* display;
                 GLXPbuffer pbuffer;
                 GLXContext openGLContext;
+
+                uint8_t                 m_uiMajor;
+                uint8_t                 m_uiMinor;
 
             };
 

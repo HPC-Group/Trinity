@@ -3,16 +3,7 @@
 
 #include "IRenderer.h"
 
-#include <core/Math/Vectors.h>
-#include <memory.h>
-#include "CullingLOD.h"
 
-#include "RenderEnums.h"
-#include "Service/RenderStatev2.h"
-
-#include <renderer/Context/Context.h>
-
-#include <thread>
 
 namespace Tuvok{
   class IOLocal;
@@ -21,10 +12,8 @@ namespace Tuvok{
   namespace Renderer{
 
       class AbstrRenderer{
-	  public:
-
       public:
-		  AbstrRenderer(                    std::shared_ptr<Tuvok::Renderer::Context::Context> context,
+        AbstrRenderer(                    std::shared_ptr<Tuvok::Renderer::Context::Context> context,
                                             Core::Math::Vec2ui vWinSize = Core::Math::Vec2ui(640, 480),
                                             ERenderMode mode = RM_ISOSURFACE);
         virtual ~AbstrRenderer();
@@ -66,12 +55,6 @@ namespace Tuvok{
         virtual Core::Math::Vec2ui GetSize() const;
 
         virtual void Resize(const Core::Math::Vec2ui& vWinSize);
-
-        virtual bool LoadFile(const std::string& filename);
-        virtual void ClearBricks();
-        virtual bool LoadRebricked(const std::string& strFilename,
-                                   const Core::Math::Vec3ui bsize,
-                                   size_t minmaxMode);
 
         virtual void SetDataset(DataIOPtr dio);
 		void SetDataset(Tuvok::IOPtr dio);
@@ -115,20 +98,22 @@ namespace Tuvok{
 
 		void setRenderState(State renderState);
 
-		virtual void makeScreenshot() = 0;
+		virtual void SwitchPagingStrategy(MissingBrickStrategy brickStrategy) = 0;
 
 		void startRenderThread();
 		void pauseRenderThread();
 		void stopRenderThread();
 
       protected:
-        virtual void ScheduleCompleteRedraw();
-        void BuildProjectionMatrix();
-        void BuildViewMatrix();
+        virtual void    ScheduleCompleteRedraw();
+        void            BuildProjectionMatrix();
+        void             BuildViewMatrix();
 
 	virtual bool RecreateAfterResize();
 
 	std::shared_ptr<State>     	m_pRenderState;
+
+	void handleCommands();
 
 	bool				m_bCompleteRedraw;
 

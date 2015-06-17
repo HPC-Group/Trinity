@@ -56,6 +56,8 @@ namespace Tuvok{
 
             virtual int storeFinalFrameToTNG(std::string name) = 0;
 
+            virtual void ReadBackBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount) = 0;
+
             Core::Math::Vec2ui getContextResolution() const{ return m_vResolution;}
         protected:
             Context(std::string windowname, System system, Visibility visibility,Core::Math::Vec2ui resolution):

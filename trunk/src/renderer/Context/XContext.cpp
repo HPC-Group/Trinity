@@ -4,8 +4,12 @@
 using namespace Tuvok::Renderer::Context;
 using namespace Tuvok::Renderer;
 
-XserverContext::XserverContext(Core::Math::Vec2ui resolution):
-Context("XRenderer",System::Linux,Visibility::hidden,resolution){}
+XserverContext::XserverContext(Core::Math::Vec2ui resolution,
+                            uint8_t MajorVersion,
+                            uint8_t MinorVersion):
+Context("XRenderer",System::Linux,Visibility::hidden,resolution),
+m_uiMajor(MajorVersion),
+m_uiMinor(MinorVersion){}
 XserverContext::~XserverContext(){}
 
 void XserverContext::lockContext(){
@@ -32,8 +36,8 @@ bool XserverContext::initContext() {
 
     LINFOC("XCONTEXT","define context");
     int context_attribs[] = {
-        GLX_CONTEXT_MAJOR_VERSION_ARB, 4,
-        GLX_CONTEXT_MINOR_VERSION_ARB, 3,
+        GLX_CONTEXT_MAJOR_VERSION_ARB, m_uiMajor,
+        GLX_CONTEXT_MINOR_VERSION_ARB, m_uiMinor,
         GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
         GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
         None
@@ -144,5 +148,25 @@ int XserverContext::storeFinalFrameToTNG(std::string name){
 	delete[] pixels;
 
 	return 0;
+}
+
+void XserverContext::ReadBackBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){
+ lockContext();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	width = viewport[2];
+	height = viewport[3];
+	componentCount = 3;
+
+	pixels.resize(viewport[2] * viewport[3] * 3);
+	//glReadBuffer(GL_FRONT);
+	glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
+		GL_UNSIGNED_BYTE, &pixels[0]);
+
+    unlockContext();
 }
 #endif

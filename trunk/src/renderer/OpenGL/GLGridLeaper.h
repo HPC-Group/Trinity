@@ -91,7 +91,6 @@ namespace Tuvok{
 
 				Core::Math::Vec4f readVolumePosition(Core::Math::Vec2ui v);
 
-				void makeScreenshot();
 			private:
 				bool InitOffScreenBuffers();
 				void InitVolumePool(uint64_t gpuMemorySizeInByte);

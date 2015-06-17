@@ -6,8 +6,12 @@ using namespace Tuvok::Renderer;
 GLFWContext::GLFWContext(std::string windowname,
                             System system,
                             Visibility visibility,
-                            Core::Math::Vec2ui resolution):
-Context(windowname,system,visibility,resolution){}
+                            Core::Math::Vec2ui resolution,
+                            uint8_t MajorVersion,
+                            uint8_t MinorVersion):
+Context(windowname,system,visibility,resolution),
+m_uiMajor(MajorVersion),
+m_uiMinor(MinorVersion){}
 GLFWContext::~GLFWContext(){}
 
 void GLFWContext::lockContext(){
@@ -26,8 +30,8 @@ bool GLFWContext::initContext() {
 
         //Set some window hints for linux and osx, not needed on windows
         if(m_eSystem == System::Linux || m_eSystem == System::OSX){
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_uiMajor);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_uiMinor);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         }else{
@@ -142,4 +146,24 @@ int GLFWContext::storeFinalFrameToTNG(std::string name){
 	delete[] pixels;
 
 	return 0;
+}
+
+void GLFWContext::ReadBackBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){
+    lockContext();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	width = viewport[2];
+	height = viewport[3];
+	componentCount = 3;
+
+	pixels.resize(viewport[2] * viewport[3] * 3);
+	//glReadBuffer(GL_FRONT);
+	glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
+		GL_UNSIGNED_BYTE, &pixels[0]);
+
+    unlockContext();
 }
