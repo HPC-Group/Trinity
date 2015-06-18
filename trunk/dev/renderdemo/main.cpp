@@ -249,13 +249,13 @@ int main(int argc, char* argv[]){
     //NEW STUFF TESTING MAKE NICE LATER!!
 
 //CONTEXT CREATION
-    std::shared_ptr<Context::Context> context = Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640,480));
+	std::shared_ptr<Tuvok::Renderer::Context::Context> context = Tuvok::Renderer::Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640, 480));
 
 //RENDER INIT!!
     std::shared_ptr<AbstrRenderer> renderer = RenderManager::getInstance().createRenderer(context,dataset,transferfunction);
     renderer->startRenderThread();
 
-    std::shared_ptr<Context::Context> display = Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640,480),4,5);
+	//std::shared_ptr<Tuvok::Renderer::Context::Context> display = Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640, 480), 4, 5);
 
     std::vector<uint8_t> pixels;
     int width;
@@ -263,7 +263,7 @@ int main(int argc, char* argv[]){
     int componentCount;
 
     while(true){
-        GLFWwindow* w = static_cast<GLFWwindow*>(context->getContextItem());
+       /* GLFWwindow* w = static_cast<GLFWwindow*>(context->getContextItem());
         glfwHanldeKeyboard(w,renderer);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
@@ -271,35 +271,7 @@ int main(int argc, char* argv[]){
         context->ReadBackBuffer(pixels,width,height,componentCount);
         display->lockContext();
         test(pixels,width,height,componentCount);
-
-        LINFOC("MAIN", pixels.size());
-
-        LINFOC("MAIN-",(width*height*componentCount));
-
-        GLenum err = glGetError();
-        if (err != GL_NO_ERROR) {
-            std::cout << "error at start "<< static_cast<unsigned int>(err) <<std::endl;
-        }
-
-
-        err = glGetError();
-        if (err != GL_NO_ERROR) {
-            std::cout << "error atfter clear "<< static_cast<unsigned int>(err) <<std::endl;
-        }
-
-        glDrawPixels((GLsizei)width,(GLsizei)height, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-
-        err = glGetError();
-        if (err != GL_NO_ERROR) {
-            std::cout << "error atfter draw pixels "<< static_cast<unsigned int>(err) <<std::endl;
-        }
-        std::cout << (char*)gluErrorString(err)<<std::endl;;
-
-        display->frameFinished();
-        display->unlockContext();
-
-
-
+		*/
     }
 
     renderer->stopRenderThread();

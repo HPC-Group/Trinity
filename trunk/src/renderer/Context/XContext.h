@@ -5,7 +5,7 @@
 #include "Context.h"
 
 #include "../OpenGL/OpenGLDefines.h"
-#define LINUXOS
+
 #ifdef LINUXOS
 
 typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
