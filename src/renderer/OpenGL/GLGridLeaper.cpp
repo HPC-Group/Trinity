@@ -91,7 +91,7 @@ static void CheckGLError(std::string comment){
 }
 
 //! initializes a opengl based gridleaper with default values
-GLGridLeaper::GLGridLeaper(std::shared_ptr<Context::Context> context,Vec2ui vWinSize, ERenderMode mode) :
+GLGridLeaper::GLGridLeaper(std::shared_ptr<Tuvok::Renderer::Context::Context> context,Vec2ui vWinSize, ERenderMode mode) :
 AbstrRenderer(context,vWinSize, mode),
 m_pFBORayStart(nullptr),
 m_pFBORayStartNext(nullptr),

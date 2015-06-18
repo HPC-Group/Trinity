@@ -29,7 +29,7 @@ namespace Core{
 				for(std::string s : searchPathList){
 					currentPath = s+filename;
 #ifdef _WIN32
-					std::replace(currentPath.begin(), currentPath.end(), '/', '\\');
+					//std::replace(currentPath.begin(), currentPath.end(), '/', '\\');
 #endif
 					std::ifstream ifs;
  					ifs.open (currentPath, std::ifstream::in);
@@ -44,7 +44,7 @@ namespace Core{
             {
 #ifdef _WIN32
 
-				std::replace(dir.begin(), dir.end(), '/', '\\');
+				//std::replace(dir.begin(), dir.end(), '/', '\\');
 
 				char search_path[200];
 				sprintf(search_path, "%s*.*", dir.c_str());
@@ -90,7 +90,7 @@ namespace Core{
 			int readFilesWithEnding(std::string dir, std::vector<std::string> &files, std::string ending)
 			{
 #ifdef _WIN32
-				std::replace(dir.begin(), dir.end(), '/', '\\');
+				//std::replace(dir.begin(), dir.end(), '/', '\\');
 
 				char search_path[200];
 				sprintf(search_path, "%s*.*", dir.c_str());
