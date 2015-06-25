@@ -11,7 +11,6 @@ add_subdirectory(tools)
 add_subdirectory(renderer)
 add_subdirectory(IO)
 add_subdirectory(core)
-add_subdirectory(communication)
 
 
 ########## Ghoul Objects +++++++++++>
