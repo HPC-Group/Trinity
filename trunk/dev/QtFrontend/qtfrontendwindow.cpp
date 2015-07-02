@@ -12,7 +12,8 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 	m_image(NULL),
 	m_pixelmap(NULL),
 	m_rawData(NULL),
-	m_loop(false)
+	m_loop(false),
+	m_renderer(NULL)
 {
     ui->setupUi(this);
 
@@ -76,6 +77,8 @@ long QtFrontendWindow::milliseconds_now() {
 
 void QtFrontendWindow::SelectDataDirectory()
 {
+	m_loop = false;
+
 	m_datasetDirectory = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "D:\Dev\build\trinity\dev\QtFrontend\Release", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	AddDataToModel(m_datasetDirectory, "*.uvf");
@@ -84,6 +87,8 @@ void QtFrontendWindow::SelectDataDirectory()
 
 void QtFrontendWindow::DatasetSelectedSlot(QModelIndex index)
 {
+	m_loop = false;
+
 	m_selectedDataset = m_modelDatasets->data(index, Qt::DisplayRole).toString();
 	m_selectedDataset = m_datasetDirectory + "/" + m_selectedDataset;
 	InitRenderer();
@@ -91,8 +96,11 @@ void QtFrontendWindow::DatasetSelectedSlot(QModelIndex index)
 
 void QtFrontendWindow::TransferFunctionSelectedSlot(QModelIndex index)
 {
+	m_loop = false;
+
 	m_selectedTransferFunction = m_modelTransferFunction->data(index, Qt::DisplayRole).toString();
-	m_selectedTransferFunction = m_datasetDirectory + "/" + m_selectedTransferFunction;
+	if (m_selectedTransferFunction != "none")
+		m_selectedTransferFunction = m_datasetDirectory + "/" + m_selectedTransferFunction;
 	InitRenderer();
 }
 
@@ -119,15 +127,28 @@ void QtFrontendWindow::InitRenderer()
 {
 	if (m_selectedDataset != "" && m_selectedTransferFunction != "")
 	{
-		m_renderer = RenderManager::getInstance().createRenderer(Visibility::hidden, Vec2ui(m_frameWidth, m_frameHeight), m_selectedDataset.toStdString(), m_selectedTransferFunction.toStdString());
-		m_renderer->startRenderThread();
+		//if (m_renderer != NULL)
+		//{
+			m_renderer = RenderManager::getInstance().createRenderer(Visibility::hidden, Vec2ui(m_frameWidth, m_frameHeight), m_selectedDataset.toStdString(), m_selectedTransferFunction.toStdString());
+			m_renderer->startRenderThread();
 
-		m_renderLabel->setRenderProtocol(m_renderer);
+			m_renderLabel->setRenderProtocol(m_renderer);
+		//}
+		/*else 
+		{
+			m_renderer->pauseRenderThread();
+
+			std::shared_ptr<IOLocal> ioLocal = std::make_shared<IOLocal>("LOCALIO");
+			uint16_t handleLocal = ioLocal->openFile(m_selectedDataset.toStdString());
+
+			m_renderer->SetDataset(ioLocal);
+
+			m_renderer->startRenderThread();
+		}*/
 
 		InitImage();
 
 		m_loop = true;
-		//Loop();
 	}
 }
 
@@ -165,47 +186,27 @@ void  QtFrontendWindow::doUpdate()
 {
 	if (m_loop)
 	{
-		long copyTime = milliseconds_now();
-
 		std::vector<uint8_t> image;
 		m_renderer->ReadFrameBuffer(image, m_frameWidth, m_frameHeight, m_componentCount);
 
-		std::cout << image.size() << std::endl;
-		std::cout << m_componentCount << std::endl;
+		uint32_t totalSize = 0;
 
-		uint32_t totalSize = m_image->height() * m_image->bytesPerLine();
-		uint8_t* rawDataIter = m_rawData;
-
-		//uint32_t limit = (totalSize / 4);
-		uint32_t limit = m_frameWidth * m_frameHeight * m_componentCount;
+		/*uint32_t totalSize = m_image->height() * m_image->bytesPerLine();
+		uint8_t* rawDataIter = m_rawData;*/
 
 		if (image.size() > 0)
 		{
-			for (int i = 0; i < image.size() / 3; i+=3)
+			/*for (int i = 0; i < image.size(); i += 3)
 			{
-				rawDataIter[i] = 255;
-				rawDataIter[i + 1] = 0;
-				rawDataIter[i + 2] = 0;
-			}
-
-			/*for (int i = m_frameHeight - 1; i >= 0; i--)
-			{
-				for (int j = 0; j < m_frameWidth; j++)
-				{
-					rawDataIter = image.at((j * m_componentCount) + (i * m_frameWidth * m_componentCount));
-					++rawDataIter;
-					*rawDataIter = image.at(((j * m_componentCount) + 1) + (i * m_frameWidth * m_componentCount));
-					++rawDataIter;
-					*rawDataIter = image.at(((j * m_componentCount) + 2) + (i * m_frameWidth * m_componentCount));
-					++rawDataIter;
-					*rawDataIter = 0;
-					++rawDataIter;
-				}
+				rawDataIter[i] = image[i];
+				rawDataIter[i + 1] = image[i + 1];
+				rawDataIter[i + 2] = image[i + 2];
 			}*/
 
 			totalSize = m_frameWidth * m_frameHeight * 3;
 
-			std::copy(m_rawData, m_rawData + totalSize, m_image->bits());
+			//std::copy(m_rawData, m_rawData + totalSize, m_image->bits());
+			std::copy(&image[0], &image[0] + totalSize, m_image->bits());
 			m_renderLabel->setPixmap(QPixmap::fromImage(*m_image));
 		}
 	}
