@@ -1,10 +1,4 @@
-//
-//  IOService.h
-//  DemoRendering
-//
-//  Created by Andre Waschk on 24/10/14.
-//  Copyright (c) 2014 CoViDaG. All rights reserved.
-//
+
 
 #ifndef __IOLocal__
 #define __IOLocal__
@@ -20,6 +14,7 @@
 #include <core/Math/Vectors.h>
 
 #include "DSEntry.h"
+#include "IOInterface.h"
 
 struct HandleLocal {
     uint16_t clientID;
@@ -29,7 +24,7 @@ struct HandleLocal {
 
 namespace Tuvok {
 
-class IOLocal
+	class IOLocal : public IOInterface
 {
 public:
     IOLocal(std::string serviceName);
@@ -47,8 +42,6 @@ private:
     std::shared_ptr<LinearIndexDataset> m_dataset;
 
 public:
-
-    //For definitions of the functions, see Protocol_IO class!
 
     std::vector<std::string> getFileList();
     uint16_t openFile(std::string filename);
