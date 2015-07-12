@@ -252,11 +252,11 @@ int main(int argc, char* argv[]){
 	std::shared_ptr<Tuvok::Renderer::Context::Context> context = Tuvok::Renderer::Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640, 480));
 
 //RENDER INIT!!
-	std::shared_ptr<AbstrRenderer> renderer = RenderManager::getInstance().createRenderer(context, dataset, transferfunction);
+	std::shared_ptr<IRenderer> renderer = RenderManager::getInstance().createRenderer(context, dataset, transferfunction);
 	renderer->startRenderThread();
 
-	std::shared_ptr<AbstrRenderer> renderer2 = RenderManager::getInstance().createRenderer(Visibility::Windowed, Vec2ui(640, 480), dataset, transferfunction);
-	renderer2->startRenderThread();
+	//std::shared_ptr<AbstrRenderer> renderer2 = RenderManager::getInstance().createRenderer(Visibility::Windowed, Vec2ui(640, 480), dataset, transferfunction);
+	//renderer2->startRenderThread();
 
     std::vector<uint8_t> pixels;
     int width;
@@ -266,8 +266,8 @@ int main(int argc, char* argv[]){
     while(true){
 		renderer->RotateCamera(Vec3f(0, 0.2f, 0));
 		std::this_thread::sleep_for(std::chrono::milliseconds(30));
-		renderer2->RotateCamera(Vec3f(-0.3f, 0.2f, 0));
-		std::this_thread::sleep_for(std::chrono::milliseconds(30));
+		//renderer2->RotateCamera(Vec3f(-0.3f, 0.2f, 0));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(30));
        /* GLFWwindow* w = static_cast<GLFWwindow*>(context->getContextItem());
         glfwHanldeKeyboard(w,renderer);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
