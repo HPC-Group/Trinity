@@ -2,16 +2,20 @@
 #define TNG_AbstrRenderer_h
 
 #include "IRenderer.h"
-
-
+#include "CullingLOD.h"
 
 namespace Tuvok{
-  class IOLocal;
-  typedef std::shared_ptr<IOLocal> IOPtr;
+  class RenderRegion;
+  typedef std::shared_ptr<RenderRegion> RenderRegionPtr;
+
+  class ExtendedPlane;
+  typedef std::shared_ptr<ExtendedPlane> ExtendedPlanePtr;
 
   namespace Renderer{
+      class Camera;
+      typedef std::shared_ptr<Camera> CameraPtr;
 
-      class AbstrRenderer{
+      class AbstrRenderer : public IRenderer{
       public:
         AbstrRenderer(                    std::shared_ptr<Tuvok::Renderer::Context::Context> context,
                                             Core::Math::Vec2ui vWinSize = Core::Math::Vec2ui(640, 480),
@@ -56,9 +60,7 @@ namespace Tuvok{
 
         virtual void Resize(const Core::Math::Vec2ui& vWinSize);
 
-        virtual void SetDataset(DataIOPtr dio);
 		void SetDataset(Tuvok::IOPtr dio);
-        virtual DataIOPtr GetDataIO() const;
 
         virtual void GetVolumeAABB(Core::Math::Vec3f& vCenter, Core::Math::Vec3f& vExtend) const;
 
@@ -107,15 +109,15 @@ namespace Tuvok{
       protected:
         virtual void    ScheduleCompleteRedraw();
         void            BuildProjectionMatrix();
-        void             BuildViewMatrix();
+        void            BuildViewMatrix();
 
-	virtual bool RecreateAfterResize();
+        virtual bool RecreateAfterResize();
 
-	std::shared_ptr<State>     	m_pRenderState;
+        std::shared_ptr<State>     	m_pRenderState;
 
-	void handleCommands();
+        void handleCommands();
 
-	bool				m_bCompleteRedraw;
+        bool				m_bCompleteRedraw;
 
       //--------------- private
       private:
@@ -123,10 +125,8 @@ namespace Tuvok{
         RenderRegionPtr             m_pRenderRegion;
         ExtendedPlanePtr            m_pClipplane;
 
-        DataIOPtr                   m_pDatasetIO;
 
-
-	protected:
+	  protected:
 		Tuvok::IOPtr 				        m_pToCDataset;
 		std::vector<std::string>            m_vSearchPathes;
 		std::shared_ptr<Context::Context>   m_pContext;
