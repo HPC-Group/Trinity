@@ -8,7 +8,6 @@ using namespace Core::Math;
 AbstrRenderer::AbstrRenderer(std::shared_ptr<Tuvok::Renderer::Context::Context> context,Vec2ui vWinSize, ERenderMode mode) :
 m_pRenderRegion(nullptr),
 m_pClipplane(nullptr),
-m_pDatasetIO(nullptr),
 m_bCompleteRedraw(true),
 m_pContext(context)
 {
@@ -133,17 +132,10 @@ void AbstrRenderer::GetVolumeAABB(Core::Math::Vec3f& vCenter, Core::Math::Vec3f&
   vExtend = Vec3f(1,1,1);
 }
 
-void AbstrRenderer::SetDataset(DataIOPtr dio){
-  m_pDatasetIO = dio;
-}
 
 //! function to set a pointer to a dataio object \todo should later communicate over the network
 void AbstrRenderer::SetDataset(IOPtr dio){
 	m_pToCDataset = dio;
-}
-
-DataIOPtr AbstrRenderer::GetDataIO() const{
-  return m_pDatasetIO;
 }
 
 

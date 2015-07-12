@@ -42,7 +42,7 @@ uint64_t useableVRAM(){
 }
 
 
-std::shared_ptr<AbstrRenderer> RenderManager::createRenderer(   Visibility visibility,
+std::shared_ptr<IRenderer> RenderManager::createRenderer(   Visibility visibility,
                                                                 Core::Math::Vec2ui resolution,
                                                                 std::string dataset,
                                                                 std::string tf){
@@ -54,7 +54,7 @@ std::shared_ptr<AbstrRenderer> RenderManager::createRenderer(   Visibility visib
 }
 
 
-std::shared_ptr<AbstrRenderer> RenderManager::createRenderer(  std::shared_ptr<Tuvok::Renderer::Context::Context> contextPtr,
+std::shared_ptr<IRenderer> RenderManager::createRenderer(  std::shared_ptr<Tuvok::Renderer::Context::Context> contextPtr,
                                                         std::string dataset,
                                                         std::string tf){
 

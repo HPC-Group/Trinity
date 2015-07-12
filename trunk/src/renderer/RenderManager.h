@@ -1,7 +1,7 @@
 #ifndef TUVOK_RENDERMANAGER
 #define TUVOK_RENDERMANAGER
 
-#include "AbstrRenderer.h"
+#include "IRenderer.h"
 #include "RenderEnums.h"
 #include "Context/Context.h"
 #include <memory>
@@ -16,13 +16,13 @@ namespace Tuvok{
              return instance;
         }
 
-        std::shared_ptr<AbstrRenderer> createRenderer(
+        std::shared_ptr<IRenderer> createRenderer(
                                                         Visibility visibility,
                                                         Core::Math::Vec2ui resolution,
                                                         std::string dataset,
                                                         std::string tf);
 
-        std::shared_ptr<AbstrRenderer> createRenderer(  std::shared_ptr<Tuvok::Renderer::Context::Context> contextPtr,
+        std::shared_ptr<IRenderer> createRenderer(  std::shared_ptr<Tuvok::Renderer::Context::Context> contextPtr,
                                                         std::string dataset,
                                                         std::string tf);
     private:
