@@ -1,62 +1,35 @@
 //
 //  IRenderer.h
 //  TNG
-//
-//  Created by Andre Waschk on 22/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
 
 #ifndef TNG_IRenderer_h
 #define TNG_IRenderer_h
 
 
-#include <core/Math/Vectors.h>
-#include <memory.h>
-#include "CullingLOD.h"
-
-#include "RenderEnums.h"
-#include "Service/RenderStatev2.h"
-
+#include "Service/RenderState.h"
 #include <renderer/Context/Context.h>
 
 #include <thread>
 
 namespace Tuvok{
-  class IDataIO;
-  typedef std::shared_ptr<IDataIO> DataIOPtr;
-
-
-
-  namespace IO{
-    class Dataset;
-    typedef std::shared_ptr<Dataset> DatasetPtr;
-  }
-
-  class RenderRegion;
-  typedef std::shared_ptr<RenderRegion> RenderRegionPtr;
-
-  class ExtendedPlane;
-  typedef std::shared_ptr<ExtendedPlane> ExtendedPlanePtr;
-
-  class Context; // wofür context class bei opengl ?
-  typedef std::shared_ptr<Context> ContextPtr;
+  class IOLocal;
+  typedef std::shared_ptr<IOLocal> IOPtr;
 
   namespace Renderer{
-    class Camera;
-    typedef std::shared_ptr<Camera> CameraPtr;
 
     class IRenderer{
     public:
-      IRenderer(){};
-      virtual ~IRenderer(){};
+        IRenderer(){};
+        virtual ~IRenderer(){};
 
-      virtual bool Paint();
+        virtual bool Initialize() = 0;
+        virtual void Cleanup() = 0;
+        virtual bool Paint() = 0;
 
         virtual void SetClearFrameBuffer(bool bClearFramebuffer) = 0;
-        virtual bool GetClearFrameBuffer() const = 0;
+        virtual bool GetClearFrameBuffer() const  = 0;
 
         virtual void SetViewParameters(float angle, float znear, float zfar) = 0;
-
         virtual Core::Math::Mat4f& GetProjectionMatrix() = 0;
         virtual Core::Math::Mat4f& GetViewMatrix() = 0;
 
@@ -86,15 +59,17 @@ namespace Tuvok{
 
         virtual void Resize(const Core::Math::Vec2ui& vWinSize) = 0;
 
+		virtual void SetDataset(Tuvok::IOPtr dio) = 0;
+
         virtual void GetVolumeAABB(Core::Math::Vec3f& vCenter, Core::Math::Vec3f& vExtend) const = 0;
 
         //implement in subclasses
         virtual void SetViewPort(Core::Math::Vec2ui lower_left, Core::Math::Vec2ui upper_right,
-                                 bool decrease_screen_res = false) = 0; //glrenderer
+                                 bool decrease_screen_res = false)  = 0; //glrenderer
 
 
         //Camera Controls;
-        virtual void SetFirstPersonMode(bool mode) = 0;
+        virtual void SetFirstPersonMode(bool mode)  = 0;
         virtual void RotateCamera(Core::Math::Vec3f rotation) = 0;
         virtual void MoveCamera(Core::Math::Vec3f direction) = 0;
         virtual void SetCamera(Camera c) = 0;
@@ -124,20 +99,12 @@ namespace Tuvok{
 
 		virtual void setRenderState(State renderState) = 0;
 
-
-
-
 		virtual void SwitchPagingStrategy(MissingBrickStrategy brickStrategy) = 0;
-
 
 		virtual void startRenderThread() = 0;
 		virtual void pauseRenderThread() = 0;
 		virtual void stopRenderThread() = 0;
-
-		protected:
-        virtual bool RecreateAfterResize() = 0;
     };
-
   };
 };
 
