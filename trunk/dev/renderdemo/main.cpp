@@ -94,7 +94,7 @@ void selectDataSetAndTransferFunction(std::string& sDataSet, std::string& sTF){
 
 bool endAll = false;
 //interaction with the renderer
-void glfwHanldeKeyboard(GLFWwindow* window, std::shared_ptr<AbstrRenderer> renderer){
+void glfwHanldeKeyboard(GLFWwindow* window, std::shared_ptr<IRenderer> renderer){
 
   /*  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
       double x =0;
@@ -105,6 +105,7 @@ void glfwHanldeKeyboard(GLFWwindow* window, std::shared_ptr<AbstrRenderer> rende
     }
   */
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
+		cout << "left pressed" << std::endl;
 		renderer->RotateCamera(Vec3f(0, 0.5f, 0));
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
@@ -217,31 +218,28 @@ int main(int argc, char* argv[]){
     LogMgr.addLog(console);
 
     LINFOC("bla log", "blub");
-
-
     std::string dataset;
     std::string transferfunction;
 
     selectDataSetAndTransferFunction(dataset,transferfunction);
     //NEW STUFF TESTING MAKE NICE LATER!!
 
-//CONTEXT CREATION
+	//CONTEXT CREATION
 	std::shared_ptr<Tuvok::Renderer::Context::Context> context = Tuvok::Renderer::Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640, 480));
 
-//RENDER INIT!!
+	GLFWwindow* window = (GLFWwindow*)context->getContextItem();
+
+	//RENDER INIT!!
 	std::shared_ptr<IRenderer> renderer = RenderManager::getInstance().createRenderer(context, dataset, transferfunction);
+	
 	renderer->startRenderThread();
 
-    std::vector<uint8_t> pixels;
-    int width;
-    int height;
-    int componentCount;
-
+	//sleep and wait for renderer to initiate
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	while (true){
 		renderer->RotateCamera(Vec3f(0, 0.2f, 0));
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		glfwHanldeKeyboard(window, renderer);
 	}
-    renderer->stopRenderThread();
+    renderer->stopRenderThread(); // <- never reached right now!
 }
