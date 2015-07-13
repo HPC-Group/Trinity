@@ -103,7 +103,7 @@ void glfwHanldeKeyboard(GLFWwindow* window, std::shared_ptr<AbstrRenderer> rende
 
       renderer->clearViewPicking(Vec2ui((uint32_t)x,(uint32_t)y));
     }
-*/
+  */
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
 		renderer->RotateCamera(Vec3f(0, 0.5f, 0));
 	}
@@ -206,12 +206,6 @@ int test(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCo
 }
 
 int main(int argc, char* argv[]){
-    //DebugOut remove as soon as possible
-	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowErrors(true);
-	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowMessages(true);
-	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowWarnings(true);
-	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowOther(true);
-
 
     LogManager::initialize(LogManager::LogLevel::Debug, true);
 
@@ -229,23 +223,6 @@ int main(int argc, char* argv[]){
     std::string transferfunction;
 
     selectDataSetAndTransferFunction(dataset,transferfunction);
-/*
-    Communication::ProtocolRenderer* renderer = new Communication::LocalRenderer();
-    renderer->createNewRenderer(Visibility::Windowed,Vec2ui(640,480),dataset,transferfunction);
-
-    while(!endAll && renderer->checkIfRenderThreadIsRunning()){
-        //THIS IS ONLY FOR OUR LOCAL GLFW TEST! DO NOT DO THIS LATER!!
-        GLFWwindow* w = static_cast<GLFWwindow*>(RenderServer::getInstance().getContextPtr(renderer->getRenderHandle())->getContextItem());
-        if(w != nullptr){
-                //Handle inputs
-                glfwHanldeKeyboard(w,renderer);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    }
-
-    //wait for every other thread to detach
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));*/
-
     //NEW STUFF TESTING MAKE NICE LATER!!
 
 //CONTEXT CREATION
@@ -255,29 +232,16 @@ int main(int argc, char* argv[]){
 	std::shared_ptr<IRenderer> renderer = RenderManager::getInstance().createRenderer(context, dataset, transferfunction);
 	renderer->startRenderThread();
 
-	//std::shared_ptr<AbstrRenderer> renderer2 = RenderManager::getInstance().createRenderer(Visibility::Windowed, Vec2ui(640, 480), dataset, transferfunction);
-	//renderer2->startRenderThread();
-
     std::vector<uint8_t> pixels;
     int width;
     int height;
     int componentCount;
 
-    while(true){
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	while (true){
 		renderer->RotateCamera(Vec3f(0, 0.2f, 0));
-		std::this_thread::sleep_for(std::chrono::milliseconds(30));
-		//renderer2->RotateCamera(Vec3f(-0.3f, 0.2f, 0));
-		//std::this_thread::sleep_for(std::chrono::milliseconds(30));
-       /* GLFWwindow* w = static_cast<GLFWwindow*>(context->getContextItem());
-        glfwHanldeKeyboard(w,renderer);
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-
-        context->ReadBackBuffer(pixels,width,height,componentCount);
-        display->lockContext();
-        test(pixels,width,height,componentCount);
-		*/
-    }
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
     renderer->stopRenderThread();
 }
