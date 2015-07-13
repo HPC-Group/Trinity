@@ -1,2 +1,6 @@
 add_subdirectory(renderdemo)
-add_subdirectory(QtFrontend)
+OPTION(BuildQT "Build QT Project" OFF)
+
+IF(BuildQT)
+	add_subdirectory(QtFrontend)
+ENDIF()

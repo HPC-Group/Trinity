@@ -24,7 +24,6 @@ namespace Tuvok{
 
         virtual bool Initialize() = 0;
         virtual void Cleanup() = 0;
-        virtual bool Paint() = 0;
 
         virtual void SetClearFrameBuffer(bool bClearFramebuffer) = 0;
         virtual bool GetClearFrameBuffer() const  = 0;
