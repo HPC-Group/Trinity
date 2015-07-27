@@ -37,7 +37,8 @@ namespace Tuvok{
         virtual void SetCameraZoom(float f) = 0;
 
         //read the last framebuffer
-        virtual void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount) = 0;
+        virtual void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount) = 0; //LEGACY
+        virtual std::vector<uint8_t> ReadFrameBuffer() = 0;
         // END BASIC INTERACTION METHODS
 
 

@@ -9,6 +9,7 @@ AbstrRenderer::AbstrRenderer(std::shared_ptr<Tuvok::Renderer::Context::Context> 
 m_pRenderRegion(nullptr),
 m_pClipplane(nullptr),
 m_bCompleteRedraw(true),
+m_bFinishedInit(false),
 m_pContext(context)
 {
   m_pRenderState = std::make_shared<State>();
@@ -260,6 +261,7 @@ void AbstrRenderer::SetColorDataset(bool isColor){
 
 //*************THREADING
 void AbstrRenderer::startRenderThread(){
+    while(!m_bFinishedInit){}
     //start runthread;
 	LINFOC("GLGridLeaper","try to start new renderthread");
 	m_pRenderThread = std::make_shared<std::thread>(&AbstrRenderer::run, this);

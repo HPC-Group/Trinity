@@ -29,7 +29,7 @@ bool GLFWContext::initContext() {
         glfwInit();
 
         //Set some window hints for linux and osx, not needed on windows
-        if(m_eSystem == System::Linux || m_eSystem == System::OSX){
+        if((m_eSystem == System::Linux || m_eSystem == System::OSX) && m_uiMajor != 0){
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_uiMajor);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_uiMinor);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
