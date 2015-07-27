@@ -31,7 +31,7 @@ using namespace Core::Math;
 using namespace ghoul::logging;
 
 
-typedef std::shared_ptr<IRenderer> RenderPtr;
+//typedef std::shared_ptr<IRenderer> RenderPtr;
 
 
 
