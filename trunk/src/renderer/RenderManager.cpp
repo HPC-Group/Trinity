@@ -47,7 +47,7 @@ std::shared_ptr<IRenderer> RenderManager::createRenderer(   Visibility visibilit
                                                                 std::string dataset,
                                                                 std::string tf){
 
-
+LINFOC("RenderServer", "initialize renderer");
     std::shared_ptr<Context::Context> context = Context::ContextManager::getInstance().createContext(visibility, resolution);
 
     return createRenderer(context,dataset,tf);
@@ -83,5 +83,6 @@ std::shared_ptr<IRenderer> RenderManager::createRenderer(  std::shared_ptr<Tuvok
 		return 0;
     }
 
+    renderer->startRenderThread();
     return renderer;
 }

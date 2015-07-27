@@ -132,6 +132,8 @@ namespace Tuvok{
 		std::shared_ptr<Context::Context>   m_pContext;
         std::shared_ptr<std::thread>        m_pRenderThread;
         virtual void run() = 0;
+        bool                                m_bFinishedInit;
+
     };
 
   };

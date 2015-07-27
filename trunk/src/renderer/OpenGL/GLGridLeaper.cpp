@@ -189,6 +189,8 @@ bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
 	//m_pRenderThread = std::make_shared<std::thread>(&GLGridLeaper::run, this);
 
     LINFOC("GLGridLeaper","return");
+
+    m_bFinishedInit = true;
 	return true;
 }
 
@@ -1228,6 +1230,30 @@ void GLGridLeaper::ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int
 	if (!m_bCreateFrameBuffer){
 		m_bCreateFrameBuffer = true;
 	}
+}
+
+
+std::vector<uint8_t> GLGridLeaper::ReadFrameBuffer(){
+std::vector<uint8_t> data;
+    m_pContext->lockContext();
+
+    m_pTargetBinder->Unbind();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	m_width = viewport[2];
+	m_height = viewport[3];
+	m_componentCount = 3;
+
+	data.resize(viewport[2] * viewport[3] * 3);
+	//glReadBuffer(GL_FRONT);
+	glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
+		GL_UNSIGNED_BYTE, &data[0]);
+
+    m_pContext->unlockContext();
+	return data;
 }
 
 void GLGridLeaper::readFB(){
