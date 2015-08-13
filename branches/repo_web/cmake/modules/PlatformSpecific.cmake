@@ -1,0 +1,5 @@
+if (APPLE)
+	include(${CMAKE_PLATFORM_PATH}/osx/platform.cmake)
+elseif (UNIX)
+	include(${CMAKE_PLATFORM_PATH}/unix/platform.cmake)
+endif ()
