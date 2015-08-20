@@ -225,20 +225,18 @@ int main(int argc, char* argv[]){
     //NEW STUFF TESTING MAKE NICE LATER!!
 
 	//CONTEXT CREATION
-	std::shared_ptr<Tuvok::Renderer::Context::Context> context = Tuvok::Renderer::Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(640, 480));
+	std::shared_ptr<Tuvok::Renderer::Context::Context> context = Tuvok::Renderer::Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(1280, 720));
 
 	GLFWwindow* window = (GLFWwindow*)context->getContextItem();
 
 	//RENDER INIT!!
 	std::shared_ptr<IRenderer> renderer = RenderManager::getInstance().createRenderer(context, dataset, transferfunction);
-	
-	renderer->startRenderThread();
 
 	//sleep and wait for renderer to initiate
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	while (true){
 		renderer->RotateCamera(Vec3f(0, 0.2f, 0));
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		glfwHanldeKeyboard(window, renderer);
 	}
     renderer->stopRenderThread(); // <- never reached right now!

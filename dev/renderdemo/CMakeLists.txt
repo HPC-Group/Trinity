@@ -20,3 +20,8 @@ include_directories(
 					${TRINITY_ROOT_DIR}/ext/ghoul/include/
 					${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/)
 
+#MOCCA
+include_directories(
+					${TRINITY_ROOT_DIR}/src/mocca/include/
+					${TRINITY_ROOT_DIR}/src/mocca/include/mocca/)
+
