@@ -25,11 +25,24 @@
 
 #include <renderer/RenderManager.h> //RenderManager!
 
+#include <base/Error.h>
+#include <base/BytePacket.h>
+#include <net/TCPNetworkAddress.h>
+#include <net/LoopbackNetworkService.h>
+#include <net/LoopbackConnectionListener.h>
+#include <net/TCPNetworkService.h>
+
+#include <lz4/lz4.h>
+#include <lz4/lz4hc.h>
+
 //some usings
 using namespace Tuvok::Renderer;
 using namespace Tuvok;
 using namespace Core::Math;
 using namespace ghoul::logging;
+
+using namespace mocca;
+using namespace mocca::net;
 
 
 typedef std::shared_ptr<IRenderer> RenderPtr;
@@ -82,14 +95,39 @@ int main(int argc, char* argv[]){
     IRenderManager& manager = RenderManager::getInstance();
     //create a renderer
     //RenderPtr renderer = manager.createRenderer(Visibility::Windowed,Vec2ui(640,480),"walnut.uvf","none");
-    RenderPtr renderer = manager.createRenderer(Visibility::Windowed,Vec2ui(1280,720),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
+    RenderPtr renderer = manager.createRenderer(Visibility::Windowed,Vec2ui(1024,768),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
     //at this point a gridleaper should run in a seperate thread and you can use the RenderPtr for interaction
 
+    TCPNetworkService netService; // instantiate the network service
+    auto connectionListener = netService.bind("1234"); // listen for connections
 
+    int connectionCounter = 0;
+    std::unique_ptr<AbstractConnection> serverConnection  = nullptr;
+    std::vector<uint8_t> pixels;
+    std::vector<uint8_t> pixelsCompressed;
+    pixelsCompressed.resize(1024*768*3);
+    int compressedSize = 0;
 	while (true){
         // do whatever you want ?
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // to reduce the incoming commands !
 
         renderer->RotateCamera(Vec3f(0,0.3,0));
+
+        if(connectionListener->numConnections() > connectionCounter){
+           serverConnection = connectionListener->getConnection(); // accept the next pending connection
+           std::cout << "something connected!"<< std::endl;
+           connectionCounter = connectionListener->numConnections();
+        }
+        if(serverConnection != nullptr){
+            pixels = renderer->ReadFrameBuffer();
+
+            //compressedSize = LZ4_compress((char*)&pixels[0],(char*)&pixelsCompressed[0],pixels.size());
+            //pixelsCompressed.resize(compressedSize);
+            ByteArray p = ByteArray::create();
+            //p.append(&(pixelsCompressed[0]),pixels.size());
+            p.append(&(pixels[0]),pixels.size());
+            serverConnection->send(p);
+            //pixelsCompressed.resize(1920*1080*3);
+        }
 	}
 }

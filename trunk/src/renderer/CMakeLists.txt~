@@ -23,4 +23,9 @@ target_link_libraries (Renderer LINK_PUBLIC Core)
 target_link_libraries (Renderer LINK_PUBLIC IO)
 target_link_libraries (Renderer LINK_PUBLIC glew)
 target_link_libraries (Renderer LINK_PUBLIC glfw ${GLFW_LIBRARIES})
-target_link_libraries(RenderDemo LINK_PUBLIC ghoul)
+target_link_libraries (Renderer LINK_PUBLIC ghoul)
+
+INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src/mocca/include)
+
+# level 0 modules
+ADD_SUBDIRECTORY(mocca)

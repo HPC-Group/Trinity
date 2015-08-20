@@ -24,6 +24,17 @@
 #include <renderer/RenderEnums.h>   // visibility state etc
 #include <renderer/Context/ContextManager.h>
 
+
+#include <base/Error.h>
+#include <base/BytePacket.h>
+#include <net/TCPNetworkAddress.h>
+#include <net/LoopbackNetworkService.h>
+#include <net/LoopbackConnectionListener.h>
+#include <net/TCPNetworkService.h>
+
+#include <lz4/lz4.h>
+#include <lz4/lz4hc.h>
+
 //some usings
 using namespace Tuvok::Renderer;
 using namespace Tuvok;
@@ -32,7 +43,8 @@ using namespace ghoul::logging;
 
 
 //typedef std::shared_ptr<IRenderer> RenderPtr;
-
+using namespace mocca;
+using namespace mocca::net;
 
 
 
@@ -51,9 +63,9 @@ int main(int argc, char* argv[]){
 
 
     //CREATE A SIMPLE WINDOW TO DISPLAY THE RENDERER STUFF!
-    std::shared_ptr<Tuvok::Renderer::Context::Context> FrontendWindow = Tuvok::Renderer::Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(1280, 720),0);
+    std::shared_ptr<Tuvok::Renderer::Context::Context> FrontendWindow = Tuvok::Renderer::Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(1024,768),0);
     std::vector<uint8_t> pixels;
-    pixels.resize(1280*720*3);
+    pixels.resize(1024*768*3);
 
     // NOW YOU SHOULD USE YOUR NETWORK LAYER TO TALK TO THE RENDER SERVER
     // USE
@@ -73,14 +85,25 @@ int main(int argc, char* argv[]){
         }
 
     */
+    TCPNetworkService netService; // instantiate the network service
+    std::unique_ptr<AbstractConnection>  clientConnection = netService.connect("localhost:1234"); // connect to the server
+   /* BytePacket packet;
+    packet << "The meaning of life is... "; // create some data to send
+    clientConnection->send(packet.byteArray()); // send data to server
+    */
 
 	while (true){
         // do whatever you want ?
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // to reduce the incoming commands !
+        BytePacket data = clientConnection->receive(ReceiveMode::NON_BLOCKING);
+             if(data.byteArray().size() > 0){
 
-        FrontendWindow->lockContext();
-        glDrawPixels(1280,720, GL_BGR, GL_UNSIGNED_BYTE,(void*) &(pixels[0])); // DISPLAY FRAMEBUFER!
-        FrontendWindow->frameFinished();
-        FrontendWindow->unlockContext();
+                //LZ4_decompress_safe ((char*)data.byteArray().data(), (char*) &pixels[0], data.byteArray().size(), 1024*768*3);
+                FrontendWindow->lockContext();
+                //glDrawPixels(1024,768, GL_RGB, GL_UNSIGNED_BYTE,(void*) &(pixels[0])); // DISPLAY FRAMEBUFER!
+                glDrawPixels(1024,768, GL_RGB, GL_UNSIGNED_BYTE,(void*) data.byteArray().data()); // DISPLAY FRAMEBUFER!
+                FrontendWindow->frameFinished();
+                FrontendWindow->unlockContext();
+        }
 	}
 }

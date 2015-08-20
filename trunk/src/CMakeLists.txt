@@ -12,7 +12,6 @@ add_subdirectory(renderer)
 add_subdirectory(IO)
 add_subdirectory(core)
 
-
 ########## Ghoul Objects +++++++++++>
 
 file(GLOB GHOUL_SOURCE ${TRINITY_ROOT_DIR}/ext/ghoul/src/logging/*.cpp
@@ -21,6 +20,15 @@ file(GLOB GHOUL_HEADER ${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/logging/*.h
 					   ${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/cmdparser/*.h)
 
 add_library(ghoul ${GHOUL_SOURCE} ${GHOUL_HEADER})
+
+
+######### MOCCA +++++++>
+
+INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src)
+INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src/mocca/include)
+
+# level 0 modules
+ADD_SUBDIRECTORY(mocca)
 
 
 ########## Tests +++++++++++>

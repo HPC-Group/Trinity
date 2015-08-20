@@ -86,7 +86,6 @@ static void CheckGLError(std::string comment){
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
         LWARNINGC("GLGridLeaper"," Error occured (" << static_cast<unsigned int>(err) <<") comment: " << comment );
-		//printf("[GLGridLeaper] Unknown error (%x) occurred | Comment : %s \n", static_cast<unsigned int>(err), comment.c_str());
 	}
 }
 
@@ -183,10 +182,6 @@ bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
 	CalculateUsedGPUMemory();
 
 	m_pContext->unlockContext();
-
-	//start runthread;
-	//LINFOC("GLGridLeaper","try to start new renderthread");
-	//m_pRenderThread = std::make_shared<std::thread>(&GLGridLeaper::run, this);
 
     LINFOC("GLGridLeaper","return");
 
@@ -1278,6 +1273,7 @@ void GLGridLeaper::readFB(){
 Core::Math::Vec4f GLGridLeaper::readVolumePosition(Core::Math::Vec2ui v){
     Vec4ui8 data(255,255,255,255);
 
+    m_pContext->lockContext();
     //bind targets
     #ifdef GLGRIDLEAPER_DEBUGVIEW
 	m_pTargetBinder->Bind(m_pFBOFinalColorNext,
@@ -1299,6 +1295,7 @@ Core::Math::Vec4f GLGridLeaper::readVolumePosition(Core::Math::Vec2ui v){
 
 
     m_pTargetBinder->Unbind();
+    m_pContext->unlockContext();
     return m_vVolumePicking;
 }
 
