@@ -37,6 +37,7 @@ namespace Tuvok{
         private:
         RenderPtr                           renderer;
         uint64_t                            _lastFrameID;
+        std::vector<uint8_t>                     _compressedData;
         std::unique_ptr<IConnectionListener> connectionListener;
         std::unique_ptr<AbstractConnection> serverConnection;
         int connectionCounter;
