@@ -60,36 +60,38 @@ namespace Tuvok{
 		//ISO FUNCTIONS
 		virtual void SetIsoValue(float fIsoValue){};
 		virtual void SetIsoValueRelative(float fIsovalue){};
-		virtual float GetIsoValue() const {};
+		virtual float GetIsoValue() const { return 0.0f; };
 		virtual void SetIsosurfaceColor(const Core::Math::Vec3f& vColor) {};
-		virtual Core::Math::Vec3f GetIsosurfaceColor() const {};
+		virtual Core::Math::Vec3f GetIsosurfaceColor() const { return Core::Math::Vec3f(); };
 		virtual void SetColorDataset(bool isColor) {};
 		//END ISO FUNCTIONS
 
 
         virtual void SetClearFrameBuffer(bool bClearFramebuffer){};
-        virtual bool GetClearFrameBuffer() const  {};
+		virtual bool GetClearFrameBuffer() const  { return true; };
 
         virtual void SetViewParameters(float angle, float znear, float zfar) {};
-        virtual Core::Math::Mat4f& GetProjectionMatrix() {};
-        virtual Core::Math::Mat4f& GetViewMatrix() {};
+		virtual Core::Math::Mat4f& GetProjectionMatrix() { Core::Math::Mat4f m; return m; };
+		virtual Core::Math::Mat4f& GetViewMatrix() { Core::Math::Mat4f m; return m;  };
 
         virtual bool SetBackgroundColors(Core::Math::Vec3f vTopColor,
-                                         Core::Math::Vec3f vBottomColor) {};
-        virtual Core::Math::Vec3f GetBackgroundColor(const uint8_t index) {};
+			Core::Math::Vec3f vBottomColor) {
+			return true;
+		};
+		virtual Core::Math::Vec3f GetBackgroundColor(const uint8_t index) { return Core::Math::Vec3f(); };
 
         virtual void SetUseLighting(bool bUseLighting) {};
 		virtual void SetLightingParameters(Core::Math::Vec4f cAmbient,
 			Core::Math::Vec4f cDiffuse,
 			Core::Math::Vec4f cSpecular
 			) {};
-	    virtual const Core::Math::Vec4f GetAmbientColor() {};
-	    virtual const Core::Math::Vec4f GetDiffuseColor() {};
-	    virtual const Core::Math::Vec4f GetSpecularColor() {};
+		virtual const Core::Math::Vec4f GetAmbientColor() { return Core::Math::Vec4f(); };
+		virtual const Core::Math::Vec4f GetDiffuseColor() { return Core::Math::Vec4f(); };
+		virtual const Core::Math::Vec4f GetSpecularColor() { return Core::Math::Vec4f(); };
         virtual void SetSampleRateModifier(float fSampleRateModifier) {};
 		virtual void ResetCamera() {};
 
-        virtual Core::Math::Vec2ui GetSize() const {};
+		virtual Core::Math::Vec2ui GetSize() const { return Core::Math::Vec2ui(); };
 
         virtual void Resize(const Core::Math::Vec2ui& vWinSize) {};
 
@@ -101,7 +103,7 @@ namespace Tuvok{
 
 	    virtual void SetLoDFactor(const float f) {};
 
-	    virtual float GetSampleRateModifier() {};
+		virtual float GetSampleRateModifier() { return 0.0f; };
 
 	    virtual void ClipVolume(Core::Math::Vec3f minValues, Core::Math::Vec3f maxValues) {};
 
@@ -111,13 +113,13 @@ namespace Tuvok{
 
 	    virtual void Set1DTransferFunction(std::vector<Core::Math::Vec4f> data) {};
 
-	    virtual Core::Math::Vec4f readVolumePosition(Core::Math::Vec2ui v) {};
+		virtual Core::Math::Vec4f readVolumePosition(Core::Math::Vec2ui v) { return Core::Math::Vec4f(); };
 
 	    virtual void setClearViewEnabled(bool b) {};
 
 	    virtual void setClearViewRadius(float f) {};
 
-	    virtual State getRenderState() {};
+		virtual State getRenderState() { return State(); };
 
 	    virtual void setRenderState(State renderState) {};
 

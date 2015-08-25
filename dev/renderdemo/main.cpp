@@ -224,21 +224,26 @@ int main(int argc, char* argv[]){
     selectDataSetAndTransferFunction(dataset,transferfunction);
     //NEW STUFF TESTING MAKE NICE LATER!!
 
-	//CONTEXT CREATION
+	/*//CONTEXT CREATION
 	std::shared_ptr<Tuvok::Renderer::Context::Context> context = Tuvok::Renderer::Context::ContextManager::getInstance().createContext(Visibility::Windowed, Vec2ui(1280, 720));
 
 	GLFWwindow* window = (GLFWwindow*)context->getContextItem();
 
 	//RENDER INIT!!
-	std::shared_ptr<IRenderer> renderer = RenderManager::getInstance().createRenderer(context, dataset, transferfunction);
+	std::shared_ptr<IRenderer> renderer = RenderManager::getInstance().createRenderer(context, dataset, transferfunction);*/
+
+
+	//ONE LINE CREATION ----------------------------------------------
+	std::shared_ptr<IRenderer> renderer = RenderManager::getInstance().createRenderer(Visibility::Windowed,Vec2ui(640,480), dataset, transferfunction);
+
+
 
 	//sleep and wait for renderer to initiate
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	renderer->SetCameraZoom(0.5f);
 	while (true){
 		renderer->RotateCamera(Vec3f(0, 3.1f, 0));
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-		glfwHanldeKeyboard(window, renderer);
+		//glfwHanldeKeyboard(window, renderer);
 	}
     renderer->stopRenderThread(); // <- never reached right now!
 }
