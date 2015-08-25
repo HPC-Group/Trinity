@@ -47,6 +47,17 @@ using namespace mocca;
 using namespace mocca::net;
 
 
+void doMessageLoop(AbstractConnection *con){
+    std::string message = "";
+    while(message != "EXIT"){
+        std::cin >> message;
+        BytePacket msg;
+        msg << message;
+        std::cout << "will send : "<< message<< std::endl;
+        con->send(msg.byteArray());
+    }
+}
+
 
 int main(int argc, char* argv[]){
 
@@ -92,9 +103,22 @@ int main(int argc, char* argv[]){
     clientConnection->send(packet.byteArray()); // send data to server
     */
 
+
+    BytePacket msg;
+    msg << "INIT";
+    clientConnection->send(msg.byteArray());
+
+    std::thread t(doMessageLoop,clientConnection.get());
+
+
+    std::string message;
 	while (true){
         // do whatever you want ?
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // to reduce the incoming commands !
+        //std::cin >> message;
+
+
+
+        //std::this_thread::sleep_for(std::chrono::milliseconds(10)); // to reduce the incoming commands !
         BytePacket data = clientConnection->receive(ReceiveMode::NON_BLOCKING);
              if(data.byteArray().size() > 0){
 
@@ -107,3 +131,5 @@ int main(int argc, char* argv[]){
         }
 	}
 }
+
+

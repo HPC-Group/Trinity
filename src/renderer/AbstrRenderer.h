@@ -117,7 +117,12 @@ namespace Tuvok{
 
         void handleCommands();
 
-        bool				m_bCompleteRedraw;
+        bool				    m_bCompleteRedraw;
+        int                     m_iFinishCounter;
+        uint64_t                m_iFrameCounter;
+
+        FrameData               m_storedFrame;
+
 
       //--------------- private
       private:

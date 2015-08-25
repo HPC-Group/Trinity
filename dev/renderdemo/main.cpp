@@ -234,8 +234,9 @@ int main(int argc, char* argv[]){
 
 	//sleep and wait for renderer to initiate
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	renderer->SetCameraZoom(0.5f);
 	while (true){
-		renderer->RotateCamera(Vec3f(0, 0.2f, 0));
+		renderer->RotateCamera(Vec3f(0, 3.1f, 0));
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		glfwHanldeKeyboard(window, renderer);
 	}
