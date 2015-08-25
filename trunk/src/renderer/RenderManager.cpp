@@ -4,6 +4,7 @@
 #include <IO/Service/IOLocal.h>
 #include <IO/TransferFunction1D.h>
 #include <renderer/OpenGL/GLGridLeaper.h>
+#include <renderer/NetworkRenderer/NetRendererClient.h>
 
 
 using namespace Tuvok::Renderer::OpenGL;
@@ -43,9 +44,9 @@ uint64_t useableVRAM(){
 
 
 std::shared_ptr<IRenderer> RenderManager::createRenderer(   Visibility visibility,
-                                                                Core::Math::Vec2ui resolution,
-                                                                std::string dataset,
-                                                                std::string tf){
+                                                            Core::Math::Vec2ui resolution,
+                                                            std::string dataset,
+                                                            std::string tf){
 
 LINFOC("RenderServer", "initialize renderer");
     std::shared_ptr<Context::Context> context = Context::ContextManager::getInstance().createContext(visibility, resolution);
@@ -54,9 +55,9 @@ LINFOC("RenderServer", "initialize renderer");
 }
 
 
-std::shared_ptr<IRenderer> RenderManager::createRenderer(  std::shared_ptr<Tuvok::Renderer::Context::Context> contextPtr,
-                                                        std::string dataset,
-                                                        std::string tf){
+std::shared_ptr<IRenderer> RenderManager::createRenderer(   std::shared_ptr<Tuvok::Renderer::Context::Context> contextPtr,
+                                                            std::string dataset,
+                                                            std::string tf){
 
     std::shared_ptr<IOLocal> ioLocal = std::make_shared<IOLocal>("LOCALIO");
 	uint16_t handleLocal = ioLocal->openFile(dataset);
@@ -84,5 +85,17 @@ std::shared_ptr<IRenderer> RenderManager::createRenderer(  std::shared_ptr<Tuvok
     }
 
     renderer->startRenderThread();
+    return renderer;
+}
+
+
+ std::shared_ptr<IRenderer> RenderManager::createRenderer(      std::string ip,
+                                                                int port,
+                                                                Visibility visibility,
+                                                                Core::Math::Vec2ui resolution,
+                                                                std::string dataset,
+                                                                std::string tf){
+
+    std::shared_ptr<NetRendererClient> renderer = std::make_shared<NetRendererClient>(ip,port,visibility,resolution,dataset,tf);
     return renderer;
 }

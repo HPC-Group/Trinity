@@ -164,7 +164,7 @@ bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
 	LDEBUGC("GLGRIDLEAPER", "Load frontface shaders");
 	if (!LoadFrontFaceShader()) return false;
 	LDEBUGC("GLGRIDLEAPER", "Load traversel shaders");
-	if (!LoadTraversalShader(MissingBrickStrategy::OnlyNeeded)) return false;
+	if (!LoadTraversalShader(MissingBrickStrategy::SkipTwoLevels)) return false;
 
 	//relocate this
 	SetViewParameters(45.0f, 0.1f, 100.0f);
@@ -239,51 +239,57 @@ void GLGridLeaper::SwitchPagingStrategy(MissingBrickStrategy brickStrategy){
 	LoadTraversalShader(brickStrategy);
 }
 
-
-
 //! \brief main paint function for the renderpath
+int prevHS =1.0f;
 bool GLGridLeaper::Paint(){
-    //! check for new framestart
-	RecreateAfterResize();
-	if (m_bCompleteRedraw){
-        if(m_pRenderState->m_bClearViewEnabled){
-            swapBuffers(true);
+    if(m_iFinishCounter > 0){
+
+        //! check for new framestart
+        RecreateAfterResize();
+        if (m_bCompleteRedraw){
+            if(m_pRenderState->m_bClearViewEnabled){
+                swapBuffers(true);
+                FillRayEntryBuffer();
+            }
+            swapBuffers(false);
             FillRayEntryBuffer();
-		}
-		swapBuffers(false);
-		FillRayEntryBuffer();
-		m_bCompleteRedraw = false;
-	}
+            m_bCompleteRedraw = false;
+        }
 
-	//! raycast
-	m_pglHashTable->ClearData();
-	if (!m_pRenderState->m_bClearViewEnabled)
-        Raycast(m_pRenderState->m_eRenderMode);
-    else
-        Raycast(RM_ISOSURFACE);
-	swapToNextBuffer(false);
+        //! raycast
+        m_pglHashTable->ClearData();
+        if (!m_pRenderState->m_bClearViewEnabled)
+            Raycast(m_pRenderState->m_eRenderMode);
+        else
+            Raycast(RM_ISOSURFACE);
+        swapToNextBuffer(false);
 
-	//! update volumepool
-	std::vector<Vec4ui> hash = m_pglHashTable->GetData();
-	if (hash.size() > 0){
-		m_pVolumePool->UploadBricks(hash, true);
-	}
+        //! update volumepool
+        std::vector<Vec4ui> hash = m_pglHashTable->GetData();
+        if (hash.size() > 0){
+            m_pVolumePool->UploadBricks(hash, true);
+            m_iFinishCounter++;
+        }
 
+        if(hash.size() == 0 && prevHS == 0){
+            m_iFinishCounter = 0;
+        }
+        prevHS = hash.size();
 
-	//clear view IFF m_bClearView == true
-	ClearView();
+        //clear view IFF m_bClearView == true
+        ClearView();
 
-	//! 5) final compose
-	FinalCompose();
+        //! 5) final compose
+        FinalCompose();
+    }
 
-
-    //! \todo remove, just for michael atm
+    /*//! \todo remove, just for michael atm
 	if (m_bCreateFrameBuffer){
 		readFB();
 		m_bCreateFrameBuffer = false;
 		m_nextFrame++;
 
-	}
+	}*/
 	return true;
 
 }
@@ -777,6 +783,7 @@ void GLGridLeaper::SelectShader(Tuvok::Renderer::ERenderMode rendermode){
 
 	if (temp != m_pCurrentShaderProgram){
 		m_bCompleteRedraw = true;
+		m_iFinishCounter = 1;
 	}
 }
 
@@ -961,6 +968,7 @@ void GLGridLeaper::FinalCompose(){
 	screenshot(3);*/
 
 	m_pTargetBinder->Unbind();
+	++m_iFrameCounter;
 }
 
 //! Helper Functions ------------------------------------------------
@@ -1039,6 +1047,7 @@ void GLGridLeaper::Set1DTransferFunctionptr(GLCore::GLTexture1DPtr texturePtr){
 void GLGridLeaper::ClipVolume(Core::Math::Vec3f minValues, Core::Math::Vec3f maxValues){
 	m_pVolumeBox->SetSlideLevels(minValues, maxValues);
 	m_bCompleteRedraw = true;
+	m_iFinishCounter = 1;
 }
 
 void GLGridLeaper::Set1DTransferFunction(std::vector<Core::Math::Vec4f> data){
@@ -1061,6 +1070,7 @@ void GLGridLeaper::Set1DTransferFunction(std::vector<Core::Math::Vec4f> data){
 	}
 
 	m_bCompleteRedraw = true;
+	m_iFinishCounter = 1;
 }
 
 
@@ -1228,8 +1238,12 @@ void GLGridLeaper::ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int
 }
 
 
-std::vector<uint8_t> GLGridLeaper::ReadFrameBuffer(){
-std::vector<uint8_t> data;
+FrameData GLGridLeaper::ReadFrameBuffer(){
+    if(m_iFrameCounter == m_storedFrame._frameID){
+        return m_storedFrame;
+    }
+    m_storedFrame._frameID = m_iFrameCounter;
+
     m_pContext->lockContext();
 
     m_pTargetBinder->Unbind();
@@ -1242,13 +1256,13 @@ std::vector<uint8_t> data;
 	m_height = viewport[3];
 	m_componentCount = 3;
 
-	data.resize(viewport[2] * viewport[3] * 3);
+	m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);
 	//glReadBuffer(GL_FRONT);
 	glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
-		GL_UNSIGNED_BYTE, &data[0]);
+		GL_UNSIGNED_BYTE, &(m_storedFrame._data)[0]);
 
     m_pContext->unlockContext();
-	return data;
+	return m_storedFrame;
 }
 
 void GLGridLeaper::readFB(){

@@ -2,6 +2,7 @@
 #define RENDERLABEL_H
 
 #include <renderer/RenderManager.h>
+#include <renderer/AbstrRenderer.h>
 
 #include <QMouseEvent>
 #include <QKeyEvent>

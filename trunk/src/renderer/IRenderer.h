@@ -17,6 +17,14 @@ namespace Tuvok{
 
   namespace Renderer{
 
+    struct FrameData{
+            FrameData(uint64_t frame, std::vector<uint8_t> data):_frameID(frame),_data(data){};
+            FrameData():_frameID(0),_data(){};
+
+            uint64_t                _frameID;
+            std::vector<uint8_t>    _data;
+    };
+
     class IRenderer{
     public:
         IRenderer(){};
@@ -38,7 +46,7 @@ namespace Tuvok{
 
         //read the last framebuffer
         virtual void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount) = 0; //LEGACY
-        virtual std::vector<uint8_t> ReadFrameBuffer() = 0;
+        virtual FrameData ReadFrameBuffer() = 0;
         // END BASIC INTERACTION METHODS
 
 

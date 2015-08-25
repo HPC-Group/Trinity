@@ -1,1 +1,9 @@
-add_subdirectory(RenderDemo)
+add_subdirectory(renderdemo)
+add_subdirectory(renderdemo_network)
+add_subdirectory(renderdemo_client)
+OPTION(BuildQT "Build QT Project" OFF)
+
+IF(BuildQT)
+	add_subdirectory(QtFrontend)
+	add_subdirectory(QtNetwork_client)
+ENDIF()

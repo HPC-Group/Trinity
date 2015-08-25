@@ -10,6 +10,8 @@ m_pRenderRegion(nullptr),
 m_pClipplane(nullptr),
 m_bCompleteRedraw(true),
 m_bFinishedInit(false),
+m_iFrameCounter(0),
+m_storedFrame(),
 m_pContext(context)
 {
   m_pRenderState = std::make_shared<State>();
@@ -63,6 +65,7 @@ void AbstrRenderer::SetViewParameters(float angle, float znear, float zfar){
 
 void AbstrRenderer::ScheduleCompleteRedraw() {
     m_bCompleteRedraw = true;
+    m_iFinishCounter = 1;
 }
 
 Core::Math::Mat4f& AbstrRenderer::GetProjectionMatrix(){
