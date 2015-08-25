@@ -16,7 +16,7 @@ client::client(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 
-    timer->start(10);
+    timer->start(5);
 }
 
 client::~client()

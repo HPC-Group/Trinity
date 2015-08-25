@@ -71,8 +71,13 @@ void NetRendererServer::handleMsg(std::string msg){
 
         if(_lastFrameID < frame._frameID){
             _lastFrameID = frame._frameID;
+
+            _compressedData.resize(640*480*3);
+            int compressedSize = LZ4_compress((char*)&(frame._data[0]),(char*) &(_compressedData[0]), frame._data.size());
+
             ByteArray p = ByteArray::create();
-            p.append(&(frame._data[0]),frame._data.size());
+            //p.append(&(frame._data[0]),frame._data.size());
+            p.append(&(_compressedData[0]),compressedSize);
             serverConnection->send(p);
         }
         return;

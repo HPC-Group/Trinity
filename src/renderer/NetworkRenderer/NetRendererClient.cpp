@@ -48,13 +48,12 @@ FrameData NetRendererClient::ReadFrameBuffer(){
 
     //if there is a new frame we wait till we get it!
     if(_currentFrame._frameID < frameID){
-        std::cout << "Waiting for new frame with id "<< frameID << std::endl;
+        //std::cout << "Waiting for new frame with id "<< frameID << std::endl;
 
         BytePacket data = connection->receive();
-        if(data.byteArray().size() == _framebuffersize){
-            _currentFrame._data.resize(_framebuffersize);
-            memcpy(&(_currentFrame._data)[0], (char*)data.byteArray().data(), 640*480*3);
-        }
+
+        _currentFrame._data.resize(_framebuffersize);
+        int uncompressedSize =  LZ4_decompress_safe ((char*)data.byteArray().data(), (char*)&(_currentFrame._data)[0], data.byteArray().size(), _framebuffersize);
 
         _currentFrame._frameID = frameID;
     }
