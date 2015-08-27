@@ -20,9 +20,15 @@ void RenderLabel::slotClicked()
 	
 }
 
-void RenderLabel::setRenderProtocol(std::shared_ptr<AbstrRenderer> renderer)
+void RenderLabel::setRenderProtocol(std::shared_ptr<IRenderer> renderer)
 {
 	renderProtocol = renderer;
+}
+
+void RenderLabel::setFrameSize(int width, int height)
+{
+	m_frameSize.x = width;
+	m_frameSize.y = height;
 }
 
 void RenderLabel::rotateCamera(Vec3f rot)
@@ -63,7 +69,7 @@ void RenderLabel::mouseMoveEvent(QMouseEvent * event)
 		Vec2d dir = m_LastMouseClick - pix;
 		m_LastMouseClick = pix;
 
-		renderProtocol->MoveCamera(Vec3f(dir.x / 1280.0f, dir.y / -720.0f, 0));
+		renderProtocol->MoveCamera(Vec3f(dir.x / (float)m_frameSize.x, dir.y / (float)m_frameSize.y, 0));
 	}
 	else
 	{

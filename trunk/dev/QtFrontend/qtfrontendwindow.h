@@ -9,33 +9,15 @@
 #include "logging/htmllog.h"
 #include "logging/textlog.h"
 
-#include <renderer/RenderManager.h>
-
-#include <IO/Service/IOLocal.h>
-#include <IO/TransferFunction1D.h>
-#include <renderer/OpenGL/GLGridLeaper.h>
-
-#include <renderer/RenderEnums.h>
-
-#include <core/Math/Vectors.h>
-
 #include <QMainWindow>
 #include <QDir>
 #include <QFileDialog>
 #include <QStringListModel>
 #include <qtimer.h>
+#include <qsurfaceformat.h>
 
-#include <chrono>
-#include <thread>
-#include <iostream>
-#include <fstream>
+#include "RendererOut.h"
 
-#include "renderlabel.h"
-
-using namespace Tuvok::Renderer;
-using namespace Tuvok::Renderer::OpenGL;
-using namespace Tuvok;
-using namespace Core::Math;
 using namespace ghoul::logging;
 
 namespace Ui {
@@ -87,8 +69,8 @@ private:
 	QString m_selectedDataset;
 	QString m_selectedTransferFunction;
 
-	RenderLabel *m_renderLabel;
-	std::shared_ptr<AbstrRenderer> m_renderer;
+	//RenderLabel *m_renderLabel;
+	RendererOut *m_renderOut;
 };
 
 #endif // QTFRONTENDWINDOW_H

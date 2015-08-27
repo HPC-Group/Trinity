@@ -24,7 +24,8 @@ public:
 	explicit RenderLabel(const QString& text = "", QWidget * parent = 0);
     ~RenderLabel();
 
-	void setRenderProtocol(std::shared_ptr<AbstrRenderer> renderer);
+	void setRenderProtocol(std::shared_ptr<IRenderer> renderer);
+	void setFrameSize(int width, int height);
 	void rotateCamera(Vec3f rot);
 
 signals:
@@ -42,7 +43,9 @@ protected:
 private:
 	Vec2d m_LastMouseClick;
 
-	std::shared_ptr<AbstrRenderer> renderProtocol;
+	std::shared_ptr<IRenderer> renderProtocol;
+
+	Vec2d m_frameSize;
 };
 
 #endif // RENDERLABEL_H
