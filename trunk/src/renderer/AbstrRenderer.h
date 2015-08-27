@@ -51,7 +51,7 @@ namespace Tuvok{
 
         virtual void SetIsoValue(float fIsoValue);
         virtual void SetIsoValueRelative(float fIsovalue);
-        virtual float GetIsoValue() const;
+        virtual float GetIsoValue();
         virtual void SetIsosurfaceColor(const Core::Math::Vec3f& vColor);
         virtual Core::Math::Vec3f GetIsosurfaceColor() const;
 		void SetColorDataset(bool isColor);

@@ -3,6 +3,8 @@
 
 #include <renderer/RenderManager.h> //RenderManager!
 
+#include "NetCommands.h"
+
 #include <base/Error.h>
 #include <base/BytePacket.h>
 #include <net/TCPNetworkAddress.h>
@@ -35,12 +37,12 @@ namespace Tuvok{
         void handleMsg(std::string msg);
 
         private:
-        RenderPtr                           renderer;
-        uint64_t                            _lastFrameID;
-        std::vector<uint8_t>                     _compressedData;
-        std::unique_ptr<IConnectionListener> connectionListener;
-        std::unique_ptr<AbstractConnection> serverConnection;
-        int connectionCounter;
+        RenderPtr                                   renderer;
+        uint64_t                                    _lastFrameID;
+        std::vector<uint8_t>                        _compressedData;
+        std::unique_ptr<IConnectionListener>        connectionListener;
+        std::unique_ptr<AbstractConnection>         serverConnection;
+        int                                         connectionCounter;
 
     };
 

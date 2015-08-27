@@ -53,7 +53,7 @@ namespace Tuvok{
 		//ISO FUNCTIONS
 		virtual void SetIsoValue(float fIsoValue) = 0;
 		virtual void SetIsoValueRelative(float fIsovalue) = 0;
-		virtual float GetIsoValue() const = 0;
+		virtual float GetIsoValue() = 0;
 		virtual void SetIsosurfaceColor(const Core::Math::Vec3f& vColor) = 0;
 		virtual Core::Math::Vec3f GetIsosurfaceColor() const = 0;
 		virtual void SetColorDataset(bool isColor) = 0;

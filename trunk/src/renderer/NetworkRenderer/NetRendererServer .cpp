@@ -1,5 +1,7 @@
 #include <renderer/NetworkRenderer/NetRendererServer.h>
 
+#define str std::to_string
+
 using namespace Core::Math;
 
 #include <string>
@@ -23,13 +25,18 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 
 
-NetRendererServer::NetRendererServer():connectionCounter(0),_lastFrameID(0){
+NetRendererServer::NetRendererServer():
+connectionCounter(0),
+_lastFrameID(0)
+{
 }
-NetRendererServer::~NetRendererServer(){}
+NetRendererServer::~NetRendererServer()
+{
+}
 
 void NetRendererServer::openServer(int port){
     TCPNetworkService netService; // instantiate the network service
-    connectionListener = netService.bind(std::to_string(port)); // listen for connections
+    connectionListener = netService.bind(str(port)); // listen for connections
 }
 
 void NetRendererServer::acceptConnection(){
@@ -42,24 +49,28 @@ void NetRendererServer::acceptConnection(){
 
 void NetRendererServer::waitForMsg(){
     if(serverConnection != nullptr){
+        //only the msg thread will sleep and wait
+        //renderer runs in seperate threads!
         BytePacket data = serverConnection->receive(ReceiveMode::NON_BLOCKING);
         if(data.byteArray().size() > 0){
-            std::string message = data.get<std::string>();
-            //std::cout << message << std::endl;
-            handleMsg(message);
+            //give msg to our handle method
+            handleMsg(data.get<std::string>());
         }
     }
 }
 
 void NetRendererServer::handleMsg(std::string msg){
+
+    //split the msg into a vector!
     std::vector<std::string> args = split(msg,':');
 
     if(args.size() <= 0){
+        //something wrong!
         return;
     }
 
     //requested framebuffer?
-    if(args[0] == "READFB"){
+    if(args[0] == Commands::FRAME & args.size() == 3){ //request frame needs 1 parameter + 2 overhead
         if(renderer == nullptr) return;
 
         FrameData frame  = renderer->ReadFrameBuffer();
@@ -68,29 +79,32 @@ void NetRendererServer::handleMsg(std::string msg){
         framePacket.append(&(frame._frameID),sizeof(frame._frameID));
         serverConnection->send(framePacket);
 
-
+        //if last frame ov client is different then current highest frame
+        //send the frame!
         if(_lastFrameID < frame._frameID){
             _lastFrameID = frame._frameID;
 
             _compressedData.resize(640*480*3);
-            int compressedSize = LZ4_compress((char*)&(frame._data[0]),(char*) &(_compressedData[0]), frame._data.size());
+            int compressedSize = LZ4_compress((char*)&(frame._data[0]),(char*) &(_compressedData[0]), frame._data.size()); // maybe move compress to renderer less work for serverthread(?)
 
             ByteArray p;
-            //p.append(&(frame._data[0]),frame._data.size());
             p.append(&(_compressedData[0]),compressedSize);
             serverConnection->send(p);
         }
         return;
 
-    //init renderer command?
-    }else if(args[0] == "ROTATE" & args.size() == 4){
-        renderer->RotateCamera(Vec3f( std::atof(args[1].c_str()) , std::atof(args[2].c_str()) , std::atof(args[3].c_str()) ));
+    //rotate renderer
+    }else if(args[0] == Commands::ROT & args.size() == 5){
+        if(renderer == nullptr) return;
 
-    }else if(args[0] == "INIT"){
-        if(args.size() != 6){
-            std::cout << "not enough args to init"<<std::endl;
-            return;
-        }
+        renderer->RotateCamera(Vec3f( std::atof(args[2].c_str()) , std::atof(args[3].c_str()) , std::atof(args[4].c_str()) ));
+
+    }else if(args[0] == Commands::MOV & args.size() == 5){
+        if(renderer == nullptr) return;
+
+        renderer->MoveCamera(Vec3f( std::atof(args[2].c_str()) , std::atof(args[3].c_str()) , std::atof(args[4].c_str()) ));
+
+    }else if(args[0] == Commands::INIT & args.size() == 6){
 
         //check for params
         Visibility v = (Visibility)std::atoi(args[1].c_str());

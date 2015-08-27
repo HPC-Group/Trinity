@@ -111,7 +111,7 @@ void AbstrRenderer::SetIsoValueRelative(float fIsoValue){
   m_pRenderState->m_fIsoValue = fIsoValue;
   ScheduleCompleteRedraw();
 }
-float AbstrRenderer::GetIsoValue() const{
+float AbstrRenderer::GetIsoValue(){
   return m_pRenderState->m_fIsoValue;
 }
 void AbstrRenderer::SetIsosurfaceColor(const Core::Math::Vec3f& vColor){
