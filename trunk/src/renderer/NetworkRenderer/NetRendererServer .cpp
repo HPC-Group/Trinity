@@ -64,7 +64,7 @@ void NetRendererServer::handleMsg(std::string msg){
 
         FrameData frame  = renderer->ReadFrameBuffer();
         //send the frameID;
-        ByteArray framePacket = ByteArray::create();
+        ByteArray framePacket;
         framePacket.append(&(frame._frameID),sizeof(frame._frameID));
         serverConnection->send(framePacket);
 
@@ -75,7 +75,7 @@ void NetRendererServer::handleMsg(std::string msg){
             _compressedData.resize(640*480*3);
             int compressedSize = LZ4_compress((char*)&(frame._data[0]),(char*) &(_compressedData[0]), frame._data.size());
 
-            ByteArray p = ByteArray::create();
+            ByteArray p;
             //p.append(&(frame._data[0]),frame._data.size());
             p.append(&(_compressedData[0]),compressedSize);
             serverConnection->send(p);
