@@ -27,7 +27,10 @@ client::~client()
 void client::on_clearview_clicked()
 {
     IRenderManager& manager = RenderManager::getInstance();
-    renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
+    //renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
+    renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"walnut.uvf","none");
+
+    ui->openGLWidget->setRenderer(renderer);
 
     //TCPNetworkService netService; // instantiate the network service
     //clientConnection = netService.connect("localhost:1234");
@@ -36,7 +39,7 @@ void client::on_clearview_clicked()
 void client::on_slicing_clicked()
 {
 
-    renderer->RotateCamera(Vec3f(0,1,0));
+    //renderer->RotateCamera(Vec3f(0,1,0));
    //BytePacket msg;
     //msg << "INIT";
     //clientConnection->send(msg.byteArray());
@@ -52,7 +55,7 @@ void client::on_rotation_clicked()
    //BytePacket data = clientConnection->receive(ReceiveMode::NON_BLOCKING);
    //if(data.byteArray().size() > 0){
    //     ui->openGLWidget->paintFrameBuffer((void*) data.byteArray().data());
-  //}
+   //}
 }
 
 void client::requestInUpdate(){

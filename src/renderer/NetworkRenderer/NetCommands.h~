@@ -7,8 +7,6 @@
 
 #include <renderer/IRenderer.h>
 
-#include "NetCommands.h"
-
 
 //NETWORKING
 #include <base/Error.h>
@@ -48,21 +46,21 @@ namespace Tuvok{
 
         //Camera Controls
         void SetFirstPersonMode(bool mode){};
-        void RotateCamera(Core::Math::Vec3f rotation);                                              //
-        void MoveCamera(Core::Math::Vec3f direction);                                               //
+        void RotateCamera(Core::Math::Vec3f rotation);
+        void MoveCamera(Core::Math::Vec3f direction);
         void SetCamera(Camera c){};
-        void SetCameraZoom(float f);                                                                //
+        void SetCameraZoom(float f);
 
         //read the last framebuffer
         void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){}; //LEGACY
-        FrameData ReadFrameBuffer(); //
+        FrameData ReadFrameBuffer();
         // END BASIC INTERACTION METHODS
 
 
 		//ISO FUNCTIONS
-		void SetIsoValue(float fIsoValue);                                                          //
+		virtual void SetIsoValue(float fIsoValue){};
 		virtual void SetIsoValueRelative(float fIsovalue){};
-		float GetIsoValue();                                                                        //
+		virtual float GetIsoValue() const { return 0.0f; };
 		virtual void SetIsosurfaceColor(const Core::Math::Vec3f& vColor) {};
 		virtual Core::Math::Vec3f GetIsosurfaceColor() const { return Core::Math::Vec3f(); };
 		virtual void SetColorDataset(bool isColor) {};
