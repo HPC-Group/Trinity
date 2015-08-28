@@ -119,7 +119,15 @@ int main(int argc, char* argv[]){
 
 
         //std::this_thread::sleep_for(std::chrono::milliseconds(10)); // to reduce the incoming commands !
-        BytePacket data = clientConnection->receive(ReceiveMode::NON_BLOCKING);
+        BytePacket data = clientConnection->receive();
+        // dmc: I changed the interface of AbstractConnection::receive. I
+        // removed the enum ReceiveMode and replaced it with a timeout. This
+        // call was NON_BLOCKING before, corresponding to a timeout of 0.
+        // However, a timeout of 0 leads to busy-waiting, i.e. unneccessarily
+        // high CPU-load. Since action is only performed when data is received,
+        // it should be ok to go with the default timeout (or a higher timeout,
+        // in fact). If it isn't, setting the timeout to 0 should restore the
+        // old behavior.
              if(data.byteArray().size() > 0){
 
                 //LZ4_decompress_safe ((char*)data.byteArray().data(), (char*) &pixels[0], data.byteArray().size(), 1024*768*3);

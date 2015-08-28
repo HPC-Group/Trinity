@@ -51,8 +51,16 @@ void NetRendererServer::waitForMsg(){
     if(serverConnection != nullptr){
         //only the msg thread will sleep and wait
         //renderer runs in seperate threads!
-        BytePacket data = serverConnection->receive(ReceiveMode::NON_BLOCKING);
-        if(data.byteArray().size() > 0){
+        BytePacket data = serverConnection->receive();
+        // dmc: I changed the interface of AbstractConnection::receive. I
+        // removed the enum ReceiveMode and replaced it with a timeout. This
+        // call was NON_BLOCKING before, corresponding to a timeout of 0.
+        // However, a timeout of 0 leads to busy-waiting, i.e. unneccessarily
+        // high CPU-load. Since action is only performed when data is received,
+        // it should be ok to go with the default timeout (or a higher timeout,
+        // in fact). If it isn't, setting the timeout to 0 should restore the
+        // old behavior.
+        if(!data.byteArray().isEmpty()){
             //give msg to our handle method
             handleMsg(data.get<std::string>());
         }
