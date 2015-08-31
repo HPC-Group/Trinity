@@ -60,9 +60,11 @@ void NetRendererServer::waitForMsg(){
         // it should be ok to go with the default timeout (or a higher timeout,
         // in fact). If it isn't, setting the timeout to 0 should restore the
         // old behavior.
-        if(!data.byteArray().isEmpty()){
+        if(data.byteArray().size() > 0){
+            //std::string s(data.byteArray().data(),0,data.byteArray().size() );    // Android, until fixed the recieve
+            std::string s = data.get<std::string>();                                // default mocca recieve
             //give msg to our handle method
-            handleMsg(data.get<std::string>());
+            handleMsg(s);
         }
     }
 }
