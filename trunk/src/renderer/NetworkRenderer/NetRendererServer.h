@@ -42,7 +42,6 @@ namespace Tuvok{
         std::vector<uint8_t>                        _compressedData;
         std::unique_ptr<IConnectionListener>        connectionListener;
         std::unique_ptr<AbstractConnection>         serverConnection;
-        int                                         connectionCounter;
 
     };
 
