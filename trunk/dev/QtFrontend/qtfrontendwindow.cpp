@@ -60,7 +60,8 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 	connect(ui->listViewDatasets, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(DatasetSelectedSlot(QModelIndex)));
     connect(ui->listViewTransferFunction, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(TransferFunctionSelectedSlot(QModelIndex)));
 
-	//m_renderOut->resize(m_frameWidth, m_frameHeight);
+	m_renderOut->setMinimumSize(m_frameWidth, m_frameHeight);
+	m_renderOut->resize(m_frameWidth, m_frameHeight);
 
 	m_renderOut->initRenderServer("walnut.uvf", "none");
 }
