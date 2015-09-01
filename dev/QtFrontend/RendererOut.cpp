@@ -16,7 +16,7 @@ RendererOut::~RendererOut()
 void RendererOut::initializeGL()
 {
 	initializeOpenGLFunctions();
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	m_shaderProgram = new QOpenGLShaderProgram(this);
 
@@ -46,38 +46,37 @@ void RendererOut::resizeGL(int w, int h)
 
 void RendererOut::paintGL()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-
 	if (m_renderer != NULL)
 	{
 		FrameData frame = m_renderer->ReadFrameBuffer();
 
 		if (frame._data.size() > 0)
 		{
-			//std::cout << "render" << std::endl;
+			glBindTexture(GL_TEXTURE_2D, m_frameTexture2D);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_frameSize.x(), m_frameSize.y(), GL_RGB, GL_UNSIGNED_BYTE, &frame._data[0]);
 
 			glDisable(GL_DEPTH_TEST);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, m_frameSize.x(), m_frameSize.y());
 
 			m_shaderProgram->bind();
 
-			//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-			GLuint frameTexLocation = m_shaderProgram->uniformLocation("frameTexture");
+			/*GLuint frameTexLocation = m_shaderProgram->uniformLocation("frameTexture");
 			if (frameTexLocation >= 0)
 			{
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, m_frameTexture2D);
 				glUniform1i(frameTexLocation, 0);
-			}
+			}*/
 
 			glBindVertexArray(m_frameVAO);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
+			glBindVertexArray(0);
 			m_shaderProgram->release();
 		}
 	}
@@ -90,15 +89,30 @@ void RendererOut::initRenderServer(std::string dataset, std::string tf)
 
 void RendererOut::createTexture2D()
 {
+	/*int size = (int)(m_frameSize.x() * m_frameSize.y()) * 3;
+
+	std::cout << m_frameSize.x() << " " << m_frameSize.y() << std::endl;
+
+	GLubyte *buffer = new GLubyte[size];
+
+	for (int i = 0; i < size; i+= 3)
+	{
+		buffer[i] = 211;
+		buffer[i + 1] = 0;
+		buffer[i + 2] = 0;
+	}*/
+
 	glGenTextures(1, &m_frameTexture2D);
 	glBindTexture(GL_TEXTURE_2D, m_frameTexture2D);
 
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_frameSize.x(), m_frameSize.y(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, (int)m_frameSize.x(), (int)m_frameSize.y(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	if (glGetError() != GL_NO_ERROR)
+		std::cout << "2D texture Error: " << std::endl;
 }
 
 void RendererOut::createFrameRenderTarget()
@@ -123,6 +137,9 @@ void RendererOut::createFrameRenderTarget()
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
+
+	if (glGetError() != GL_NO_ERROR)
+		std::cout << "target Error: " << std::endl;
 
 	glBindVertexArray(0);
 }
