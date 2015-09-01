@@ -35,7 +35,7 @@
 #include <lz4/lz4.h>
 #include <lz4/lz4hc.h>
 
-#include <renderer/NetworkRenderer/NetRendererServer.h>>
+#include <renderer/NetworkRenderer/NetRendererServer.h>
 
 //some usings
 using namespace Tuvok::Renderer;
@@ -65,8 +65,8 @@ int main(int argc, char* argv[]){
 	Tuvok::Renderer::NetRendererServer server;
 
 	server.openServer(1234);
-	while(true){
-        server.acceptConnection();
+    server.acceptConnection();
+    while(true){
         server.waitForMsg();
 	}
 }

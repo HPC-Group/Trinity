@@ -26,7 +26,6 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 
 NetRendererServer::NetRendererServer():
-connectionCounter(0),
 _lastFrameID(0)
 {
 }
@@ -40,11 +39,11 @@ void NetRendererServer::openServer(int port){
 }
 
 void NetRendererServer::acceptConnection(){
-    if(connectionListener->numConnections() > 0){
-           serverConnection = connectionListener->getConnection(); // accept the next pending connection
-           std::cout << "new connection!"<< std::endl;
-           connectionCounter = connectionListener->numConnections();
+    while (serverConnection == nullptr) {
+        // accept the next pending connection, returns nullptr if there is no pending connection
+        serverConnection = connectionListener->getConnection();
     }
+    std::cout << "new connection!" << std::endl;
 }
 
 void NetRendererServer::waitForMsg(){
