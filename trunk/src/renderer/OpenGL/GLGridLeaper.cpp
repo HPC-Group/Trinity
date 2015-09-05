@@ -2,8 +2,6 @@
 
 #include "GLGridLeaper.h"
 
-
-
 #include "GLCore/GLVolumeBox.h"
 #include "GLCore/GLRenderPlane.h"
 #include "GLCore/GLBoundingBox.h"
@@ -30,6 +28,8 @@
 #include <fstream>
 #include <thread>
 
+#include <lz4/lz4.h>
+#include <lz4/lz4hc.h>
 
 #include <core/FileFinder.h>
 
@@ -282,7 +282,7 @@ bool GLGridLeaper::Paint(){
         //! 5) final compose
         FinalCompose();
 
-        //read framebuffer
+        //read framebuffer -> move to a private function! \todo!!
         m_storedFrame._frameID = m_iFrameCounter;
 
         m_pTargetBinder->Unbind();
@@ -295,21 +295,19 @@ bool GLGridLeaper::Paint(){
         m_height = viewport[3];
         m_componentCount = 3;
 
-        m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);
-        //glReadBuffer(GL_FRONT);
+        m_pixels.resize(viewport[2] * viewport[3] * 3);
         glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
-		GL_UNSIGNED_BYTE, &(m_storedFrame._data)[0]);
+		GL_UNSIGNED_BYTE, &(m_pixels)[0]);
+
+		//compress the data
+		m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);
+        int compressedSize = LZ4_compress(  (char*)&(m_pixels[0]),
+                                                (char*) &(m_storedFrame._data[0]),
+                                                m_pixels.size());
+        m_storedFrame._data.resize(compressedSize);
     }
 
-    /*//! \todo remove, just for michael atm
-	if (m_bCreateFrameBuffer){
-		readFB();
-		m_bCreateFrameBuffer = false;
-		m_nextFrame++;
-
-	}*/
 	return true;
-
 }
 
 
@@ -1242,17 +1240,6 @@ Core::Math::Vec3ui GLGridLeaper::CalculateVolumePoolSize(uint64_t GPUMemorySizeI
 }
 
 void GLGridLeaper::ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){
-	if (m_lastFrame < m_nextFrame){
-		pixels = m_pixels;
-		width = m_width;
-		height = m_height;
-		componentCount = m_componentCount;
-
-		m_lastFrame = m_nextFrame;
-	}
-	if (!m_bCreateFrameBuffer){
-		m_bCreateFrameBuffer = true;
-	}
 }
 
 
@@ -1261,20 +1248,6 @@ FrameData GLGridLeaper::ReadFrameBuffer(){
 }
 
 void GLGridLeaper::readFB(){
-	m_pTargetBinder->Unbind();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	m_width = viewport[2];
-	m_height = viewport[3];
-	m_componentCount = 3;
-
-	m_pixels.resize(viewport[2] * viewport[3] * 3);
-	//glReadBuffer(GL_FRONT);
-	glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
-		GL_UNSIGNED_BYTE, &m_pixels[0]);
 
 }
 

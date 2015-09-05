@@ -16,7 +16,7 @@ client::client(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 
-    timer->start(5);
+    timer->start(4);
 }
 
 client::~client()
@@ -27,8 +27,8 @@ client::~client()
 void client::on_clearview_clicked()
 {
     IRenderManager& manager = RenderManager::getInstance();
-    //renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
-    renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"walnut.uvf","none");
+    renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
+    //renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"walnut.uvf","none");
 
     ui->openGLWidget->setRenderer(renderer);
 

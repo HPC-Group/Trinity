@@ -33,7 +33,7 @@ namespace Tuvok{
 
     class Ticket{
     public:
-        Ticket(uint32_t ticketID, double TTLdelta = 10.0f):
+        Ticket(uint32_t ticketID, double TTLdelta = 60.0f):
             _ticketID(ticketID),
             _renderer(nullptr),
             _ticketTimer(),
@@ -90,6 +90,7 @@ namespace Tuvok{
         //RenderPtr                                                   renderer;
         std::vector<uint32_t>                                       _disconnectedConnections;
         std::vector<int32_t>                                        _endoflifeTickets;
+
         std::vector<uint8_t>                                        _compressedData;
         std::unique_ptr<IConnectionListener>                        connectionListener;
         std::shared_ptr<std::thread>                                _acceptionThread;
@@ -108,6 +109,14 @@ namespace Tuvok{
 
         //rendererFunctions
         private:
+        void OpenTicket(uint32_t& connectionID, std::vector<std::string>& args);
+        void InitRenderer(uint32_t& connectionID, int32_t& ticketID, std::vector<std::string>& args);
+
+        void ReadFramebuffer(RenderPtr renderer,uint32_t& connectionID, int32_t& ticketID, std::vector<std::string>& args);
+        void RotateCamera(RenderPtr renderer,uint32_t& connectionID, int32_t& ticketID, std::vector<std::string>& args);
+        void MoveCamera(RenderPtr renderer,uint32_t& connectionID, int32_t& ticketID, std::vector<std::string>& args);
+
+
     };
 
     };

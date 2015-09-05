@@ -22,7 +22,7 @@ namespace Tuvok{
             FrameData():_frameID(0),_data(){};
 
             uint64_t                _frameID;
-            std::vector<uint8_t>    _data;
+            std::vector<uint8_t>    _data; //lz4 compressed data
     };
 
     class IRenderer{

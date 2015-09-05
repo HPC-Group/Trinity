@@ -49,16 +49,19 @@ void NetRendererServer::acceptConnection(){
     if(con != nullptr){
         _connections.insert(std::pair<  uint32_t,
                                         std::unique_ptr<AbstractConnection>>
-                                        (_connectionCounterID,std::move(con)));
-        _connectionCounterID++;
+                                        (++_connectionCounterID,std::move(con)));
     }
 }
+
+
 
 void NetRendererServer::acceptionThreadMth(){
     while(true){
         acceptConnection();
     }
 }
+
+
 
 void NetRendererServer::waitForMsg(){
     _disconnectedConnections.clear();
@@ -67,22 +70,18 @@ void NetRendererServer::waitForMsg(){
         //renderer runs in seperate threads!
         try{
             BytePacket data = connection->second->receive();
-            // dmc: I changed the interface of AbstractConnection::receive. I
-            // removed the enum ReceiveMode and replaced it with a timeout. This
-            // call was NON_BLOCKING before, corresponding to a timeout of 0.
-            // However, a timeout of 0 leads to busy-waiting, i.e. unneccessarily
-            // high CPU-load. Since action is only performed when data is received,
-            // it should be ok to go with the default timeout (or a higher timeout,
-            // in fact). If it isn't, setting the timeout to 0 should restore the
-            // old behavior.
             if(data.byteArray().size() > 0){
                 // for first we see incoming bytarray as simple strings where each byte
                 // represents a single 8 bit char
                 std::string s(data.byteArray().data(),0,data.byteArray().size());
+
                 //give msg to our handle method
                 handleMsg(s,connection->first);
             }
-        }catch(ConnectionClosedError& err){
+        }catch(const ConnectionClosedError& err){
+            //add connection id to be closed afterwards
+            _disconnectedConnections.push_back(connection->first);
+        }catch(const NetworkError& err){
             //add connection id to be closed afterwards
             _disconnectedConnections.push_back(connection->first);
         }
@@ -91,39 +90,44 @@ void NetRendererServer::waitForMsg(){
     cleanOldTickets();
 }
 
+
+
 void NetRendererServer::cleanOldConnections(){
+    //delete connection on loss
     for(uint32_t i : _disconnectedConnections){
         _connections.erase(i);
     }
 }
 
+
+
 void NetRendererServer::cleanOldTickets(){
+    //clear old ticketlist
     _endoflifeTickets.clear();
+    //check tickets for eol
     for (auto ticket = _tickets.begin(); ticket!=_tickets.end(); ++ticket){
-        if(ticket->second->endOfLife()){
-            std::cout << "something is TTL" << std::endl;
+        if(ticket->second->endOfLife())
             _endoflifeTickets.push_back(ticket->first);
-        }
     }
+    // we do not want to fuck up our iterator so
+    // stopping renderer afterwards
     for(int32_t i : _endoflifeTickets){
-        std::cout << "should clean : "<< i << std::endl;
         if(_tickets.find(i)->second->getRenderer() != nullptr)
             _tickets.erase(i);
     }
 }
 
+
+
 void NetRendererServer::handleMsg(std::string msg, uint32_t connectionID){
+    int32_t ticketID = 0;
+    RenderPtr renderer = nullptr;
 
     //split the msg into a vector!
     std::vector<std::string> args = split(msg,':');
 
-    if(args.size() <= 0){
-        //something wrong!
-        return;
-    }
+    if(args.size() <= 0) return;
 
-    int32_t ticketID = 0;
-    RenderPtr renderer = nullptr;
     if(args.size() >= 3)
         ticketID = std::atoi(args[1].c_str());
 
@@ -134,74 +138,24 @@ void NetRendererServer::handleMsg(std::string msg, uint32_t connectionID){
 
     //requested framebuffer?
     if(args[0] == Commands::FRAME && args.size() == 4){ //request frame needs 1 parameter + 2 overhead
-        if(renderer == nullptr) return;
-
-        FrameData frame  = renderer->ReadFrameBuffer();
-
-        //send the frameID;
-        ByteArray framePacket;
-        framePacket.append(&(frame._frameID),sizeof(frame._frameID));
-        _connections.find(connectionID)->second->send(framePacket);
-
-        uint64_t clientFrame = std::atoi(args[3].c_str());
-
-        //does the client have an older frame?
-        if(clientFrame < frame._frameID){
-
-            _compressedData.resize(640*480*3);
-            int compressedSize = LZ4_compress(  (char*)&(frame._data[0]),
-                                                (char*) &(_compressedData[0]),
-                                                frame._data.size());
-            // maybe move compress to renderer less work for serverthread(?)
-
-            ByteArray p;
-            p.append(&(_compressedData[0]),compressedSize);
-            _connections.find(connectionID)->second->send(p);
-        }
+        ReadFramebuffer(renderer, connectionID, ticketID,args);
         return;
 
     //rotate renderer
     }else if(args[0] == Commands::ROT && args.size() == 6){
-        if(renderer == nullptr) return;
-
-        renderer->RotateCamera(Vec3f(   std::atof(args[3].c_str()) ,
-                                        std::atof(args[4].c_str()) ,
-                                        std::atof(args[5].c_str()) ));
+        RotateCamera(renderer, connectionID, ticketID,args);
+        return;
 
     }else if(args[0] == Commands::MOV && args.size() == 6){
-        if(renderer == nullptr) return;
-
-        renderer->MoveCamera(Vec3f(     std::atof(args[3].c_str()) ,
-                                        std::atof(args[4].c_str()) ,
-                                        std::atof(args[5].c_str()) ));
+        MoveCamera(renderer, connectionID, ticketID,args);
+        return;
 
     }else if(args[0] == Commands::INIT && args.size() == 8){
-    std::cout << "should do some init" << std::endl;
-        if(_tickets.find(ticketID) != _tickets.end()){
-
-            //check for params
-            Visibility v = (Visibility)std::atoi(args[3].c_str());
-            Vec2ui resolution = Vec2ui( std::atoi(args[4].c_str()) ,
-                                        std::atoi(args[5].c_str()) );
-            std::string ds = args[6];
-            std::string tf = args[7];
-
-            //init renderer
-            IRenderManager& manager = RenderManager::getInstance();
-            renderer = manager.createRenderer(v,resolution,ds,tf);
-
-            _tickets.find(ticketID)->second->setRenderer(renderer);
-        }
+        InitRenderer(connectionID, ticketID,args);
         return;
     }else if(args[0] == Commands::OPENTICKET && args.size() == 2){
-        ++_ticketCounter;
-
-        auto ticket = std::unique_ptr<Ticket>(new Ticket(_ticketCounter));
-        _tickets.insert(std::pair<int32_t,std::unique_ptr<Ticket>>(_ticketCounter,std::move(ticket)));
-
-        ByteArray ticketID;
-        ticketID.append(&(_ticketCounter),sizeof(_ticketCounter));
-        _connections.find(connectionID)->second->send(ticketID);
+        OpenTicket(connectionID,args);
+        return;
     }
 }
 
@@ -210,4 +164,68 @@ RenderPtr NetRendererServer::getRenderer(uint32_t ticketID) const {
 }
 void NetRendererServer::updateTTL(uint32_t ticketID){
     _tickets.find(ticketID)->second->updatePing();
+}
+
+void NetRendererServer::OpenTicket(uint32_t& connectionID, std::vector<std::string>& args){
+    auto ticket = std::unique_ptr<Ticket>(new Ticket(++_ticketCounter));
+    _tickets.insert(std::pair<int32_t,std::unique_ptr<Ticket>>(_ticketCounter,std::move(ticket)));
+
+    ByteArray ticketID;
+    ticketID.append(&(_ticketCounter),sizeof(_ticketCounter));
+    _connections.find(connectionID)->second->send(ticketID);
+}
+
+
+void NetRendererServer::InitRenderer(uint32_t& connectionID, int32_t& ticketID, std::vector<std::string>& args){
+    if(_tickets.find(ticketID) == _tickets.end()) return;
+
+    //check for params
+    Visibility v = (Visibility)std::atoi(args[3].c_str());
+    Vec2ui resolution = Vec2ui( std::atoi(args[4].c_str()) ,
+                                            std::atoi(args[5].c_str()) );
+    std::string ds = args[6];
+    std::string tf = args[7];
+
+    //init renderer
+    IRenderManager& manager = RenderManager::getInstance();
+    RenderPtr renderer = manager.createRenderer(v,resolution,ds,tf);
+
+    _tickets.find(ticketID)->second->setRenderer(renderer);
+}
+
+
+void NetRendererServer::ReadFramebuffer(RenderPtr renderer,uint32_t& connectionID, int32_t& ticketID, std::vector<std::string>& args){
+    if(renderer == nullptr) return;
+
+    uint64_t clientFrame = std::atoi(args[3].c_str());
+
+    FrameData frame  = renderer->ReadFrameBuffer();
+
+    //send the frameID;
+    ByteArray framePacket;
+    framePacket.append(&(frame._frameID),sizeof(frame._frameID));
+    _connections.find(connectionID)->second->send(framePacket);
+
+    //does the client have an older frame?
+    if(clientFrame < frame._frameID){
+        ByteArray p;
+        p.append(&(frame._data[0]),frame._data.size());
+        _connections.find(connectionID)->second->send(p);
+    }
+}
+
+
+void NetRendererServer::RotateCamera(RenderPtr renderer,uint32_t& connectionID, int32_t& ticketID, std::vector<std::string>& args){
+    if(renderer == nullptr) return;
+    renderer->RotateCamera(Vec3f(   std::atof(args[3].c_str()) ,
+                                     std::atof(args[4].c_str()) ,
+                                     std::atof(args[5].c_str()) ));
+}
+
+
+void NetRendererServer::MoveCamera(RenderPtr renderer,uint32_t& connectionID, int32_t& ticketID, std::vector<std::string>& args){
+    if(renderer == nullptr) return;
+    renderer->MoveCamera(Vec3f( std::atof(args[3].c_str()) ,
+                                std::atof(args[4].c_str()) ,
+                                std::atof(args[5].c_str()) ));
 }
