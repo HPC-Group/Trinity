@@ -15,6 +15,12 @@
 #include <lz4/lz4.h>
 #include <lz4/lz4hc.h>
 
+#include <map>
+
+#include <core/Time/Timer.h>
+
+#include <thread>
+
 using namespace mocca;
 using namespace mocca::net;
 using namespace Tuvok::Renderer;
@@ -24,25 +30,84 @@ typedef std::shared_ptr<IRenderer> RenderPtr;
 namespace Tuvok{
     namespace Renderer{
 
+
+    class Ticket{
+    public:
+        Ticket(uint32_t ticketID, double TTLdelta = 10.0f):
+            _ticketID(ticketID),
+            _renderer(nullptr),
+            _ticketTimer(),
+            _TTLdelta(TTLdelta)
+            {
+            _ticketTimer.start();
+            _lastPing = _ticketTimer.now();
+            };
+        ~Ticket(){
+            _renderer->stopRenderThread();
+            _renderer = nullptr;
+        };
+
+        RenderPtr getRenderer() const { return _renderer;}
+        void setRenderer(RenderPtr p) { _renderer = p;}
+        int32_t getTicketId() const { return _ticketID; }
+
+        void cleanup(){};
+
+        void updatePing(){_lastPing = _ticketTimer.now();}
+        const bool endOfLife() {
+            return (_ticketTimer.now()-_lastPing) > _TTLdelta ? true : false;
+            }
+
+    private:
+        uint32_t                                            _ticketID;
+        RenderPtr                                           _renderer;
+        Core::Time::Timer                                   _ticketTimer;
+        double                                              _lastPing;
+        double                                              _TTLdelta;
+
+        //specifics
+        std::vector<uint8_t>                                _compressedData;
+    };
+
+
     class NetRendererServer{
         public:
         NetRendererServer();
         ~NetRendererServer();
 
         void openServer(int port);
-        void acceptConnection();
         void waitForMsg();
 
+        void acceptConnection();
+        void acceptionThreadMth();
+
         protected:
-        void handleMsg(std::string msg);
+        void handleMsg(std::string msg, uint32_t connectionID);
+        void cleanOldConnections();
+        void cleanOldTickets();
 
         private:
-        RenderPtr                                   renderer;
-        uint64_t                                    _lastFrameID;
-        std::vector<uint8_t>                        _compressedData;
-        std::unique_ptr<IConnectionListener>        connectionListener;
-        std::unique_ptr<AbstractConnection>         serverConnection;
+        //RenderPtr                                                   renderer;
+        std::vector<uint32_t>                                       _disconnectedConnections;
+        std::vector<int32_t>                                        _endoflifeTickets;
+        std::vector<uint8_t>                                        _compressedData;
+        std::unique_ptr<IConnectionListener>                        connectionListener;
+        std::shared_ptr<std::thread>                                _acceptionThread;
 
+
+
+        private:
+        RenderPtr getRenderer(uint32_t ticketID) const;
+        void updateTTL(uint32_t ticketID);
+        int32_t                                                     _ticketCounter;
+        std::map<int32_t, std::unique_ptr<Ticket>>                  _tickets;
+
+        uint32_t                                                    _connectionCounterID;
+        std::map<uint32_t,std::unique_ptr<AbstractConnection>>      _connections;
+
+
+        //rendererFunctions
+        private:
     };
 
     };

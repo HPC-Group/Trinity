@@ -281,6 +281,24 @@ bool GLGridLeaper::Paint(){
 
         //! 5) final compose
         FinalCompose();
+
+        //read framebuffer
+        m_storedFrame._frameID = m_iFrameCounter;
+
+        m_pTargetBinder->Unbind();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+
+        m_width = viewport[2];
+        m_height = viewport[3];
+        m_componentCount = 3;
+
+        m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);
+        //glReadBuffer(GL_FRONT);
+        glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
+		GL_UNSIGNED_BYTE, &(m_storedFrame._data)[0]);
     }
 
     /*//! \todo remove, just for michael atm
@@ -1239,29 +1257,6 @@ void GLGridLeaper::ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int
 
 
 FrameData GLGridLeaper::ReadFrameBuffer(){
-    if(m_iFrameCounter == m_storedFrame._frameID){
-        return m_storedFrame;
-    }
-    m_storedFrame._frameID = m_iFrameCounter;
-
-    m_pContext->lockContext();
-
-    m_pTargetBinder->Unbind();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	m_width = viewport[2];
-	m_height = viewport[3];
-	m_componentCount = 3;
-
-	m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);
-	//glReadBuffer(GL_FRONT);
-	glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
-		GL_UNSIGNED_BYTE, &(m_storedFrame._data)[0]);
-
-    m_pContext->unlockContext();
 	return m_storedFrame;
 }
 
@@ -1315,11 +1310,13 @@ Core::Math::Vec4f GLGridLeaper::readVolumePosition(Core::Math::Vec2ui v){
 
 
 void GLGridLeaper::run(){
-    while(true){
+    while(m_bKeepRunning){
         m_pContext->lockContext();
         Paint();
         m_pContext->frameFinished();
         m_pContext->unlockContext();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
+    Cleanup();
+    m_pContext->deleteContext();
 }
