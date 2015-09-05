@@ -12,7 +12,8 @@ m_bCompleteRedraw(true),
 m_bFinishedInit(false),
 m_iFrameCounter(0),
 m_storedFrame(),
-m_pContext(context)
+m_pContext(context),
+m_bKeepRunning(true)
 {
   m_pRenderState = std::make_shared<State>();
   m_pRenderState->m_vLightDir = m_pRenderState->m_pCameraPtr.GetWorldPosition();
@@ -270,6 +271,10 @@ void AbstrRenderer::startRenderThread(){
 	m_pRenderThread = std::make_shared<std::thread>(&AbstrRenderer::run, this);
 }
 void AbstrRenderer::pauseRenderThread(){}
+
 void AbstrRenderer::stopRenderThread(){
-    m_pRenderThread->detach();
+    m_bKeepRunning = false;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    m_pRenderThread->join();
+
 }

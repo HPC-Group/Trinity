@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
 	Tuvok::Renderer::NetRendererServer server;
 
 	server.openServer(1234);
-    server.acceptConnection();
+
     while(true){
         server.waitForMsg();
 	}

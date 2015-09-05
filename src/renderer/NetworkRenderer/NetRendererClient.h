@@ -133,6 +133,7 @@ namespace Tuvok{
         //network methods
         private:
         void connectToServer(std::string ip, int port);
+        void openTicket();
         void initializeRenderer(Visibility visibility,
                                 Core::Math::Vec2ui resolution,
                                 std::string dataset,
@@ -147,8 +148,8 @@ namespace Tuvok{
         uint64_t                            _framebuffersize;
         FrameData                           _currentFrame;
 
-        uint64_t                            _iRendererID;
-
+        int32_t                             _iTicketID;
+        uint32_t                            _iCallID;
     };
   };
 };

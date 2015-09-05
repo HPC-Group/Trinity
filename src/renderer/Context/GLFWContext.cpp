@@ -98,7 +98,6 @@ bool GLFWContext::initContext() {
 
 bool GLFWContext::deleteContext(){
     glfwDestroyWindow(m_windowContext);
-
     return true;
 }
 
