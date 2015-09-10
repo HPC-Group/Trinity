@@ -36,6 +36,8 @@ public slots:
     void DatasetSelectedSlot(QModelIndex);
 	void TransferFunctionSelectedSlot(QModelIndex);
 	void SelectDataDirectory();
+	void RotateCamera(Core::Math::Vec3f rotVec);
+	void MoveCamera(Core::Math::Vec3f movVec);
 
 protected slots:
 	void doUpdate();
@@ -46,20 +48,9 @@ private:
 	long milliseconds_now();
     void AddDataToModel(QString path, QString extension);
 	void InitRenderer();
-	void Loop();
-
-	void DeleteImage();
-	void InitImage();
-
-	QPixmap* m_pixelmap;
-	QImage* m_image;
-	uint8_t* m_rawData;
-
-	bool m_loop;
 
 	int m_frameWidth;
 	int m_frameHeight;
-	int m_componentCount;
 
 	QString m_datasetDirectory;
 	QString m_transferFunctionDirectory;
@@ -69,8 +60,7 @@ private:
 	QString m_selectedDataset;
 	QString m_selectedTransferFunction;
 
-	//RenderLabel *m_renderLabel;
-	RendererOut *m_renderOut;
+	std::shared_ptr<IRenderer> m_renderer;
 };
 
 #endif // QTFRONTENDWINDOW_H
