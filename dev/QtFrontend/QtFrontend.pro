@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         qtfrontendwindow.cpp \
-    renderlabel.cpp
+    renderlabel.cpp \
+    myglwidget.cpp
 
 HEADERS  += qtfrontendwindow.h \
-    renderlabel.h
+    renderlabel.h \
+    myglwidget.h
 
 FORMS    += qtfrontendwindow.ui

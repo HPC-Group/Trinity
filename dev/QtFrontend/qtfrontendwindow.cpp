@@ -7,12 +7,7 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 	m_selectedDataset(""),
 	m_selectedTransferFunction(""),
 	m_frameWidth(640),
-	m_frameHeight(480),
-	m_componentCount(3),
-	m_image(NULL),
-	m_pixelmap(NULL),
-	m_rawData(NULL),
-	m_loop(false)
+	m_frameHeight(480)
 {
     ui->setupUi(this);
 
@@ -40,36 +35,18 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 
 	LINFOC("bla log", "blub");*/
 
-	//m_renderLabel = new RenderLabel("Render window");
-
-	QSurfaceFormat format;
-	format.setDepthBufferSize(24);
-	format.setStencilBufferSize(8);
-	format.setVersion(3, 2);
-	format.setProfile(QSurfaceFormat::CoreProfile);
-	QSurfaceFormat::setDefaultFormat(format);
-
-	m_renderOut = new RendererOut(m_frameWidth, m_frameHeight);
-
-	QVBoxLayout *vbl = new QVBoxLayout();
-	vbl->addWidget(m_renderOut);
-
-	ui->frameRenderWindow->setLayout(vbl);
-
 	connect(ui->actionLoadData, SIGNAL(triggered()), this, SLOT(SelectDataDirectory()));
 	connect(ui->listViewDatasets, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(DatasetSelectedSlot(QModelIndex)));
     connect(ui->listViewTransferFunction, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(TransferFunctionSelectedSlot(QModelIndex)));
+	
+	connect(ui->openGLWidget, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
+	connect(ui->openGLWidget, SIGNAL(Move(Core::Math::Vec3f)), this, SLOT(MoveCamera(Core::Math::Vec3f)));
 
-	m_renderOut->setMinimumSize(m_frameWidth, m_frameHeight);
-	m_renderOut->resize(m_frameWidth, m_frameHeight);
-
-	m_renderOut->initRenderServer("walnut.uvf", "none");
+	ui->openGLWidget->setSize(m_frameWidth, m_frameHeight);
 }
 
 QtFrontendWindow::~QtFrontendWindow()
 {
-	//DeleteImage();
-	delete m_renderOut;
     delete ui;
 }
 
@@ -86,33 +63,36 @@ long QtFrontendWindow::milliseconds_now() {
 	}
 }
 
+void QtFrontendWindow::InitRenderer()
+{
+	IRenderManager& manager = RenderManager::getInstance();
+	//renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
+	m_renderer = manager.createRenderer(Visibility::hidden, Vec2ui(m_frameWidth, m_frameHeight), m_selectedDataset.toStdString(), m_selectedTransferFunction.toStdString());
+
+	ui->openGLWidget->setRenderer(m_renderer);
+}
+
 void QtFrontendWindow::SelectDataDirectory()
 {
-	m_loop = false;
-
 	m_datasetDirectory = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "D:\Dev\build\trinity\dev\QtFrontend\Release", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	AddDataToModel(m_datasetDirectory, "*.uvf");
 	AddDataToModel(m_datasetDirectory, "*.1dt");
+
+	InitRenderer();
 }
 
 void QtFrontendWindow::DatasetSelectedSlot(QModelIndex index)
 {
-	m_loop = false;
-
 	m_selectedDataset = m_modelDatasets->data(index, Qt::DisplayRole).toString();
 	m_selectedDataset = m_datasetDirectory + "/" + m_selectedDataset;
-	//InitRenderer();
 }
 
 void QtFrontendWindow::TransferFunctionSelectedSlot(QModelIndex index)
 {
-	m_loop = false;
-
 	m_selectedTransferFunction = m_modelTransferFunction->data(index, Qt::DisplayRole).toString();
 	if (m_selectedTransferFunction != "none")
 		m_selectedTransferFunction = m_datasetDirectory + "/" + m_selectedTransferFunction;
-	//InitRenderer();
 }
 
 void QtFrontendWindow::AddDataToModel(QString path, QString extension)
@@ -125,68 +105,31 @@ void QtFrontendWindow::AddDataToModel(QString path, QString extension)
 	{
 		m_modelDatasets->setStringList(files);
 		ui->listViewDatasets->setModel(m_modelDatasets);
+
+		m_selectedDataset = files[0];
 	}
 	else if (extension == "*.1dt")
 	{
 		files.append("none");
 		m_modelTransferFunction->setStringList(files);
 		ui->listViewTransferFunction->setModel(m_modelTransferFunction);
+
+		m_selectedTransferFunction = files[0];
 	}
-}
-
-void QtFrontendWindow::InitRenderer()
-{
-	if (m_selectedDataset != "" && m_selectedTransferFunction != "")
-	{
-
-		InitImage();
-
-		m_loop = true;
-	}
-}
-
-void QtFrontendWindow::Loop()
-{
-	while (true)
-	{
-		//m_renderLabel->rotateCamera(Vec3f(0.1f*(1 + 1), 0, 0));
-		doUpdate();
-		std::this_thread::sleep_for(std::chrono::milliseconds(30));
-	}
-}
-
-void QtFrontendWindow::DeleteImage()
-{
-	delete m_image;
-	delete m_pixelmap;
-	delete[] m_rawData;
-}
-
-void QtFrontendWindow::InitImage() {
-	DeleteImage();
-
-	m_image = new QImage(m_frameWidth, m_frameHeight, QImage::Format_RGB888);
-	m_pixelmap = new QPixmap(m_image->width(), m_image->height());
-	m_rawData = new uint8_t[3 * m_image->height()*m_image->width()];
-
-	//m_renderLabel->resize(m_frameWidth, m_frameHeight);
 }
 
 void  QtFrontendWindow::doUpdate()
 {
-	m_renderOut->repaint();
-	if (m_loop)
-	{
-		/*FrameData frame = m_renderer->ReadFrameBuffer();
+	ui->openGLWidget->paintGL();
+	ui->openGLWidget->repaint();
+}
 
-		uint32_t totalSize = 0;
+void QtFrontendWindow::RotateCamera(Core::Math::Vec3f rotVec)
+{
+	m_renderer->RotateCamera(rotVec);
+}
 
-		if (frame._data.size() > 0)
-		{
-			totalSize = m_frameWidth * m_frameHeight * 3;
-
-			std::copy(&frame._data[0], &frame._data[0] + totalSize, m_image->bits());
-			m_renderLabel->setPixmap(QPixmap::fromImage(*m_image));
-		}*/
-	}
+void QtFrontendWindow::MoveCamera(Core::Math::Vec3f movVec)
+{
+	m_renderer->MoveCamera(movVec);
 }
