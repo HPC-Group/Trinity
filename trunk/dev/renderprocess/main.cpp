@@ -26,6 +26,12 @@ Der QtNetwork_Client funktioniert mit diesem Ansatz und wurde unter
 Linux/Windows/osX getestet. Wenn du weiterhin den rendermanager benutzt
 um ein renderer zu erstellen ändert sich nichts da dieser "portshift"
 komplett vor dir versteckt wird.
+
+//UPDATE
+PROJECTE WERDEN NUN IN 
+	trinity/build/bin/Release
+	trinity/build/bin/Debug
+gebaut, kein copy mehr nötig
 */
 
 
@@ -85,7 +91,7 @@ int main(int argc, char* argv[]){
 
 
     std::shared_ptr<IRenderer> renderer = RenderManager::getInstance().createRenderer(
-                                                            Visibility::Windowed,                           //displaymode
+                                                            Visibility::hidden,                           //displaymode
                                                             Vec2ui(std::atoi(argv[4]),std::atoi(argv[5])),  //resolution
                                                             argv[2],                                        //dataset
                                                             argv[3],                                        // tf

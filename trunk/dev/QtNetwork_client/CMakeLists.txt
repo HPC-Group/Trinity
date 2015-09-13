@@ -3,10 +3,6 @@ cmake_minimum_required(VERSION 2.8.11)
 file(GLOB QTFRONTEND_SOURCE *.cpp)
 file(GLOB QTFRONTEND_HEADER *.h)
 
-file(GLOB REND_SHADERS ${CMAKE_SOURCE_DIR}/src/renderer/Shader/*.glsl)
-file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
-file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
-
 #set (CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.0\\Lib\\win8\\um\\x64")
 set (CMAKE_PREFIX_PATH "C:\\Qt5.5\\msvc2013_64")
 #set (CMAKE_PREFIX_PATH "/home/waschkbaer/Qt/5.5/gcc_64/lib/cmake/Qt5Widgets")
@@ -24,6 +20,8 @@ find_package(Qt5Widgets REQUIRED)
 QT5_WRAP_UI(UIS_HDRS client.ui)
 
 add_executable(QtNetwork_Client ${QTFRONTEND_SOURCE} ${QTFRONTEND_HEADER} ${UIS_HDRS} $<TARGET_OBJECTS:mocca>)
+
+set_target_properties( QtNetwork_Client PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TRINITY_ROOT_DIR}/build/bin )
 
 include_directories(../src/Externals/glm)
 target_link_libraries(QtNetwork_Client LINK_PUBLIC Qt5::Widgets)

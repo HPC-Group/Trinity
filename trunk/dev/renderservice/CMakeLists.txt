@@ -3,6 +3,8 @@ file(GLOB RENDERSERVICE_HEADER *.h)
 
 add_executable(Renderservice ${RENDERSERVICE_SOURCE} ${RENDERSERVICE_HEADER})
 
+set_target_properties( Renderservice PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TRINITY_ROOT_DIR}/build/bin )
+
 include_directories(../src/Externals/glm)
 target_link_libraries(Renderservice LINK_PUBLIC Renderer)
 target_link_libraries(Renderservice LINK_PUBLIC glfw ${GLFW_LIBRARIES})
