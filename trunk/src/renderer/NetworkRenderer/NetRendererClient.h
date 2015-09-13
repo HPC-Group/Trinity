@@ -21,6 +21,7 @@
 //COMPRESSION
 #include <lz4/lz4.h>
 #include <lz4/lz4hc.h>
+#include <mutex>
 
 using namespace mocca;
 using namespace mocca::net;
@@ -127,8 +128,12 @@ namespace Tuvok{
 
 	    virtual void SwitchPagingStrategy(MissingBrickStrategy brickStrategy){};
 
+	    virtual void run(){};
+
         //PROPABLY PROTECTED METHODS // HAVE TO CHECK
         virtual void SetDataset(Tuvok::IOPtr dio) {};
+
+        void stopRenderer(){};
 
         //network methods
         private:
@@ -150,6 +155,8 @@ namespace Tuvok{
 
         int32_t                             _iTicketID;
         uint32_t                            _iCallID;
+
+        std::mutex                          _contextMutex;
     };
   };
 };

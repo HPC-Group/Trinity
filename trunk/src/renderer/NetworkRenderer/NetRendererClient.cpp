@@ -19,7 +19,8 @@ NetRendererClient::NetRendererClient(std::string ip,
                           _currentFrame(),
                           _iTicketID(0),
                           _iCallID(0),
-                          _framebuffersize(resolution.x*resolution.y*3)
+                          _framebuffersize(resolution.x*resolution.y*3),
+                          _contextMutex()
 {
 //connect to the server
 connectToServer(ip,port);
@@ -28,7 +29,7 @@ connectToServer(ip,port);
 openTicket();
 
 //auto init the renderer !
-initializeRenderer(visibility,resolution,dataset,tf);
+//initializeRenderer(visibility,resolution,dataset,tf);
 }
 
 NetRendererClient::~NetRendererClient(){
@@ -39,18 +40,38 @@ void NetRendererClient::connectToServer(std::string ip, int port)
 {
     TCPNetworkService netService; // instantiate the network service
     std::string s = ip + ":"+ std::to_string(port);
+    std::cout << "WILL CONNECT TO : "<<s <<std::endl;
     connection = netService.connect(s);
 
     //add some getRendererID or so, will be used later on
 }
 
 void NetRendererClient::openTicket(){
-    std::string s = Commands::OPENTICKET+":"+str(_iCallID);
+    //std::string s = Commands::OPENTICKET+":"+str(_iCallID);
+
+    //OPENTICKET:FILENAME:TRANSFERFUNKTION:AUFLÖSUNGX:AUFLÖSUNGY ---return---> port
+    std::string s = Commands::OPENTICKET+":walnut.uvf:none:640:480";
+
     sendString(s);
 
     //wait for ticketId;
     BytePacket frameIDPacket = connection->receive();
-    _iTicketID = frameIDPacket.get<int32_t>();
+    int32_t rendererPort = frameIDPacket.get<int32_t>();
+
+    std::cout << rendererPort << std::endl;
+
+
+
+    std::string adr = "lcoalhost:"+std::to_string(rendererPort);
+
+    std::cout << adr << std::endl;
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // wait 1 seconds, renderer could take some time
+
+    TCPNetworkService netService;
+    connection = netService.connect(adr);
+
+    //_iTicketID = frameIDPacket.get<int32_t>();
 }
 
 void NetRendererClient::sendString(std::string msg)
@@ -76,6 +97,7 @@ void NetRendererClient::initializeRenderer( Visibility visibility,
 
 FrameData NetRendererClient::ReadFrameBuffer()
 {
+    _contextMutex.lock();
     //String : READFB:ID:LATESTFRAME;
     sendString(Commands::FRAME+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(_currentFrame._frameID));
 
@@ -92,29 +114,38 @@ FrameData NetRendererClient::ReadFrameBuffer()
 
         _currentFrame._frameID = frameID;
     }
+    _contextMutex.unlock();
     return _currentFrame;
 }
 
 void NetRendererClient::RotateCamera(Core::Math::Vec3f rotation){
+    _contextMutex.lock();
     //String : ROTATE:X:Y:Z
     std::string msg = Commands::ROT+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(rotation.x)+":"+str(rotation.y)+":"+str(rotation.z);
     sendString(msg);
+    _contextMutex.unlock();
 }
 
 void NetRendererClient::MoveCamera(Core::Math::Vec3f direction){
     //String : MOVE:X:Y:Z
+    _contextMutex.lock();
     std::string msg = Commands::MOV+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(direction.x)+":"+str(direction.y)+":"+str(direction.z);
     sendString(msg);
+    _contextMutex.unlock();
 }
 
 void NetRendererClient::SetCameraZoom(float f){
     //String : ZOOM:X
+    _contextMutex.lock();
     std::string msg = Commands::ZOM+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(f);
     sendString(msg);
+    _contextMutex.unlock();
 }
 
 void NetRendererClient::SetIsoValue(float fIsoValue){
+    _contextMutex.lock();
     sendString(Commands::SISO+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(fIsoValue));
+    _contextMutex.unlock();
 }
 
 float NetRendererClient::GetIsoValue(){

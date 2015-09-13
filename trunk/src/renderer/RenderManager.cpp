@@ -46,18 +46,20 @@ uint64_t useableVRAM(){
 std::shared_ptr<IRenderer> RenderManager::createRenderer(   Visibility visibility,
                                                             Core::Math::Vec2ui resolution,
                                                             std::string dataset,
-                                                            std::string tf){
+                                                            std::string tf,
+                                                            bool startThread){
 
-LINFOC("RenderServer", "initialize renderer");
+    LINFOC("RenderServer", "initialize renderer");
     std::shared_ptr<Context::Context> context = Context::ContextManager::getInstance().createContext(visibility, resolution);
 
-    return createRenderer(context,dataset,tf);
+    return createRenderer(context,dataset,tf,startThread);
 }
 
 
 std::shared_ptr<IRenderer> RenderManager::createRenderer(   std::shared_ptr<Tuvok::Renderer::Context::Context> contextPtr,
                                                             std::string dataset,
-                                                            std::string tf){
+                                                            std::string tf,
+                                                            bool startThread){
 
     std::shared_ptr<IOLocal> ioLocal = std::make_shared<IOLocal>("LOCALIO");
 	uint16_t handleLocal = ioLocal->openFile(dataset);
@@ -84,7 +86,9 @@ std::shared_ptr<IRenderer> RenderManager::createRenderer(   std::shared_ptr<Tuvo
 		return 0;
     }
 
-    renderer->startRenderThread();
+    if(startThread)
+        renderer->startRenderThread();
+
     return renderer;
 }
 

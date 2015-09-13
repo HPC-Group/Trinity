@@ -1,6 +1,6 @@
 add_subdirectory(renderdemo)
-add_subdirectory(renderdemo_network)
-add_subdirectory(renderdemo_client)
+add_subdirectory(renderprocess)
+add_subdirectory(renderservice)
 OPTION(BuildQTMichael "Build QT Project" OFF)
 OPTION(BuildQTNetwork "Build QT Project" OFF)
 
