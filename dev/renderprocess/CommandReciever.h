@@ -32,6 +32,7 @@ public:
     void run();
 
     void startThread();
+	void joinThread();
 
 protected:
     void handleMsg(std::string& msg);

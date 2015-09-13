@@ -84,7 +84,7 @@ void TuvokService::handleMsg(std::string msg, uint32_t id){
         //OPENTICKET:FILENAME:TRANSFERFUNKTION:AUFLÖSUNGX:AUFLÖSUNGY ---return---> port
 
 #ifdef _WIN32
-        std::string cmd = "nohup setsid ./Renderprocess "+ std::to_string(_portCounter) +" "+ args[1]+" "+ args[2]+" "+ args[3]+" "+ args[4]+" &";
+		std::string cmd = "START cmd /c Renderprocess " + std::to_string(_portCounter) + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4];
 #else
         std::string cmd = "nohup setsid ./Renderprocess "+ std::to_string(_portCounter) +" "+ args[1]+" "+ args[2]+" "+ args[3]+" "+ args[4]+" &";
 #endif
@@ -109,5 +109,5 @@ void TuvokService::handleMsg(std::string msg, uint32_t id){
 }
 
 int TuvokService::startRenderProcess(){
-
+	return 0;
 }

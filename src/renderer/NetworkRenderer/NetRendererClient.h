@@ -157,6 +157,8 @@ namespace Tuvok{
         uint32_t                            _iCallID;
 
         std::mutex                          _contextMutex;
+		std::string							_ip;
+
     };
   };
 };

@@ -20,7 +20,8 @@ NetRendererClient::NetRendererClient(std::string ip,
                           _iTicketID(0),
                           _iCallID(0),
                           _framebuffersize(resolution.x*resolution.y*3),
-                          _contextMutex()
+                          _contextMutex(),
+						  _ip(ip)
 {
 //connect to the server
 connectToServer(ip,port);
@@ -62,7 +63,7 @@ void NetRendererClient::openTicket(){
 
 
 
-    std::string adr = "lcoalhost:"+std::to_string(rendererPort);
+	std::string adr = _ip +":"+ std::to_string(rendererPort);
 
     std::cout << adr << std::endl;
 

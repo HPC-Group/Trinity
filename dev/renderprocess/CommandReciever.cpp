@@ -114,3 +114,7 @@ void CommandReciever::endCommandReciever(){
 void CommandReciever::startThread(){
     _thread = std::unique_ptr<std::thread>(new std::thread(&CommandReciever::run,this));
 }
+
+void CommandReciever::joinThread(){
+	_thread->join();
+}
