@@ -2,10 +2,12 @@ file(GLOB RENDERPROCESS_SOURCE *.cpp)
 file(GLOB RENDERPROCESS_HEADER *.h)
 
 file(GLOB REND_SHADERS ${CMAKE_SOURCE_DIR}/src/renderer/Shader/*.glsl)
-file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
-file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
+file(COPY ${REND_SHADERS} DESTINATION ${TRINITY_ROOT_DIR}/build/bin/Debug/Shaders)
+file(COPY ${REND_SHADERS} DESTINATION ${TRINITY_ROOT_DIR}/build/bin/Release/Shaders)
 
 add_executable(Renderprocess ${RENDERPROCESS_SOURCE} ${RENDERPROCESS_HEADER})
+
+set_target_properties( Renderprocess PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TRINITY_ROOT_DIR}/build/bin )
 
 include_directories(../src/Externals/glm)
 target_link_libraries(Renderprocess LINK_PUBLIC Renderer)
