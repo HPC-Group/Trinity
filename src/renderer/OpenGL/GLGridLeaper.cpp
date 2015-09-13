@@ -1289,6 +1289,7 @@ void GLGridLeaper::run(){
         m_pContext->frameFinished();
         m_pContext->unlockContext();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        //RotateCamera(Vec3f(0,1,0));
     }
     Cleanup();
     m_pContext->deleteContext();

@@ -15,11 +15,13 @@ namespace Tuvok{
                                                         Visibility visibility,
                                                         Core::Math::Vec2ui resolution,
                                                         std::string dataset,
-                                                        std::string tf) = 0;
+                                                        std::string tf,
+                                                         bool startThread = true) = 0;
 
         virtual std::shared_ptr<IRenderer> createRenderer(  std::shared_ptr<Tuvok::Renderer::Context::Context> contextPtr,
                                                         std::string dataset,
-                                                        std::string tf) = 0;
+                                                        std::string tf,
+                                                        bool startThread = true) = 0;
 
         virtual std::shared_ptr<IRenderer> createRenderer(      std::string ip,
                                                         int port,

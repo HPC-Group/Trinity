@@ -278,3 +278,7 @@ void AbstrRenderer::stopRenderThread(){
     m_pRenderThread->join();
 
 }
+
+void AbstrRenderer::stopRenderer(){
+    m_bKeepRunning = false;
+}

@@ -106,6 +106,8 @@ namespace Tuvok{
 		void pauseRenderThread();
 		void stopRenderThread();
 
+        void stopRenderer();
+
       protected:
         virtual void    ScheduleCompleteRedraw();
         void            BuildProjectionMatrix();

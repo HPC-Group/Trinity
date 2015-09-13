@@ -118,6 +118,10 @@ namespace Tuvok{
 
         //PROPABLY PROTECTED METHODS // HAVE TO CHECK
         virtual void SetDataset(Tuvok::IOPtr dio) = 0;
+
+        virtual void run() = 0;
+
+        virtual void stopRenderer() = 0;
     };
   };
 };
