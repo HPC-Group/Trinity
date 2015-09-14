@@ -47,29 +47,29 @@ private:
 
     void SetIsoValue(float fIsoValue);                                                          //
 	void SetIsoValueRelative(float fIsovalue);
-    float GetIsoValue();                                                                        //
+	void GetIsoValue();                                                                        //
 	void SetIsosurfaceColor(Core::Math::Vec3f vColor);
-	Core::Math::Vec3f GetIsosurfaceColor();
+	void GetIsosurfaceColor();
 	void SetColorDataset(bool isColor);
 
 	void SetViewParameters(float angle, float znear, float zfar);
-	Core::Math::Mat4f GetProjectionMatrix();
-	Core::Math::Mat4f GetViewMatrix();
+	void GetProjectionMatrix();
+	void GetViewMatrix();
 
 	void SetBackgroundColors(Core::Math::Vec3f vTopColor,Core::Math::Vec3f vBottomColor);
-	Core::Math::Vec3f GetBackgroundColor(const uint8_t index);
+	void GetBackgroundColor(const uint8_t index);
 
 	void SetUseLighting(bool bUseLighting);
 	void SetLightingParameters(Core::Math::Vec4f cAmbient,
 			Core::Math::Vec4f cDiffuse,
 			Core::Math::Vec4f cSpecular);
-	Core::Math::Vec4f GetAmbientColor();
-	Core::Math::Vec4f GetDiffuseColor();
-	Core::Math::Vec4f GetSpecularColor();
+	void GetAmbientColor();
+	void GetDiffuseColor();
+	void GetSpecularColor();
     void SetSampleRateModifier(float fSampleRateModifier);
 	void ResetCamera();
 
-    Core::Math::Vec2ui GetSize();
+	void GetSize();
     void Resize(Core::Math::Vec2ui vWinSize);
 
     void SetViewPort(Core::Math::Vec2ui lower_left, Core::Math::Vec2ui upper_right,
