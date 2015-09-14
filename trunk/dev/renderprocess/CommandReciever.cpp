@@ -149,7 +149,7 @@ void CommandReciever::SetIsoValue(float fIsoValue){
 void CommandReciever::SetIsoValueRelative(float fIsovalue){
     _renderer->SetIsoValueRelative(fIsovalue);
 }
-float CommandReciever::GetIsoValue(){
+void CommandReciever::GetIsoValue(){
     float f = _renderer->GetIsoValue();
 
     ByteArray response;
@@ -159,7 +159,7 @@ float CommandReciever::GetIsoValue(){
 void CommandReciever::SetIsosurfaceColor(Core::Math::Vec3f vColor){
     _renderer->SetIsosurfaceColor(vColor);
 }
-Core::Math::Vec3f CommandReciever::GetIsosurfaceColor(){
+void CommandReciever::GetIsosurfaceColor(){
     Vec3f v = _renderer->GetIsosurfaceColor();
 
     ByteArray response;
@@ -173,14 +173,14 @@ void CommandReciever::SetColorDataset(bool isColor){
 void CommandReciever::SetViewParameters(float angle, float znear, float zfar) {
     _renderer->SetViewParameters(angle,znear,zfar);
 }
-Core::Math::Mat4f CommandReciever::GetProjectionMatrix(){
+void CommandReciever::GetProjectionMatrix(){
     Mat4f m = _renderer->GetProjectionMatrix();
 
     ByteArray response;
     response.append(&(m),sizeof(m));
     _connection->send(response);
 }
-Core::Math::Mat4f CommandReciever::GetViewMatrix(){
+void CommandReciever::GetViewMatrix(){
     Mat4f m = _renderer->GetViewMatrix();
 
     ByteArray response;
@@ -191,7 +191,7 @@ Core::Math::Mat4f CommandReciever::GetViewMatrix(){
 void CommandReciever::SetBackgroundColors(Core::Math::Vec3f vTopColor,Core::Math::Vec3f vBottomColor){
     _renderer->SetBackgroundColors(vTopColor,vBottomColor);
 }
-Core::Math::Vec3f CommandReciever::GetBackgroundColor(const uint8_t index){
+void CommandReciever::GetBackgroundColor(const uint8_t index){
     Vec3f v = _renderer->GetBackgroundColor(index);
 
     ByteArray response;
@@ -207,21 +207,21 @@ void CommandReciever::SetLightingParameters(Core::Math::Vec4f cAmbient,
 			Core::Math::Vec4f cSpecular){
     _renderer->SetLightingParameters(cAmbient,cDiffuse,cSpecular);
 }
-Core::Math::Vec4f CommandReciever::GetAmbientColor(){
+void CommandReciever::GetAmbientColor(){
     Vec4f v = _renderer->GetAmbientColor();
 
     ByteArray response;
     response.append(&(v),sizeof(v));
     _connection->send(response);
 }
-Core::Math::Vec4f CommandReciever::GetDiffuseColor(){
+void CommandReciever::GetDiffuseColor(){
     Vec4f v = _renderer->GetDiffuseColor();
 
     ByteArray response;
     response.append(&(v),sizeof(v));
     _connection->send(response);
 }
-Core::Math::Vec4f CommandReciever::GetSpecularColor(){
+void CommandReciever::GetSpecularColor(){
     Vec4f v = _renderer->GetSpecularColor();
 
     ByteArray response;
@@ -235,7 +235,7 @@ void CommandReciever::ResetCamera(){
     _renderer->ResetCamera();
 }
 
-Core::Math::Vec2ui CommandReciever::GetSize(){
+void CommandReciever::GetSize(){
     Vec2ui v = _renderer->GetSize();
 
     ByteArray response;
