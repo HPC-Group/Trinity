@@ -138,7 +138,10 @@ namespace Tuvok{
         //network methods
         private:
         void connectToServer(std::string ip, int port);
-        void openTicket();
+        void openTicket(Visibility visibility,
+                                Core::Math::Vec2ui resolution,
+                                std::string dataset,
+                                std::string tf);
         void initializeRenderer(Visibility visibility,
                                 Core::Math::Vec2ui resolution,
                                 std::string dataset,
