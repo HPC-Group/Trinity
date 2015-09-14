@@ -39,7 +39,7 @@ void Camera::ResetCamera(){
 
 void Camera::moveCamera(Core::Math::Vec3f direction){
   Vec3f addDir(0,0,0);
-  
+
   addDir += m_vDir*direction.z;
   addDir += m_vRight*direction.x;
   addDir += m_vUp*direction.y;
@@ -71,7 +71,7 @@ Mat4f Camera::buildLookAt(){
 }
 
 
-void Camera::setZoom(float& f){
+void Camera::setZoom(float f){
   if (f <= 0.1f) f = 0.1f;
   m_fZoom = f;
   rotateCamera();
@@ -106,7 +106,7 @@ void Camera::roll(float theta)
 	//Now find the new point of cameraLookAt using quaternians: Rotate theta around "rotateAroundVector" at point cameraPos
 	//q = cos(qTheta) + (i)sin(qTheta)
 	//I(i,j,k) is rotateAroundVector[0,1,2]
-	//So:	T^-1 * q * T * p * q^-1 
+	//So:	T^-1 * q * T * p * q^-1
 
 	float qTheta = theta / 2;
 	Vec3f Pt = m_vUp;
@@ -148,7 +148,7 @@ void Camera::roll(float theta)
 		qiK, 0, 0, 0);
 
 	Mat4f resultantMatrix;
-	
+
 	resultantMatrix = q * p * qi;
 	Vec3f resultantPoint(resultantMatrix.m21, resultantMatrix.m31, resultantMatrix.m41);
 	m_vUp = resultantPoint;
@@ -168,7 +168,7 @@ void Camera::pivit(float theta)
 	//Now find the new point of cameraLookAt using quaternians: Rotate theta around "rotateAroundVector" at point cameraPos
 	//q = cos(qTheta) + (i)sin(qTheta)
 	//I(i,j,k) is rotateAroundVector[0,1,2]
-	//So:	T^-1 * q * T * p * q^-1 
+	//So:	T^-1 * q * T * p * q^-1
 
 	float qTheta = theta / 2;
 	Vec3f Pt = m_vDir;
@@ -219,7 +219,7 @@ void Camera::pivit(float theta)
 
 	m_vRight = m_vDir%m_vUp;
 	m_vRight.normalize();
-	
+
 };
 
 void Camera::tilt(float theta)
@@ -228,20 +228,20 @@ void Camera::tilt(float theta)
 	//Assumption: Camera Position remains unchanged, but the cameraLookAt is modified through rotation
 	//Plan of Attack:	Find new cameraLookAt by rotating x degrees around the axis
 	//					perpendicular to the plane defined by the upVector  and the vector between
-	//				    the cameraPosition and the cameraLookAt, at the cameraPosition 
+	//				    the cameraPosition and the cameraLookAt, at the cameraPosition
 	m_vDir.normalize();
 	Vec3f lookAtVector = m_vDir;
 	Vec3f rotateAroundVector;
 
 	//Calculate Cross Product: lookAtVector X upVector
 	rotateAroundVector = lookAtVector % m_vUp;
-	
-	
+
+
 
 	//Now find the new point of cameraLookAt using quaternians: Rotate theta around "rotateAroundVector" at point cameraPos
 	//q = cos(qTheta) + (i)sin(qTheta)
 	//I(i,j,k) is rotateAroundVector[0,1,2]
-	//So:	T^-1 * q * T * p * q^-1 
+	//So:	T^-1 * q * T * p * q^-1
 
 	float qTheta = theta / 2;
 	Vec3f Pt = m_vLookAt - m_vPosition;

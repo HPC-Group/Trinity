@@ -27,6 +27,7 @@ public:
 
     void mousePressEvent(QMouseEvent  *event);
     void mouseReleaseEvent(QMouseEvent  *event);
+    void wheelEvent(QWheelEvent* event);
 
     void setRenderer(std::shared_ptr<Tuvok::Renderer::IRenderer> renderer){
         _renderer = renderer;

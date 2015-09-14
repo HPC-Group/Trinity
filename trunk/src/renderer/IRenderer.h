@@ -43,6 +43,7 @@ namespace Tuvok{
         virtual void MoveCamera(Core::Math::Vec3f direction) = 0;
         virtual void SetCamera(Camera c) = 0;
         virtual void SetCameraZoom(float f) = 0;
+        virtual void ZoomCamera(float f) = 0;
 
         //read the last framebuffer
         virtual void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount) = 0; //LEGACY

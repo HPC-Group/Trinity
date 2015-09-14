@@ -75,6 +75,7 @@ namespace Tuvok{
         virtual void MoveCamera(Core::Math::Vec3f direction);
         virtual void SetCamera(Camera c);
         virtual void SetCameraZoom(float f);
+        virtual void ZoomCamera(float f);
 
 
 		void SetLoDFactor(const float f);

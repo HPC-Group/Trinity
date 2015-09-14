@@ -10,6 +10,7 @@
 #include <core/splittools.h>
 #include <core/Math/Vectors.h>
 
+
 using namespace ghoul::logging;
 using namespace Core::Math;
 
@@ -98,10 +99,15 @@ void CommandReciever::handleMsg(std::string& msg){
 
         //rotate renderer
         }else if(args[0] == Commands::ROT && args.size() == 6){
-
-            _renderer->RotateCamera(Vec3f(   std::atof(args[3].c_str()) ,
-                                             std::atof(args[4].c_str()) ,
-                                             std::atof(args[5].c_str()) ));
+            RotateCamera(Vec3f(   std::stof(args[3].c_str()) ,
+                                  std::stof(args[4].c_str()) ,
+                                  std::stof(args[5].c_str()) ));
+        }else if(args[0] == Commands::MOV && args.size() == 6){
+            MoveCamera(Vec3f(   std::stof(args[3].c_str()) ,
+                                  std::stof(args[4].c_str()) ,
+                                  std::stof(args[5].c_str()) ));
+        }else if(args[0] == Commands::ZOM && args.size() == 4){
+            ZoomCamera(std::stof(args[3].c_str()));
         }
     }
 }
@@ -117,4 +123,130 @@ void CommandReciever::startThread(){
 
 void CommandReciever::joinThread(){
 	_thread->join();
+}
+
+//------------- NetworkCommands-------------------------------------------------
+void CommandReciever::SetFirstPersonMode(bool mode){
+    _renderer->SetFirstPersonMode(mode);
+}
+void CommandReciever::RotateCamera(Core::Math::Vec3f rotation){
+    _renderer->RotateCamera(rotation);
+}
+void CommandReciever::MoveCamera(Core::Math::Vec3f direction){
+    _renderer->MoveCamera(direction);
+}
+void CommandReciever::SetCameraZoom(float f){
+    _renderer->SetCameraZoom(f);
+}
+void CommandReciever::ZoomCamera(float f){
+std::cout << "ZOOM UM "<< f << std::endl;
+    _renderer->ZoomCamera(f);
+}
+
+void CommandReciever::SetIsoValue(float fIsoValue){
+    _renderer->SetIsoValue(fIsoValue);
+}
+void CommandReciever::SetIsoValueRelative(float fIsovalue){
+    _renderer->SetIsoValueRelative(fIsovalue);
+}
+float CommandReciever::GetIsoValue(){
+    float f = _renderer->GetIsoValue();
+
+    ByteArray response;
+    response.append(&(f),sizeof(f));
+    _connection->send(response);
+}
+void CommandReciever::SetIsosurfaceColor(Core::Math::Vec3f vColor){
+    _renderer->SetIsosurfaceColor(vColor);
+}
+Core::Math::Vec3f CommandReciever::GetIsosurfaceColor(){
+    Vec3f v = _renderer->GetIsosurfaceColor();
+
+    ByteArray response;
+    response.append(&(v),sizeof(v));
+    _connection->send(response);
+}
+void CommandReciever::SetColorDataset(bool isColor){
+    _renderer->SetColorDataset(isColor);
+}
+
+void CommandReciever::SetViewParameters(float angle, float znear, float zfar) {
+    _renderer->SetViewParameters(angle,znear,zfar);
+}
+Core::Math::Mat4f CommandReciever::GetProjectionMatrix(){
+    Mat4f m = _renderer->GetProjectionMatrix();
+
+    ByteArray response;
+    response.append(&(m),sizeof(m));
+    _connection->send(response);
+}
+Core::Math::Mat4f CommandReciever::GetViewMatrix(){
+    Mat4f m = _renderer->GetViewMatrix();
+
+    ByteArray response;
+    response.append(&(m),sizeof(m));
+    _connection->send(response);
+}
+
+void CommandReciever::SetBackgroundColors(Core::Math::Vec3f vTopColor,Core::Math::Vec3f vBottomColor){
+    _renderer->SetBackgroundColors(vTopColor,vBottomColor);
+}
+Core::Math::Vec3f CommandReciever::GetBackgroundColor(const uint8_t index){
+    Vec3f v = _renderer->GetBackgroundColor(index);
+
+    ByteArray response;
+    response.append(&(v),sizeof(v));
+    _connection->send(response);
+}
+
+void CommandReciever::SetUseLighting(bool bUseLighting){
+    _renderer->SetUseLighting(bUseLighting);
+}
+void CommandReciever::SetLightingParameters(Core::Math::Vec4f cAmbient,
+			Core::Math::Vec4f cDiffuse,
+			Core::Math::Vec4f cSpecular){
+    _renderer->SetLightingParameters(cAmbient,cDiffuse,cSpecular);
+}
+Core::Math::Vec4f CommandReciever::GetAmbientColor(){
+    Vec4f v = _renderer->GetAmbientColor();
+
+    ByteArray response;
+    response.append(&(v),sizeof(v));
+    _connection->send(response);
+}
+Core::Math::Vec4f CommandReciever::GetDiffuseColor(){
+    Vec4f v = _renderer->GetDiffuseColor();
+
+    ByteArray response;
+    response.append(&(v),sizeof(v));
+    _connection->send(response);
+}
+Core::Math::Vec4f CommandReciever::GetSpecularColor(){
+    Vec4f v = _renderer->GetSpecularColor();
+
+    ByteArray response;
+    response.append(&(v),sizeof(v));
+    _connection->send(response);
+}
+void CommandReciever::SetSampleRateModifier(float fSampleRateModifier){
+    _renderer->SetSampleRateModifier(fSampleRateModifier);
+}
+void CommandReciever::ResetCamera(){
+    _renderer->ResetCamera();
+}
+
+Core::Math::Vec2ui CommandReciever::GetSize(){
+    Vec2ui v = _renderer->GetSize();
+
+    ByteArray response;
+    response.append(&(v),sizeof(v));
+    _connection->send(response);
+}
+void CommandReciever::Resize(Core::Math::Vec2ui vWinSize){
+    _renderer->Resize(vWinSize);
+}
+
+void CommandReciever::SetViewPort(Core::Math::Vec2ui lower_left, Core::Math::Vec2ui upper_right,
+                                 bool decrease_screen_res){
+    _renderer->SetViewPort(lower_left, upper_right,decrease_screen_res);
 }

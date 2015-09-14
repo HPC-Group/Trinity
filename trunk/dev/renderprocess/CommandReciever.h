@@ -37,6 +37,43 @@ public:
 protected:
     void handleMsg(std::string& msg);
 
+//remote commands
+private:
+    void SetFirstPersonMode(bool mode);
+    void RotateCamera(Core::Math::Vec3f rotation);                                              //
+    void MoveCamera(Core::Math::Vec3f direction);                                               //
+    void SetCameraZoom(float f);
+    void ZoomCamera(float f);
+
+    void SetIsoValue(float fIsoValue);                                                          //
+	void SetIsoValueRelative(float fIsovalue);
+    float GetIsoValue();                                                                        //
+	void SetIsosurfaceColor(Core::Math::Vec3f vColor);
+	Core::Math::Vec3f GetIsosurfaceColor();
+	void SetColorDataset(bool isColor);
+
+	void SetViewParameters(float angle, float znear, float zfar);
+	Core::Math::Mat4f GetProjectionMatrix();
+	Core::Math::Mat4f GetViewMatrix();
+
+	void SetBackgroundColors(Core::Math::Vec3f vTopColor,Core::Math::Vec3f vBottomColor);
+	Core::Math::Vec3f GetBackgroundColor(const uint8_t index);
+
+	void SetUseLighting(bool bUseLighting);
+	void SetLightingParameters(Core::Math::Vec4f cAmbient,
+			Core::Math::Vec4f cDiffuse,
+			Core::Math::Vec4f cSpecular);
+	Core::Math::Vec4f GetAmbientColor();
+	Core::Math::Vec4f GetDiffuseColor();
+	Core::Math::Vec4f GetSpecularColor();
+    void SetSampleRateModifier(float fSampleRateModifier);
+	void ResetCamera();
+
+    Core::Math::Vec2ui GetSize();
+    void Resize(Core::Math::Vec2ui vWinSize);
+
+    void SetViewPort(Core::Math::Vec2ui lower_left, Core::Math::Vec2ui upper_right,
+                                 bool decrease_screen_res = false);
 
 private:
     std::unique_ptr<IConnectionListener>    _listener;

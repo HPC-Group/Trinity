@@ -9,12 +9,13 @@
 #include <QRect>
 #include <QPoint>
 #include <QCursor>
+#include <QMouseEvent>
 
 myGLWidget::myGLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
     _lastPosition(-1,-1),
     _deltaPosition(0,0),
-    _moveScale(1),
+    _moveScale(0.9),
     _leftClick(false),
     _rightClick(false)
 {
@@ -42,6 +43,10 @@ void myGLWidget::initializeGL()
      std::printf("version %s \n", t.c_str());
 }
 
+float clip(float n, float lower, float upper) {
+  return std::max(lower, std::min(n, upper));
+}
+
 void myGLWidget::paintGL(){
       if(pixelptr != NULL){
         glDrawPixels(640,480, GL_RGB, GL_UNSIGNED_BYTE,pixelptr); // DISPLAY FRAMEBUFER!
@@ -51,12 +56,22 @@ void myGLWidget::paintGL(){
     QPoint mousePos = this->mapFromGlobal(QCursor::pos());
     if(widgetRect.contains(mousePos))
     {
-        if(_lastPosition.x != -1 && _lastPosition.y != -1 && _leftClick){
+        if(_lastPosition.x != -1 && _lastPosition.y != -1 && (_leftClick || _rightClick)){
+
             _deltaPosition.x = (mousePos.x()-_lastPosition.x)*_moveScale;
             _deltaPosition.y = (mousePos.y()-_lastPosition.y)*_moveScale;
 
-            //std::cout << _deltaPosition << std::endl;
-            _renderer->RotateCamera(Core::Math::Vec3f(-_deltaPosition.y,-_deltaPosition.x,0.0f));
+
+            if(_leftClick){
+            std::cout << _deltaPosition << std::endl;
+                _renderer->RotateCamera(Core::Math::Vec3f(-_deltaPosition.y,-_deltaPosition.x,0.0f));
+            }
+            if(_rightClick){
+            _deltaPosition.x = _deltaPosition.x*0.01f;
+            _deltaPosition.y = _deltaPosition.y*0.01f;
+            std::cout << "MOVE: " <<_deltaPosition.x << " " << _deltaPosition.y << std::endl;
+                _renderer->MoveCamera(Core::Math::Vec3f(-_deltaPosition.x,_deltaPosition.y,0.0f));
+            }
         }
 
         _lastPosition.x = mousePos.x();
@@ -70,11 +85,32 @@ void myGLWidget::paintFrameBuffer(void* pixels){
 }
 
 void myGLWidget::mousePressEvent(QMouseEvent  *event){
-    std::cout << "pressed"<< std::endl;
-    _leftClick = true;
+    if(event->buttons() == Qt::LeftButton)
+    {
+        std::cout << "left"<< std::endl;
+        _leftClick = !_leftClick;
+    }
+    if(event->buttons() == Qt::RightButton)
+    {
+        std::cout << "right"<< std::endl;
+        _rightClick = !_rightClick;
+    }
 }
 
 void myGLWidget::mouseReleaseEvent(QMouseEvent  *event){
-    std::cout << "released"<< std::endl;
-    _leftClick = false;
+    if(event->buttons() == Qt::LeftButton)
+    {
+        std::cout << "left"<< std::endl;
+        _leftClick = false;
+    }
+    if(event->buttons() == Qt::RightButton)
+    {
+        std::cout << "right"<< std::endl;
+        _rightClick = false;
+    }
+}
+
+void myGLWidget::wheelEvent(QWheelEvent* event){
+    std::cout << (float)event->delta()/1000.0f << std::endl;
+   _renderer->ZoomCamera((float)event->delta()/1000.0f);
 }
