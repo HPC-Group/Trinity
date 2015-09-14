@@ -27,7 +27,7 @@ NetRendererClient::NetRendererClient(std::string ip,
 connectToServer(ip,port);
 
 //open ticket
-openTicket();
+openTicket(visibility,resolution,dataset,tf);
 
 //auto init the renderer !
 //initializeRenderer(visibility,resolution,dataset,tf);
@@ -47,11 +47,14 @@ void NetRendererClient::connectToServer(std::string ip, int port)
     //add some getRendererID or so, will be used later on
 }
 
-void NetRendererClient::openTicket(){
+void NetRendererClient::openTicket(Visibility visibility,
+                                Core::Math::Vec2ui resolution,
+                                std::string dataset,
+                                std::string tf){
     //std::string s = Commands::OPENTICKET+":"+str(_iCallID);
 
     //OPENTICKET:FILENAME:TRANSFERFUNKTION:AUFLÖSUNGX:AUFLÖSUNGY ---return---> port
-    std::string s = Commands::OPENTICKET+":walnut.uvf:none:640:480";
+    std::string s = Commands::OPENTICKET+":"+dataset+":"+tf+":"+std::to_string(resolution.x)+":"+std::to_string(resolution.y);
 
     sendString(s);
 
