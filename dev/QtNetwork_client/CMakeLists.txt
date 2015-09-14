@@ -4,8 +4,8 @@ file(GLOB QTFRONTEND_SOURCE *.cpp)
 file(GLOB QTFRONTEND_HEADER *.h)
 
 #set (CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.0\\Lib\\win8\\um\\x64")
-set (CMAKE_PREFIX_PATH "C:\\Qt5.5\\msvc2013_64")
-#set (CMAKE_PREFIX_PATH "/home/waschkbaer/Qt/5.5/gcc_64/lib/cmake/Qt5Widgets")
+#set (CMAKE_PREFIX_PATH "C:\\Qt5.5\\msvc2013_64")
+set (CMAKE_PREFIX_PATH "/home/waschkbaer/Qt/5.5/gcc_64/lib/cmake/Qt5Widgets")
 
 project(QtFrontend)
 

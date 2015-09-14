@@ -49,29 +49,30 @@ namespace Tuvok{
 
         //Camera Controls
         void SetFirstPersonMode(bool mode){};
-        void RotateCamera(Core::Math::Vec3f rotation);                                              //
-        void MoveCamera(Core::Math::Vec3f direction);                                               //
-        void SetCamera(Camera c){};
-        void SetCameraZoom(float f);                                                                //
+        void RotateCamera(Core::Math::Vec3f rotation);
+        void MoveCamera(Core::Math::Vec3f direction);
+        void SetCamera(Camera c){};                                                                             //OUT
+        void SetCameraZoom(float f);
+        void ZoomCamera(float f);
 
         //read the last framebuffer
-        void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){}; //LEGACY
+        void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){};     //OUT
         FrameData ReadFrameBuffer(); //
         // END BASIC INTERACTION METHODS
 
 
 		//ISO FUNCTIONS
-		void SetIsoValue(float fIsoValue);                                                          //
+		void SetIsoValue(float fIsoValue);
 		virtual void SetIsoValueRelative(float fIsovalue){};
-		float GetIsoValue();                                                                        //
+		float GetIsoValue();
 		virtual void SetIsosurfaceColor(const Core::Math::Vec3f& vColor) {};
 		virtual Core::Math::Vec3f GetIsosurfaceColor() const { return Core::Math::Vec3f(); };
 		virtual void SetColorDataset(bool isColor) {};
 		//END ISO FUNCTIONS
 
 
-        virtual void SetClearFrameBuffer(bool bClearFramebuffer){};
-		virtual bool GetClearFrameBuffer() const  { return true; };
+        virtual void SetClearFrameBuffer(bool bClearFramebuffer){};                                         //OUT
+		virtual bool GetClearFrameBuffer() const  { return true; };                                         //OUT
 
         virtual void SetViewParameters(float angle, float znear, float zfar) {};
 		virtual Core::Math::Mat4f& GetProjectionMatrix() { Core::Math::Mat4f m; return m; };
@@ -98,12 +99,12 @@ namespace Tuvok{
 
         virtual void Resize(const Core::Math::Vec2ui& vWinSize) {};
 
-        virtual void GetVolumeAABB(Core::Math::Vec3f& vCenter, Core::Math::Vec3f& vExtend) const {};
+        virtual void GetVolumeAABB(Core::Math::Vec3f& vCenter, Core::Math::Vec3f& vExtend) const {};    //later
 
         //implement in subclasses
         virtual void SetViewPort(Core::Math::Vec2ui lower_left, Core::Math::Vec2ui upper_right,
                                  bool decrease_screen_res = false)  {}; //glrenderer
-
+//-----------------------------------------------------
 	    virtual void SetLoDFactor(const float f) {};
 
 		virtual float GetSampleRateModifier() { return 0.0f; };

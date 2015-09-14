@@ -24,7 +24,7 @@ namespace Tuvok{
 
       Core::Math::Mat4f buildLookAt();
 
-      void setZoom(float& f);
+      void setZoom(float f);
       float getZoom() const;
 
       void setCameraMode(bool mode);

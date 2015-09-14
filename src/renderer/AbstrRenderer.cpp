@@ -183,6 +183,12 @@ void AbstrRenderer::SetCameraZoom(float f){
   BuildViewMatrix();
 }
 
+void AbstrRenderer::ZoomCamera(float f){
+  m_pRenderState->m_pCameraPtr.setZoom(m_pRenderState->m_pCameraPtr.getZoom()+f);
+  BuildViewMatrix();
+}
+
+
 void AbstrRenderer::SetCompositeMode(ECompositeDisplay displaymode){
 	m_pRenderState->m_eCompsoitingMode = displaymode;
 }

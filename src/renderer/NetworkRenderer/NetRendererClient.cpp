@@ -1,5 +1,5 @@
 #include "NetRendererClient.h"
-
+#include <algorithm>
 #define str std::to_string
 
 using namespace Tuvok;
@@ -80,6 +80,7 @@ void NetRendererClient::openTicket(Visibility visibility,
 
 void NetRendererClient::sendString(std::string msg)
 {
+    std::replace( msg.begin(), msg.end(), ',', '.');
     ByteArray stringArray;
     stringArray.append(msg.c_str(),msg.size());
 
@@ -140,6 +141,13 @@ void NetRendererClient::MoveCamera(Core::Math::Vec3f direction){
 
 void NetRendererClient::SetCameraZoom(float f){
     //String : ZOOM:X
+    _contextMutex.lock();
+    std::string msg = Commands::ZOM+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(f);
+    sendString(msg);
+    _contextMutex.unlock();
+}
+
+void NetRendererClient::ZoomCamera(float f){
     _contextMutex.lock();
     std::string msg = Commands::ZOM+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(f);
     sendString(msg);
