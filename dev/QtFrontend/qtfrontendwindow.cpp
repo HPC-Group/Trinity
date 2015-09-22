@@ -24,9 +24,9 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowWarnings(true);
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowOther(true);
 
-	LogManager::initialize(LogManager::LogLevel::Debug, true);
+	/*LogManager::initialize(LogManager::LogLevel::Debug, true);
 
-	/*Log* html = new HTMLLog("RenderDemoLog.html");
+	Log* html = new HTMLLog("RenderDemoLog.html");
 	Log* text = new TextLog("RenderDemoLog.txt");
 	Log* console = new ConsoleLog();
 	LogMgr.addLog(html);
@@ -35,12 +35,16 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 
 	LINFOC("bla log", "blub");*/
 
+	m_muicontroller = new MUIController();
+
 	connect(ui->actionLoadData, SIGNAL(triggered()), this, SLOT(SelectDataDirectory()));
 	connect(ui->listViewDatasets, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(DatasetSelectedSlot(QModelIndex)));
     connect(ui->listViewTransferFunction, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(TransferFunctionSelectedSlot(QModelIndex)));
 	
 	connect(ui->openGLWidget, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
 	connect(ui->openGLWidget, SIGNAL(Move(Core::Math::Vec3f)), this, SLOT(MoveCamera(Core::Math::Vec3f)));
+
+	connect(m_muicontroller, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
 
 	ui->openGLWidget->setSize(m_frameWidth, m_frameHeight);
 }
@@ -67,7 +71,7 @@ void QtFrontendWindow::InitRenderer()
 {
 	IRenderManager& manager = RenderManager::getInstance();
 	//renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
-	m_renderer = manager.createRenderer(Visibility::hidden, Vec2ui(m_frameWidth, m_frameHeight), m_selectedDataset.toStdString(), m_selectedTransferFunction.toStdString());
+	m_renderer = manager.createRenderer("localhost", 1234, Visibility::hidden, Vec2ui(m_frameWidth, m_frameHeight), m_selectedDataset.toStdString(), m_selectedTransferFunction.toStdString());
 
 	ui->openGLWidget->setRenderer(m_renderer);
 }
@@ -126,10 +130,12 @@ void  QtFrontendWindow::doUpdate()
 
 void QtFrontendWindow::RotateCamera(Core::Math::Vec3f rotVec)
 {
-	m_renderer->RotateCamera(rotVec);
+	if (m_renderer != NULL)
+		m_renderer->RotateCamera(rotVec);
 }
 
 void QtFrontendWindow::MoveCamera(Core::Math::Vec3f movVec)
 {
-	m_renderer->MoveCamera(movVec);
+	if (m_renderer != NULL)
+		m_renderer->MoveCamera(movVec);
 }
