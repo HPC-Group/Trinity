@@ -52,7 +52,6 @@ void myGLWidget::initializeGL()
 void myGLWidget::paintGL(){
 
 	if (_renderer != NULL){
-		
 		Tuvok::Renderer::FrameData data = _renderer->ReadFrameBuffer();
 
 		if (data._data.size() > 0)

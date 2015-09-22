@@ -4,10 +4,10 @@
 //logger, use sweden logger later ! will remove debugouthandle
 #include <tools/DebugOutHandler.h>
 
-#include "logging/logmanager.h"
-#include "logging/consolelog.h"
-#include "logging/htmllog.h"
-#include "logging/textlog.h"
+//#include "logging/logmanager.h"
+//#include "logging/consolelog.h"
+//#include "logging/htmllog.h"
+//#include "logging/textlog.h"
 
 #include <QMainWindow>
 #include <QDir>
@@ -16,9 +16,12 @@
 #include <qtimer.h>
 #include <qsurfaceformat.h>
 
-#include "RendererOut.h"
+#include <renderer/RenderManager.h>
+#include <renderer/IRenderer.h>
+#include "muicontroller.h"
 
-using namespace ghoul::logging;
+//using namespace ghoul::logging;
+using namespace Tuvok::Renderer;
 
 namespace Ui {
 class QtFrontendWindow;
@@ -61,6 +64,8 @@ private:
 	QString m_selectedTransferFunction;
 
 	std::shared_ptr<IRenderer> m_renderer;
+
+	MUIController *m_muicontroller;
 };
 
 #endif // QTFRONTENDWINDOW_H
