@@ -13,14 +13,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        qtfrontendwindow.cpp \
-    renderlabel.cpp \
-    myglwidget.cpp \
+	myglwidget.cpp \
+    qtfrontendwindow.cpp \
     muicontroller.cpp
 
-HEADERS  += qtfrontendwindow.h \
-    renderlabel.h \
-    myglwidget.h \
+HEADERS  += myglwidget.h \
+    qtfrontendwindow.h \
     gateapi.h \
     muicontroller.h
 

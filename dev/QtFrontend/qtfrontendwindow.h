@@ -2,7 +2,7 @@
 #define QTFRONTENDWINDOW_H
 
 //logger, use sweden logger later ! will remove debugouthandle
-#include <tools/DebugOutHandler.h>
+//#include <tools\DebugOutHandler.cpp>
 
 //#include "logging/logmanager.h"
 //#include "logging/consolelog.h"
@@ -16,9 +16,12 @@
 #include <qtimer.h>
 #include <qsurfaceformat.h>
 
-#include <renderer/RenderManager.h>
-#include <renderer/IRenderer.h>
+#include <renderer\IRenderer.h>
+//#include <renderer\RenderManager.cpp>
+#include <NetRendererClient.h>
 #include "muicontroller.h"
+#include "myglwidget.h"
+
 
 //using namespace ghoul::logging;
 using namespace Tuvok::Renderer;
@@ -63,6 +66,7 @@ private:
 	QString m_selectedDataset;
 	QString m_selectedTransferFunction;
 
+    myGLWidget *m_openGLWidget;
 	std::shared_ptr<IRenderer> m_renderer;
 
 	MUIController *m_muicontroller;
