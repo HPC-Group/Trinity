@@ -24,13 +24,21 @@ QT5_WRAP_UI(UIS_HDRS qtfrontendwindow.ui)
 
 add_executable(QtFrontend ${QTFRONTEND_SOURCE} ${QTFRONTEND_HEADER} ${UIS_HDRS})
 
-include_directories(../src/Externals/glm)
+include_directories(../src/ext/glm)
+
+include_directories(
+					${TRINITY_ROOT_DIR}/src/
+					${TRINITY_ROOT_DIR}/ext/lz4-new/include/
+					${TRINITY_ROOT_DIR}/ext/glew/include/
+					${TRINITY_ROOT_DIR}/src/mocca/include/
+					${TRINITY_ROOT_DIR}/src/mocca/include/mocca/)
+
 target_link_libraries(QtFrontend LINK_PUBLIC Qt5::Widgets)
-target_link_libraries(QtFrontend LINK_PUBLIC Renderer)
-target_link_libraries(QtFrontend LINK_PUBLIC glfw ${GLFW_LIBRARIES})
-target_link_libraries(QtFrontend LINK_PUBLIC ${OPENGL_LIBRARIES})
-target_link_libraries(QtFrontend LINK_PUBLIC Core)
-target_link_libraries(QtFrontend LINK_PUBLIC IO)
+#target_link_libraries(QtFrontend LINK_PUBLIC Renderer)
+#target_link_libraries(QtFrontend LINK_PUBLIC glfw ${GLFW_LIBRARIES})
+#target_link_libraries(QtFrontend LINK_PUBLIC ${OPENGL_LIBRARIES})
+#target_link_libraries(QtFrontend LINK_PUBLIC Core)
+#target_link_libraries(QtFrontend LINK_PUBLIC IO)
 target_link_libraries(QtFrontend LINK_PUBLIC ghoul)
 
 #GHOUL

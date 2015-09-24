@@ -1,9 +1,9 @@
 #pragma once
 
-#include <renderer/RenderManager.h>
-#include <renderer/RenderEnums.h>
+#include <renderer\RenderManager.h>
+#include <renderer\RenderEnums.h>
 
-#include <core/Math/Vectors.h>
+#include <core\Math/Vectors.h>
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_2_Core>

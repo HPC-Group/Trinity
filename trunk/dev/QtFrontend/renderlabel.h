@@ -1,14 +1,14 @@
 #ifndef RENDERLABEL_H
 #define RENDERLABEL_H
 
-#include <renderer/RenderManager.h>
-#include <renderer/AbstrRenderer.h>
+#include <renderer\RenderManager.h>
+#include <renderer\AbstrRenderer.h>
 
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <qlabel.h>
 
-#include <core/Math/Vectors.h>
+#include <core\Math/Vectors.h>
 
 #include <iostream>
 

@@ -11,9 +11,9 @@
 
 #include <iostream>
 
-#include <core/Math/Vectors.h>
 #include <renderer/IRenderer.h>
 #include <memory>
+#include <core/Math/Vectors.h>
 
 using namespace Core::Math;
 
