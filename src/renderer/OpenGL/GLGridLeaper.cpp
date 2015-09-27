@@ -32,6 +32,8 @@
 #include <lz4/lz4hc.h>
 
 #include <core/FileFinder.h>
+#include <stdio.h>
+#include <string.h>
 
 using namespace Tuvok;
 using namespace Tuvok::Renderer;
@@ -304,7 +306,7 @@ bool GLGridLeaper::Paint(){
         glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
 		GL_UNSIGNED_BYTE, &(m_pixels)[0]);
 
-		
+
 
 		//compress the data (LZ4)
 		/*m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);

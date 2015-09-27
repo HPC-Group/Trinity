@@ -10,7 +10,7 @@
 #include <core/splittools.h>
 #include <core/Math/Vectors.h>
 
-#include <io/JPEGTool.h>
+#include <IO/JPEGTool.h>
 
 using namespace ghoul::logging;
 using namespace Core::Math;
@@ -25,7 +25,7 @@ _thread(nullptr)
 {
     TCPNetworkService netService;
     _listener  = netService.bind(std::to_string(port)); // listen for connections
-	
+
 }
 
 
@@ -99,7 +99,7 @@ void CommandReciever::handleMsg(std::string& msg){
 				ByteArray qualityValue;
 				qualityValue.append(&(quality), sizeof(quality));
 				_connection->send(qualityValue);
-				
+
 				//compress frame to target quality
 				unsigned long l = compressImage((char*)&(frame._data[0]), 640, 480, compressedImage, quality);
 

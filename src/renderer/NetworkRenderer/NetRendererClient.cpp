@@ -9,7 +9,7 @@
 #include <net/Error.h>
 #include <algorithm>
 
-#include <io/JPEGTool.h>
+#include <IO/JPEGTool.h>
 
 #define tostr std::to_string
 
@@ -182,7 +182,7 @@ FrameData& NetRendererClient::ReadFrameBuffer()
 			LERRORC("NetworkRendererClient", "network error");
 		}
 	}
-	
+
     _contextMutex.unlock();
     return _currentFrame;
 }

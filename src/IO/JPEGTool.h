@@ -127,7 +127,6 @@ static void write_JPEG_file(char * filename, int quality, uint8_t* data)
 	/* And we're done! */
 }
 
-
 static size_t compressImage(char* buffer, size_t width, size_t height, unsigned char* outputBuffer, int quality){
 
 	unsigned char* bits = (unsigned char*)buffer;
@@ -153,8 +152,8 @@ static size_t compressImage(char* buffer, size_t width, size_t height, unsigned 
 	jpeg_mem_dest(&cinfo, &outp, &outlen);
 
 	jpeg_set_defaults(&cinfo);
-	jpeg_set_quality(&cinfo, quality, true);
-	jpeg_start_compress(&cinfo, true);
+	jpeg_set_quality(&cinfo, quality, (boolean)true);
+	jpeg_start_compress(&cinfo, (boolean)true);
 
 	while (cinfo.next_scanline < cinfo.image_height){
 		row_pointer[0] = &bits[cinfo.next_scanline * row_stride];
@@ -226,7 +225,7 @@ static void decompressImage(unsigned char* input, size_t outlen, std::vector<uin
 
 	jpeg_finish_decompress(&dinfo);
 	jpeg_destroy_decompress(&dinfo);
-	
+
 	delete bits;
 }
 
