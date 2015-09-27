@@ -98,7 +98,7 @@ void TuvokService::handleMsg(std::string msg, uint32_t id){
         LINFOC("Renderservice", "renderer runs with port "<< _portCounter);
         _connections.find(id)->second->send(PortArray);
 
-        _portCounter++;
+		_portCounter = _portCounter + 2;
 
         if(_portCounter > 51414){
             _portCounter = 41414;

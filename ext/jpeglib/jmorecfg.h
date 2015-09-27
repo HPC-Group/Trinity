@@ -1,7 +1,8 @@
 /*
  * jmorecfg.h
  *
- * Copyright (C) 1991-1998, Thomas G. Lane.
+ * Copyright (C) 1991-1997, Thomas G. Lane.
+ * Modified 1997-2012 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -10,12 +11,6 @@
  * optimizations.  Most users will not need to touch this file.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif // cplusplus
-
-// Force static build.
-#define JPEGSTATIC
 
 /*
  * Define BITS_IN_JSAMPLE as either
@@ -26,10 +21,8 @@ extern "C" {
  * We do not support run-time selection of data precision, sorry.
  */
 
-/*#define BITS_IN_JSAMPLE  8*//* use 8 or 12 (or 16 only for lossless) */
-#ifndef BITS_IN_JSAMPLE
-#error You need to define BITS_IN_JSAMPLE
-#endif
+#define BITS_IN_JSAMPLE  8	/* use 8 or 12 */
+
 
 /*
  * Maximum number of components (color channels) allowed in JPEG image.
@@ -98,33 +91,6 @@ typedef short JSAMPLE;
 #endif /* BITS_IN_JSAMPLE == 12 */
 
 
-#if BITS_IN_JSAMPLE == 16
-/* JSAMPLE should be the smallest type that will hold the values 0..65535.
- * You can use a signed short by having GETJSAMPLE mask it with 0xFFFF.
- */
-
-#ifdef HAVE_UNSIGNED_SHORT
-
-typedef unsigned short JSAMPLE;
-#define GETJSAMPLE(value)  ((int) (value))
-
-#else /* not HAVE_UNSIGNED_SHORT */
-
-typedef short JSAMPLE;
-#ifdef SHORT_IS_UNSIGNED
-#define GETJSAMPLE(value)  ((int) (value))
-#else
-#define GETJSAMPLE(value)  ((int) (value) & 0xFFFF)
-#endif /* SHORT_IS_UNSIGNED */
-
-#endif /* HAVE_UNSIGNED_SHORT */
-
-#define MAXJSAMPLE	65535
-#define CENTERJSAMPLE	32768
-
-#endif /* BITS_IN_JSAMPLE == 16 */
-
-
 /* Representation of a DCT frequency coefficient.
  * This should be a signed value of at least 16 bits; "short" is usually OK.
  * Again, we allocate large arrays of these, but you can change to int
@@ -132,13 +98,6 @@ typedef short JSAMPLE;
  */
 
 typedef short JCOEF;
-
-
-/* Representation of a spatial difference value.
- * This should be a signed value of at least 16 bits; int is usually OK.
- */
-
-typedef int JDIFF;
 
 
 /* Compressed datastreams are represented as arrays of JOCTET.
@@ -198,10 +157,15 @@ typedef short INT16;
 #endif
 
 /* INT32 must hold at least signed 32-bit values. */
-/* X11/xmd.h and basetsd.h correctly defines INT32 */
 
-#if !defined(XMD_H) && !defined(_BASETSD_H_)
-typedef int INT32;
+#ifndef XMD_H			/* X11/xmd.h correctly defines INT32 */
+#ifndef _BASETSD_H_		/* Microsoft defines it in basetsd.h */
+#ifndef _BASETSD_H		/* MinGW is slightly different */
+#ifndef QGLOBAL_H		/* Qt defines it in qglobal.h */
+typedef long INT32;
+#endif
+#endif
+#endif
 #endif
 
 /* Datatype used for image dimensions.  The JPEG standard only supports
@@ -228,25 +192,9 @@ typedef unsigned int JDIMENSION;
 /* a function used only in its module: */
 #define LOCAL(type)		static type
 /* a function referenced thru EXTERNs: */
-#if defined( _WIN32 ) && defined (JPEGDLL)
-#define GLOBAL(type)            __declspec(dllexport) type
-#else
-#define GLOBAL(type)            type
-#endif
-
+#define GLOBAL(type)		type
 /* a reference to a GLOBAL function: */
-#if defined(_WIN32) && !defined(JPEGSTATIC)
-#ifdef JPEGDLL
-/* Win32, building a dll */
-#define EXTERN(type)            __declspec(dllexport) type
-#else
-/* Win32, not building a dll but using the dll */
-#define EXTERN(type)            __declspec(dllimport) type
-#endif
-#else
-/* not a Win32 system or building a static Win32 lib */
-#define EXTERN(type)            extern type
-#endif
+#define EXTERN(type)		extern type
 
 
 /* This macro is used to declare a "method", that is, a function pointer.
@@ -259,6 +207,26 @@ typedef unsigned int JDIMENSION;
 #define JMETHOD(type,methodname,arglist)  type (*methodname) arglist
 #else
 #define JMETHOD(type,methodname,arglist)  type (*methodname) ()
+#endif
+
+
+/* The noreturn type identifier is used to declare functions
+ * which cannot return.
+ * Compilers can thus create more optimized code and perform
+ * better checks for warnings and errors.
+ * Static analyzer tools can make improved inferences about
+ * execution paths and are prevented from giving false alerts.
+ *
+ * Unfortunately, the proposed specifications of corresponding
+ * extensions in the Dec 2011 ISO C standard revision (C11),
+ * GCC, MSVC, etc. are not viable.
+ * Thus we introduce a user defined type to declare noreturn
+ * functions at least for clarity.  A proper compiler would
+ * have a suitable noreturn type to match in place of void.
+ */
+
+#ifndef HAVE_NORETURN_T
+typedef void noreturn_t;
 #endif
 
 
@@ -284,14 +252,15 @@ typedef unsigned int JDIMENSION;
  * Defining HAVE_BOOLEAN before including jpeglib.h should make it work.
  */
 
-#ifndef HAVE_BOOLEAN
-typedef int boolean;
-#endif
+#ifdef HAVE_BOOLEAN
 #ifndef FALSE			/* in case these macros already exist */
 #define FALSE	0		/* values of boolean */
 #endif
 #ifndef TRUE
 #define TRUE	1
+#endif
+#else
+typedef enum { FALSE = 0, TRUE = 1 } boolean;
 #endif
 
 
@@ -317,8 +286,6 @@ typedef int boolean;
  * (You may HAVE to do that if your compiler doesn't like null source files.)
  */
 
-/* Arithmetic coding is unsupported for legal reasons.  Complaints to IBM. */
-
 /* Capability options common to encoder and decoder: */
 
 #define DCT_ISLOW_SUPPORTED	/* slow but accurate integer algorithm */
@@ -327,31 +294,29 @@ typedef int boolean;
 
 /* Encoder capability options: */
 
-#undef  C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
+#define C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 #define C_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
-#define C_LOSSLESS_SUPPORTED	    /* Lossless JPEG? */
+#define DCT_SCALING_SUPPORTED	    /* Input rescaling via DCT? (Requires DCT_ISLOW)*/
 #define ENTROPY_OPT_SUPPORTED	    /* Optimization of entropy coding parms? */
 /* Note: if you selected 12-bit data precision, it is dangerous to turn off
  * ENTROPY_OPT_SUPPORTED.  The standard Huffman tables are only good for 8-bit
- * precision, so jcshuff.c normally uses entropy optimization to compute
+ * precision, so jchuff.c normally uses entropy optimization to compute
  * usable tables for higher precision.  If you don't want to do optimization,
  * you'll have to supply different default Huffman tables.
- * The exact same statements apply for progressive and lossless JPEG:
- * the default tables don't work for progressive mode or lossless mode.
- * (This may get fixed, however.)
+ * The exact same statements apply for progressive JPEG: the default tables
+ * don't work for progressive mode.  (This may get fixed, however.)
  */
 #define INPUT_SMOOTHING_SUPPORTED   /* Input image smoothing option? */
 
 /* Decoder capability options: */
 
-#undef  D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
+#define D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 #define D_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
-#define D_LOSSLESS_SUPPORTED	    /* Lossless JPEG? */
+#define IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? */
 #define SAVE_MARKERS_SUPPORTED	    /* jpeg_save_markers() needed? */
 #define BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing? (Progressive only) */
-#define IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? */
 #undef  UPSAMPLE_SCALING_SUPPORTED  /* Output rescaling at upsample stage? */
 #define UPSAMPLE_MERGING_SUPPORTED  /* Fast path for sloppy upsampling? */
 #define QUANT_1PASS_SUPPORTED	    /* 1-pass color quantization? */
@@ -368,9 +333,7 @@ typedef int boolean;
  * the offsets will also change the order in which colormap data is organized.
  * RESTRICTIONS:
  * 1. The sample applications cjpeg,djpeg do NOT support modified RGB formats.
- * 2. These macros only affect RGB<=>YCbCr color conversion, so they are not
- *    useful if you are using JPEG color spaces other than YCbCr or grayscale.
- * 3. The color quantizer modules will not behave desirably if RGB_PIXELSIZE
+ * 2. The color quantizer modules will not behave desirably if RGB_PIXELSIZE
  *    is not 3 (they don't understand about dummy color components!).  So you
  *    can't use color quantization if you change that value.
  */
@@ -425,7 +388,3 @@ typedef int boolean;
 #endif
 
 #endif /* JPEG_INTERNAL_OPTIONS */
-
-#ifdef __cplusplus
-}
-#endif // cplusplus

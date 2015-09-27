@@ -20,10 +20,6 @@
 #include "jconfig.h"		/* auto configuration options */
 #define JCONFIG_INCLUDED	/* so that jpeglib.h doesn't do it again */
 
-#ifdef __cplusplus
-extern "C" {
-#endif // cplusplus
-
 /*
  * We need the NULL macro and size_t typedef.
  * On an ANSI-conforming system it is sufficient to include <stddef.h>.
@@ -93,7 +89,3 @@ extern "C" {
   ((size_t) fread((void *) (buf), (size_t) 1, (size_t) (sizeofbuf), (file)))
 #define JFWRITE(file,buf,sizeofbuf)  \
   ((size_t) fwrite((const void *) (buf), (size_t) 1, (size_t) (sizeofbuf), (file)))
-
-#ifdef __cplusplus
-}
-#endif // cplusplus

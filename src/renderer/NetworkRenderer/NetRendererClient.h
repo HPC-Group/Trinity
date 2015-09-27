@@ -57,7 +57,7 @@ namespace Tuvok{
 
         //read the last framebuffer
         void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){};     //OUT
-        FrameData ReadFrameBuffer(); //
+        FrameData& ReadFrameBuffer(); //
         // END BASIC INTERACTION METHODS
 
 

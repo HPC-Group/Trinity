@@ -46,6 +46,7 @@ using namespace DataIO;
 
 static int screenshot(int i)
 {
+
 	unsigned char *pixels;
 	FILE *image;
 
@@ -81,6 +82,9 @@ static int screenshot(int i)
 
 	return 0;
 }
+
+
+
 
 static void CheckGLError(std::string comment){
 	GLenum err = glGetError();
@@ -241,6 +245,7 @@ void GLGridLeaper::SwitchPagingStrategy(MissingBrickStrategy brickStrategy){
 
 //! \brief main paint function for the renderpath
 int prevHS =1.0f;
+unsigned char* c = new unsigned char[640 * 480 * 3];
 bool GLGridLeaper::Paint(){
     if(m_iFinishCounter > 0){
 
@@ -299,12 +304,26 @@ bool GLGridLeaper::Paint(){
         glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
 		GL_UNSIGNED_BYTE, &(m_pixels)[0]);
 
-		//compress the data
-		m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);
+		
+
+		//compress the data (LZ4)
+		/*m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);
         int compressedSize = LZ4_compress(  (char*)&(m_pixels[0]),
                                                 (char*) &(m_storedFrame._data[0]),
                                                 m_pixels.size());
         m_storedFrame._data.resize(compressedSize);
+		std::cout << "LZ4" << m_storedFrame._data.size() << std::endl;*/
+
+		//compress to jpeg
+		//unsigned long l = compressImage((char*)&(m_pixels)[0], 640, 480, c, 100);
+
+		m_storedFrame._data.resize(viewport[2] * viewport[3]*3);
+		memcpy(&m_storedFrame._data[0], &m_pixels[0], viewport[2] * viewport[3] * 3);
+
+		//decompress
+		//out = decompressImage(c, l);
+
+		m_pContext->frameFinished();
     }
 
 	return true;
@@ -1243,7 +1262,7 @@ void GLGridLeaper::ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int
 }
 
 
-FrameData GLGridLeaper::ReadFrameBuffer(){
+FrameData& GLGridLeaper::ReadFrameBuffer(){
 	return m_storedFrame;
 }
 
@@ -1286,10 +1305,8 @@ void GLGridLeaper::run(){
     while(m_bKeepRunning){
         m_pContext->lockContext();
         Paint();
-        m_pContext->frameFinished();
-        m_pContext->unlockContext();
+		m_pContext->unlockContext();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        //RotateCamera(Vec3f(0,1,0));
     }
     Cleanup();
     m_pContext->deleteContext();

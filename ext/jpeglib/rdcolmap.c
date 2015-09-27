@@ -23,8 +23,6 @@
 
 #include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
 
-
-
 #ifdef QUANT_2PASS_SUPPORTED	/* otherwise can't quantize to supplied map */
 
 /* Portions of this code are based on the PBMPLUS library, which is:

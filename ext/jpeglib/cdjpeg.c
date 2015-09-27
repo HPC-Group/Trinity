@@ -9,6 +9,7 @@
  * programs (cjpeg, djpeg, jpegtran).
  */
 
+#include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
 #include <ctype.h>		/* to declare isupper(), tolower() */
 #ifdef NEED_SIGNAL_CATCHER
 #include <signal.h>		/* to declare signal() */
@@ -18,8 +19,6 @@
 /* If you have setmode() but not <io.h>, just delete this line: */
 #include <io.h>			/* to declare setmode() */
 #endif
-#include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
-
 
 
 /*
