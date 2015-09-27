@@ -9,6 +9,7 @@
 #include <net/LoopbackConnectionListener.h>
 #include <net/TCPNetworkService.h>
 #include <net/Error.h>
+#include <core/Time/Timer.h>
 
 #include <renderer/IRenderer.h>
 
@@ -86,6 +87,7 @@ private:
     bool                                    _keepAlive;
 
     std::unique_ptr<std::thread>            _thread;
+	Core::Time::Timer						_timer;
 };
 
 

@@ -22,7 +22,8 @@ namespace Tuvok{
             FrameData():_frameID(0),_data(){};
 
             uint64_t                _frameID;
-            std::vector<uint8_t>    _data; //lz4 compressed data
+            std::vector<uint8_t>    _data; //raw image data
+			double					_sendTime;
     };
 
     class IRenderer{
@@ -47,7 +48,7 @@ namespace Tuvok{
 
         //read the last framebuffer
         virtual void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount) = 0; //LEGACY
-        virtual FrameData ReadFrameBuffer() = 0;
+        virtual FrameData& ReadFrameBuffer() = 0;
         // END BASIC INTERACTION METHODS
 
 

@@ -2,6 +2,7 @@
  * cderror.h
  *
  * Copyright (C) 1994-1997, Thomas G. Lane.
+ * Modified 2009 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -28,10 +29,6 @@
 #endif /* CDERROR_H */
 #endif /* JMESSAGE */
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 #ifdef JMAKE_ENUM_LIST
 
 typedef enum {
@@ -49,6 +46,7 @@ JMESSAGE(JERR_BMP_BADHEADER, "Invalid BMP file: bad header length")
 JMESSAGE(JERR_BMP_BADPLANES, "Invalid BMP file: biPlanes not equal to 1")
 JMESSAGE(JERR_BMP_COLORSPACE, "BMP output must be grayscale or RGB")
 JMESSAGE(JERR_BMP_COMPRESSED, "Sorry, compressed BMPs not yet supported")
+JMESSAGE(JERR_BMP_EMPTY, "Empty BMP image")
 JMESSAGE(JERR_BMP_NOT, "Not a BMP file - does not start with BM")
 JMESSAGE(JTRC_BMP, "%ux%u 24-bit BMP image")
 JMESSAGE(JTRC_BMP_MAPPED, "%ux%u 8-bit colormapped BMP image")
@@ -131,10 +129,6 @@ JMESSAGE(JERR_UNSUPPORTED_FORMAT, "Unsupported output file format")
 
 #undef JMAKE_ENUM_LIST
 #endif /* JMAKE_ENUM_LIST */
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 
 /* Zap JMESSAGE macro so that future re-inclusions do nothing by default */
 #undef JMESSAGE

@@ -8,6 +8,9 @@
 
 #include <net/Error.h>
 #include <algorithm>
+
+#include <io/JPEGTool.h>
+
 #define tostr std::to_string
 
 using namespace Tuvok;
@@ -109,7 +112,10 @@ void NetRendererClient::initializeRenderer( Visibility visibility,
     sendString(m);
 }
 
-FrameData NetRendererClient::ReadFrameBuffer()
+unsigned char* inputFrame = new unsigned char[640*480*3];
+bool perfect = false;
+uint32_t qualityRecv = 0;
+FrameData& NetRendererClient::ReadFrameBuffer()
 {
     _contextMutex.lock();
     //String : READFB:ID:LATESTFRAME;
@@ -130,14 +136,41 @@ FrameData NetRendererClient::ReadFrameBuffer()
 		LERRORC("NetworkRendererClient", "network error");
 	}
 
+	if (_currentFrame._frameID < frameID) qualityRecv = 0; //new frame we don't know the coming quality
+
     //if there is a new frame we wait till we get it!
-    if(_currentFrame._frameID < frameID){
+	if (_currentFrame._frameID < frameID || qualityRecv < 100){
+		//wait for quality
 		try{
+			BytePacket QualityPacket = connection->receive(std::chrono::milliseconds(1000));
+			if (QualityPacket.byteArray().size() == 4){
+				qualityRecv = QualityPacket.get<int>();
+				std::cout << "QUALITY : " << qualityRecv << std::endl;
+			}
+		}
+		catch (const ConnectionClosedError& err){
+			LERRORC("NetworkRendererClient", "lost connection");
+		}
+		catch (const NetworkError& err){
+			LERRORC("NetworkRendererClient", "network error");
+		}
+
+
+
+		try{
+			perfect = false;
 			BytePacket data = connection->receive(std::chrono::milliseconds(1000));
 
 			if (data.byteArray().size() > 0){
+				std::cout << data.byteArray().size() << std::endl;
 				_currentFrame._data.resize(_framebuffersize);
-				int uncompressedSize = LZ4_decompress_safe((char*)data.byteArray().data(), (char*)&(_currentFrame._data)[0], data.byteArray().size(), _framebuffersize);
+
+				//LZ4
+				//int uncompressedSize = LZ4_decompress_safe((char*)data.byteArray().data(), (char*)&(_currentFrame._data)[0], data.byteArray().size(), _framebuffersize);
+
+				//decompress
+				memcpy(inputFrame, data.byteArray().data(), data.byteArray().size());
+				decompressImage(inputFrame, data.byteArray().size(), _currentFrame._data);
 
 				_currentFrame._frameID = frameID;
 			}
@@ -148,7 +181,8 @@ FrameData NetRendererClient::ReadFrameBuffer()
 		catch (const NetworkError& err){
 			LERRORC("NetworkRendererClient", "network error");
 		}
-    }
+	}
+	
     _contextMutex.unlock();
     return _currentFrame;
 }

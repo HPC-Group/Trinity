@@ -10,6 +10,7 @@
 #include <core/splittools.h>
 #include <core/Math/Vectors.h>
 
+#include <io/JPEGTool.h>
 
 using namespace ghoul::logging;
 using namespace Core::Math;
@@ -24,6 +25,7 @@ _thread(nullptr)
 {
     TCPNetworkService netService;
     _listener  = netService.bind(std::to_string(port)); // listen for connections
+	
 }
 
 
@@ -42,8 +44,7 @@ void CommandReciever::run(){
         _connection = _listener->getConnection();
         std::cout <<" waiting" << std::endl;
     }
-
-
+	_timer.start();
     while(_keepAlive){
         try{
             BytePacket data = _connection->receive();
@@ -66,6 +67,8 @@ void CommandReciever::run(){
     }
 }
 
+unsigned char* compressedImage = new unsigned char[640 * 480 * 3];
+uint32_t quality = 20;
 void CommandReciever::handleMsg(std::string& msg){
     int32_t ticketID = 0;
 
@@ -89,13 +92,23 @@ void CommandReciever::handleMsg(std::string& msg){
             ByteArray framePacket;
             framePacket.append(&(frame._frameID),sizeof(frame._frameID));
             _connection->send(framePacket);
+			if (clientFrame < frame._frameID) quality = 20; //start with lowest quality
 
             //does the client have an older frame?
-            if(clientFrame < frame._frameID){
+            if(clientFrame < frame._frameID || quality <= 100){
+				ByteArray qualityValue;
+				qualityValue.append(&(quality), sizeof(quality));
+				_connection->send(qualityValue);
+				
+				//compress frame to target quality
+				unsigned long l = compressImage((char*)&(frame._data[0]), 640, 480, compressedImage, quality);
+
                 ByteArray p;
-                p.append(&(frame._data[0]),frame._data.size());
+				p.append(&(compressedImage[0]), l);
                 _connection->send(p);
-            }
+
+				quality += 10;
+			}
 
         //rotate renderer
         }else if(args[0] == Commands::ROT && args.size() == 6){
