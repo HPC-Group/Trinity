@@ -113,7 +113,6 @@ void NetRendererClient::initializeRenderer( Visibility visibility,
 }
 
 unsigned char* inputFrame = new unsigned char[640*480*3];
-bool perfect = false;
 uint32_t qualityRecv = 0;
 FrameData& NetRendererClient::ReadFrameBuffer()
 {
@@ -124,64 +123,42 @@ FrameData& NetRendererClient::ReadFrameBuffer()
     //wait for frameid
 	uint64_t frameID = _currentFrame._frameID;
 	try{
-		BytePacket frameIDPacket = connection->receive(std::chrono::milliseconds(1000));
-		if (frameIDPacket.byteArray().size() == 8){
-			frameID = frameIDPacket.get<uint64_t>();
-		}
-	}
-	catch (const ConnectionClosedError& err){
-		LERRORC("NetworkRendererClient", "lost connection");
-	}
-	catch (const NetworkError& err){
-		LERRORC("NetworkRendererClient", "network error");
-	}
+      BytePacket frameIDPacket = connection->receive();
+      if (frameIDPacket.byteArray().size() == 8){
+        frameID = frameIDPacket.get<uint64_t>();
+      }
 
-	if (_currentFrame._frameID < frameID) qualityRecv = 0; //new frame we don't know the coming quality
+      if (_currentFrame._frameID < frameID) qualityRecv = 0; //new frame we don't know the coming quality
 
-    //if there is a new frame we wait till we get it!
-	if (_currentFrame._frameID < frameID || qualityRecv < 100){
-		//wait for quality
-		try{
-			BytePacket QualityPacket = connection->receive(std::chrono::milliseconds(1000));
-			if (QualityPacket.byteArray().size() == 4){
-				qualityRecv = QualityPacket.get<int>();
-				std::cout << "QUALITY : " << qualityRecv << std::endl;
-			}
-		}
-		catch (const ConnectionClosedError& err){
-			LERRORC("NetworkRendererClient", "lost connection");
-		}
-		catch (const NetworkError& err){
-			LERRORC("NetworkRendererClient", "network error");
-		}
+      //if there is a new frame we wait till we get it!
+      if (_currentFrame._frameID < frameID || qualityRecv < 100){
+        //wait for quality
 
+        BytePacket QualityPacket = connection->receive(std::chrono::milliseconds(1000));
+        if (QualityPacket.byteArray().size() == 4){
+          qualityRecv = QualityPacket.get<int>();
 
+          BytePacket data = connection->receive(std::chrono::milliseconds(1000));
 
-		try{
-			perfect = false;
-			BytePacket data = connection->receive(std::chrono::milliseconds(1000));
+          if (data.byteArray().size() > 1000){
+            _currentFrame._data.resize(_framebuffersize);
 
-			if (data.byteArray().size() > 0){
-				std::cout << data.byteArray().size() << std::endl;
-				_currentFrame._data.resize(_framebuffersize);
+            //decompress
+            memcpy(inputFrame, data.byteArray().data(), data.byteArray().size());
+            decompressImage(inputFrame, data.byteArray().size(), _currentFrame._data);
 
-				//LZ4
-				//int uncompressedSize = LZ4_decompress_safe((char*)data.byteArray().data(), (char*)&(_currentFrame._data)[0], data.byteArray().size(), _framebuffersize);
+            _currentFrame._frameID = frameID;
+          }
+        }
+    }
 
-				//decompress
-				memcpy(inputFrame, data.byteArray().data(), data.byteArray().size());
-				decompressImage(inputFrame, data.byteArray().size(), _currentFrame._data);
-
-				_currentFrame._frameID = frameID;
-			}
-		}
-		catch (const ConnectionClosedError& err){
-			LERRORC("NetworkRendererClient", "lost connection");
-		}
-		catch (const NetworkError& err){
-			LERRORC("NetworkRendererClient", "network error");
-		}
-	}
+  }
+  catch (const ConnectionClosedError& err){
+    LERRORC("NetworkRendererClient", "lost connection");
+  }
+  catch (const NetworkError& err){
+    LERRORC("NetworkRendererClient", "network error");
+  }
 
     _contextMutex.unlock();
     return _currentFrame;

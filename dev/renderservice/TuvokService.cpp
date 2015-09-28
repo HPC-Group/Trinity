@@ -39,7 +39,7 @@ void TuvokService::run(){
 
 void TuvokService::acceptConnection(){
     while(true){
-       std::unique_ptr<AbstractConnection> con = _listener->getConnection();
+       std::unique_ptr<AbstractConnection> con = _listener->getConnection(std::chrono::milliseconds(100));
         if(con != nullptr){
             _connections.insert(std::pair<  uint32_t,
                                         std::unique_ptr<AbstractConnection>>
@@ -47,6 +47,7 @@ void TuvokService::acceptConnection(){
 
             LINFOC("Renderservice", "new connection to service");
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
@@ -54,7 +55,7 @@ void TuvokService::acceptMsg(){
     _disconnectedConnections.clear();
     for (auto connection = _connections.begin(); connection!=_connections.end(); ++connection){
         try{
-            BytePacket data = connection->second->receive();
+            BytePacket data = connection->second->receive(std::chrono::milliseconds(100));
             if(data.byteArray().size() > 0){
                 std::string s(data.byteArray().data(),0,data.byteArray().size());
 
@@ -66,6 +67,7 @@ void TuvokService::acceptMsg(){
         }catch(const NetworkError& err){
             _disconnectedConnections.push_back(connection->first);
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     //not sure if the iterator will fail if we delet on err
     for(uint32_t i : _disconnectedConnections){
