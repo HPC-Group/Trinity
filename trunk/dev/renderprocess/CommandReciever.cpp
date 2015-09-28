@@ -50,7 +50,7 @@ void CommandReciever::run(){
             BytePacket data = _connection->receive();
             if(data.byteArray().size() > 0){
                 std::string s(data.byteArray().data(),0,data.byteArray().size());
-                LDEBUGC("Renderprocess", s);
+                //LDEBUGC("Renderprocess", s);
 
                 handleMsg(s);
             }
@@ -92,7 +92,7 @@ void CommandReciever::handleMsg(std::string& msg){
             ByteArray framePacket;
             framePacket.append(&(frame._frameID),sizeof(frame._frameID));
             _connection->send(framePacket);
-			if (clientFrame < frame._frameID) quality = 20; //start with lowest quality
+			if (clientFrame < frame._frameID) quality = 10; //start with lowest quality
 
             //does the client have an older frame?
             if(clientFrame < frame._frameID || quality <= 100){
@@ -101,7 +101,7 @@ void CommandReciever::handleMsg(std::string& msg){
 				_connection->send(qualityValue);
 
 				//compress frame to target quality
-				unsigned long l = compressImage((char*)&(frame._data[0]), 640, 480, compressedImage, quality);
+				unsigned long l = compressImage((char*)&(frame._data[0]), _renderer->GetSize().x, _renderer->GetSize().y, compressedImage, quality);
 
                 ByteArray p;
 				p.append(&(compressedImage[0]), l);
@@ -152,7 +152,6 @@ void CommandReciever::SetCameraZoom(float f){
     _renderer->SetCameraZoom(f);
 }
 void CommandReciever::ZoomCamera(float f){
-std::cout << "ZOOM UM "<< f << std::endl;
     _renderer->ZoomCamera(f);
 }
 
