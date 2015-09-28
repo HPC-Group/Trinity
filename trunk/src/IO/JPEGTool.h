@@ -128,7 +128,6 @@ static void write_JPEG_file(char * filename, int quality, uint8_t* data)
 }
 
 static size_t compressImage(char* buffer, size_t width, size_t height, unsigned char* outputBuffer, int quality){
-
 	unsigned char* bits = (unsigned char*)buffer;
 	unsigned char* outp = new unsigned char[60000];
 	memset(outp, '0', (size_t)(60000));
@@ -162,7 +161,8 @@ static size_t compressImage(char* buffer, size_t width, size_t height, unsigned 
 
 	jpeg_finish_compress(&cinfo);
 	jpeg_destroy_compress(&cinfo);
-	std::cout << outlen << std::endl;
+
+	//std::cout << outlen << std::endl;
 	memcpy(outputBuffer, outp, outlen);
 
 	delete outp;
@@ -191,7 +191,6 @@ static void decompressImage(unsigned char* input, size_t outlen, std::vector<uin
 
 	unsigned int width = dinfo.output_width;
 	unsigned int height = dinfo.output_height;
-	std::cout << width << " + " << height << std::endl;
 
 	row_stride = dinfo.output_width * dinfo.output_components;
 	buffer = (*dinfo.mem->alloc_sarray)((j_common_ptr)&dinfo, JPOOL_IMAGE, row_stride, 1);

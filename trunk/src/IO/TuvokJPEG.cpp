@@ -106,7 +106,7 @@ struct j_implementation : public JPEG::j_impl {
   void set_data(const std::vector<char>& mem) {
     this->data = mem;
     this->jinfo.src->bytes_in_buffer = this->data.size();
-    //this->jinfo.src->next_input_byte = &(this->data.at(0));
+    this->jinfo.src->next_input_byte = (JOCTET*)&(this->data.at(0));
     if(jpeg_read_header(&(this->jinfo), TRUE) != JPEG_HEADER_OK) {
       IVDA_ERROR("Could not read JPEG header, bailing...");
       return;
