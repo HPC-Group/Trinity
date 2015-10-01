@@ -7,8 +7,10 @@ file(GLOB REND_SHADERS ${CMAKE_SOURCE_DIR}/src/renderer/Shader/*.glsl)
 file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
 
-#set (CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.0\\Lib\\win8\\um\\x64")
-#set (CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.3.0\\5.3\\msvc2013_64_opengl\\")
+file(GLOB MUI_GATE_DLL ${CMAKE_SOURCE_DIR}/dev/QtFrontend/gate_d.dll)
+file(GLOB MUI_GATE_LIB ${CMAKE_SOURCE_DIR}/dev/QtFrontend/gate_d.lib)
+file(COPY ${MUI_GATE_DLL} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Lib)
+file(COPY ${MUI_GATE_LIB} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Lib)
 
 project(QtFrontend)
 
@@ -22,29 +24,26 @@ find_package(Qt5Widgets REQUIRED)
 
 QT5_WRAP_UI(UIS_HDRS qtfrontendwindow.ui)
 
-add_executable(QtFrontend ${QTFRONTEND_SOURCE} ${QTFRONTEND_HEADER} ${UIS_HDRS})
+add_executable(QtFrontend ${QTFRONTEND_SOURCE} ${QTFRONTEND_HEADER} ${UIS_HDRS} $<TARGET_OBJECTS:mocca>)
 
 include_directories(../src/ext/glm)
 
 include_directories(
 					${TRINITY_ROOT_DIR}/src/
-					${TRINITY_ROOT_DIR}/ext/lz4-new/include/
 					${TRINITY_ROOT_DIR}/ext/glew/include/
 					${TRINITY_ROOT_DIR}/src/mocca/include/
-					${TRINITY_ROOT_DIR}/src/mocca/include/mocca/)
-
-target_link_libraries(QtFrontend LINK_PUBLIC Qt5::Widgets)
-#target_link_libraries(QtFrontend LINK_PUBLIC Renderer)
-#target_link_libraries(QtFrontend LINK_PUBLIC glfw ${GLFW_LIBRARIES})
-#target_link_libraries(QtFrontend LINK_PUBLIC ${OPENGL_LIBRARIES})
-#target_link_libraries(QtFrontend LINK_PUBLIC Core)
-#target_link_libraries(QtFrontend LINK_PUBLIC IO)
-target_link_libraries(QtFrontend LINK_PUBLIC ghoul)
-
-#GHOUL
-include_directories(
+					${TRINITY_ROOT_DIR}/src/mocca/include/mocca/
 					${TRINITY_ROOT_DIR}/ext/ghoul/include/
 					${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/)
+
+target_link_libraries(QtFrontend LINK_PUBLIC Qt5::Widgets)
+target_link_libraries(QtFrontend LINK_PUBLIC ${OPENGL_LIBRARIES})
+target_link_libraries(QtFrontend LINK_PUBLIC ghoul)
+target_link_libraries(QtFrontend LINK_PUBLIC jpeglib)
+
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/Lib)
+
+target_link_libraries (QtFrontend Lib/gate_d)
 
 
 

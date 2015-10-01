@@ -19,12 +19,6 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
     m_modelDatasets = new QStringListModel(this);
 	m_modelTransferFunction = new QStringListModel(this);
 
-    m_openGLWidget = new myGLWidget();
-
-    QVBoxLayout *layout = new QVBoxLayout();
-	layout->addWidget(m_openGLWidget);
-    ui->frameRenderWindow->setLayout(layout);
-
 /*	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowErrors(true);
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowMessages(true);
 	IVDA::DebugOutHandler::Instance().DebugOut()->SetShowWarnings(true);
@@ -47,12 +41,12 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 	connect(ui->listViewDatasets, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(DatasetSelectedSlot(QModelIndex)));
     connect(ui->listViewTransferFunction, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(TransferFunctionSelectedSlot(QModelIndex)));
 	
-    connect(m_openGLWidget, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
-    connect(m_openGLWidget, SIGNAL(Move(Core::Math::Vec3f)), this, SLOT(MoveCamera(Core::Math::Vec3f)));
+	connect(ui->openGLWidget, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
+	connect(ui->openGLWidget, SIGNAL(Move(Core::Math::Vec3f)), this, SLOT(MoveCamera(Core::Math::Vec3f)));
 
 	connect(m_muicontroller, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
 
-	m_openGLWidget->setSize(m_frameWidth, m_frameHeight);
+    ui->openGLWidget->setSize(m_frameWidth, m_frameHeight);
 }
 
 QtFrontendWindow::~QtFrontendWindow()
@@ -78,9 +72,9 @@ void QtFrontendWindow::InitRenderer()
 	//IRenderManager& manager = RenderManager::getInstance();
 	//renderer = manager.createRenderer("localhost",1234,Visibility::Windowed,Vec2ui(640,480),"WholeBody-SCANLINE-68-lz4.uvf","WholeBody.1dt");
 	//m_renderer = manager.createRenderer("localhost", 1234, Visibility::hidden, Vec2ui(m_frameWidth, m_frameHeight), m_selectedDataset.toStdString(), m_selectedTransferFunction.toStdString());
-	m_renderer = std::make_shared<NetRendererClient>("localhost", 1234, Visibility::hidden, Vec2ui(m_frameWidth, m_frameHeight), m_selectedDataset.toStdString(), m_selectedTransferFunction.toStdString());
+	m_renderer = std::make_shared<NetRendererClient>("localhost", 1234, Visibility::Windowed, Vec2ui(m_frameWidth, m_frameHeight), m_selectedDataset.toStdString(), m_selectedTransferFunction.toStdString());
 
-    m_openGLWidget->setRenderer(m_renderer);
+    ui->openGLWidget->setRenderer(m_renderer);
 }
 
 void QtFrontendWindow::SelectDataDirectory()
@@ -131,10 +125,10 @@ void QtFrontendWindow::AddDataToModel(QString path, QString extension)
 
 void  QtFrontendWindow::doUpdate()
 {
-    if(m_openGLWidget != NULL)
+	if (ui->openGLWidget != NULL)
     {
-        m_openGLWidget->paintGL();
-        m_openGLWidget->repaint();
+        ui->openGLWidget->paintGL();
+        ui->openGLWidget->repaint();
     }
 }
 
