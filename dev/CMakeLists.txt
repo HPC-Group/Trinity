@@ -4,7 +4,7 @@ add_subdirectory(renderservice)
 OPTION(BuildQTMichael "Build QT Project" OFF)
 OPTION(BuildQTNetwork "Build QT Project" OFF)
 
-IF(BuildQT)
+IF(BuildQTMichael)
 	add_subdirectory(QtFrontend)
 ENDIF()
 
