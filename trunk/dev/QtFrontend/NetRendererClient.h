@@ -5,6 +5,7 @@
 #ifndef TNG_NETRENDERERCLIENT_h
 #define TNG_NETRENDERERCLIENT_h
 
+//#include "renderer\Service\RenderState.h"
 #include <renderer/IRenderer.h>
 
 #include "NetCommands.h"
@@ -19,8 +20,8 @@
 #include <net/TCPNetworkService.h>
 
 //COMPRESSION
-#include <lz4/lz4.h>
-#include <lz4/lz4hc.h>
+//#include <lz4/lz4.h>
+//#include <lz4/lz4hc.h>
 #include <mutex>
 
 using namespace mocca;
@@ -51,13 +52,13 @@ namespace Tuvok{
         void SetFirstPersonMode(bool mode){};
         void RotateCamera(Core::Math::Vec3f rotation);
         void MoveCamera(Core::Math::Vec3f direction);
-        void SetCamera(Camera c){};                                                                             //OUT
+        //void SetCamera(Camera c){};                                                                             //OUT
         void SetCameraZoom(float f);
         void ZoomCamera(float f);
 
         //read the last framebuffer
         void ReadFrameBuffer(std::vector<uint8_t>& pixels, int& width, int& height, int& componentCount){};     //OUT
-        FrameData ReadFrameBuffer(); //
+        FrameData& ReadFrameBuffer(); //
         // END BASIC INTERACTION METHODS
 
 
@@ -123,9 +124,9 @@ namespace Tuvok{
 
 	    virtual void setClearViewRadius(float f) {};
 
-		virtual State getRenderState() { return State(); };
+		/*virtual State getRenderState() { return State(); };
 
-	    virtual void setRenderState(State renderState) {};
+	    virtual void setRenderState(State renderState) {};*/
 
 	    virtual void SwitchPagingStrategy(MissingBrickStrategy brickStrategy){};
 

@@ -1,10 +1,22 @@
 #include "NetRendererClient.h"
+
+
+#include "logging/logmanager.h"
+#include "logging/consolelog.h"
+#include "logging/htmllog.h"
+#include "logging/textlog.h"
+
+#include <net/Error.h>
 #include <algorithm>
-#define str std::to_string
+
+#include <IO/JPEGTool.h>
+
+#define tostr std::to_string
 
 using namespace Tuvok;
 using namespace Tuvok::Renderer;
-
+using namespace ghoul::logging;
+using namespace std;
 /*
     BIG THING TO CHANGE ! ADD THE CORRECT PROTOKOL!! CAN'T FIND IT RIGHT NOW!
 */
@@ -95,30 +107,59 @@ void NetRendererClient::initializeRenderer( Visibility visibility,
                                             std::string tf)
 {
     //init string : INIT:VISIBILITYSTATE:RESOLUTIONX:RESOLUTIONY:DATASET:TRANSFERFUNCTION
-    std::string m = Commands::INIT+":"+str(_iTicketID)+":"+str(_iCallID)+":" + str(visibility) + ":" + str(resolution.x) +":" + str(resolution.y) + ":" + dataset + ":"+tf;
+	std::string m = Commands::INIT + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID) + ":" + tostr(visibility) + ":" + tostr(resolution.x) + ":" + tostr(resolution.y) + ":" + dataset + ":" + tf;
     std::cout << m << std::endl;
     sendString(m);
 }
 
-FrameData NetRendererClient::ReadFrameBuffer()
+unsigned char* inputFrame = new unsigned char[640*480*3];
+uint32_t qualityRecv = 0;
+FrameData& NetRendererClient::ReadFrameBuffer()
 {
     _contextMutex.lock();
     //String : READFB:ID:LATESTFRAME;
-    sendString(Commands::FRAME+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(_currentFrame._frameID));
+	sendString(Commands::FRAME + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID) + ":" + tostr(_currentFrame._frameID));
 
     //wait for frameid
-    BytePacket frameIDPacket = connection->receive(std::chrono::milliseconds(1000));
-    uint64_t frameID = frameIDPacket.get<uint64_t>();
+	uint64_t frameID = _currentFrame._frameID;
+	try{
+      BytePacket frameIDPacket = connection->receive();
+      if (frameIDPacket.byteArray().size() == 8){
+        frameID = frameIDPacket.get<uint64_t>();
+      }
 
-    //if there is a new frame we wait till we get it!
-    if(_currentFrame._frameID < frameID){
-        BytePacket data = connection->receive(std::chrono::milliseconds(1000));
+      if (_currentFrame._frameID < frameID) qualityRecv = 0; //new frame we don't know the coming quality
 
-        _currentFrame._data.resize(_framebuffersize);
-        int uncompressedSize =  LZ4_decompress_safe ((char*)data.byteArray().data(), (char*)&(_currentFrame._data)[0], data.byteArray().size(), _framebuffersize);
+      //if there is a new frame we wait till we get it!
+      if (_currentFrame._frameID < frameID || qualityRecv < 100){
+        //wait for quality
 
-        _currentFrame._frameID = frameID;
+        BytePacket QualityPacket = connection->receive(std::chrono::milliseconds(1000));
+        if (QualityPacket.byteArray().size() == 4){
+          qualityRecv = QualityPacket.get<int>();
+
+          BytePacket data = connection->receive(std::chrono::milliseconds(1000));
+
+          if (data.byteArray().size() > 1000){
+            _currentFrame._data.resize(_framebuffersize);
+
+            //decompress
+            memcpy(inputFrame, data.byteArray().data(), data.byteArray().size());
+            decompressImage(inputFrame, data.byteArray().size(), _currentFrame._data);
+
+            _currentFrame._frameID = frameID;
+          }
+        }
     }
+
+  }
+  catch (const ConnectionClosedError& err){
+    LERRORC("NetworkRendererClient", "lost connection");
+  }
+  catch (const NetworkError& err){
+    LERRORC("NetworkRendererClient", "network error");
+  }
+
     _contextMutex.unlock();
     return _currentFrame;
 }
@@ -126,7 +167,7 @@ FrameData NetRendererClient::ReadFrameBuffer()
 void NetRendererClient::RotateCamera(Core::Math::Vec3f rotation){
     _contextMutex.lock();
     //String : ROTATE:X:Y:Z
-    std::string msg = Commands::ROT+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(rotation.x)+":"+str(rotation.y)+":"+str(rotation.z);
+	std::string msg = Commands::ROT + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID) + ":" + tostr(rotation.x) + ":" + tostr(rotation.y) + ":" + tostr(rotation.z);
     sendString(msg);
     _contextMutex.unlock();
 }
@@ -134,7 +175,7 @@ void NetRendererClient::RotateCamera(Core::Math::Vec3f rotation){
 void NetRendererClient::MoveCamera(Core::Math::Vec3f direction){
     //String : MOVE:X:Y:Z
     _contextMutex.lock();
-    std::string msg = Commands::MOV+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(direction.x)+":"+str(direction.y)+":"+str(direction.z);
+	std::string msg = Commands::MOV + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID) + ":" + tostr(direction.x) + ":" + tostr(direction.y) + ":" + tostr(direction.z);
     sendString(msg);
     _contextMutex.unlock();
 }
@@ -142,26 +183,26 @@ void NetRendererClient::MoveCamera(Core::Math::Vec3f direction){
 void NetRendererClient::SetCameraZoom(float f){
     //String : ZOOM:X
     _contextMutex.lock();
-    std::string msg = Commands::ZOM+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(f);
+	std::string msg = Commands::ZOM + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID) + ":" + tostr(f);
     sendString(msg);
     _contextMutex.unlock();
 }
 
 void NetRendererClient::ZoomCamera(float f){
     _contextMutex.lock();
-    std::string msg = Commands::ZOM+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(f);
+	std::string msg = Commands::ZOM + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID) + ":" + tostr(f);
     sendString(msg);
     _contextMutex.unlock();
 }
 
 void NetRendererClient::SetIsoValue(float fIsoValue){
     _contextMutex.lock();
-    sendString(Commands::SISO+":"+str(_iTicketID)+":"+str(_iCallID)+":"+str(fIsoValue));
+	sendString(Commands::SISO + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID) + ":" + tostr(fIsoValue));
     _contextMutex.unlock();
 }
 
 float NetRendererClient::GetIsoValue(){
-    sendString(Commands::GISO+":"+str(_iTicketID)+":"+str(_iCallID));
+	sendString(Commands::GISO + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID));
     BytePacket data = connection->receive();
     return data.get<float>();
 }

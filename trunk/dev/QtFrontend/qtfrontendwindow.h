@@ -20,7 +20,6 @@
 //#include <renderer\RenderManager.cpp>
 #include <NetRendererClient.h>
 #include "muicontroller.h"
-#include "myglwidget.h"
 
 
 //using namespace ghoul::logging;
@@ -66,7 +65,6 @@ private:
 	QString m_selectedDataset;
 	QString m_selectedTransferFunction;
 
-    myGLWidget *m_openGLWidget;
 	std::shared_ptr<IRenderer> m_renderer;
 
 	MUIController *m_muicontroller;
