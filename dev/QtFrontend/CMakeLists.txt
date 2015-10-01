@@ -12,6 +12,8 @@ file(GLOB MUI_GATE_LIB ${CMAKE_SOURCE_DIR}/dev/QtFrontend/gate_d.lib)
 file(COPY ${MUI_GATE_DLL} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Lib)
 file(COPY ${MUI_GATE_LIB} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Lib)
 
+OPTION(EnableMUI "Enable MUI" OFF)
+
 project(QtFrontend)
 
 # Find includes in corresponding build directories
@@ -25,6 +27,8 @@ find_package(Qt5Widgets REQUIRED)
 QT5_WRAP_UI(UIS_HDRS qtfrontendwindow.ui)
 
 add_executable(QtFrontend ${QTFRONTEND_SOURCE} ${QTFRONTEND_HEADER} ${UIS_HDRS} $<TARGET_OBJECTS:mocca>)
+
+set_target_properties(QtFrontend PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TRINITY_ROOT_DIR}/build/bin )
 
 include_directories(../src/ext/glm)
 
@@ -41,9 +45,12 @@ target_link_libraries(QtFrontend LINK_PUBLIC ${OPENGL_LIBRARIES})
 target_link_libraries(QtFrontend LINK_PUBLIC ghoul)
 target_link_libraries(QtFrontend LINK_PUBLIC jpeglib)
 
-link_directories(${CMAKE_CURRENT_BINARY_DIR}/Lib)
+IF(EnableMUI)
+	link_directories(${CMAKE_CURRENT_BINARY_DIR}/Lib)
+	target_link_libraries (QtFrontend Lib/gate_d)
+ENDIF()
 
-target_link_libraries (QtFrontend Lib/gate_d)
+
 
 
 
