@@ -1,7 +1,16 @@
 cmake_minimum_required(VERSION 2.8.11)
 
+OPTION(EnableMUI "Enable MUI" OFF)
+
+add_definitions(-DENABLEMUI=${EnableMUI})
+
 file(GLOB QTFRONTEND_SOURCE *.cpp)
 file(GLOB QTFRONTEND_HEADER *.h)
+
+IF(NOT EnableMUI)
+	list(REMOVE_ITEM QTFRONTEND_SOURCE ${CMAKE_SOURCE_DIR}/dev/QtFrontend/muicontroller.cpp)
+	list(REMOVE_ITEM QTFRONTEND_HEADER ${CMAKE_SOURCE_DIR}/dev/QtFrontend/muicontroller.h)
+ENDIF()
 
 file(GLOB REND_SHADERS ${CMAKE_SOURCE_DIR}/src/renderer/Shader/*.glsl)
 file(COPY ${REND_SHADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
@@ -11,8 +20,6 @@ file(GLOB MUI_GATE_DLL ${CMAKE_SOURCE_DIR}/dev/QtFrontend/gate_d.dll)
 file(GLOB MUI_GATE_LIB ${CMAKE_SOURCE_DIR}/dev/QtFrontend/gate_d.lib)
 file(COPY ${MUI_GATE_DLL} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Lib)
 file(COPY ${MUI_GATE_LIB} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Lib)
-
-OPTION(EnableMUI "Enable MUI" OFF)
 
 project(QtFrontend)
 
