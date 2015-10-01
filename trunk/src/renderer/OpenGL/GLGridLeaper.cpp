@@ -132,7 +132,34 @@ GLGridLeaper::~GLGridLeaper(){
 
 
 //! initializes the renderer \todo more parameters like resolution etc
-bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
+bool GLGridLeaper::Initialize(){
+	uint64_t gpumemorysize = 500 * 1024 * 1024;
+
+	std::string vendor = (char*)glGetString(GL_VENDOR);
+	LINFOC("RenderServer", "gpu vendor: " << vendor);
+	if (vendor == "NVIDIA Corporation"){
+
+		int currentavailable = 0;
+		// get the currently AVAILABLE!! free gpu memory
+		glGetIntegerv(0x9049, &currentavailable);
+
+		LINFOC("RenderServer", "available vram in kb: " << currentavailable);
+		uint64_t willusemax = currentavailable - (200 * 1024);
+		if (willusemax < 200 * 1024){
+			LWARNINGC("RenderServer", "not enough free vram.");
+			return 0;
+		}
+		LINFOC("RenderServer", "will use 200MB less vram: " << willusemax);
+		LINFOC("RenderServer", "read errorcodes: " << glGetError());
+
+		gpumemorysize = willusemax * 1024;
+	}
+
+
+
+
+
+
     LDEBUGC("GLGRIDLEAPER","will lock the context");
     m_pContext->lockContext();
 	//create the target binder
@@ -162,7 +189,7 @@ bool GLGridLeaper::Initialize(uint64_t gpuMemorySizeInByte){
 	LDEBUGC("GLGRIDLEAPER", "Init hashtbale");
 	InitHashTable();
 	LDEBUGC("GLGRIDLEAPER", "Init volumepool");
-	InitVolumePool(gpuMemorySizeInByte);
+	InitVolumePool(gpumemorysize);
 
 	//try to load the shaders
 	LDEBUGC("GLGRIDLEAPER", "Load compose shader");

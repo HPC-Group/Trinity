@@ -51,7 +51,7 @@ namespace Tuvok{
         void SetFirstPersonMode(bool mode){};
         void RotateCamera(Core::Math::Vec3f rotation);
         void MoveCamera(Core::Math::Vec3f direction);
-        void SetCamera(Camera c){};                                                                             //OUT
+        //void SetCamera(Camera c){};                                                                             //OUT
         void SetCameraZoom(float f);
         void ZoomCamera(float f);
 
@@ -123,9 +123,9 @@ namespace Tuvok{
 
 	    virtual void setClearViewRadius(float f) {};
 
-		virtual State getRenderState() { return State(); };
+		/*virtual State getRenderState() { return State(); };
 
-	    virtual void setRenderState(State renderState) {};
+	    virtual void setRenderState(State renderState) {};*/
 
 	    virtual void SwitchPagingStrategy(MissingBrickStrategy brickStrategy){};
 
