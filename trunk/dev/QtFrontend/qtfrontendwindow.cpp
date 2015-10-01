@@ -35,8 +35,6 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 
 	LINFOC("bla log", "blub");*/
 
-	m_muicontroller = new MUIController();
-
 	connect(ui->actionLoadData, SIGNAL(triggered()), this, SLOT(SelectDataDirectory()));
 	connect(ui->listViewDatasets, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(DatasetSelectedSlot(QModelIndex)));
     connect(ui->listViewTransferFunction, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(TransferFunctionSelectedSlot(QModelIndex)));
@@ -44,7 +42,10 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 	connect(ui->openGLWidget, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
 	connect(ui->openGLWidget, SIGNAL(Move(Core::Math::Vec3f)), this, SLOT(MoveCamera(Core::Math::Vec3f)));
 
+#ifdef _WIN32
+	m_muicontroller = new MUIController();
 	connect(m_muicontroller, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
+#endif
 
     ui->openGLWidget->setSize(m_frameWidth, m_frameHeight);
 }
@@ -54,7 +55,7 @@ QtFrontendWindow::~QtFrontendWindow()
     delete ui;
 }
 
-long QtFrontendWindow::milliseconds_now() {
+/*long QtFrontendWindow::milliseconds_now() {
 	static LARGE_INTEGER s_frequency;
 	static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
 	if (s_use_qpc) {
@@ -65,7 +66,7 @@ long QtFrontendWindow::milliseconds_now() {
 	else {
 		return GetTickCount();
 	}
-}
+}*/
 
 void QtFrontendWindow::InitRenderer()
 {

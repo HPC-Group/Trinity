@@ -19,7 +19,10 @@
 #include <renderer\IRenderer.h>
 //#include <renderer\RenderManager.cpp>
 #include <NetRendererClient.h>
-#include "muicontroller.h"
+#ifdef _WIN32
+	#include "muicontroller.h"
+#endif
+
 
 
 //using namespace ghoul::logging;
@@ -50,7 +53,7 @@ protected slots:
 private:
     Ui::QtFrontendWindow *ui;
 
-	long milliseconds_now();
+	//long milliseconds_now();
     void AddDataToModel(QString path, QString extension);
 	void InitRenderer();
 
@@ -67,7 +70,9 @@ private:
 
 	std::shared_ptr<IRenderer> m_renderer;
 
+#ifdef _WIN32
 	MUIController *m_muicontroller;
+#endif
 };
 
 #endif // QTFRONTENDWINDOW_H
