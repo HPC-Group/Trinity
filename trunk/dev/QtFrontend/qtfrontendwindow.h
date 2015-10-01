@@ -19,7 +19,8 @@
 #include <renderer/IRenderer.h>
 //#include <renderer\RenderManager.cpp>
 #include <NetRendererClient.h>
-#ifdef _WIN32
+
+#ifdef DENABLEMUI
 	#include "muicontroller.h"
 #endif
 
@@ -70,7 +71,7 @@ private:
 
 	std::shared_ptr<IRenderer> m_renderer;
 
-#ifdef _WIN32
+#ifdef DENABLEMUI
 	MUIController *m_muicontroller;
 #endif
 };

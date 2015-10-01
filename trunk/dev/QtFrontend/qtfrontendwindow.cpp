@@ -42,7 +42,7 @@ QtFrontendWindow::QtFrontendWindow(QWidget *parent) :
 	connect(ui->openGLWidget, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
 	connect(ui->openGLWidget, SIGNAL(Move(Core::Math::Vec3f)), this, SLOT(MoveCamera(Core::Math::Vec3f)));
 
-#ifdef _WIN32
+#ifdef DENABLEMUI
 	m_muicontroller = new MUIController();
 	connect(m_muicontroller, SIGNAL(Rotate(Core::Math::Vec3f)), this, SLOT(RotateCamera(Core::Math::Vec3f)));
 #endif
