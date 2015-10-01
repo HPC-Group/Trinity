@@ -16,7 +16,7 @@
 #include <qtimer.h>
 #include <qsurfaceformat.h>
 
-#include <renderer\IRenderer.h>
+#include <renderer/IRenderer.h>
 //#include <renderer\RenderManager.cpp>
 #include <NetRendererClient.h>
 #ifdef _WIN32
