@@ -6,7 +6,7 @@
 #define TNG_IRenderer_h
 
 
-#include "Service/RenderState.h"
+//#include "Service/RenderState.h"
 #include <renderer/Context/Context.h>
 
 #include <thread>
@@ -42,7 +42,7 @@ namespace Tuvok{
         virtual void SetFirstPersonMode(bool mode)  = 0;
         virtual void RotateCamera(Core::Math::Vec3f rotation) = 0;
         virtual void MoveCamera(Core::Math::Vec3f direction) = 0;
-        virtual void SetCamera(Camera c) = 0;
+        //virtual void SetCamera(Camera c) = 0;
         virtual void SetCameraZoom(float f) = 0;
         virtual void ZoomCamera(float f) = 0;
 
@@ -112,9 +112,9 @@ namespace Tuvok{
 
 	    virtual void setClearViewRadius(float f) = 0;
 
-	    virtual State getRenderState() = 0;
+	    //virtual State getRenderState() = 0;
 
-	    virtual void setRenderState(State renderState) = 0;
+	    //virtual void setRenderState(State renderState) = 0;
 
 	    virtual void SwitchPagingStrategy(MissingBrickStrategy brickStrategy) = 0;
 

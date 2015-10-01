@@ -1,6 +1,7 @@
 #ifndef TNG_AbstrRenderer_h
 #define TNG_AbstrRenderer_h
 
+#include "Service/RenderState.h"
 #include "IRenderer.h"
 #include "CullingLOD.h"
 

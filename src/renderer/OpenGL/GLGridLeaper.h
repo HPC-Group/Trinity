@@ -64,7 +64,7 @@ namespace Tuvok{
 				~GLGridLeaper();
 
 				//! initializes the renderer \todo more parameters like resolution etc
-				bool Initialize(uint64_t gpuMemorySizeInByte);
+				bool Initialize();
 
 				//! cleanup
 				void Cleanup();
