@@ -8,6 +8,7 @@ add_definitions(-DTRINITY_ROOT_DIR="${TRINITY_ROOT_DIR}")
 # install libraries to ~/local if you don't have sudo permissions; fixme dmc: remove when refactoring is finished
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ~/local)
 
+
 set(CMAKE_INSTALL_PREFIX ${TRINITY_ROOT_DIR}/build/install)
 set(CMAKE_MODULE_PATH ${TRINITY_ROOT_DIR}/cmake/modules)
 set(CMAKE_PLATFORM_PATH ${TRINITY_ROOT_DIR}/cmake/platform)

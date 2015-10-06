@@ -71,7 +71,7 @@ void NetRendererClient::openTicket(Visibility visibility,
     sendString(s);
 
     //wait for ticketId;
-    BytePacket frameIDPacket = connection->receive();
+    BytePacket frameIDPacket = connection->receive(std::chrono::milliseconds(1000));
     int32_t rendererPort = frameIDPacket.get<int32_t>();
 
     std::cout << rendererPort << std::endl;
