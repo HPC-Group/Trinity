@@ -5,7 +5,9 @@ OPTION(EnableMUI "Enable MUI" OFF)
 add_definitions(-DENABLEMUI=${EnableMUI})
 
 file(GLOB QTFRONTEND_SOURCE *.cpp)
+list(REMOVE_ITEM QTFRONTEND_SOURCE muicontroller.cpp)
 file(GLOB QTFRONTEND_HEADER *.h)
+list(REMOVE_ITEM QTFRONTEND_HEADER muicontroller.h)
 
 IF(NOT EnableMUI)
 	list(REMOVE_ITEM QTFRONTEND_SOURCE ${CMAKE_SOURCE_DIR}/dev/QtFrontend/muicontroller.cpp)
