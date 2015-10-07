@@ -20,14 +20,11 @@ add_library (Renderer ${REND2_SOURCE} ${REND2_HEADER} ${REND2_SHADERS} $<TARGET_
 target_include_directories (Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
 target_include_directories (Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shader)
 
-target_link_libraries (Renderer LINK_PUBLIC Tools)
 target_link_libraries (Renderer LINK_PUBLIC Core)
 target_link_libraries (Renderer LINK_PUBLIC IO)
 target_link_libraries (Renderer LINK_PUBLIC glew)
 target_link_libraries (Renderer LINK_PUBLIC glfw ${GLFW_LIBRARIES})
 target_link_libraries (Renderer LINK_PUBLIC ghoul)
-target_link_libraries (Renderer LINK_PUBLIC lz4)
-target_link_libraries (Renderer LINK_PUBLIC jpeglib)
 
 #MOCCA
 include_directories(

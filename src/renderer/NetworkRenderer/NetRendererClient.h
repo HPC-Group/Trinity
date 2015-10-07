@@ -19,8 +19,6 @@
 #include <net/TCPNetworkService.h>
 
 //COMPRESSION
-#include <lz4/lz4.h>
-#include <lz4/lz4hc.h>
 #include <mutex>
 
 using namespace mocca;

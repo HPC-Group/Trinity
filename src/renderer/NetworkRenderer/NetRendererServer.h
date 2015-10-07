@@ -12,9 +12,6 @@
 #include <net/LoopbackConnectionListener.h>
 #include <net/TCPNetworkService.h>
 
-#include <lz4/lz4.h>
-#include <lz4/lz4hc.h>
-
 #include <map>
 
 #include <core/Time/Timer.h>

@@ -28,9 +28,6 @@
 #include <fstream>
 #include <thread>
 
-#include <lz4/lz4.h>
-#include <lz4/lz4hc.h>
-
 #include <core/FileFinder.h>
 #include <stdio.h>
 #include <string.h>
@@ -332,19 +329,6 @@ bool GLGridLeaper::Paint(){
         m_pixels.resize(viewport[2] * viewport[3] * 3);
         glReadPixels(0, 0, viewport[2], viewport[3], GL_RGB,
 		GL_UNSIGNED_BYTE, &(m_pixels)[0]);
-
-
-
-		//compress the data (LZ4)
-		/*m_storedFrame._data.resize(viewport[2] * viewport[3] * 3);
-        int compressedSize = LZ4_compress(  (char*)&(m_pixels[0]),
-                                                (char*) &(m_storedFrame._data[0]),
-                                                m_pixels.size());
-        m_storedFrame._data.resize(compressedSize);
-		std::cout << "LZ4" << m_storedFrame._data.size() << std::endl;*/
-
-		//compress to jpeg
-		//unsigned long l = compressImage((char*)&(m_pixels)[0], 640, 480, c, 100);
 
 		m_storedFrame._data.resize(viewport[2] * viewport[3]*3);
 		memcpy(&m_storedFrame._data[0], &m_pixels[0], viewport[2] * viewport[3] * 3);
