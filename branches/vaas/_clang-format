@@ -1,0 +1,12 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+Standard: Cpp11
+UseTab: Never
+ColumnLimit: 100
+DerivePointerAlignment: false
+PointerAlignment: Left
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: Inline
+BreakConstructorInitializersBeforeComma : true
