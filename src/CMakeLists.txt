@@ -9,7 +9,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
 
 # level 0 modules
 add_subdirectory(mocca)
-
+add_subdirectory(common)
 
 option(TRINITY_BUILD_TESTS "Build tests for trinity" on)
 if (TRINITY_BUILD_TESTS)
