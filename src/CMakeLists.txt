@@ -11,8 +11,8 @@ include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
 add_subdirectory(mocca)
 add_subdirectory(common)
 add_subdirectory(thirdparty)
-add_subdirectory(silverbullet-core)
-add_subdirectory(io-fractal)
+add_subdirectory(silverbullet)
+#add_subdirectory(io-fractal)
 
 
 option(TRINITY_BUILD_TESTS "Build tests for trinity" on)
