@@ -6,6 +6,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS on)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
+include_directories(${PROJECT_SOURCE_DIR}/src/silverbullet/include)
 
 # level 0 modules
 add_subdirectory(mocca)
