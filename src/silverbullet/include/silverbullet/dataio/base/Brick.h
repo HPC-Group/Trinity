@@ -56,7 +56,7 @@ namespace Tuvok {
 ///  struct or similar: if a new component gets added to the key which is not
 ///  the last component, it shifts all the indices, necessitating massive code
 ///  changes.
-typedef std::tuple<size_t, size_t, size_t> BrickKey; ///< timestep + LOD + 1D brick index
+typedef std::tuple<uint64_t, uint64_t, uint64_t, uint64_t> BrickKey; ///< modality + timestep + LOD + 1D brick index
 struct BrickMD {
   Vec3f center; ///< center of the brick, in world coords
   Vec3f extents; ///< width/height/depth of the brick.
