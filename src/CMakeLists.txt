@@ -14,6 +14,9 @@ add_subdirectory(common)
 add_subdirectory(thirdparty)
 add_subdirectory(silverbullet)
 add_subdirectory(io-fractal)
+add_subdirectory(io-dummy)
+add_subdirectory(frontend-dummy)
+add_subdirectory(processing-dummy)
 
 
 option(TRINITY_BUILD_TESTS "Build tests for trinity" on)
