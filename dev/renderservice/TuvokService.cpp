@@ -20,7 +20,7 @@ _disconnectedConnections(),
 _portCounter(41420)
 {
     TCPNetworkService netService;
-    _listener = netService.bind(port);
+	_listener = netService.bind(port);
 
     _connectionThread = std::unique_ptr<std::thread>(new std::thread(&TuvokService::acceptConnection,this));
 }
@@ -44,7 +44,6 @@ void TuvokService::acceptConnection(){
             _connections.insert(std::pair<  uint32_t,
                                         std::unique_ptr<AbstractConnection>>
                                         (++_connectionCounter,std::move(con)));
-
             LINFOC("Renderservice", "new connection to service");
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -56,7 +55,8 @@ void TuvokService::acceptMsg(){
     for (auto connection = _connections.begin(); connection!=_connections.end(); ++connection){
         try{
             BytePacket data = connection->second->receive(std::chrono::milliseconds(100));
-            if(data.byteArray().size() > 0){
+
+			if(data.byteArray().size() > 0){
                 std::string s(data.byteArray().data(),0,data.byteArray().size());
 
                 LDEBUGC("Renderservice", s);
@@ -66,8 +66,8 @@ void TuvokService::acceptMsg(){
             _disconnectedConnections.push_back(connection->first);
         }catch(const NetworkError& err){
             _disconnectedConnections.push_back(connection->first);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+        //std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     //not sure if the iterator will fail if we delet on err
     for(uint32_t i : _disconnectedConnections){
@@ -105,7 +105,6 @@ void TuvokService::handleMsg(std::string msg, uint32_t id){
         if(_portCounter > 51414){
             _portCounter = 41414;
         }
-
         _connections.erase(id);
     }
 }
