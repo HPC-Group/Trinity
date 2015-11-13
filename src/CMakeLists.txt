@@ -13,10 +13,10 @@ add_subdirectory(IO)
 add_subdirectory(core)
 
 INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src)
-INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src/pushframework/include)
+#INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src/pushframework/include)
 
-add_subdirectory(pushframework)
-add_subdirectory(websocketprotocol)
+#add_subdirectory(pushframework)
+#add_subdirectory(websocketprotocol)
 
 ########## Ghoul Objects +++++++++++>
 
