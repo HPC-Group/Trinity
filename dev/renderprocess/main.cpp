@@ -46,7 +46,6 @@ gebaut, kein copy mehr nötig
 
 
 #include <base/Error.h>
-#include <base/BytePacket.h>
 #include <net/TCPNetworkAddress.h>
 #include <net/LoopbackNetworkService.h>
 #include <net/LoopbackConnectionListener.h>

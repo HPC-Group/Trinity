@@ -54,10 +54,10 @@ void TuvokService::acceptMsg(){
     _disconnectedConnections.clear();
     for (auto connection = _connections.begin(); connection!=_connections.end(); ++connection){
         try{
-            BytePacket data = connection->second->receive(std::chrono::milliseconds(100));
+            ByteArray data = connection->second->receive(std::chrono::milliseconds(100));
 
-			if(data.byteArray().size() > 0){
-                std::string s(data.byteArray().data(),0,data.byteArray().size());
+			if(data.size() > 0){
+                std::string s(data.data(),0,data.size());
 
                 LDEBUGC("Renderservice", s);
                 handleMsg(s,connection->first);

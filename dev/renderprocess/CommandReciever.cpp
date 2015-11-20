@@ -47,9 +47,9 @@ void CommandReciever::run(){
 	_timer.start();
     while(_keepAlive){
         try{
-            BytePacket data = _connection->receive();
-            if(data.byteArray().size() > 0){
-                std::string s(data.byteArray().data(),0,data.byteArray().size());
+            ByteArray data = _connection->receive();
+            if(data.size() > 0){
+                std::string s(data.data(),0,data.size());
                 //LDEBUGC("Renderprocess", s);
 
                 handleMsg(s);

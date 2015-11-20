@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <base/Error.h>
-#include <base/BytePacket.h>
+#include <base/ByteArray.h>
 #include <net/TCPNetworkAddress.h>
 #include <net/LoopbackNetworkService.h>
 #include <net/LoopbackConnectionListener.h>
