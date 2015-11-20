@@ -71,7 +71,7 @@ void NetRendererClient::openTicket(Visibility visibility,
     sendString(s);
 
     //wait for ticketId;
-    BytePacket frameIDPacket = connection->receive(std::chrono::milliseconds(1000));
+    ByteArray frameIDPacket = connection->receive(std::chrono::milliseconds(1000));
     int32_t rendererPort = frameIDPacket.get<int32_t>();
 
     std::cout << rendererPort << std::endl;
@@ -123,8 +123,8 @@ FrameData& NetRendererClient::ReadFrameBuffer()
     //wait for frameid
 	uint64_t frameID = _currentFrame._frameID;
 	try{
-      BytePacket frameIDPacket = connection->receive();
-      if (frameIDPacket.byteArray().size() == 8){
+      ByteArray frameIDPacket = connection->receive();
+      if (frameIDPacket.size() == 8){
         frameID = frameIDPacket.get<uint64_t>();
       }
 
@@ -134,18 +134,18 @@ FrameData& NetRendererClient::ReadFrameBuffer()
       if (_currentFrame._frameID < frameID || qualityRecv < 100){
         //wait for quality
 
-        BytePacket QualityPacket = connection->receive(std::chrono::milliseconds(1000));
-        if (QualityPacket.byteArray().size() == 4){
+        ByteArray QualityPacket = connection->receive(std::chrono::milliseconds(1000));
+        if (QualityPacket.size() == 4){
           qualityRecv = QualityPacket.get<int>();
 
-          BytePacket data = connection->receive(std::chrono::milliseconds(1000));
+          ByteArray data = connection->receive(std::chrono::milliseconds(1000));
 
-          if (data.byteArray().size() > 1000){
+          if (data.size() > 1000){
             _currentFrame._data.resize(_framebuffersize);
 
             //decompress
-            memcpy(inputFrame, data.byteArray().data(), data.byteArray().size());
-            decompressImage(inputFrame, data.byteArray().size(), _currentFrame._data);
+            memcpy(inputFrame, data.data(), data.size());
+            decompressImage(inputFrame, data.size(), _currentFrame._data);
 
             _currentFrame._frameID = frameID;
           }
@@ -203,6 +203,6 @@ void NetRendererClient::SetIsoValue(float fIsoValue){
 
 float NetRendererClient::GetIsoValue(){
 	sendString(Commands::GISO + ":" + tostr(_iTicketID) + ":" + tostr(_iCallID));
-    BytePacket data = connection->receive();
+    ByteArray data = connection->receive();
     return data.get<float>();
 }

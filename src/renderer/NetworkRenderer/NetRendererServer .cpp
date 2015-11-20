@@ -69,11 +69,11 @@ void NetRendererServer::waitForMsg(){
         //only the msg thread will sleep and wait
         //renderer runs in seperate threads!
         try{
-            BytePacket data = connection->second->receive();
-            if(data.byteArray().size() > 0){
+            ByteArray data = connection->second->receive();
+            if(data.size() > 0){
                 // for first we see incoming bytarray as simple strings where each byte
                 // represents a single 8 bit char
-                std::string s(data.byteArray().data(),0,data.byteArray().size());
+                std::string s(data.data(),0,data.size());
 
                 //give msg to our handle method
                 handleMsg(s,connection->first);
