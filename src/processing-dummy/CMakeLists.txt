@@ -10,5 +10,7 @@ add_executable(processingdummy ${PROCESSINGDUMMY_HEADER} ${PROCESSINGDUMMY_SOURC
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 
+target_link_libraries(processingdummy ${POCO_LIBRARIES})
+
 SET_TARGET_PROPERTIES(processingdummy PROPERTIES FOLDER "dummy")
 SET_TARGET_PROPERTIES(processingdummy PROPERTIES FOLDER "dummy")

@@ -10,5 +10,6 @@ add_executable(iodummy ${IODUMMY_HEADER} ${IODUMMY_SOURCE}
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 
+
 SET_TARGET_PROPERTIES(iodummy PROPERTIES FOLDER "dummy")
 SET_TARGET_PROPERTIES(iodummy PROPERTIES FOLDER "dummy")

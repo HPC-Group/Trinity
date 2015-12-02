@@ -10,5 +10,6 @@ add_executable(frontenddummy ${FRONTENDDUMMY_HEADER} ${FRONTENDDUMMY_SOURCE}
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 
+
 SET_TARGET_PROPERTIES(frontenddummy PROPERTIES FOLDER "dummy")
 SET_TARGET_PROPERTIES(frontenddummy PROPERTIES FOLDER "dummy")
