@@ -1,10 +1,12 @@
 #pragma once
-#include <memory>
 
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/AbstractConnection.h"
 #include "RendererPrx.h"
 #include "common/Commands.h"
+
+#include <memory>
+#include <atomic>
 
 namespace trinity {
     

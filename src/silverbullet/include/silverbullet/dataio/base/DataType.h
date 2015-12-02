@@ -3,6 +3,8 @@
 
 #include <silverbullet/base/SilverBulletBase.h>
 
+#include <algorithm>
+
 namespace DataIO {
   class DataType : public Core::Streamable {
   public:

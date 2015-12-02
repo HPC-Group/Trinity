@@ -1,5 +1,5 @@
 #include "FractalIO.h"
-#include "mocca/base/error.h"
+#include "mocca/base/Error.h"
 
 using namespace Core::Math;
 
