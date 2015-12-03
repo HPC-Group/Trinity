@@ -3,10 +3,10 @@ include(GTest)
 
 option(TRINITY_TEST_LOGGING "Enable log output for tests (slows down test execution)" off)
 
-ExtFolder(gmock)
-ExtFolder(gmock_main)
-ExtFolder(gtest)
-ExtFolder(gtest_main)
+MarkAsExternal(gmock)
+MarkAsExternal(gmock_main)
+MarkAsExternal(gtest)
+MarkAsExternal(gtest_main)
 
 
 file(GLOB TRINITY_TEST_HEADER ${CMAKE_CURRENT_LIST_DIR}/base/*.h

@@ -37,7 +37,7 @@ void ProcessingNode::listen() {
         auto msgEnvelope = std::move(m_aggregator.receive(receiveTimeout));
         if(!msgEnvelope.isNull()) {
             auto byteArray = msgEnvelope.release().message;
-            LINFO("command: " << byteArray.get<std::string>());
+            LINFO("command: " << byteArray.read(byteArray.size()));
         }
     }
 }

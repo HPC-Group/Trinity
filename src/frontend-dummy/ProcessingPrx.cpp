@@ -3,7 +3,6 @@
 #include "ProcessingPrx.h"
 #include "common/MuiError.h"
 #include "mocca/net/NetworkServiceLocator.h"
-#include "mocca/net/AbstractConnection.h"
 #include "mocca/net/Error.h"
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
@@ -31,7 +30,8 @@ bool ProcessingPrx::connect() {
     std::stringstream cmd;
     cmd << trinity::vcl::INIT_CONNECTION
     << "_" << std::to_string(0) << "_" <<  m_mainChannelIDGen.nextID();
-    m_mainChannel->send(mocca::ByteArray() << cmd.str());
+    auto cmdStr = cmd.str();
+    m_mainChannel->send(mocca::ByteArray::createFromRaw(cmdStr.c_str(), cmdStr.size()));
     LINFO("successfully connected to processing at \"" << m_processingNode << "\": ");
     return true;
 }
@@ -45,11 +45,12 @@ std::unique_ptr<RendererPrx> ProcessingPrx::spawnRenderer() {
     std::stringstream cmd;
     cmd << trinity::vcl::INIT_RENDERER
     << "_" << std::to_string(0) << "_" <<  m_mainChannelIDGen.nextID();
-    m_mainChannel->send(mocca::ByteArray() << cmd.str());
+    auto cmdStr = cmd.str();
+    m_mainChannel->send(mocca::ByteArray::createFromRaw(cmdStr.c_str(), cmdStr.size()));
     
     while(!m_exitFlag) {
         auto byteArray = m_mainChannel->receive();
-        LINFO("cmd : " << cmd.str() << "; reply: " << byteArray.get<std::string>());
+        LINFO("cmd : " << cmd.str() << "; reply: " << byteArray.read(byteArray.size()));
     }
     
     

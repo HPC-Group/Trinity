@@ -1,6 +1,5 @@
 include(PlatformSpecific)
-include(CreateSourceGroups)
-include(ExtFolder)
+include(Macros)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS on)
 
