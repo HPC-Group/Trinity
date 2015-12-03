@@ -14,5 +14,9 @@ add_executable(iofracalmain ${CMAKE_CURRENT_LIST_DIR}/main.cpp
 				$<TARGET_OBJECTS:silverbullet>
 				${CMAKE_CURRENT_LIST_DIR}/main.cpp)
 
+IF (WIN32)
+	TARGET_LINK_LIBRARIES(iofracalmain Shlwapi.lib)
+ENDIF ()
+				
 SET_TARGET_PROPERTIES(iofractal PROPERTIES FOLDER "iofractal")
 SET_TARGET_PROPERTIES(iofracalmain PROPERTIES FOLDER "iofractal")

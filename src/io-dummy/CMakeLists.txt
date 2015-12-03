@@ -10,6 +10,9 @@ add_executable(iodummy ${IODUMMY_HEADER} ${IODUMMY_SOURCE}
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 
-
+IF (WIN32)
+	TARGET_LINK_LIBRARIES(iodummy Shlwapi.lib)
+ENDIF ()
+				
 SET_TARGET_PROPERTIES(iodummy PROPERTIES FOLDER "dummy")
 SET_TARGET_PROPERTIES(iodummy PROPERTIES FOLDER "dummy")

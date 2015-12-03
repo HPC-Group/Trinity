@@ -11,6 +11,9 @@ add_executable(processingdummy ${PROCESSINGDUMMY_HEADER} ${PROCESSINGDUMMY_SOURC
 				$<TARGET_OBJECTS:silverbullet>)
 
 target_link_libraries(processingdummy ${POCO_LIBRARIES})
+IF (WIN32)
+	TARGET_LINK_LIBRARIES(processingdummy Shlwapi.lib)
+ENDIF ()
 
 SET_TARGET_PROPERTIES(processingdummy PROPERTIES FOLDER "dummy")
 SET_TARGET_PROPERTIES(processingdummy PROPERTIES FOLDER "dummy")
