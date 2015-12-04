@@ -4,17 +4,25 @@
 namespace trinity {
 namespace vcl {
     
+    static const int MIN_CMD_LENGTH = 3;
     // global
     static const std::string TRI_RET = "RET";
     static const std::string TRI_ERROR = "ERR";
 
     
-    // from frontend to processing
+    // managing connections
     static const std::string INIT_CONNECTION = "CON";
     static const std::string CLOSE_CONNECTION = "EXT";
     
+    // managing processing/rendering instances
     static const std::string INIT_RENDERER = "INR";
     static const std::string CLOSE_RENDERER = "CLR";
+    
+    // renderer types
+    static const std::string DUMMY_RENDERER = "DRN";
+    static const std::string GRID_LEAPER_RENDERER = "GRN";
+    
+    
 } // end vcl
 
 

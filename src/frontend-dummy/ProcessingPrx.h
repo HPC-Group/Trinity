@@ -24,7 +24,7 @@ public:
     bool connect();
     void disconnect();
     
-    std::unique_ptr<RendererPrx> spawnRenderer();
+    std::unique_ptr<RendererPrx> spawnRenderer(const std::string&);
     
 private:
     const mocca::net::Endpoint& m_processingNode;

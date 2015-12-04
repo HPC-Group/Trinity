@@ -10,6 +10,7 @@ namespace trinity {
     
 public:
     
+    DummyRenderer();
     
     
 };

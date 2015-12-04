@@ -12,13 +12,16 @@
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/LogManager.h"
 #include "ProcessingPrx.h"
+#include "common/Commands.h"
 
-std::atomic<bool> exitFlag{false};
 static int reconnectInSec = 5;
+std::atomic<bool> exitFlag{false};
+std::unique_ptr<trinity::ProcessingPrx> processingNode;
 
 void exitHandler(int s) {
     std::cout << "Trinity exit on signal " << std::to_string(s) << std::endl;
     exitFlag = true;
+    processingNode->disconnect();
 }
 
 void init() {
@@ -40,19 +43,24 @@ int main(int argc, char** argv) {
     Endpoint processingEndpoint(MoccaNetworkService::protocolStatic(),
                                 TCPNetworkService::transportStatic(), "localhost:5678");
 
-    trinity::ProcessingPrx processingNode(processingEndpoint);
+    processingNode =
+    std::unique_ptr<trinity::ProcessingPrx>(new trinity::ProcessingPrx(processingEndpoint));
 
     bool connected = false;
 
     while (!connected && !exitFlag) {
-        connected = processingNode.connect();
+        connected = processingNode->connect();
         if (!connected) {
             LINFO("reconnecting in " << std::to_string(reconnectInSec) << " seconds");
             std::this_thread::sleep_for(std::chrono::seconds(reconnectInSec));
         }
     }
-
-    processingNode.spawnRenderer();
+    try {
+        processingNode->spawnRenderer(trinity::vcl::DUMMY_RENDERER);
+    } catch (const mocca::Error& err) {
+        LERROR(err.what());
+    }
+    
 
     while (!exitFlag) {
     };
