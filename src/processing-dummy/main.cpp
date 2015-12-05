@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
                                             TCPNetworkService::transportStatic(),
                                           std::to_string(feWSPort)));
 
-    std::thread t1(&trinity::ProcessingNode::listen, &wsNode);
-    tcpNode.listen();
-    //wsNode.listen();
+    //std::thread t1(&trinity::ProcessingNode::listen, &wsNode);
+    //tcpNode.listen();
+    wsNode.listen();
 }
