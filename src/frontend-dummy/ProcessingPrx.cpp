@@ -17,7 +17,7 @@ static std::chrono::milliseconds receiveTimeout(50);
 
 ProcessingPrx::~ProcessingPrx() {}
 
-ProcessingPrx::ProcessingPrx(const mocca::net::Endpoint& endpoint) :
+ProcessingPrx::ProcessingPrx(mocca::net::Endpoint endpoint) :
 m_processingNode(endpoint), m_exitFlag(false) {}
 
 
@@ -75,6 +75,6 @@ std::unique_ptr<RendererPrx> ProcessingPrx::spawnRenderer(const std::string& typ
             break;
         }
     }
-    
-    
+    std::unique_ptr<RendererPrx> ren(new RendererPrx);
+    return ren;
 }

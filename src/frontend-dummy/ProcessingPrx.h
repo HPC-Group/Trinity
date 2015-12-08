@@ -16,7 +16,7 @@ public:
 
     
     /// see mocca::net::Endpoint for details, supports remote and local calls
-    ProcessingPrx(const mocca::net::Endpoint&);
+    ProcessingPrx(mocca::net::Endpoint);
     
     ~ProcessingPrx();
     
@@ -27,7 +27,7 @@ public:
     std::unique_ptr<RendererPrx> spawnRenderer(const std::string&);
     
 private:
-    const mocca::net::Endpoint& m_processingNode;
+    const mocca::net::Endpoint m_processingNode;
     std::unique_ptr<mocca::net::IProtocolConnection> m_mainChannel;
     trinity::IDGenerator m_mainChannelIDGen;
     std::atomic<bool> m_exitFlag;

@@ -50,9 +50,8 @@ void ProcessingNode::listen() {
             std::stringstream reply;
             
             if (args.size() < vcl::MIN_CMD_LENGTH) {  // cmd not well-formatted
-                reply << vcl::TRI_ERROR << "_0_" << args[2] << "_1";
-            }
-            if (args[0] == vcl::INIT_RENDERER) {
+                reply << vcl::TRI_ERROR << "_0_" << "_0_" << "_1";
+            } else if (args[0] == vcl::INIT_RENDERER) {
                 reply << handleSpawnRendererCmd(args);
             } else if (args[0] == vcl::INIT_CONNECTION) {
                 LINFO("someone connected");  // do nothing

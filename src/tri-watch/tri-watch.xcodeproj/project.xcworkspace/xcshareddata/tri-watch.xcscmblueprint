@@ -1,0 +1,35 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "d21111eb-5840-4a8f-b421-6474c1277627",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "d21111eb-5840-4a8f-b421-6474c1277627" : {
+
+    },
+    "2ba7c523-1b2b-4c1b-b753-6ed2505edfa1++7889" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "d21111eb-5840-4a8f-b421-6474c1277627" : 0,
+    "2ba7c523-1b2b-4c1b-b753-6ed2505edfa1++7889" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "27902BF6-0284-434F-A622-56BDCDC57B99",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "d21111eb-5840-4a8f-b421-6474c1277627" : "trinity\/",
+    "2ba7c523-1b2b-4c1b-b753-6ed2505edfa1++7889" : "trinity\/branches\/vaas\/src\/mocca\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "tri-watch",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "branches\/vaas\/src\/tri-watch\/tri-watch.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn+ssh:\/\/134.91.11.160\/var\/svn\/mocca",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "2ba7c523-1b2b-4c1b-b753-6ed2505edfa1++7889"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn+ssh:\/\/134.91.11.160\/var\/svn\/trinity",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "d21111eb-5840-4a8f-b421-6474c1277627"
+    }
+  ]
+}

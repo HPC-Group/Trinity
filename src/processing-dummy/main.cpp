@@ -53,6 +53,6 @@ int main(int argc, char** argv) {
                                           std::to_string(feWSPort)));
 
     //std::thread t1(&trinity::ProcessingNode::listen, &wsNode);
-    //tcpNode.listen();
-    wsNode.listen();
+    tcpNode.listen();
+    //wsNode.listen();
 }
