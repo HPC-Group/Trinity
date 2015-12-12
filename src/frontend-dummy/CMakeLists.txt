@@ -5,8 +5,14 @@ CreateSourceGroups("${FRONTENDDUMMY_HEADER}" ${CMAKE_CURRENT_LIST_DIR})
 CreateSourceGroups("${FRONTENDDUMMY_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
 
 
+list(REMOVE_ITEM FRONTENDDUMMY_SOURCE ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
 
-add_executable(frontenddummy ${FRONTENDDUMMY_HEADER} ${FRONTENDDUMMY_SOURCE}
+add_library(frontenddummylib OBJECT ${FRONTENDDUMMY_HEADER} ${FRONTENDDUMMY_SOURCE})
+
+add_executable(frontenddummy 
+				${CMAKE_CURRENT_LIST_DIR}/main.cpp
+				${FRONTENDDUMMY_HEADER} 
+				${FRONTENDDUMMY_SOURCE}
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 

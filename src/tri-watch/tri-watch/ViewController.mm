@@ -46,7 +46,7 @@ static int reconnectInSec = 5;
                                                                                 std::unique_ptr<IPhysicalNetworkService>(new TCPNetworkService())));
     
     Endpoint processingEndpoint(MoccaNetworkService::protocolStatic(),
-                                TCPNetworkService::transportStatic(), "192.168.1.24:5678");
+                                TCPNetworkService::transportStatic(), "134.91.11.158:5678");
     
 
     processingNode =

@@ -6,7 +6,14 @@ CreateSourceGroups("${IODUMMY_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
 
 
 
-add_executable(iodummy ${IODUMMY_HEADER} ${IODUMMY_SOURCE}
+list(REMOVE_ITEM IODUMMY_SOURCE ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
+
+# add_library(iodummylib OBJECT ${IODUMMY_HEADER} ${IODUMMY_SOURCE})
+
+add_executable(iodummy 
+				${CMAKE_CURRENT_LIST_DIR}/main.cpp
+				${IODUMMY_HEADER} 
+				${IODUMMY_SOURCE}
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 
