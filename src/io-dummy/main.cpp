@@ -1,7 +1,5 @@
 #include "mocca/net/NetworkServiceLocator.h"
-#include "mocca/net/TCPNetworkService.h"
-#include "mocca/net/MoccaNetworkService.h"
-#include "mocca/net/IProtocolConnectionAcceptor.h"
+#include "mocca/net/IMessageConnectionAcceptor.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ByteArray.h"
 #include <iostream>
@@ -12,13 +10,12 @@ using namespace mocca::net;
 int main(int argc, char** argv)
 {
     
-    NetworkServiceLocator::provideService(std::make_shared<MoccaNetworkService>(
-        std::unique_ptr<IPhysicalNetworkService>(new TCPNetworkService())));
+    NetworkServiceLocator::provideAll();
 
-    auto acceptor = NetworkServiceLocator::bind(Endpoint(MoccaNetworkService::protocolStatic(), TCPNetworkService::transportStatic(), "5678"));
+    auto acceptor = NetworkServiceLocator::bind(Endpoint(NetworkServiceLocator::tcpPrefixed(), "5678"));
     // acceptor.getConnection();
     while (true) {
-        auto conn = acceptor->getConnection();
+        auto conn = acceptor->accept();
         if(conn) {
             std::cout << "connection opened" << std::endl;
             while(true) {

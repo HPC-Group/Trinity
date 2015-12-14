@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mocca/net/Endpoint.h"
-#include "mocca/net/IProtocolConnection.h"
+#include "mocca/net/IMessageConnection.h"
 #include "RendererPrx.h"
 #include "common/Commands.h"
 
@@ -28,7 +28,7 @@ public:
     
 private:
     const mocca::net::Endpoint m_processingNode;
-    std::unique_ptr<mocca::net::IProtocolConnection> m_mainChannel;
+    std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
     trinity::IDGenerator m_mainChannelIDGen;
     std::atomic<bool> m_exitFlag;
 };

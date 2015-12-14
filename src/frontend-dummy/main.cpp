@@ -5,8 +5,6 @@
 #include <thread>
 
 #include "mocca/net/NetworkServiceLocator.h"
-#include "mocca/net/MoccaNetworkService.h"
-#include "mocca/net/TCPNetworkService.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
@@ -37,14 +35,12 @@ using namespace mocca::net;
 int main(int argc, char** argv) {
     init();
 
-    NetworkServiceLocator::provideService(std::make_shared<MoccaNetworkService>(
-        std::unique_ptr<IPhysicalNetworkService>(new TCPNetworkService())));
+    NetworkServiceLocator::provideAll();
 
-    Endpoint processingEndpoint(MoccaNetworkService::protocolStatic(),
-                                TCPNetworkService::transportStatic(), "localhost:5678");
+    Endpoint processingEndpoint(NetworkServiceLocator::tcpPrefixed(), "localhost:5678");
 
     processingNode =
-    std::unique_ptr<trinity::ProcessingPrx>(new trinity::ProcessingPrx(processingEndpoint));
+        std::unique_ptr<trinity::ProcessingPrx>(new trinity::ProcessingPrx(processingEndpoint));
 
     bool connected = false;
 
@@ -60,7 +56,6 @@ int main(int argc, char** argv) {
     } catch (const mocca::Error& err) {
         LERROR(err.what());
     }
-    
 
     while (!exitFlag) {
     };

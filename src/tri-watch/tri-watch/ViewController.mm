@@ -42,11 +42,9 @@ static int reconnectInSec = 5;
     NSLog(@"init network");
     [self initLog];
     
-    NetworkServiceLocator::provideService(std::make_shared<MoccaNetworkService>(
-                                                                                std::unique_ptr<IPhysicalNetworkService>(new TCPNetworkService())));
+    NetworkServiceLocator::provideAll();
     
-    Endpoint processingEndpoint(MoccaNetworkService::protocolStatic(),
-                                TCPNetworkService::transportStatic(), "134.91.11.158:5678");
+    Endpoint processingEndpoint(NetworkServiceLocator::tcpPrefixed(), "134.91.11.158:5678");
     
 
     processingNode =
