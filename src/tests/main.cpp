@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
   using mocca::LogManager;
-#ifdef MUI_TEST_LOGGING
+#ifdef TRINITY_TEST_LOGGING
   LogManager::initialize(LogManager::LogLevel::Debug, true);
 #else
   LogManager::initialize(LogManager::LogLevel::None, true);

@@ -10,7 +10,7 @@
 
 namespace trinity {
     
-class ProcessingPrx {
+    class ProcessingPrx {
     
 public:
 
@@ -20,16 +20,14 @@ public:
     
     ~ProcessingPrx();
     
-    /// true on success. Does not throw any errors
+    /// true on success. Does not throw any errors. Disconnect happens in dtor
     bool connect();
-    void disconnect();
     
     std::unique_ptr<RendererPrx> spawnRenderer(const std::string&);
     
 private:
-    const mocca::net::Endpoint m_processingNode;
+    mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
     trinity::IDGenerator m_mainChannelIDGen;
-    std::atomic<bool> m_exitFlag;
 };
 }

@@ -19,7 +19,6 @@ std::unique_ptr<trinity::ProcessingPrx> processingNode;
 void exitHandler(int s) {
     std::cout << "Trinity exit on signal " << std::to_string(s) << std::endl;
     exitFlag = true;
-    processingNode->disconnect();
 }
 
 void init() {

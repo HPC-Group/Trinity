@@ -6,23 +6,27 @@
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/ConnectionAggregator.h"
 #include "RenderSession.h"
+#include "mocca/base/Thread.h"
 
 
 
 namespace trinity {
-class ProcessingNode {
+    class ProcessingNode : public mocca::Runnable {
     
 public:
     
     // only frontends can connect to the processing node -> only one endpoint needed
-    ProcessingNode(const mocca::net::Endpoint&);
+    ProcessingNode(const mocca::net::Endpoint);
+        
+    ~ProcessingNode();
+        
+
     
-    void listen();
     
     
 private:
-    
-    const mocca::net::Endpoint& m_endpoint;
+    void run() override;
+    const mocca::net::Endpoint m_endpoint;
     mocca::net::ConnectionAggregator m_aggregator;
     std::vector<std::unique_ptr<RenderSession> > m_renderSessions;
     

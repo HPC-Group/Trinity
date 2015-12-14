@@ -22,6 +22,8 @@ namespace vcl {
     static const std::string DUMMY_RENDERER = "DRN";
     static const std::string GRID_LEAPER_RENDERER = "GRN";
     
+    static const std::string GET_FRAMEBUFFER = "GFB";
+    
     
 } // end vcl
 

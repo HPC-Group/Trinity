@@ -1,5 +1,3 @@
-#include <atomic>
-#include <csignal>
 #include <iostream>
 #include <memory>
 
@@ -9,34 +7,35 @@
 #include "mocca/base/StringTools.h"
 #include "common/Commands.h"
 
+
 using namespace trinity;
 using namespace mocca::net;
 
 
 static std::chrono::milliseconds receiveTimeout(50);
 
-// exit handler for interrupts
-std::atomic<bool> exitFlag { false };
-void exitHandler(int s) {
-    LINFO("trinity exit on signal " << std::to_string(s));
-    exitFlag = true;
+
+ProcessingNode::~ProcessingNode() {
+    LINFO("renderers to stop: " << m_renderSessions.size());
+    for(auto& session : m_renderSessions)
+        session->interrupt();
+    join();
 }
 
 
-ProcessingNode::ProcessingNode(const mocca::net::Endpoint& endpoint) :
+ProcessingNode::ProcessingNode(const mocca::net::Endpoint endpoint) :
 m_endpoint(endpoint),
 m_aggregator(std::move(NetworkServiceLocator::bind(endpoint)),
              ConnectionAggregator::DisconnectStrategy::RemoveConnection)
 {
-    signal(SIGINT, exitHandler);
 }
 
 
-void ProcessingNode::listen() {
+void ProcessingNode::run() {
     LINFO("listening at endpoint \"" << m_endpoint << "\"");
     
     // listening for incoming requests
-    while(!exitFlag) {
+    while(!isInterrupted()) {
         
         // receive request
         auto msgEnvelope = m_aggregator.receive(receiveTimeout);
@@ -79,7 +78,15 @@ std::string ProcessingNode::handleSpawnRendererCmd(std::vector<std::string>& arg
     std::string ret = vcl::TRI_RET + "_0_" + args[2] + "_" +
     std::to_string(session->getSid()) + "_" + std::to_string(session->getPort());
     
+    // endpoint for the render session
+    std::unique_ptr<mocca::net::Endpoint> ep(
+                            new mocca::net::Endpoint(m_endpoint.protocol(),
+                            m_endpoint.transport(),
+                            std::to_string(session->getPort())));
+    session->provideOwnEndpoint(std::move(ep));
+    session->start();
     m_renderSessions.push_back(std::move(session));
+    
     return ret;
 }
 

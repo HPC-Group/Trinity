@@ -1,6 +1,11 @@
 #include "RenderSession.h"
 #include "mocca/base/Error.h"
 #include "DummyRenderer.h"
+#include "mocca/log/LogManager.h"
+#include "mocca/net/Error.h"
+#include "mocca/net/NetworkServiceLocator.h"
+#include "mocca/base/StringTools.h"
+#include "common/Commands.h"
 
 using namespace trinity;
 
@@ -14,7 +19,11 @@ RenderSession::RenderSession(const RenderType& type) {
 }
 
 RenderSession::~RenderSession() {
-    
+    join();
+}
+
+void RenderSession::provideOwnEndpoint(std::unique_ptr<mocca::net::Endpoint> ep) {
+    m_endpoint = std::move(ep);
 }
 
 
@@ -41,4 +50,39 @@ unsigned int RenderSession::getSid() const {
 
 int RenderSession::getPort() const {
     return m_port;
+}
+
+
+void RenderSession::run() {
+    
+    LINFO("render session listening at \"" + m_endpoint->toString() + "\"");
+    
+    try {
+        
+        std::unique_ptr<mocca::net::IProtocolConnectionAcceptor> acceptor =
+        mocca::net::NetworkServiceLocator::bind(*m_endpoint);
+        while(!m_connection && !isInterrupted()) {
+            m_connection = acceptor->getConnection(); // auto-timeout
+        }
+        
+    } catch (const mocca::net::NetworkError& err) {
+        LERROR("cannot bind the render session: " << err.what());
+        return;
+    }
+    
+    while(!isInterrupted()) {
+        auto bytepacket = m_connection->receive();
+        if(!bytepacket.isEmpty()) {
+            std::string cmd = bytepacket.read(bytepacket.size());
+            LINFO("command arrived at renderer: " << cmd);  // print cmd
+            std::vector<std::string> args = mocca::splitString<std::string>(cmd, '_');
+            
+            // todo check for ill-formed requests
+            std::stringstream reply;
+            reply << trinity::vcl::TRI_RET << "_" << args[1] << "_" << args[2] << "_" << 42;
+            m_connection->send(std::move(mocca::ByteArray() << reply.str()));
+            // ...
+        }
+    }
+
 }

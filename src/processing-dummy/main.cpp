@@ -5,7 +5,11 @@
 #include <thread>
 
 #include "mocca/net/NetworkServiceLocator.h"
+#include "mocca/net/TCPNetworkService.h"
+#include "mocca/net/WSNetworkService.h"
+#include "mocca/net/MoccaNetworkService.h"
 #include "mocca/net/Endpoint.h"
+#include "mocca/net/TCPNetworkAddress.h"
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/LogManager.h"
@@ -15,6 +19,14 @@
 static std::chrono::milliseconds receiveTimeout(50);
 static int feTCPPort = 5678;
 static int feWSPort = 5679;
+std::atomic<bool> exitFlag{false};
+
+
+void exitHandler(int s) {
+    std::cout << "Trinity exit on signal " << std::to_string(s) << std::endl;
+    exitFlag = true;
+}
+
 
 void initLogging() {
     using mocca::LogManager;
@@ -27,16 +39,33 @@ using namespace mocca::net;
 
 int main(int argc, char** argv) {
     initLogging();
+    signal(SIGINT, exitHandler);
 
-    NetworkServiceLocator::provideAll();
+    NetworkServiceLocator::provideService(std::make_shared<MoccaNetworkService>(
+    std::unique_ptr<IPhysicalNetworkService>(new TCPNetworkService())));
 
-    trinity::ProcessingNode tcpNode(
-        Endpoint(NetworkServiceLocator::tcpPrefixed(), std::to_string(feTCPPort)));
+    
+    std::unique_ptr<IPhysicalNetworkService> tcpService(new TCPNetworkService());
+    
+    std::unique_ptr<IProtocolNetworkService> wsService(new WSNetworkService(std::move(tcpService)));
+    
+    NetworkServiceLocator::provideService(std::move(wsService));
 
-    trinity::ProcessingNode wsNode(
-        Endpoint(NetworkServiceLocator::tcpPrefixed(), std::to_string(feWSPort)));
+    
+    trinity::ProcessingNode tcpNode(Endpoint(MoccaNetworkService::protocolStatic(),
+                                          TCPNetworkService::transportStatic(),
+                                          std::to_string(feTCPPort)));
+     
+    
+    trinity::ProcessingNode wsNode(Endpoint(WSNetworkService::protocolStatic(),
+                                            TCPNetworkService::transportStatic(),
+                                          std::to_string(feWSPort)));
 
-    // std::thread t1(&trinity::ProcessingNode::listen, &wsNode);
-    tcpNode.listen();
-    // wsNode.listen();
+    tcpNode.start();
+    wsNode.start();
+    while(!exitFlag) {
+        
+    }
+    tcpNode.interrupt();
+    wsNode.interrupt();
 }
