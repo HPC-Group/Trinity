@@ -19,7 +19,7 @@ bool RendererPrx::connect() {
     
     try {
         m_mainChannel = mocca::net::NetworkServiceLocator::connect(m_endpoint);
-    } catch (const mocca::net::NetworkError& err) {
+    } catch (const mocca::net::NetworkError&) {
         LERROR("no connection to render session  at \"" << m_endpoint << "\": ");
         return false;
     }

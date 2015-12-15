@@ -26,7 +26,7 @@ bool ProcessingPrx::connect() {
     
     try {
         m_mainChannel = mocca::net::NetworkServiceLocator::connect(m_endpoint);
-    } catch (const mocca::net::ConnectFailedError& err) {
+    } catch (const mocca::net::ConnectFailedError&) {
         LWARNING("no connection to processing  at \"" << m_endpoint << "\": ");
         return false;
     }
@@ -76,7 +76,6 @@ std::unique_ptr<RendererPrx> ProcessingPrx::spawnRenderer(const std::string& typ
     std::string port = args[4];
 
     mocca::net::Endpoint renderConnection(m_endpoint.protocol(),
-                                          m_endpoint.transport(),
                                           port);
     
     LINFO("creating render proxy for " << renderConnection);

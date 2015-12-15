@@ -59,10 +59,10 @@ void RenderSession::run() {
     
     try {
         
-        std::unique_ptr<mocca::net::IProtocolConnectionAcceptor> acceptor =
+        std::unique_ptr<mocca::net::IMessageConnectionAcceptor> acceptor =
         mocca::net::NetworkServiceLocator::bind(*m_endpoint);
         while(!m_connection && !isInterrupted()) {
-            m_connection = acceptor->getConnection(); // auto-timeout
+            m_connection = acceptor->accept(); // auto-timeout
         }
         
     } catch (const mocca::net::NetworkError& err) {

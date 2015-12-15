@@ -81,7 +81,6 @@ std::string ProcessingNode::handleSpawnRendererCmd(std::vector<std::string>& arg
     // endpoint for the render session
     std::unique_ptr<mocca::net::Endpoint> ep(
                             new mocca::net::Endpoint(m_endpoint.protocol(),
-                            m_endpoint.transport(),
                             std::to_string(session->getPort())));
     session->provideOwnEndpoint(std::move(ep));
     session->start();

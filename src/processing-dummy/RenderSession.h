@@ -3,7 +3,7 @@
 #include <string>
 #include "common/IRenderer.h"
 #include "mocca/net/Endpoint.h"
-#include "mocca/net/FramingConnectionAcceptor.h"
+#include "mocca/net/IMessageConnection.h"
 #include "mocca/base/Thread.h"
 
 
@@ -33,7 +33,7 @@ private:
     unsigned int m_sid;
     std::unique_ptr<IRenderer> m_renderer;
     std::unique_ptr<mocca::net::Endpoint> m_endpoint;
-    std::unique_ptr<mocca::net::IProtocolConnection> m_connection;
+    std::unique_ptr<mocca::net::IMessageConnection> m_connection;
     
     // renderer factory
     static std::unique_ptr<IRenderer> createRenderer(const RenderType&);

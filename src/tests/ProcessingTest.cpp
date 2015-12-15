@@ -3,8 +3,6 @@
 #include "frontend-dummy/ProcessingPrx.h"
 
 #include "mocca/net/NetworkServiceLocator.h"
-#include "mocca/net/LoopbackNetworkService.h"
-#include "mocca/net/WSNetworkService.h"
 #include "mocca/net/Endpoint.h"
 
 
@@ -14,26 +12,17 @@ class ProcessingTest : public ::testing::Test {
 protected:
     
     ProcessingTest() {
-        // You can do set-up work for each test here.
-        static bool setupDone = false;
-        if(!setupDone) {
-            std::unique_ptr<IProtocolNetworkService> service(new LoopbackNetworkService());
-            NetworkServiceLocator::provideService(std::move(service));
-            setupDone = true;
-        }
-        
-        
+        NetworkServiceLocator::provideAll();
     }
 
     virtual ~ProcessingTest() {
-        // You can do clean-up work that doesn't throw exceptions here.
+        NetworkServiceLocator::removeAll();
     }
 };
 
 TEST_F(ProcessingTest, AcceptInitRendererTest) {
     
-    Endpoint endpoint (LoopbackNetworkService::protocolStatic(),
-             LoopbackNetworkService::transportStatic(), "5678");
+    Endpoint endpoint (NetworkServiceLocator::loopback(), "5678");
     
     trinity::ProcessingNode node(endpoint);
     node.start();
@@ -49,8 +38,7 @@ TEST_F(ProcessingTest, AcceptInitRendererTest) {
 
 TEST_F(ProcessingTest, SpawnRendererTest) {
     
-    Endpoint endpoint (LoopbackNetworkService::protocolStatic(),
-                       LoopbackNetworkService::transportStatic(), "5678");
+    Endpoint endpoint (NetworkServiceLocator::loopback(), "5678");
     
     trinity::ProcessingNode node(endpoint);
     node.start();
@@ -67,8 +55,7 @@ TEST_F(ProcessingTest, SpawnRendererTest) {
 
 TEST_F(ProcessingTest, FrameBufferTest) {
     
-    Endpoint endpoint (LoopbackNetworkService::protocolStatic(),
-                       LoopbackNetworkService::transportStatic(), "5678");
+    Endpoint endpoint (NetworkServiceLocator::loopback(), "5678");
     
     trinity::ProcessingNode node(endpoint);
     node.start();
