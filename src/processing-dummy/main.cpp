@@ -4,7 +4,7 @@
 #include <memory>
 #include <thread>
 
-#include "mocca/net/NetworkServiceLocator.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
@@ -37,11 +37,11 @@ int main(int argc, char** argv) {
     initLogging();
     signal(SIGINT, exitHandler);
 
-    NetworkServiceLocator::provideAll();
-    trinity::ProcessingNode tcpNode(Endpoint(NetworkServiceLocator::tcpPrefixed(),
+    ConnectionFactorySelector::addDefaultFactories();
+    trinity::ProcessingNode tcpNode(Endpoint(ConnectionFactorySelector::tcpPrefixed(),
                                           std::to_string(feTCPPort)));
      
-    trinity::ProcessingNode wsNode(Endpoint(NetworkServiceLocator::tcpWebSocket(),
+    trinity::ProcessingNode wsNode(Endpoint(ConnectionFactorySelector::tcpWebSocket(),
                                           std::to_string(feWSPort)));
 
     tcpNode.start();

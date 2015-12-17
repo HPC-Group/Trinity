@@ -2,7 +2,7 @@
 #include "processing-dummy/ProcessingNode.h"
 #include "frontend-dummy/ProcessingPrx.h"
 
-#include "mocca/net/NetworkServiceLocator.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 
 
@@ -12,17 +12,17 @@ class ProcessingTest : public ::testing::Test {
 protected:
     
     ProcessingTest() {
-        NetworkServiceLocator::provideAll();
+        ConnectionFactorySelector::addDefaultFactories();
     }
 
     virtual ~ProcessingTest() {
-        NetworkServiceLocator::removeAll();
+        ConnectionFactorySelector::removeAll();
     }
 };
 
 TEST_F(ProcessingTest, AcceptInitRendererTest) {
     
-    Endpoint endpoint (NetworkServiceLocator::loopback(), "5678");
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
     
     trinity::ProcessingNode node(endpoint);
     node.start();
@@ -38,7 +38,7 @@ TEST_F(ProcessingTest, AcceptInitRendererTest) {
 
 TEST_F(ProcessingTest, SpawnRendererTest) {
     
-    Endpoint endpoint (NetworkServiceLocator::loopback(), "5678");
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
     
     trinity::ProcessingNode node(endpoint);
     node.start();
@@ -55,7 +55,7 @@ TEST_F(ProcessingTest, SpawnRendererTest) {
 
 TEST_F(ProcessingTest, FrameBufferTest) {
     
-    Endpoint endpoint (NetworkServiceLocator::loopback(), "5678");
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
     
     trinity::ProcessingNode node(endpoint);
     node.start();

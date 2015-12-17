@@ -4,7 +4,7 @@
 #include <memory>
 #include <thread>
 
-#include "mocca/net/NetworkServiceLocator.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
@@ -34,9 +34,9 @@ using namespace mocca::net;
 int main(int argc, char** argv) {
     init();
 
-    NetworkServiceLocator::provideAll();
+    ConnectionFactorySelector::addDefaultFactories();
 
-    Endpoint processingEndpoint(NetworkServiceLocator::tcpPrefixed(), "localhost:5678");
+    Endpoint processingEndpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost:5678");
 
     processingNode =
         std::unique_ptr<trinity::ProcessingPrx>(new trinity::ProcessingPrx(processingEndpoint));

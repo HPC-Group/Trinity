@@ -2,8 +2,8 @@
 #include "mocca/base/Error.h"
 #include "DummyRenderer.h"
 #include "mocca/log/LogManager.h"
-#include "mocca/net/Error.h"
-#include "mocca/net/NetworkServiceLocator.h"
+#include "mocca/net/NetworkError.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/base/StringTools.h"
 #include "common/Commands.h"
 
@@ -60,7 +60,7 @@ void RenderSession::run() {
     try {
         
         std::unique_ptr<mocca::net::IMessageConnectionAcceptor> acceptor =
-        mocca::net::NetworkServiceLocator::bind(*m_endpoint);
+        mocca::net::ConnectionFactorySelector::bind(*m_endpoint);
         while(!m_connection && !isInterrupted()) {
             m_connection = acceptor->accept(); // auto-timeout
         }

@@ -1,8 +1,8 @@
 #include <thread>
 #include "RendererPrx.h"
 #include "common/MuiError.h"
-#include "mocca/net/NetworkServiceLocator.h"
-#include "mocca/net/Error.h"
+#include "mocca/net/ConnectionFactorySelector.h"
+#include "mocca/net/NetworkError.h"
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/base/StringTools.h"
@@ -18,7 +18,7 @@ RendererPrx::RendererPrx(mocca::net::Endpoint ep, const unsigned int& sid) : m_e
 bool RendererPrx::connect() {
     
     try {
-        m_mainChannel = mocca::net::NetworkServiceLocator::connect(m_endpoint);
+        m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
     } catch (const mocca::net::NetworkError&) {
         LERROR("no connection to render session  at \"" << m_endpoint << "\": ");
         return false;

@@ -1,4 +1,4 @@
-#include "mocca/net/NetworkServiceLocator.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/IMessageConnectionAcceptor.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ByteArray.h"
@@ -10,9 +10,9 @@ using namespace mocca::net;
 int main(int argc, char** argv)
 {
     
-    NetworkServiceLocator::provideAll();
+    ConnectionFactorySelector::addDefaultFactories();
 
-    auto acceptor = NetworkServiceLocator::bind(Endpoint(NetworkServiceLocator::tcpPrefixed(), "5678"));
+    auto acceptor = ConnectionFactorySelector::bind(Endpoint(ConnectionFactorySelector::tcpPrefixed(), "5678"));
     // acceptor.getConnection();
     while (true) {
         auto conn = acceptor->accept();

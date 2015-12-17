@@ -4,8 +4,8 @@
 #include "common/MuiError.h"
 #include <thread>
 
-#include "mocca/net/NetworkServiceLocator.h"
-#include "mocca/net/Error.h"
+#include "mocca/net/ConnectionFactorySelector.h"
+#include "mocca/net/NetworkError.h"
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/base/StringTools.h"
@@ -25,7 +25,7 @@ m_endpoint(endpoint) {}
 bool ProcessingPrx::connect() {
     
     try {
-        m_mainChannel = mocca::net::NetworkServiceLocator::connect(m_endpoint);
+        m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
     } catch (const mocca::net::ConnectFailedError&) {
         LWARNING("no connection to processing  at \"" << m_endpoint << "\": ");
         return false;

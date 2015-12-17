@@ -3,9 +3,9 @@
 
 #include "ProcessingNode.h"
 #include "mocca/log/LogManager.h"
-#include "mocca/net/NetworkServiceLocator.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/base/StringTools.h"
-#include "mocca/base/Containers.h"
+#include "mocca/base/ContainerTools.h"
 #include "common/Commands.h"
 
 using namespace trinity;
@@ -23,7 +23,7 @@ ProcessingNode::~ProcessingNode() {
 ProcessingNode::ProcessingNode(const mocca::net::Endpoint endpoint)
     : m_endpoint(endpoint)
     , m_aggregator(mocca::makeUniquePtrVec<IMessageConnectionAcceptor>(
-                       NetworkServiceLocator::bind(endpoint)),
+                       ConnectionFactorySelector::bind(endpoint)),
                    ConnectionAggregator::DisconnectStrategy::RemoveConnection) {}
 
 void ProcessingNode::run() {
