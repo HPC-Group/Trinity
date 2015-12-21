@@ -4,6 +4,7 @@
 
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
+#include "common/Commands.h"
 
 
 using namespace mocca::net;
@@ -20,7 +21,7 @@ protected:
     }
 };
 
-TEST_F(ProcessingTest, AcceptInitRendererTest) {
+TEST_F(ProcessingTest, RequestInitRendererTest) {
     
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
     
@@ -30,13 +31,13 @@ TEST_F(ProcessingTest, AcceptInitRendererTest) {
     trinity::ProcessingPrx proxy(endpoint);
     
     ASSERT_TRUE(proxy.connect());
-    ASSERT_NO_THROW(proxy.spawnRenderer(trinity::vcl::DUMMY_RENDERER));
+    ASSERT_NO_THROW(proxy.initRenderer(trinity::VclType::DummyRenderer));
 
     node.interrupt();
 }
 
 
-TEST_F(ProcessingTest, SpawnRendererTest) {
+TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
     
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
     
@@ -46,7 +47,8 @@ TEST_F(ProcessingTest, SpawnRendererTest) {
 
     ASSERT_TRUE(proxy.connect());
     std::unique_ptr<trinity::RendererPrx> renderer;
-    ASSERT_NO_THROW(renderer = proxy.spawnRenderer(trinity::vcl::DUMMY_RENDERER));
+
+    ASSERT_NO_THROW(renderer = proxy.initRenderer(trinity::VclType::DummyRenderer));
     ASSERT_TRUE(renderer->connect());
     
     node.interrupt();
@@ -63,7 +65,8 @@ TEST_F(ProcessingTest, FrameBufferTest) {
     
     ASSERT_TRUE(proxy.connect());
     std::unique_ptr<trinity::RendererPrx> renderer;
-    ASSERT_NO_THROW(renderer = proxy.spawnRenderer(trinity::vcl::DUMMY_RENDERER));
+    
+    ASSERT_NO_THROW(renderer = proxy.initRenderer(trinity::VclType::DummyRenderer));
     ASSERT_TRUE(renderer->connect());
     
     ASSERT_NO_THROW(renderer->getFrameBuffer());

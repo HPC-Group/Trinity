@@ -22,12 +22,12 @@ public:
     
     /// true on success. Does not throw any errors. Disconnect happens in dtor
     bool connect();
-    
-    std::unique_ptr<RendererPrx> spawnRenderer(const std::string&);
+    std::unique_ptr<RendererPrx> initRenderer(const VclType&);
     
 private:
     mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
-    trinity::IDGenerator m_mainChannelIDGen;
+    trinity::IDGenerator m_ridGen;
+    Vcl m_vcl;
 };
 }

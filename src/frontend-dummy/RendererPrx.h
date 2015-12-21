@@ -21,9 +21,10 @@ public:
     
     
 private:
-    const mocca::net::Endpoint m_endpoint;
+    mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
-    trinity::IDGenerator m_mainChannelIDGen;
+    trinity::IDGenerator m_ridGen;
     const unsigned int m_sid;
+    Vcl m_vcl;
 };
 }

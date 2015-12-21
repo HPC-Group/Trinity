@@ -31,7 +31,7 @@ private:
     std::vector<std::unique_ptr<RenderSession> > m_renderSessions;
     
     std::string handleSpawnRendererCmd(std::vector<std::string>&);
-    
+    Vcl m_vcl;
     
 };
 }

@@ -12,7 +12,7 @@ using namespace trinity;
 int RenderSession::m_basePort = 5990; // config base port for renderer here
 unsigned int RenderSession::m_nextSid = 1; // sid 0 is considered invalid / dummy
 
-RenderSession::RenderSession(const RenderType& type) {
+RenderSession::RenderSession(const VclType& type) {
     m_sid = m_nextSid++;
     m_port = m_basePort++;
     m_renderer = createRenderer(type);
@@ -27,18 +27,18 @@ void RenderSession::provideOwnEndpoint(std::unique_ptr<mocca::net::Endpoint> ep)
 }
 
 
-std::unique_ptr<IRenderer> RenderSession::createRenderer(const RenderType& t) {
+std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& t) {
     switch (t) {
-        case RenderType::DUMMY:
+        case VclType::DummyRenderer:
             return std::unique_ptr<IRenderer>(new DummyRenderer());
             break;
             
-        case RenderType::GRIDLEAPER:
+        case VclType::GridLeaper:
             throw mocca::Error("grid leaper not supported yet", __FILE__, __LINE__);
             break;
             
         default:
-            throw mocca::Error("unable to create renderer: type not found", __FILE__, __LINE__);
+            throw mocca::Error("can't create renderer: no such type", __FILE__, __LINE__);
             break;
     }
 }
@@ -55,7 +55,7 @@ int RenderSession::getPort() const {
 
 void RenderSession::run() {
     
-    LINFO("render session listening at \"" + m_endpoint->toString() + "\"");
+    LINFO("(p) render session listening at \"" + m_endpoint->toString() + "\"");
     
     try {
         
@@ -66,7 +66,7 @@ void RenderSession::run() {
         }
         
     } catch (const mocca::net::NetworkError& err) {
-        LERROR("cannot bind the render session: " << err.what());
+        LERROR("(p) cannot bind the render session: " << err.what());
         return;
     }
     
@@ -74,14 +74,31 @@ void RenderSession::run() {
         auto bytepacket = m_connection->receive();
         if(!bytepacket.isEmpty()) {
             std::string cmd = bytepacket.read(bytepacket.size());
-            LINFO("command arrived at renderer: " << cmd);  // print cmd
+            LINFO("(p) command arrived at renderer: " << cmd);  // print cmd
             std::vector<std::string> args = mocca::splitString<std::string>(cmd, '_');
             
-            // todo check for ill-formed requests
-            std::stringstream reply;
-            reply << trinity::vcl::TRI_RET << "_" << args[1] << "_" << args[2] << "_" << 42;
-            m_connection->send(std::move(mocca::ByteArray() << reply.str()));
-            // ...
+            std::string reply;
+            
+            if (!m_vcl.isSoundCommand(args)) {
+                reply = m_vcl.assembleError(0, 0, 1);
+            }
+            
+            VclType t = m_vcl.toType(args[0]);
+            
+            switch(t) {
+                case VclType::GetFrameBuffer: {
+                    reply =
+                    (m_vcl.assembleRetHeader(stoi(args[1]), stoi(args[2])) << 42).str();
+                    break;
+                }
+                    
+    
+                    
+                default:
+                    reply = m_vcl.assembleError(0, stoi(args[2]), 2);
+            }
+
+            m_connection->send(std::move(mocca::ByteArray() << reply));
         }
     }
 

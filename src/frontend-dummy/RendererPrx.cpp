@@ -10,30 +10,28 @@
 
 using namespace trinity;
 
-RendererPrx::RendererPrx(mocca::net::Endpoint ep, const unsigned int& sid) : m_endpoint(ep), m_sid(sid) {
-    
+RendererPrx::RendererPrx(mocca::net::Endpoint ep, const unsigned int& sid) :
+m_endpoint(ep), m_sid(sid) {
 }
 
 
 bool RendererPrx::connect() {
-    
+    LINFO("(f) connecing to remote renderer at " << m_endpoint);
     try {
         m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
     } catch (const mocca::net::NetworkError&) {
-        LERROR("no connection to render session  at \"" << m_endpoint << "\": ");
+        LERROR("(f) no connection to render session  at \"" << m_endpoint << "\": ");
         return false;
     }
-    LINFO("successfully connected to render session at \"" << m_endpoint << "\": ");
+    LINFO("(f) successfully connected to render session at \"" << m_endpoint << "\": ");
     return true;
 }
 
 int RendererPrx::getFrameBuffer() {
     
-    std::stringstream cmd;
-    cmd << trinity::vcl::GET_FRAMEBUFFER
-    << "_" << m_sid << "_" <<  m_mainChannelIDGen.nextID();
-    auto cmdStr = cmd.str();
-    m_mainChannel->send(mocca::ByteArray::createFromRaw(cmdStr.c_str(), cmdStr.size()));
+    std::string cmd = m_vcl.assembleGetFrameBuffer(m_sid, m_ridGen.nextID());
+    m_mainChannel->send(std::move(mocca::ByteArray()<< cmd));
+
     
     auto byteArray = m_mainChannel->receive(trinity::config::TIMEOUT_REPLY);
     
@@ -43,7 +41,7 @@ int RendererPrx::getFrameBuffer() {
     }
     
     std::string rep = byteArray.read(byteArray.size());
-    LINFO("cmd : " << cmd.str() << "; reply: " << rep);
+    LINFO("(f) cmd : " << cmd << "; reply: " << rep);
     // std::vector<std::string> args = mocca::splitString<std::string>(rep, '_');
     return 2;
 }
