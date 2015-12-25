@@ -2,13 +2,14 @@
 #include <memory>
 #include <string>
 
-include "mocca/log/LogManager.h"
+#include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/base/StringTools.h"
 #include "mocca/base/ContainerTools.h"
 
 #include "ProcessingNode.h"
 #include "common/Commands.h"
+#include "common/NetConfig.h"
 
 using namespace trinity::processing;
 using namespace trinity::common;
@@ -35,7 +36,7 @@ void ProcessingNode::run() {
     while (!isInterrupted()) {
 
         // receive request
-        auto msgEnvelope = m_aggregator.receive(receiveTimeout);
+        auto msgEnvelope = m_aggregator.receive(trinity::common::TIMEOUT_REPLY);
 
         if (!msgEnvelope.isNull()) {          // req arrived
             auto env = msgEnvelope.release(); // release value from nullable

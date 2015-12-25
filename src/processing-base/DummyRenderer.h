@@ -12,7 +12,7 @@ class DummyRenderer : public common::IRenderer {
     
 public:
     
-    DummyRenderer();
+    DummyRenderer(std::shared_ptr<common::VisStream> stream);
 };
 }
 }

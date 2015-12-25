@@ -19,7 +19,8 @@ const StreamParams& VisStream::getStreamParams() const {
 void VisStream::swapBuffers() {
     m_isSwapping = true;
     swap(m_lastFrame, m_swapBuffer);
-    m_isSwapping = false;}
+    m_isSwapping = false;
+}
 
 
 bool VisStream::isSwapping() const {
@@ -34,5 +35,4 @@ const Frame& VisStream::readLastFrame() {
 void VisStream::insertFrame(Frame& frame) {
     
     swap(m_swapBuffer, frame);  // todo check if it works
-    //std::memcpy(m_swapBuffer.m_data, frame.m_data, m_streamParams.frameSize());
 }

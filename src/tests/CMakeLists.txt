@@ -19,6 +19,7 @@ CreateSourceGroups("${TRINITY_TEST_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
 add_executable(tests ${TRINITY_TEST_HEADER} ${TRINITY_TEST_SOURCE}
                      $<TARGET_OBJECTS:frontendbaselib>
                      $<TARGET_OBJECTS:processingbaselib>
+                     $<TARGET_OBJECTS:common>
                      #$<TARGET_OBJECTS:iobaselib>
                      $<TARGET_OBJECTS:mocca>
 					 ${CMAKE_CURRENT_LIST_DIR}/main.cpp)					 

@@ -12,7 +12,8 @@
 
 #include "ProcessingNode.h"
 
-static std::chrono::milliseconds receiveTimeout(50);
+using namespace trinity::processing;
+
 static int feTCPPort = 5678;
 static int feWSPort = 5679;
 std::atomic<bool> exitFlag{false};
@@ -38,10 +39,10 @@ int main(int argc, char** argv) {
     signal(SIGINT, exitHandler);
 
     ConnectionFactorySelector::addDefaultFactories();
-    trinity::ProcessingNode tcpNode(Endpoint(ConnectionFactorySelector::tcpPrefixed(),
+    ProcessingNode tcpNode(Endpoint(ConnectionFactorySelector::tcpPrefixed(),
                                           std::to_string(feTCPPort)));
      
-    trinity::ProcessingNode wsNode(Endpoint(ConnectionFactorySelector::tcpWebSocket(),
+    ProcessingNode wsNode(Endpoint(ConnectionFactorySelector::tcpWebSocket(),
                                           std::to_string(feWSPort)));
 
     tcpNode.start();

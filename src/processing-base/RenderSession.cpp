@@ -30,9 +30,15 @@ void RenderSession::provideOwnEndpoint(std::unique_ptr<mocca::net::Endpoint> ep)
 
 std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& t) {
     switch (t) {
-        case VclType::DummyRenderer:
-            return std::unique_ptr<IRenderer>(new DummyRenderer());
+        case VclType::DummyRenderer: {
+            StreamParams params;
+            params.m_resX = 1024;
+            params.m_resY = 768;
+            std::shared_ptr<VisStream> stream =
+            std::make_shared<VisStream>(params);
+            return std::unique_ptr<IRenderer>(new DummyRenderer(stream));
             break;
+        }
             
         case VclType::GridLeaper:
             throw mocca::Error("grid leaper not supported yet", __FILE__, __LINE__);
@@ -88,10 +94,12 @@ void RenderSession::run() {
             switch(t) {
                 case VclType::GetFrameBuffer: {
                     
+                    /*
                     FrameBuffer& fb = m_renderer->getFrameBuffer();
                 
                     reply =
                     (m_vcl.assembleRetHeader(stoi(args[1]), stoi(args[2])) << 42).str();
+                     */
                     break;
                 }
                     
