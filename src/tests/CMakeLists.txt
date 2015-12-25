@@ -17,9 +17,9 @@ CreateSourceGroups("${TRINITY_TEST_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
 
 # enter object libraries here
 add_executable(tests ${TRINITY_TEST_HEADER} ${TRINITY_TEST_SOURCE}
-                     $<TARGET_OBJECTS:frontenddummylib>
-                     $<TARGET_OBJECTS:processingdummylib>
-                     #$<TARGET_OBJECTS:iodummylib>
+                     $<TARGET_OBJECTS:frontendbaselib>
+                     $<TARGET_OBJECTS:processingbaselib>
+                     #$<TARGET_OBJECTS:iobaselib>
                      $<TARGET_OBJECTS:mocca>
 					 ${CMAKE_CURRENT_LIST_DIR}/main.cpp)					 
 target_link_libraries(tests gmock)

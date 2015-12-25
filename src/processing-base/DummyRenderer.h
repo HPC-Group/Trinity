@@ -5,13 +5,14 @@
 
 
 namespace trinity {
+namespace processing {
     
-    class DummyRenderer : public trinity::IRenderer {
+    
+class DummyRenderer : public common::IRenderer {
     
 public:
     
     DummyRenderer();
-    
-    
 };
+}
 }

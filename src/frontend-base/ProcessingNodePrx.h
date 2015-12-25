@@ -9,25 +9,28 @@
 #include <atomic>
 
 namespace trinity {
+namespace frontend {
     
-    class ProcessingPrx {
+    class ProcessingNodePrx {
     
 public:
 
     
     /// see mocca::net::Endpoint for details, supports remote and local calls
-    ProcessingPrx(mocca::net::Endpoint);
+    ProcessingNodePrx(mocca::net::Endpoint);
     
-    ~ProcessingPrx();
+    ~ProcessingNodePrx();
     
     /// true on success. Does not throw any errors. Disconnect happens in dtor
     bool connect();
-    std::unique_ptr<RendererPrx> initRenderer(const VclType&);
+    std::unique_ptr<RendererPrx> initRenderer(const common::VclType&);
     
 private:
     mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
-    trinity::IDGenerator m_ridGen;
-    Vcl m_vcl;
+        
+    common::IDGenerator m_ridGen;
+    common::Vcl m_vcl;
 };
+}
 }

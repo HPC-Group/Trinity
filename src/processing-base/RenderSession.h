@@ -10,6 +10,7 @@
 
 
 namespace trinity {
+namespace processing {
     
 enum class RenderType { DUMMY, GRIDLEAPER };
     
@@ -17,7 +18,7 @@ enum class RenderType { DUMMY, GRIDLEAPER };
     
 public:
     
-    RenderSession(const VclType&);
+    RenderSession(const common::VclType&);
     ~RenderSession();
     unsigned int getSid() const;
     int getPort() const;
@@ -32,13 +33,14 @@ private:
     static int m_basePort;
     int m_port;
     unsigned int m_sid;
-    Vcl m_vcl;
-    std::unique_ptr<IRenderer> m_renderer;
+    std::unique_ptr<common::IRenderer> m_renderer;
     std::unique_ptr<mocca::net::Endpoint> m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_connection;
+        
+    common::Vcl m_vcl;
     
     // renderer factory
-    static std::unique_ptr<IRenderer> createRenderer(const VclType& t);
+    static std::unique_ptr<common::IRenderer> createRenderer(const common::VclType& t);
     void run() override;
     
         
@@ -48,4 +50,5 @@ private:
     
     
 };
+}
 }

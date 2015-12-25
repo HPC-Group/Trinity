@@ -6,25 +6,30 @@
 #include "common/Commands.h"
 
 namespace trinity {
+namespace frontend {
     
-class RendererPrx : public IRenderer {
+class RendererPrx : public common::IRenderer {
     
 public:
     
     /// local proxy to a remote render session
-    RendererPrx(mocca::net::Endpoint, const unsigned int& sid);
+    RendererPrx(std::shared_ptr<common::VisStream> stream,
+                mocca::net::Endpoint remoteRenderer,
+                const unsigned int& sessionId);
     
     /// true on success. Does not throw any errors. Disconnect happens in dtor
     bool connect();
     
-    int getFrameBuffer();
-    
+    /// asks the remote renderer to update the video stream, blocking call
+    void updateStream();
     
 private:
     mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
-    trinity::IDGenerator m_ridGen;
     const unsigned int m_sid;
-    Vcl m_vcl;
+    
+    common::IDGenerator m_ridGen;
+    common::Vcl m_vcl;
 };
+}
 }

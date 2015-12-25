@@ -9,12 +9,12 @@
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/LogManager.h"
-#include "ProcessingPrx.h"
+#include "ProcessingNodePrx.h"
 #include "common/Commands.h"
 
 static int reconnectInSec = 5;
 std::atomic<bool> exitFlag{false};
-std::unique_ptr<trinity::ProcessingPrx> processingNode;
+std::unique_ptr<trinity::frontend::ProcessingNodePrx> processingNode;
 
 void exitHandler(int s) {
     std::cout << "Trinity exit on signal " << std::to_string(s) << std::endl;
@@ -36,10 +36,11 @@ int main(int argc, char** argv) {
 
     ConnectionFactorySelector::addDefaultFactories();
 
-    Endpoint processingEndpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost:5678");
+    Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost:5678");
 
     processingNode =
-        std::unique_ptr<trinity::ProcessingPrx>(new trinity::ProcessingPrx(processingEndpoint));
+    std::unique_ptr<trinity::frontend::ProcessingNodePrx>
+    (new trinity::frontend::ProcessingNodePrx(endpoint));
 
     bool connected = false;
 
@@ -51,7 +52,7 @@ int main(int argc, char** argv) {
         }
     }
     try {
-        processingNode->spawnRenderer(trinity::vcl::DUMMY_RENDERER);
+        processingNode->initRenderer(trinity::common::VclType::DummyRenderer);
     } catch (const mocca::Error& err) {
         LERROR(err.what());
     }

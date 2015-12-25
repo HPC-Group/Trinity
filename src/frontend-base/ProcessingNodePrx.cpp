@@ -1,9 +1,8 @@
 #include <sstream>
-
-#include "ProcessingPrx.h"
-#include "common/MuiError.h"
 #include <thread>
 
+#include "ProcessingNodePrx.h"
+#include "mocca/base/Error.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 #include "mocca/base/ByteArray.h"
@@ -12,17 +11,18 @@
 #include "common/NetConfig.h"
 
 
-using namespace trinity;
+using namespace trinity::frontend;
+using namespace trinity::common;
 
 static std::chrono::milliseconds receiveTimeout(50);
 
-ProcessingPrx::~ProcessingPrx() {}
+ProcessingNodePrx::~ProcessingNodePrx() {}
 
-ProcessingPrx::ProcessingPrx(mocca::net::Endpoint endpoint) :
+ProcessingNodePrx::ProcessingNodePrx(mocca::net::Endpoint endpoint) :
 m_endpoint(endpoint) {}
 
 
-bool ProcessingPrx::connect() {
+bool ProcessingNodePrx::connect() {
     
     try {
         m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
@@ -40,12 +40,12 @@ bool ProcessingPrx::connect() {
 }
 
 
-std::unique_ptr<RendererPrx> ProcessingPrx::initRenderer(const VclType& type) {
+std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type) {
     
     std::string cmd = m_vcl.assembleInitRenderer(0, m_ridGen.nextID(), type);
     m_mainChannel->send(std::move(mocca::ByteArray()<< cmd));
     
-    auto byteArray = m_mainChannel->receive(trinity::config::TIMEOUT_REPLY);
+    auto byteArray = m_mainChannel->receive(trinity::common::TIMEOUT_REPLY);
     
     if(byteArray.isEmpty()) {
         throw mocca::Error("cannot spawn renderer, no reply arrived", __FILE__, __LINE__);
@@ -75,11 +75,16 @@ std::unique_ptr<RendererPrx> ProcessingPrx::initRenderer(const VclType& type) {
             
             mocca::net::Endpoint renderConnection(m_endpoint.protocol(),
                                                   port);
+            StreamParams params;
+            params.m_resX = 1024;
+            params.m_resY = 768;
+            std::shared_ptr<VisStream> stream =
+            std::make_shared<VisStream>(params);
             
             LINFO("(f) creating render proxy for " << renderConnection);
             
             std::unique_ptr<RendererPrx>
-            ren(new RendererPrx(std::move(renderConnection), sid));
+            ren(new RendererPrx(stream, std::move(renderConnection), sid));
             return ren;
         }
             

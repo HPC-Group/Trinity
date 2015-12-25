@@ -2,12 +2,12 @@
 #include <memory>
 
 
+// subject of refactoring
 namespace trinity {
-namespace common {
+namespace processing {
     
-class IRenderer {
+class VisStreamSender {
     
-public:
     
 };
 }

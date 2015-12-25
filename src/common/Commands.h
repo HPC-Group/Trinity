@@ -5,6 +5,7 @@
 
 // subject of refactoring
 namespace trinity {
+namespace common {
     
 enum class VclType {
 
@@ -16,7 +17,9 @@ enum class VclType {
     CloseRenderer,
     DummyRenderer,
     GridLeaper,
-    GetFrameBuffer
+    GetFrameBuffer,
+    PushMode,
+    PullMode
 };
     
 
@@ -108,6 +111,8 @@ public:
         m_cmdMap.insert("DRN", VclType::DummyRenderer);
         m_cmdMap.insert("GRN", VclType::GridLeaper);
         m_cmdMap.insert("GFB", VclType::GetFrameBuffer);
+        m_cmdMap.insert("PSH", VclType::PushMode);
+        m_cmdMap.insert("PLL", VclType::PullMode);
         
     }
     
@@ -118,11 +123,6 @@ private:
 };
     
 
-class VclAssembler {
-    
-    
-};
-    
 
 class IDGenerator {
 private:
@@ -132,5 +132,5 @@ public:
     IDGenerator() : m_id(1) {}
     int nextID() { return m_id++; }
 };
-
+}
 } // end trinity

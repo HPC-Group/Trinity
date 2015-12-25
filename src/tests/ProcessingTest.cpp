@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "processing-dummy/ProcessingNode.h"
-#include "frontend-dummy/ProcessingPrx.h"
+#include "frontend-dummy/ProcessingNodePrx.h"
 
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
@@ -28,7 +28,7 @@ TEST_F(ProcessingTest, RequestInitRendererTest) {
     trinity::ProcessingNode node(endpoint);
     node.start();
     
-    trinity::ProcessingPrx proxy(endpoint);
+    trinity::ProcessingNodePrx proxy(endpoint);
     
     ASSERT_TRUE(proxy.connect());
     ASSERT_NO_THROW(proxy.initRenderer(trinity::VclType::DummyRenderer));
@@ -43,7 +43,7 @@ TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
     
     trinity::ProcessingNode node(endpoint);
     node.start();
-    trinity::ProcessingPrx proxy(endpoint);
+    trinity::ProcessingNodePrx proxy(endpoint);
 
     ASSERT_TRUE(proxy.connect());
     std::unique_ptr<trinity::RendererPrx> renderer;
@@ -61,7 +61,7 @@ TEST_F(ProcessingTest, FrameBufferTest) {
     
     trinity::ProcessingNode node(endpoint);
     node.start();
-    trinity::ProcessingPrx proxy(endpoint);
+    trinity::ProcessingNodePrx proxy(endpoint);
     
     ASSERT_TRUE(proxy.connect());
     std::unique_ptr<trinity::RendererPrx> renderer;

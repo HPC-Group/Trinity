@@ -7,7 +7,8 @@
 #include "mocca/base/StringTools.h"
 #include "common/Commands.h"
 
-using namespace trinity;
+using namespace trinity::processing;
+using namespace trinity::common;
 
 int RenderSession::m_basePort = 5990; // config base port for renderer here
 unsigned int RenderSession::m_nextSid = 1; // sid 0 is considered invalid / dummy
@@ -59,8 +60,7 @@ void RenderSession::run() {
     
     try {
         
-        std::unique_ptr<mocca::net::IMessageConnectionAcceptor> acceptor =
-        mocca::net::ConnectionFactorySelector::bind(*m_endpoint);
+        auto acceptor = mocca::net::ConnectionFactorySelector::bind(*m_endpoint);
         while(!m_connection && !isInterrupted()) {
             m_connection = acceptor->accept(); // auto-timeout
         }
@@ -87,6 +87,9 @@ void RenderSession::run() {
             
             switch(t) {
                 case VclType::GetFrameBuffer: {
+                    
+                    FrameBuffer& fb = m_renderer->getFrameBuffer();
+                
                     reply =
                     (m_vcl.assembleRetHeader(stoi(args[1]), stoi(args[2])) << 42).str();
                     break;

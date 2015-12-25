@@ -2,17 +2,18 @@
 #include <memory>
 #include <string>
 
-#include "ProcessingNode.h"
-#include "mocca/log/LogManager.h"
+include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/base/StringTools.h"
 #include "mocca/base/ContainerTools.h"
+
+#include "ProcessingNode.h"
 #include "common/Commands.h"
 
-using namespace trinity;
+using namespace trinity::processing;
+using namespace trinity::common;
 using namespace mocca::net;
 
-static std::chrono::milliseconds receiveTimeout(50);
 
 ProcessingNode::~ProcessingNode() {
     LINFO("(p) renderers to stop: " << m_renderSessions.size());

@@ -5,13 +5,16 @@
 
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/ConnectionAggregator.h"
-#include "RenderSession.h"
 #include "mocca/base/Thread.h"
+
+#include "RenderSession.h"
 
 
 
 namespace trinity {
-    class ProcessingNode : public mocca::Runnable {
+namespace processing {
+    
+class ProcessingNode : public mocca::Runnable {
     
 public:
     
@@ -20,10 +23,7 @@ public:
         
     ~ProcessingNode();
         
-
-    
-    
-    
+ 
 private:
     void run() override;
     const mocca::net::Endpoint m_endpoint;
@@ -31,7 +31,8 @@ private:
     std::vector<std::unique_ptr<RenderSession> > m_renderSessions;
     
     std::string handleSpawnRendererCmd(std::vector<std::string>&);
-    Vcl m_vcl;
+    common::Vcl m_vcl;
     
 };
+}
 }

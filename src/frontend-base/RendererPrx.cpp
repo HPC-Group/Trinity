@@ -1,6 +1,5 @@
 #include <thread>
 #include "RendererPrx.h"
-#include "common/MuiError.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 #include "mocca/base/ByteArray.h"
@@ -8,10 +7,12 @@
 #include "mocca/base/StringTools.h"
 #include "common/NetConfig.h"
 
-using namespace trinity;
+using namespace trinity::frontend;
+using namespace trinity::common;
 
-RendererPrx::RendererPrx(mocca::net::Endpoint ep, const unsigned int& sid) :
-m_endpoint(ep), m_sid(sid) {
+RendererPrx::RendererPrx(std::shared_ptr<VisStream> s,
+                         mocca::net::Endpoint ep, const unsigned int& sid) :
+IRenderer(s), m_endpoint(ep), m_sid(sid) {
 }
 
 
@@ -27,7 +28,9 @@ bool RendererPrx::connect() {
     return true;
 }
 
-int RendererPrx::getFrameBuffer() {
+/*
+
+VideoPipeline& RendererPrx::getVideoPipeline() {
     
     std::string cmd = m_vcl.assembleGetFrameBuffer(m_sid, m_ridGen.nextID());
     m_mainChannel->send(std::move(mocca::ByteArray()<< cmd));
@@ -43,5 +46,6 @@ int RendererPrx::getFrameBuffer() {
     std::string rep = byteArray.read(byteArray.size());
     LINFO("(f) cmd : " << cmd << "; reply: " << rep);
     // std::vector<std::string> args = mocca::splitString<std::string>(rep, '_');
-    return 2;
+    return m_remoteBuffer;
 }
+*/
