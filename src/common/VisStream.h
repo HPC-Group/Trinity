@@ -24,13 +24,13 @@ public:
     ~VisStream();  // free buffers here
 
     // call after you are done with the last frame
-    inline void swapBuffers();
+    void swapBuffers();
     
     // you should not read or write buffers while swapping
     bool isSwapping() const;
     
     // call stopFrameRead when done processing the array
-    const Frame& readLastFrame();
+    Frame& readLastFrame();
     
     void insertFrame(Frame&);
     

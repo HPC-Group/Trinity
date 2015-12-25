@@ -12,11 +12,10 @@ add_executable(processingbase
 				${CMAKE_CURRENT_LIST_DIR}/main.cpp
 				${PROCESSINGBASE_HEADER} 
 				${PROCESSINGBASE_SOURCE}
-				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:common>
+				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 
-target_link_libraries(processingbase ${POCO_LIBRARIES})
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(processingbase Shlwapi.lib)
 ENDIF ()

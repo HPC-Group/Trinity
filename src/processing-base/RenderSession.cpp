@@ -91,20 +91,8 @@ void RenderSession::run() {
             
             VclType t = m_vcl.toType(args[0]);
             
+            // we don't have any commands yet
             switch(t) {
-                case VclType::GetFrameBuffer: {
-                    
-                    /*
-                    FrameBuffer& fb = m_renderer->getFrameBuffer();
-                
-                    reply =
-                    (m_vcl.assembleRetHeader(stoi(args[1]), stoi(args[2])) << 42).str();
-                     */
-                    break;
-                }
-                    
-    
-                    
                 default:
                     reply = m_vcl.assembleError(0, stoi(args[2]), 2);
             }

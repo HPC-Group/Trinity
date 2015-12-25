@@ -17,7 +17,6 @@ enum class VclType {
     CloseRenderer,
     DummyRenderer,
     GridLeaper,
-    GetFrameBuffer,
     PushMode,
     PullMode
 };
@@ -72,12 +71,6 @@ public:
         return cmd.str();
     }
     
-    std::string assembleGetFrameBuffer(int sid, int rid) {
-        std::stringstream cmd;
-        cmd << toString(VclType::GetFrameBuffer)
-        << "_" << std::to_string(sid) << "_" <<  rid;
-        return cmd.str();
-    }
     
     std::string assembleError(int sid, int rid, int errorCode) {
         std::stringstream cmd;
@@ -93,12 +86,6 @@ public:
         return cmd.str();
     }
     
-    std::stringstream assembleRetHeader(int sid, int rid) {
-        std::stringstream cmd;
-        cmd << toString(VclType::GetFrameBuffer)
-        << "_" << std::to_string(sid) << "_" <<  rid << "_";
-        return cmd;
-    }
 
     Vcl() {
         
@@ -110,7 +97,6 @@ public:
         m_cmdMap.insert("CLR", VclType::CloseRenderer);
         m_cmdMap.insert("DRN", VclType::DummyRenderer);
         m_cmdMap.insert("GRN", VclType::GridLeaper);
-        m_cmdMap.insert("GFB", VclType::GetFrameBuffer);
         m_cmdMap.insert("PSH", VclType::PushMode);
         m_cmdMap.insert("PLL", VclType::PullMode);
         

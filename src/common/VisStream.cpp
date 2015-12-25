@@ -27,7 +27,7 @@ bool VisStream::isSwapping() const {
     return m_isSwapping;
 }
 
-const Frame& VisStream::readLastFrame() {
+Frame& VisStream::readLastFrame() {
     return m_lastFrame;
 }
 

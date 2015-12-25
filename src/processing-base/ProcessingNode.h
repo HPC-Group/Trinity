@@ -13,7 +13,9 @@
 
 namespace trinity {
 namespace processing {
-    
+
+// todo: refactor such that the aggregator has all connection entities
+// node waiting for frontends to connect. Spawns RenderSessions
 class ProcessingNode : public mocca::Runnable {
     
 public:

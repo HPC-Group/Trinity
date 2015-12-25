@@ -9,7 +9,7 @@ using namespace trinity::common;
 
 VisStreamReceiver::VisStreamReceiver(const mocca::net::Endpoint endpoint,
                                      std::shared_ptr<VisStream> s) :
-m_endpoint(endpoint), m_visStream(s) {
+m_visStream(s), m_endpoint(endpoint) {
 }
 
 VisStreamReceiver::~VisStreamReceiver() {
