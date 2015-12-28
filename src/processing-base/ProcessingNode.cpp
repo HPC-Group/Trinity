@@ -25,8 +25,7 @@ ProcessingNode::~ProcessingNode() {
 
 ProcessingNode::ProcessingNode(const mocca::net::Endpoint endpoint)
     : m_endpoint(endpoint)
-    , m_aggregator(mocca::makeUniquePtrVec<IMessageConnectionAcceptor>(
-                       ConnectionFactorySelector::bind(endpoint)),
+    , m_aggregator(mocca::makeUniquePtrVec(ConnectionFactorySelector::bind(endpoint)),
                    ConnectionAggregator::DisconnectStrategy::RemoveConnection) {}
 
 void ProcessingNode::run() {
