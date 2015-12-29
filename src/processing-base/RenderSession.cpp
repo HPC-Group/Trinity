@@ -15,12 +15,12 @@ unsigned int RenderSession::m_nextSid = 1; // sid 0 is considered invalid / dumm
 
 RenderSession::RenderSession(const VclType& rendererType,
                              const StreamParams& params,
-                             const std::string& protocol,
-                             const std::string& visAddr) :
+                             const std::string& protocol) :
 m_sid(m_nextSid++),
 m_controlPort(m_basePort++),
+m_visPort(m_basePort++),
 m_controlEndpoint(protocol, std::to_string(m_controlPort)),
-m_visSender(mocca::net::Endpoint(protocol, visAddr),
+m_visSender(mocca::net::Endpoint(protocol, std::to_string(m_visPort)),
             std::make_shared<VisStream>(params))
 {
     m_renderer = createRenderer(rendererType, params);
@@ -28,6 +28,7 @@ m_visSender(mocca::net::Endpoint(protocol, visAddr),
 }
 
 RenderSession::~RenderSession() {
+    m_visSender.endStreaming();
     join();
 }
 
@@ -60,6 +61,10 @@ unsigned int RenderSession::getSid() const {
 
 int RenderSession::getControlPort() const {
     return m_controlPort;
+}
+
+int RenderSession::getVisPort() const {
+    return m_visPort;
 }
 
 

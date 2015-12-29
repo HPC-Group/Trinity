@@ -21,6 +21,7 @@ public:
     
     /// true on success. Does not throw any errors. Disconnect happens in dtor
     bool connect();
+    ~RendererPrx();
     
     
 private:

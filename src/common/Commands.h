@@ -85,13 +85,12 @@ public:
     std::string assembleInitRenderer(int sid,
                                      int rid,
                                      const std::string& protocol,
-                                     const std::string& frontendAddr,
                                      const VclType& t,
                                      const StreamParams& s) {
         std::stringstream cmd;
         cmd << toString(VclType::InitRenderer)
         << "_" << std::to_string(sid) << "_" <<  rid << "_"
-        << protocol << "_" << frontendAddr << "_" << toString(t) << "_"  << s.toString();
+        << protocol << "_" << toString(t) << "_"  << s.toString();
         
         return cmd.str();
     }
@@ -111,11 +110,12 @@ public:
         return cmd.str();
     }
     
-    std::string assembleRetInitRenderer(int sid, int rid, int newSid, int ctrlPort) {
+    std::string assembleRetInitRenderer(int sid, int rid,
+                                        int newSid, int ctrlPort, int visPort) {
         std::stringstream cmd;
         cmd << toString(VclType::TrinityReturn)
         << "_" << std::to_string(sid) << "_" <<  rid << "_"
-        << newSid << "_" << ctrlPort;
+        << newSid << "_" << ctrlPort << "_" << visPort;
         return cmd.str();
     }
     

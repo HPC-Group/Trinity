@@ -1,11 +1,16 @@
+#include <chrono>
+#include <thread>
+
 #include "gtest/gtest.h"
+
 #include "processing-base/ProcessingNode.h"
 #include "frontend-base/ProcessingNodePrx.h"
+#include "common/Commands.h"
 
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ContainerTools.h"
-#include "common/Commands.h"
+
 
 
 using namespace mocca::net;
@@ -46,7 +51,7 @@ TEST_F(ProcessingTest, RequestInitRendererTest) {
     node.interrupt();
 }
 
-/*
+
 
 TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
     
@@ -75,7 +80,7 @@ TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
 }
 
 
-TEST_F(ProcessingTest, FrameBufferTest) {
+TEST_F(ProcessingTest, StreamInitTest1Sec) {
     
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
     
@@ -97,9 +102,8 @@ TEST_F(ProcessingTest, FrameBufferTest) {
     trinity::common::StreamParams params;
     renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer, params);
     renderer->connect();
-    
-    //ASSERT_NO_THROW(renderer->getFrameBuffer());
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     
     node.interrupt();
 }
- */
+

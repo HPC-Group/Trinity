@@ -22,16 +22,21 @@ m_controlEndpoint(controlEndpoint),
 m_sid(sid) {
 }
 
+RendererPrx::~RendererPrx() {
+    m_visReceiver.endStreaming();
+}
+
 
 bool RendererPrx::connect() {
     LINFO("(f) connecing to remote renderer at " << m_controlEndpoint);
     try {
         m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_controlEndpoint);
+        m_visReceiver.startStreaming();
     } catch (const mocca::net::NetworkError&) {
         LERROR("(f) no connection to render session at \"" << m_controlEndpoint);
         return false;
     }
-    LINFO("(f) connected to render session at \"" << m_controlEndpoint);
+    LINFO("(f) connected");
     return true;
 }
 

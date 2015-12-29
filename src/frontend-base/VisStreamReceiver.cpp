@@ -29,28 +29,26 @@ void VisStreamReceiver::endStreaming() {
 
 void VisStreamReceiver::run() {
     
-    LINFO("(f) vis receiver listening at \"" + m_endpoint.toString() + "\"");
+    LINFO("(f) vis receiver connecting to \"" + m_endpoint.toString() + "\"");
     
     try {
         
-        auto acceptor = mocca::net::ConnectionFactorySelector::bind(m_endpoint);
         while(!m_connection && !isInterrupted()) {
-            m_connection = acceptor->accept();
+            m_connection = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
         }
-        
-        while(!isInterrupted()) {
-            m_connection->receive();
-        }
+    
         
     } catch (const mocca::net::NetworkError& err) {
         LERROR("(f) cannot bind vis receiver: " << err.what());
         return;
     }
     
+    LINFO("(f) vis receiver connected");
+    
     while(!isInterrupted()) {
         auto bytepacket = m_connection->receive();
+        
         if(!bytepacket.isEmpty()) {
-            LINFO("(f) vis received");
             while (m_visStream->isSwapping()) {
             }
             m_visStream->insertFrame(bytepacket);
