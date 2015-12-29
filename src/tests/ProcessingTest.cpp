@@ -46,6 +46,7 @@ TEST_F(ProcessingTest, RequestInitRendererTest) {
     node.interrupt();
 }
 
+/*
 
 TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
     
@@ -101,3 +102,4 @@ TEST_F(ProcessingTest, FrameBufferTest) {
     
     node.interrupt();
 }
+ */

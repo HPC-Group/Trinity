@@ -38,7 +38,7 @@ void VisStreamSender::run() {
 
         
     } catch (const mocca::net::NetworkError& err) {
-        LERROR("(p) cannot connect vis sender: " << err.what());
+        LERROR("(p) cannot connect vis receiver: " << err.what());
         return;
     }
     

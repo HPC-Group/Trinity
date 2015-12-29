@@ -34,6 +34,9 @@ private:
         
     common::IDGenerator m_ridGen;
     common::Vcl m_vcl;
+    
+    // todo
+    std::string getOwnAddr() { return "127.0.0.1:6990"; }
 };
 }
 }

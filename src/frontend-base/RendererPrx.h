@@ -28,6 +28,7 @@ private:
     mocca::net::Endpoint m_controlEndpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
     const unsigned int m_sid;
+    static int m_basePort;
     
 
     

@@ -43,18 +43,19 @@ TEST_F(CmdTest, AssembleInitRendererTest) {
     int rid = 12;
     int sid = 10;
     std::string protocol = "tcp.Prefixed";
+    std::string addr = "127.0.0.1:8080";
     StreamParams params;
     params.m_resX = 1234;
     
     Vcl v;
-    std::string ret = v.assembleInitRenderer(sid, rid, protocol,
+    std::string ret = v.assembleInitRenderer(sid, rid, protocol, addr,
                                              VclType::DummyRenderer, params);
     
     std::string dummyRenderer = v.toString(VclType::DummyRenderer);
     std::string request = v.toString(VclType::InitRenderer);
     ASSERT_EQ(ret,
               request + "_" + std::to_string(sid) + "_" + std::to_string(rid) + "_"
-              + protocol + "_" + dummyRenderer + "_" + params.toString());
+              + protocol + "_" + addr + "_" + dummyRenderer + "_" + params.toString());
 }
 
 TEST_F(CmdTest, AssembleIRetnitRendererTest) {
@@ -65,8 +66,8 @@ TEST_F(CmdTest, AssembleIRetnitRendererTest) {
     int ctrlPort = 5050;
     int visPort = 5051;
     std::string retTag = v.toString(VclType::TrinityReturn);
-    std::string ret = v.assembleRetInitRenderer(sid, rid, newSid, ctrlPort, visPort);
+    std::string ret = v.assembleRetInitRenderer(sid, rid, newSid, ctrlPort);
     ASSERT_EQ(retTag + "_" + std::to_string(sid)
               + "_" + std::to_string(rid) + "_" + std::to_string(newSid) + "_"
-              + std::to_string(ctrlPort) + "_" + std::to_string(visPort), ret);
+              + std::to_string(ctrlPort), ret);
 }

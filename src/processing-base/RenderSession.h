@@ -24,12 +24,12 @@ public:
     
     RenderSession(const common::VclType& rendererType,
                   const common::StreamParams& params,
-                  const std::string& protocol);
+                  const std::string& protocol,
+                  const std::string& visAddr);
         
     ~RenderSession();
     unsigned int getSid() const;
     int getControlPort() const;
-    int getVisPort() const;
         
         
 private:
@@ -37,7 +37,6 @@ private:
     static unsigned int         m_nextSid;
     static int                  m_basePort;
     int                         m_controlPort;
-    int                         m_visPort;
     unsigned int                m_sid;
         
     std::unique_ptr<common::IRenderer>                  m_renderer;

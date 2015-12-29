@@ -46,6 +46,7 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
     std::string cmd = m_vcl.assembleInitRenderer(0,  // no session yet
                                                  m_ridGen.nextID(),
                                                  m_endpoint.protocol(),
+                                                 getOwnAddr(),
                                                  type,
                                                  params);
     m_mainChannel->send(std::move(mocca::ByteArray()<< cmd));

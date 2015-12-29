@@ -81,19 +81,19 @@ std::string ProcessingNode::handleInitRendererCmd(std::vector<std::string>& args
     VclType t;
     
     try {
-        t = m_vcl.toType(args[4]);
+        t = m_vcl.toType(args[5]);
     } catch (const mocca::Error& err) {
         return m_vcl.assembleError(0, stoi(args[4]), 3);
     }
 
-    StreamParams p(args[5]);
-    std::unique_ptr<RenderSession> session(new RenderSession(t, std::move(p), args[3]));
+    StreamParams p(args[6]);
+    std::unique_ptr<RenderSession>
+    session(new RenderSession(t, std::move(p), args[3], args[4]));
     
     
     std::string reply = m_vcl.assembleRetInitRenderer(0, stoi(args[2]),
                                                        session->getSid(),
-                                                       session->getControlPort(),
-                                                       session->getVisPort());
+                                                       session->getControlPort());
 
     session->start();
     m_renderSessions.push_back(std::move(session));

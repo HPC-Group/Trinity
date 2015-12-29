@@ -10,6 +10,8 @@
 using namespace trinity::frontend;
 using namespace trinity::common;
 
+int RendererPrx::m_basePort = 6990; // config base port for renderer here
+
 RendererPrx::RendererPrx(std::shared_ptr<VisStream> s,
                          mocca::net::Endpoint controlEndpoint,
                          mocca::net::Endpoint visEndpoint,
