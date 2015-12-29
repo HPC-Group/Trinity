@@ -11,20 +11,25 @@ using namespace trinity::frontend;
 using namespace trinity::common;
 
 RendererPrx::RendererPrx(std::shared_ptr<VisStream> s,
-                         mocca::net::Endpoint ep, const unsigned int& sid) :
-IRenderer(s), m_endpoint(ep), m_sid(sid) {
+                         mocca::net::Endpoint controlEndpoint,
+                         mocca::net::Endpoint visEndpoint,
+                         const unsigned int& sid) :
+m_visReceiver(std::move(visEndpoint), s),
+IRenderer(s),
+m_controlEndpoint(controlEndpoint),
+m_sid(sid) {
 }
 
 
 bool RendererPrx::connect() {
-    LINFO("(f) connecing to remote renderer at " << m_endpoint);
+    LINFO("(f) connecing to remote renderer at " << m_controlEndpoint);
     try {
-        m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
+        m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_controlEndpoint);
     } catch (const mocca::net::NetworkError&) {
-        LERROR("(f) no connection to render session  at \"" << m_endpoint << "\": ");
+        LERROR("(f) no connection to render session at \"" << m_controlEndpoint);
         return false;
     }
-    LINFO("(f) successfully connected to render session at \"" << m_endpoint << "\": ");
+    LINFO("(f) connected to render session at \"" << m_controlEndpoint);
     return true;
 }
 

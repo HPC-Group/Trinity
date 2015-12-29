@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include "mocca/base/ByteArray.h"
+#include "mocca/base/StringTools.h"
 #include "mocca/base/BidirectionalMap.h"
 
 
@@ -19,6 +21,28 @@ enum class VclType {
     GridLeaper,
     PushMode,
     PullMode
+};
+    
+typedef mocca::ByteArray Frame;
+
+struct StreamParams {
+    
+    int m_resX, m_resY;
+    
+    StreamParams() : m_resX(1024), m_resY(768) {}  // default resolution
+    
+    
+    StreamParams(const std::string& s) {  // parsed from string
+        std::vector<std::string> args = mocca::splitString<std::string>(s, ':');
+        m_resX = stoi(args[0]);
+        m_resY = stoi(args[1]);
+    }
+    
+    constexpr int const frameSize() const { return m_resX * m_resY; }
+    
+    std::string toString() const {
+        return "" + std::to_string(m_resX) + ":" + std::to_string(m_resY);
+    }
 };
     
 
@@ -57,10 +81,17 @@ public:
         return cmd.str();
     }
     
-    std::string assembleInitRenderer(int sid, int rid, const VclType& t) {
+    
+    std::string assembleInitRenderer(int sid,
+                                     int rid,
+                                     const std::string& protocol,
+                                     const VclType& t,
+                                     const StreamParams& s) {
         std::stringstream cmd;
         cmd << toString(VclType::InitRenderer)
-        << "_" << std::to_string(sid) << "_" <<  rid << "_" << toString(t);
+        << "_" << std::to_string(sid) << "_" <<  rid << "_"
+        << protocol << "_" << toString(t) << "_"  << s.toString();
+        
         return cmd.str();
     }
     
@@ -79,10 +110,12 @@ public:
         return cmd.str();
     }
     
-    std::string assembleRetSpawnRenderer(int sid, int rid, int newSid, int port) {
+    std::string assembleRetInitRenderer(int sid, int rid,
+                                        int newSid, int ctrlPort, int visPort) {
         std::stringstream cmd;
         cmd << toString(VclType::TrinityReturn)
-        << "_" << std::to_string(sid) << "_" <<  rid << "_" << newSid << "_" << port;
+        << "_" << std::to_string(sid) << "_" <<  rid << "_"
+        << newSid << "_" << ctrlPort << "_" << visPort;
         return cmd.str();
     }
     

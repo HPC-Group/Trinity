@@ -13,7 +13,7 @@ namespace frontend {
     
 class VisStreamReceiver : public mocca::Runnable {
     
-    
+public:
     VisStreamReceiver(const mocca::net::Endpoint, std::shared_ptr<common::VisStream>);
     ~VisStreamReceiver();
     

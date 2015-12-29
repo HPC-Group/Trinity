@@ -9,6 +9,7 @@
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/LogManager.h"
+#include "mocca/base/ContainerTools.h"
 
 #include "ProcessingNode.h"
 
@@ -39,17 +40,26 @@ int main(int argc, char** argv) {
     signal(SIGINT, exitHandler);
 
     ConnectionFactorySelector::addDefaultFactories();
-    ProcessingNode tcpNode(Endpoint(ConnectionFactorySelector::tcpPrefixed(),
-                                          std::to_string(feTCPPort)));
-     
-    ProcessingNode wsNode(Endpoint(ConnectionFactorySelector::tcpWebSocket(),
-                                          std::to_string(feWSPort)));
+    
+    // endpoints
+    Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), std::to_string(feTCPPort));
+    Endpoint e2(ConnectionFactorySelector::tcpWebSocket(), std::to_string(feWSPort));
+    
+    // connection acceptors for the endpoints
+    std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
+    mocca::makeUniquePtrVec<IMessageConnectionAcceptor>
+    (ConnectionFactorySelector::bind(e1), ConnectionFactorySelector::bind(e2));
+    
+    
+    std::unique_ptr<ConnectionAggregator> aggregator
+    (new ConnectionAggregator(std::move(acceptors),
+                            ConnectionAggregator::DisconnectStrategy::RemoveConnection));
+    
+    ProcessingNode node(std::move(aggregator));
 
-    tcpNode.start();
-    wsNode.start();
+    node.start();
     while(!exitFlag) {
         
     }
-    tcpNode.interrupt();
-    wsNode.interrupt();
+    node.interrupt();
 }

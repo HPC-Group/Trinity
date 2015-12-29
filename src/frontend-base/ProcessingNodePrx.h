@@ -23,7 +23,10 @@ public:
     
     /// true on success. Does not throw any errors. Disconnect happens in dtor
     bool connect();
-    std::unique_ptr<RendererPrx> initRenderer(const common::VclType&);
+        
+    // insert params here?
+        std::unique_ptr<RendererPrx> initRenderer(const common::VclType&,
+                                                  const common::StreamParams&);
     
 private:
     mocca::net::Endpoint m_endpoint;

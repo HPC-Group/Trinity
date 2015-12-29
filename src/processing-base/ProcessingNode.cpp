@@ -23,19 +23,19 @@ ProcessingNode::~ProcessingNode() {
     join();
 }
 
-ProcessingNode::ProcessingNode(const mocca::net::Endpoint endpoint)
-    : m_endpoint(endpoint)
-    , m_aggregator(mocca::makeUniquePtrVec(ConnectionFactorySelector::bind(endpoint)),
-                   ConnectionAggregator::DisconnectStrategy::RemoveConnection) {}
+ProcessingNode::ProcessingNode(std::unique_ptr<ConnectionAggregator> aggregator) :
+m_aggregator(std::move(aggregator)) {}
 
 void ProcessingNode::run() {
-    LINFO("(p) listening at endpoint \"" << m_endpoint << "\"");
+    LINFO("(p) listening...");
 
+
+    
     // listening for incoming requests
     while (!isInterrupted()) {
 
         // receive request
-        auto msgEnvelope = m_aggregator.receive(trinity::common::TIMEOUT_REPLY);
+        auto msgEnvelope = m_aggregator->receive(trinity::common::TIMEOUT_REPLY);
 
         if (!msgEnvelope.isNull()) {          // req arrived
             auto env = msgEnvelope.release(); // release value from nullable
@@ -54,7 +54,7 @@ void ProcessingNode::run() {
             
             switch(t) {
                 case VclType::InitRenderer: {
-                    reply = handleSpawnRendererCmd(args);
+                    reply = handleInitRendererCmd(args);
                     break;
                 }
                     
@@ -70,36 +70,31 @@ void ProcessingNode::run() {
             
             
             LINFO("(p) reply: " << reply);
-            m_aggregator.send(
+            m_aggregator->send(
             MessageEnvelope(std::move(mocca::ByteArray() << reply), env.senderID));
         }
     }
 }
 
-std::string ProcessingNode::handleSpawnRendererCmd(std::vector<std::string>& args) {
+std::string ProcessingNode::handleInitRendererCmd(std::vector<std::string>& args) {
 
     VclType t;
     
     try {
-        t = m_vcl.toType(args[3]);
+        t = m_vcl.toType(args[4]);
     } catch (const mocca::Error& err) {
-        return m_vcl.assembleError(0, stoi(args[2]), 3);
+        return m_vcl.assembleError(0, stoi(args[4]), 3);
     }
 
-
-    std::unique_ptr<RenderSession> session(new RenderSession(t));
-    std::string reply = m_vcl.assembleRetSpawnRenderer(0, stoi(args[2]),
-                                                       session->getSid(),
-                                                       session->getPort());
-
-
-
-    // endpoint for the render session
-    std::unique_ptr<mocca::net::Endpoint> ep(
-        new mocca::net::Endpoint(m_endpoint.protocol(),
-                                 std::to_string(session->getPort())));
+    StreamParams p(args[5]);
+    std::unique_ptr<RenderSession> session(new RenderSession(t, std::move(p), args[3]));
     
-    session->provideOwnEndpoint(std::move(ep));
+    
+    std::string reply = m_vcl.assembleRetInitRenderer(0, stoi(args[2]),
+                                                       session->getSid(),
+                                                       session->getControlPort(),
+                                                       session->getVisPort());
+
     session->start();
     m_renderSessions.push_back(std::move(session));
 

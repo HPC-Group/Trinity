@@ -4,16 +4,11 @@
 #include <thread>
 #include <cassert>
 #include "mocca/base/ByteArray.h"
+#include "Commands.h"
 
 namespace trinity {
 namespace common {
     
-typedef mocca::ByteArray Frame;
-    
-struct StreamParams {
-    int m_resX, m_resY;
-    constexpr int const frameSize() const { return m_resX * m_resY; }
-};
     
 class VisStream {
     

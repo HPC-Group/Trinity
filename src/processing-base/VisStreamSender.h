@@ -14,7 +14,7 @@ namespace processing {
 // however, this will change when videocodec will be added
 class VisStreamSender : public mocca::Runnable {
     
-    
+public:
     VisStreamSender(const mocca::net::Endpoint, std::shared_ptr<common::VisStream>);
     ~VisStreamSender();
     

@@ -40,15 +40,20 @@ bool ProcessingNodePrx::connect() {
 }
 
 
-std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type) {
+std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type,
+                                                             const StreamParams& params) {
     
-    std::string cmd = m_vcl.assembleInitRenderer(0, m_ridGen.nextID(), type);
+    std::string cmd = m_vcl.assembleInitRenderer(0,  // no session yet
+                                                 m_ridGen.nextID(),
+                                                 m_endpoint.protocol(),
+                                                 type,
+                                                 params);
     m_mainChannel->send(std::move(mocca::ByteArray()<< cmd));
     
     auto byteArray = m_mainChannel->receive(trinity::common::TIMEOUT_REPLY);
     
     if(byteArray.isEmpty()) {
-        throw mocca::Error("cannot spawn renderer, no reply arrived", __FILE__, __LINE__);
+        throw mocca::Error("cannot init renderer, no reply arrived", __FILE__, __LINE__);
     }
                            
     std::string rep = byteArray.read(byteArray.size());
@@ -57,34 +62,32 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
     
     
     if (!m_vcl.isSoundCommand(args)) {
-        throw mocca::Error("spawn renderer: result has wrong format", __FILE__, __LINE__);
+        throw mocca::Error("init renderer: result has wrong format", __FILE__, __LINE__);
     }
     
     VclType t = m_vcl.toType(args[0]);
 
     switch(t) {
         case VclType::TrinityError: {
-            throw mocca::Error("cannot spawn renderer,  code: " + args[3],
+            throw mocca::Error("cannot init renderer,  code: " + args[3],
                                                        __FILE__, __LINE__);
             break;
         }
             
-        case VclType::TrinityReturn: {
+        case VclType::TrinityReturn: {  // create render proxy and return
             unsigned int sid = stoi(args[3]);
-            std::string port = args[4];
+            std::string controlPort = args[4];
+            std::string visPort = args[5];
             
-            mocca::net::Endpoint renderConnection(m_endpoint.protocol(),
-                                                  port);
-            StreamParams params;
-            params.m_resX = 1024;
-            params.m_resY = 768;
-            std::shared_ptr<VisStream> stream =
-            std::make_shared<VisStream>(params);
+            mocca::net::Endpoint controlEndpoint(m_endpoint.protocol(), controlPort);
+            mocca::net::Endpoint visEndpoint(m_endpoint.protocol(), visPort);
+            std::shared_ptr<VisStream> stream = std::make_shared<VisStream>(params);
+            LINFO("(f) creating render proxy for " << controlEndpoint);
             
-            LINFO("(f) creating render proxy for " << renderConnection);
-            
-            std::unique_ptr<RendererPrx>
-            ren(new RendererPrx(stream, std::move(renderConnection), sid));
+            std::unique_ptr<RendererPrx> ren(new RendererPrx(stream,
+                                                             std::move(controlEndpoint),
+                                                             std::move(visEndpoint),
+                                                             sid));
             return ren;
         }
             

@@ -13,29 +13,31 @@ using namespace trinity::common;
 int RenderSession::m_basePort = 5990; // config base port for renderer here
 unsigned int RenderSession::m_nextSid = 1; // sid 0 is considered invalid / dummy
 
-RenderSession::RenderSession(const VclType& type) {
-    m_sid = m_nextSid++;
-    m_port = m_basePort++;
-    m_renderer = createRenderer(type);
+RenderSession::RenderSession(const VclType& rendererType,
+                             const StreamParams& params,
+                             const std::string& protocol) :
+m_sid(m_nextSid++),
+m_controlPort(m_basePort++),
+m_visPort(m_basePort++),
+m_controlEndpoint(protocol, std::to_string(m_controlPort)),
+m_visSender(mocca::net::Endpoint(protocol, std::to_string(m_visPort)),
+            std::make_shared<VisStream>(params))
+{
+    m_renderer = createRenderer(rendererType, params);
 }
 
 RenderSession::~RenderSession() {
     join();
 }
 
-void RenderSession::provideOwnEndpoint(std::unique_ptr<mocca::net::Endpoint> ep) {
-    m_endpoint = std::move(ep);
-}
 
 
-std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& t) {
-    switch (t) {
+std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& rendererType,
+                                                         const StreamParams& params) {
+    switch (rendererType) {
         case VclType::DummyRenderer: {
-            StreamParams params;
-            params.m_resX = 1024;
-            params.m_resY = 768;
-            std::shared_ptr<VisStream> stream =
-            std::make_shared<VisStream>(params);
+
+            std::shared_ptr<VisStream> stream = std::make_shared<VisStream>(params);
             return std::unique_ptr<IRenderer>(new DummyRenderer(stream));
             break;
         }
@@ -55,20 +57,24 @@ unsigned int RenderSession::getSid() const {
     return m_sid;
 }
 
-int RenderSession::getPort() const {
-    return m_port;
+int RenderSession::getControlPort() const {
+    return m_controlPort;
+}
+
+int RenderSession::getVisPort() const {
+    return m_visPort;
 }
 
 
 void RenderSession::run() {
     
-    LINFO("(p) render session listening at \"" + m_endpoint->toString() + "\"");
+    LINFO("(p) render session control at \"" + m_controlEndpoint.toString() + "\"");
     
     try {
         
-        auto acceptor = mocca::net::ConnectionFactorySelector::bind(*m_endpoint);
-        while(!m_connection && !isInterrupted()) {
-            m_connection = acceptor->accept(); // auto-timeout
+        auto acceptor = mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint);
+        while(!m_controlConnection && !isInterrupted()) {
+            m_controlConnection = acceptor->accept(); // auto-timeout
         }
         
     } catch (const mocca::net::NetworkError& err) {
@@ -77,28 +83,33 @@ void RenderSession::run() {
     }
     
     while(!isInterrupted()) {
-        auto bytepacket = m_connection->receive();
-        if(!bytepacket.isEmpty()) {
-            std::string cmd = bytepacket.read(bytepacket.size());
-            LINFO("(p) command arrived at renderer: " << cmd);  // print cmd
-            std::vector<std::string> args = mocca::splitString<std::string>(cmd, '_');
-            
-            std::string reply;
-            
-            if (!m_vcl.isSoundCommand(args)) {
-                reply = m_vcl.assembleError(0, 0, 1);
+        try {
+            auto bytepacket = m_controlConnection->receive();
+            if(!bytepacket.isEmpty()) {
+                std::string cmd = bytepacket.read(bytepacket.size());
+                LINFO("(p) command arrived at renderer: " << cmd);  // print cmd
+                std::vector<std::string> args = mocca::splitString<std::string>(cmd, '_');
+                
+                std::string reply;
+                
+                if (!m_vcl.isSoundCommand(args)) {
+                    reply = m_vcl.assembleError(0, 0, 1);
+                }
+                
+                VclType t = m_vcl.toType(args[0]);
+                
+                // we don't have any commands yet
+                switch(t) {
+                    default:
+                        reply = m_vcl.assembleError(0, stoi(args[2]), 2);
+                }
+                
+                m_controlConnection->send(std::move(mocca::ByteArray() << reply));
             }
-            
-            VclType t = m_vcl.toType(args[0]);
-            
-            // we don't have any commands yet
-            switch(t) {
-                default:
-                    reply = m_vcl.assembleError(0, stoi(args[2]), 2);
-            }
-
-            m_connection->send(std::move(mocca::ByteArray() << reply));
+        } catch (const mocca::net::NetworkError& err) {
+            LWARNING("(p) remote session has gone: " << err.what());
         }
+
     }
 
 }
