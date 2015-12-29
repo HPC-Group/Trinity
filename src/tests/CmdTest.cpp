@@ -21,6 +21,7 @@ protected:
     }
 };
 
+
 TEST_F(CmdTest, ParamsToStringTest) {
     
     StreamParams params;
@@ -29,6 +30,7 @@ TEST_F(CmdTest, ParamsToStringTest) {
     std::string stringifiedParams = params.toString();
     ASSERT_EQ("1680:1020", stringifiedParams);
 }
+
 
 TEST_F(CmdTest, StringToParamsTest) {
     
@@ -55,6 +57,18 @@ TEST_F(CmdTest, AssembleInitRendererTest) {
     ASSERT_EQ(ret,
               request + "_" + std::to_string(sid) + "_" + std::to_string(rid) + "_"
               + protocol + "_" + dummyRenderer + "_" + params.toString());
+}
+
+TEST_F(CmdTest, AssembleCloseRendererTest) {
+    
+    int rid = 12;
+    int sid = 10;
+    
+    Vcl v;
+    std::string ret = v.assembleCloseRenderer(sid, rid);
+    std::string request = v.toString(trinity::common::VclType::CloseRenderer);
+    
+    ASSERT_EQ(ret, request + "_" + std::to_string(sid) + "_" + std::to_string(rid));
 }
 
 TEST_F(CmdTest, AssembleIRetnitRendererTest) {
