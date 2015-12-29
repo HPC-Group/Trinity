@@ -4,6 +4,7 @@ using namespace trinity::common;
 
 VisStream::VisStream(StreamParams params) : m_streamParams(params),
 m_lastFrame(params.frameSize()), m_swapBuffer(params.frameSize()) {
+    
 }
 
 VisStream::~VisStream() {

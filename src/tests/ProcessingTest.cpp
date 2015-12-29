@@ -107,3 +107,18 @@ TEST_F(ProcessingTest, StreamInitTest1Sec) {
     node.interrupt();
 }
 
+
+TEST_F(ProcessingTest, VisStreamTest) {
+    
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
+    
+    trinity::common::StreamParams p;
+    std::shared_ptr<trinity::common::VisStream> stream =
+    std::make_shared<trinity::common::VisStream>(p);
+    trinity::frontend::VisStreamReceiver rec(endpoint, stream);
+    trinity::processing::VisStreamSender sender(endpoint, stream);
+    rec.startStreaming();
+    sender.startStreaming();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+
