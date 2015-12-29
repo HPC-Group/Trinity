@@ -38,7 +38,7 @@ struct StreamParams {
         m_resY = stoi(args[1]);
     }
     
-    constexpr int const frameSize() const { return m_resX * m_resY; }
+    int const frameSize() const { return m_resX * m_resY; }
     
     std::string toString() const {
         return "" + std::to_string(m_resX) + ":" + std::to_string(m_resY);
