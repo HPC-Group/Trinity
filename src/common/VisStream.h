@@ -11,6 +11,8 @@ namespace common {
     
     
 class VisStream {
+
+#define CAPACITY 2
     
 public:
     
@@ -18,29 +20,22 @@ public:
     
     VisStream(StreamParams params);
     ~VisStream();  // free buffers here
-
-    // call after you are done with the last frame
-    void swapBuffers();
-    
-    // you should not read or write buffers while swapping
-    bool isSwapping() const;
-    
-    // call stopFrameRead when done processing the array
-    Frame& readLastFrame();
-    
-    void insertFrame(Frame&);
     
     const StreamParams& getStreamParams() const;
+    
+    bool put(Frame frame); // false if stream full
+    Frame get();
     
     
 private:
 
-    std::atomic<bool> m_isSwapping;
-    const StreamParams m_streamParams;
+    // based on my lfq implementation
+    size_t increment(size_t idx) const;
+    std::atomic<size_t> m_tail;
+    std::atomic<size_t> m_head;
+    Frame m_data[CAPACITY];
     
-    // will be extended by an array later
-    Frame m_lastFrame;
-    Frame m_swapBuffer;
+    StreamParams m_params;
 };
 }
 }

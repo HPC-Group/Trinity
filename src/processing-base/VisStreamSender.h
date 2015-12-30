@@ -27,7 +27,6 @@ private:
     void run() override;
     
     mocca::net::Endpoint m_endpoint;
-    mocca::ByteArray m_nextFrame;
     std::unique_ptr<mocca::net::IMessageConnection> m_connection;
 };
 }

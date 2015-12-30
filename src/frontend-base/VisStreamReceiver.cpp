@@ -49,9 +49,7 @@ void VisStreamReceiver::run() {
         auto bytepacket = m_connection->receive();
         
         if(!bytepacket.isEmpty()) {
-            while (m_visStream->isSwapping()) {
-            }
-            m_visStream->insertFrame(bytepacket);
+            m_visStream->put(std::move(bytepacket));
         }
     }
     

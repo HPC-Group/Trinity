@@ -9,7 +9,7 @@ using namespace trinity::common;
 
 VisStreamSender::VisStreamSender(const mocca::net::Endpoint endpoint,
                                      std::shared_ptr<VisStream> s) :
-m_visStream(s), m_endpoint(endpoint), m_nextFrame(s->getStreamParams().frameSize()) {
+m_visStream(s), m_endpoint(endpoint) {
 }
 
 VisStreamSender::~VisStreamSender() {
@@ -44,13 +44,15 @@ void VisStreamSender::run() {
     
     LINFO("(p) vis sender was bound");
     while(!isInterrupted()) {
-        swap(m_nextFrame, m_visStream->readLastFrame());
-        try {
-            m_connection->send(std::move(m_nextFrame));
-        } catch (const mocca::net::NetworkError& err) {
+    
+        Frame f = m_visStream->get();
+        if(!f.isEmpty()) {
+            try {
+                m_connection->send(std::move(f));
+            } catch (const mocca::net::NetworkError& err) {
                 LERROR("(p) cannot send vis: " << err.what());
+            }
         }
-        m_visStream->swapBuffers();
     }
     
     // cleanup
