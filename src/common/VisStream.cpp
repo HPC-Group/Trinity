@@ -2,7 +2,7 @@
 
 using namespace trinity::common;
 
-VisStream::VisStream(StreamParams params) : m_params(params) {
+VisStream::VisStream(StreamParams params) : m_params(params), m_tail(0), m_head(0) {
     
 }
 
@@ -32,8 +32,7 @@ bool VisStream::put(Frame frame) {
 Frame VisStream::get() {
     const auto currentHead = m_head.load(std::memory_order_relaxed);
     if (currentHead == m_tail.load(std::memory_order_acquire)) {
-        Frame f;
-        return f; // empty queue
+        return nullptr;
     }
     
     Frame result = std::move(m_data[currentHead]);

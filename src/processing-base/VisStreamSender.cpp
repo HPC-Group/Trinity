@@ -46,9 +46,11 @@ void VisStreamSender::run() {
     while(!isInterrupted()) {
     
         Frame f = m_visStream->get();
-        if(!f.isEmpty()) {
+        
+        
+        if(f && !f->isEmpty()) {
             try {
-                m_connection->send(std::move(f));
+                m_connection->send(std::move(*f));
             } catch (const mocca::net::NetworkError& err) {
                 LERROR("(p) cannot send vis: " << err.what());
             }

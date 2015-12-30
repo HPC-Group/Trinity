@@ -23,7 +23,7 @@ enum class VclType {
     PullMode
 };
     
-typedef mocca::ByteArray Frame;
+typedef std::unique_ptr<mocca::ByteArray> Frame;
 
 struct StreamParams {
     
