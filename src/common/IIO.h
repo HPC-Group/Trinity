@@ -5,7 +5,7 @@
 namespace trinity {
 namespace common {
     
-class IRenderer {
+class IIO {
     
 public:
     

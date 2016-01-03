@@ -11,6 +11,8 @@ namespace common {
     
 enum class VclType {
 
+    InitDummyRenderer,
+    InitLeapRenderer,
     TrinityReturn,
     TrinityError,
     InitConnection,
