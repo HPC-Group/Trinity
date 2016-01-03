@@ -21,5 +21,6 @@ protected:
 TEST_F(CmdFactoryTest, XTest) {
     
     InitDummyRendererCmd cmd(1, 2);
+    InitDummyRendererHdl(std::move(cmd));
     
 }

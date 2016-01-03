@@ -9,7 +9,6 @@
 namespace trinity {
 namespace common {
     
-    
 class VisStream {
 
 #define CAPACITY 2

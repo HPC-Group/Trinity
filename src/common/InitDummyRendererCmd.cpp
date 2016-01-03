@@ -4,6 +4,12 @@ using namespace trinity::common;
 
 InitDummyRendererCmd::InitDummyRendererCmd(int sid, int rid) : ICommand(sid, rid){}
 
+InitDummyRendererCmd::InitDummyRendererCmd(int sid,
+                                           int rid,
+                                           const std::string& protocol,
+                                           StreamingParams p) :
+ICommand(sid, rid), m_protocol(protocol), m_streamingParams(p) {}
+
 
 InitDummyRendererCmd::~InitDummyRendererCmd() {}
 
@@ -13,10 +19,12 @@ VclType InitDummyRendererCmd::getType() const {
 
 
 void InitDummyRendererCmd::serialize(std::ostream& stream) {
-    // todo
+    stream << m_sid << " " << m_rid << " ";
+    m_streamingParams.serialize(stream);
 }
 
 
 void InitDummyRendererCmd::deserialize(std::istream& stream) {
-    // todo
+    stream >> m_sid >> m_rid;
+    m_streamingParams.deserialize(stream);
 }

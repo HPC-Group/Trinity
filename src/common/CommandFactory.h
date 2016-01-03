@@ -15,6 +15,9 @@ class CommandFactory {
 public:
     
     std::unique_ptr<ICommandHandler> createHandler(std::istream&);
+    
+private:
+    Vcl m_vcl;
 };
 }
 }

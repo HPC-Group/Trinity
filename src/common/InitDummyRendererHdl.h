@@ -6,7 +6,7 @@ namespace trinity {
 namespace common {
 
 // command-pattern like execution of trinity commands
-class InitDummyRendererHdl {
+class InitDummyRendererHdl : public ICommandHandler {
     
 public:
     virtual void execute();

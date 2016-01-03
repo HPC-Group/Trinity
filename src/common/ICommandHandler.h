@@ -17,9 +17,6 @@ public:
     
 protected:
     
-private:
-    ICommandHandler(){};
-    virtual ~ICommandHandler(){}
 };
 }
 }
