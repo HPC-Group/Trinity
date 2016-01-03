@@ -45,7 +45,7 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
     
     std::string cmd = m_vcl.assembleInitRenderer(0,  // no session yet
                                                  m_ridGen.nextID(),
-                                                 m_endpoint.protocol(),
+                                                 m_endpoint.protocol,
                                                  type,
                                                  params);
     m_mainChannel->send(std::move(mocca::ByteArray()<< cmd));
@@ -79,8 +79,8 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
             std::string controlPort = args[4];
             std::string visPort = args[5];
             
-            mocca::net::Endpoint controlEndpoint(m_endpoint.protocol(), controlPort);
-            mocca::net::Endpoint visEndpoint(m_endpoint.protocol(), visPort);
+            mocca::net::Endpoint controlEndpoint(m_endpoint.protocol, "localhost", controlPort);
+            mocca::net::Endpoint visEndpoint(m_endpoint.protocol, "localhost", visPort);
             std::shared_ptr<VisStream> stream = std::make_shared<VisStream>(params);
             LINFO("(f) creating render proxy for " << controlEndpoint);
             

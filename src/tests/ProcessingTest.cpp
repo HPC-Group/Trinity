@@ -29,7 +29,7 @@ protected:
 
 TEST_F(ProcessingTest, RequestInitRendererTest) {
     
-    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
     
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
     mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(endpoint));
@@ -55,7 +55,7 @@ TEST_F(ProcessingTest, RequestInitRendererTest) {
 
 TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
     
-    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
     
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
     mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(endpoint));
@@ -82,7 +82,7 @@ TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
 
 TEST_F(ProcessingTest, StreamInitTest1Sec) {
     
-    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
     
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
     mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(endpoint));
@@ -110,7 +110,7 @@ TEST_F(ProcessingTest, StreamInitTest1Sec) {
 
 TEST_F(ProcessingTest, VisStreamTest) {
     
-    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
     
     trinity::common::StreamParams p;
     std::shared_ptr<trinity::common::VisStream> stream =

@@ -23,7 +23,7 @@ protected:
 
 TEST_F(NodeTest, StartNodeTest) {
     
-    Endpoint endpoint (ConnectionFactorySelector::loopback(), "5678");
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
     
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
     mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(endpoint));

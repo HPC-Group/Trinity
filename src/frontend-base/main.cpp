@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
     ConnectionFactorySelector::addDefaultFactories();
 
-    Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost:5678");
+    Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "5678");
 
     processingNode =
     std::unique_ptr<trinity::frontend::ProcessingNodePrx>

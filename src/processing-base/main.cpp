@@ -42,8 +42,8 @@ int main(int argc, char** argv) {
     ConnectionFactorySelector::addDefaultFactories();
     
     // endpoints
-    Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), std::to_string(feTCPPort));
-    Endpoint e2(ConnectionFactorySelector::tcpWebSocket(), std::to_string(feWSPort));
+    Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(feTCPPort));
+    Endpoint e2(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(feWSPort));
     
     // connection acceptors for the endpoints
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =

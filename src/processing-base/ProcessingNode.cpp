@@ -71,7 +71,7 @@ void ProcessingNode::run() {
             
             LINFO("(p) reply: " << reply);
             m_aggregator->send(
-            MessageEnvelope(std::move(mocca::ByteArray() << reply), env.senderID));
+            MessageEnvelope(std::move(mocca::ByteArray() << reply), env.connectionID));
         }
     }
 }

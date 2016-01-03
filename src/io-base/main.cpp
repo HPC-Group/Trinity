@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     
     ConnectionFactorySelector::addDefaultFactories();
 
-    auto acceptor = ConnectionFactorySelector::bind(Endpoint(ConnectionFactorySelector::tcpPrefixed(), "5678"));
+    auto acceptor = ConnectionFactorySelector::bind(Endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "5678"));
     // acceptor.getConnection();
     while (true) {
         auto conn = acceptor->accept();
