@@ -1,11 +1,15 @@
 #include "gtest/gtest.h"
+
 #include "common/Icommand.h"
 #include "common/ICommandHandler.h"
-#include "common/CommandFactory.h"
-#include "common/InitDummyRendererCmd.h"
-#include "common/InitDummyRendererHdl.h"
+#include "common/InitRendererCmd.h"
+
+#include "processing-base/ProcessingCommandFactory.h"
+#include "processing-base/InitRendererHdl.h"
+#include "processing-base/SessionManager.h"
 
 using namespace trinity::common;
+using namespace trinity::processing;
 
 class CmdFactoryTest : public ::testing::Test {
 protected:
@@ -14,13 +18,15 @@ protected:
     }
     
     virtual ~CmdFactoryTest() {
+        SessionManagerSingleton::instance()->endAllSessions();
     }
 };
 
 
 TEST_F(CmdFactoryTest, XTest) {
     
-    InitDummyRendererCmd cmd(1, 2);
-    InitDummyRendererHdl(std::move(cmd));
+    InitRendererCmd cmd;
+    InitRendererHdl(std::move(cmd));
+    // todo: execute, get return value
     
 }

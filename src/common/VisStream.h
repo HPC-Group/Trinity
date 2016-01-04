@@ -5,6 +5,7 @@
 #include <cassert>
 #include "mocca/base/ByteArray.h"
 #include "Commands.h"
+#include "StreamingParams.h"
 
 namespace trinity {
 namespace common {
@@ -18,9 +19,11 @@ public:
     // read/write access to the last (newest) frame
     
     VisStream(StreamParams params);
+    VisStream(StreamingParams params);
     ~VisStream();  // free buffers here
     
     const StreamParams& getStreamParams() const;
+    const StreamingParams& getStreamingParams() const;
     
     bool put(Frame frame); // false if stream full
     Frame get();
@@ -35,6 +38,7 @@ private:
     Frame m_data[CAPACITY];
     
     StreamParams m_params;
+    StreamingParams m_streamingParams;
 };
 }
 }

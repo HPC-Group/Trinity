@@ -11,13 +11,12 @@ namespace common {
     
 enum class VclType {
 
-    InitDummyRenderer,
+    InitRenderer,
     InitLeapRenderer,
     TrinityReturn,
     TrinityError,
     InitConnection,
     CloseConnection,
-    InitRenderer,
     CloseRenderer,
     DummyRenderer,
     GridLeaper,
@@ -123,6 +122,9 @@ public:
     
 
     Vcl() {
+        m_cmdMap.insert("IND", VclType::InitRenderer);
+        m_cmdMap.insert("DRN", VclType::DummyRenderer);
+        m_cmdMap.insert("GRN", VclType::GridLeaper);
         
         m_cmdMap.insert("RET", VclType::TrinityReturn);
         m_cmdMap.insert("ERR", VclType::TrinityError);
@@ -130,8 +132,6 @@ public:
         m_cmdMap.insert("EXT", VclType::CloseConnection);
         m_cmdMap.insert("INR", VclType::InitRenderer);
         m_cmdMap.insert("CLR", VclType::CloseRenderer);
-        m_cmdMap.insert("DRN", VclType::DummyRenderer);
-        m_cmdMap.insert("GRN", VclType::GridLeaper);
         m_cmdMap.insert("PSH", VclType::PushMode);
         m_cmdMap.insert("PLL", VclType::PullMode);
         

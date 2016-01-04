@@ -8,14 +8,15 @@ namespace processing {
 class SessionManager {
     
 public:
-    void startSession(std::unique_ptr<RenderSession> session):
+    void startSession(std::unique_ptr<RenderSession> session);
     void endSession(int sid);
+    RenderSession& getSession(int sid);
     void endAllSessions();
     
 private:
-    std::vector<std::unique_ptr<RenderSession> m_sessions;
+    std::vector<std::unique_ptr<RenderSession> > m_sessions;
 };
     
-typedef Singleton<SessionManager> SessionManagerSingleton;
+typedef mocca::Singleton<SessionManager> SessionManagerSingleton;
 }
 }

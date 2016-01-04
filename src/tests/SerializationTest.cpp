@@ -2,7 +2,7 @@
 #include "common/Icommand.h"
 #include "common/ISerializable.h"
 #include "common/StreamingParams.h"
-#include "common/InitDummyRendererCmd.h"
+#include "common/InitRendererCmd.h"
 
 using namespace trinity::common;
 
@@ -29,15 +29,20 @@ TEST_F(SerializationTest, StreamParamsTest) {
 }
 
 
-TEST_F(SerializationTest, InitDummyRendererCmdTest) {
+TEST_F(SerializationTest, InitRendererCmdTest) {
     StreamingParams params(2048, 1000);
-    InitDummyRendererCmd cmd(1, 2, "tcp.Prefixed", params);
+    InitRendererCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer ,params);
     std::stringstream s;
     cmd.serialize(s);
-    InitDummyRendererCmd newCmd(1,2);
+    InitRendererCmd newCmd;
+    std::string cmdName;
+    s >> cmdName;
+    Vcl vcl;
+
+    ASSERT_EQ(cmdName, vcl.toString(cmd.getType()));
     newCmd.deserialize(s);
     std::stringstream ss;
     newCmd.serialize(ss);
-    ASSERT_EQ(newCmd.getType(), VclType::InitDummyRenderer);
-    ASSERT_EQ(ss.str(), s.str());  
+    ASSERT_EQ(newCmd.getType(), VclType::InitRenderer);
+    ASSERT_EQ(ss.str(), s.str());
 }

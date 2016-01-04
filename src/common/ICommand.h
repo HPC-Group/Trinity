@@ -9,7 +9,7 @@ class ICommand : public ISerializable {
     
 public:
     ICommand(int sid, int rid) : m_sid(sid), m_rid(rid) {}
-    ICommand() : m_sid(0), m_rid(0) {}
+    ICommand(){}
     virtual ~ICommand(){}
     
     virtual VclType getType() const = 0;
@@ -17,9 +17,13 @@ public:
     virtual void serialize(std::ostream& stream) = 0;
     virtual void deserialize(std::istream& stream) = 0;
     
+    int getSid() const { return m_sid; }
+    int getRid() const { return m_rid; }
+    
 protected:
     int m_sid;
     int m_rid;
+    Vcl m_vcl;
 };
 }
 }

@@ -27,6 +27,23 @@ m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort
     m_visSender.startStreaming();
 }
 
+RenderSession::RenderSession(const VclType& rendererType,
+                             const StreamingParams& params,
+                             const std::string& protocol) :
+m_sid(m_nextSid++),
+m_controlPort(m_basePort++),
+m_visPort(m_basePort++),
+m_controlEndpoint(protocol, "localhost", std::to_string(m_controlPort)),
+m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort)),
+            std::make_shared<VisStream>(params))
+{
+    StreamParams p;
+    p.m_resX = params.getResX();
+    p.m_resY = params.getResY();
+    m_renderer = createRenderer(rendererType, p);
+    m_visSender.startStreaming();
+}
+
 RenderSession::~RenderSession() {
     m_visSender.endStreaming();
     join();

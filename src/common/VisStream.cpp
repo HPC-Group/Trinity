@@ -6,12 +6,21 @@ VisStream::VisStream(StreamParams params) : m_params(params), m_tail(0), m_head(
     
 }
 
+VisStream::VisStream(StreamingParams params) : m_streamingParams(params), m_tail(0), m_head(0) {
+    m_params.m_resX = m_streamingParams.getResX();
+    m_params.m_resY = m_streamingParams.getResY();
+}
+
 VisStream::~VisStream() {
     
 }
 
 const StreamParams& VisStream::getStreamParams() const {
     return m_params;
+}
+
+const StreamingParams& VisStream::getStreamingParams() const {
+    return m_streamingParams;
 }
 
 

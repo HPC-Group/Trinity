@@ -8,6 +8,7 @@
 
 #include "common/IRenderer.h"
 #include "common/Commands.h"
+#include "common/StreamingParams.h"
 #include "VisStreamSender.h"
 
 
@@ -25,6 +26,12 @@ public:
     RenderSession(const common::VclType& rendererType,
                   const common::StreamParams& params,
                   const std::string& protocol);
+        
+        
+    RenderSession(const common::VclType& rendererType,
+                  const common::StreamingParams& params,
+                  const std::string& protocol);
+        
         
     ~RenderSession();
     unsigned int getSid() const;
