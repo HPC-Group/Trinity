@@ -4,6 +4,7 @@
 
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/IMessageConnection.h"
+#include "mocca/net/IMessageConnectionAcceptor.h"
 #include "mocca/base/Thread.h"
 
 #include "common/IRenderer.h"
@@ -40,17 +41,18 @@ public:
         
         
 private:
-        
+    
+    unsigned int                m_sid;
     static unsigned int         m_nextSid;
     static int                  m_basePort;
     int                         m_controlPort;
     int                         m_visPort;
-    unsigned int                m_sid;
-        
-    std::unique_ptr<common::IRenderer>                  m_renderer;
-    mocca::net::Endpoint                                m_controlEndpoint;
-    VisStreamSender                                     m_visSender;
-    std::unique_ptr<mocca::net::IMessageConnection>     m_controlConnection;
+
+    std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;
+    std::unique_ptr<common::IRenderer>                      m_renderer;
+    mocca::net::Endpoint                                    m_controlEndpoint;
+    VisStreamSender                                         m_visSender;
+    std::unique_ptr<mocca::net::IMessageConnection>         m_controlConnection;
         
     common::Vcl m_vcl;
     

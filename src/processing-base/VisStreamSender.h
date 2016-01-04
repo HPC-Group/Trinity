@@ -3,6 +3,7 @@
 
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/IMessageConnection.h"
+#include "mocca/net/IMessageConnectionAcceptor.h"
 #include "mocca/base/Thread.h"
 #include "common/VisStream.h"
 
@@ -27,6 +28,7 @@ private:
     void run() override;
     
     mocca::net::Endpoint m_endpoint;
+    std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;
     std::unique_ptr<mocca::net::IMessageConnection> m_connection;
 };
 }

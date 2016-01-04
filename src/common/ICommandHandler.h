@@ -12,10 +12,7 @@ class ICommandHandler {
 public:
     virtual void execute() = 0;
     
-    // todo: retvalue
-    
-    
-protected:
+    virtual std::unique_ptr<ICommand> getReturnValue() { return nullptr; }
     
 };
 }

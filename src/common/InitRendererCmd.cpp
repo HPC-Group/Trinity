@@ -20,14 +20,14 @@ VclType InitRendererCmd::getType() const {
 
 void InitRendererCmd::serialize(std::ostream& stream) {
     stream << m_vcl.toString(getType()) << " " << m_sid << " "
-    << m_rid << " " << m_vcl.toString(m_renderType) << " ";
+    << m_rid << " " << m_protocol << " " << m_vcl.toString(m_renderType) << " ";
     m_streamingParams.serialize(stream);
 }
 
 
 void InitRendererCmd::deserialize(std::istream& stream) {
     std::string typeString;
-    stream >> m_sid >> m_rid >> typeString;
+    stream >> m_sid >> m_rid >> m_protocol >> typeString;
     m_renderType = m_vcl.toType(typeString);
     m_streamingParams.deserialize(stream);
 }

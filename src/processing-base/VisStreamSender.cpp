@@ -10,6 +10,7 @@ using namespace trinity::common;
 VisStreamSender::VisStreamSender(const mocca::net::Endpoint endpoint,
                                      std::shared_ptr<VisStream> s) :
 m_visStream(s), m_endpoint(endpoint) {
+    m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_endpoint));
 }
 
 VisStreamSender::~VisStreamSender() {
@@ -32,9 +33,8 @@ void VisStreamSender::run() {
     
     try {
         
-        auto acceptor = mocca::net::ConnectionFactorySelector::bind(m_endpoint);
         while(!m_connection && !isInterrupted()) {
-            m_connection = acceptor->accept();
+            m_connection = m_acceptor->accept();
         }
         
     } catch (const mocca::net::NetworkError& err) {

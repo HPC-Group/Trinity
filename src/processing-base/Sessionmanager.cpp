@@ -4,8 +4,7 @@
 
 using namespace trinity::processing;
 
-void SessionManager::startSession(std::unique_ptr<RenderSession> session) {
-    session->start();
+void SessionManager::addSession(std::unique_ptr<RenderSession> session) {
     m_sessions.push_back(std::move(session));
 }
 

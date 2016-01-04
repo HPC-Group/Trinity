@@ -8,7 +8,7 @@ namespace processing {
 class SessionManager {
     
 public:
-    void startSession(std::unique_ptr<RenderSession> session);
+    void addSession(std::unique_ptr<RenderSession> session);
     void endSession(int sid);
     RenderSession& getSession(int sid);
     void endAllSessions();

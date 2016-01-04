@@ -24,6 +24,7 @@ m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort
             std::make_shared<VisStream>(params))
 {
     m_renderer = createRenderer(rendererType, params);
+    m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
     m_visSender.startStreaming();
 }
 
@@ -41,6 +42,7 @@ m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort
     p.m_resX = params.getResX();
     p.m_resY = params.getResY();
     m_renderer = createRenderer(rendererType, p);
+    m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
     m_visSender.startStreaming();
 }
 
@@ -90,10 +92,8 @@ void RenderSession::run() {
     LINFO("(p) render session control at \"" + m_controlEndpoint.toString() + "\"");
     
     try {
-        
-        auto acceptor = mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint);
         while(!m_controlConnection && !isInterrupted()) {
-            m_controlConnection = acceptor->accept(); // auto-timeout
+            m_controlConnection = m_acceptor->accept(); // auto-timeout
         }
         
     } catch (const mocca::net::NetworkError& err) {

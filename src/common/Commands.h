@@ -122,7 +122,7 @@ public:
     
 
     Vcl() {
-        m_cmdMap.insert("IND", VclType::InitRenderer);
+        m_cmdMap.insert("INR", VclType::InitRenderer);
         m_cmdMap.insert("DRN", VclType::DummyRenderer);
         m_cmdMap.insert("GRN", VclType::GridLeaper);
         
