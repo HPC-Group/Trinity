@@ -14,7 +14,7 @@ public:
     
     virtual VclType getType() const;
 
-    const std::string& printError();
+    const std::string printError();
     int getErrorCode() const;
     
     virtual void serialize(std::ostream& stream);

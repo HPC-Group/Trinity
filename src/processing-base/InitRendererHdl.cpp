@@ -5,7 +5,7 @@
 using namespace trinity::processing;
 using namespace trinity::common;
 
-InitRendererHdl::InitRendererHdl(common::InitRendererCmd cmd) :
+InitRendererHdl::InitRendererHdl(InitRendererCmd cmd) :
 m_params(cmd.getParams()),
 m_protocol(cmd.getProtocol()),
 m_reply(cmd.getSid(), cmd.getRid())

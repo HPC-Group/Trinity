@@ -70,7 +70,7 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
     
     try {
         resultType = m_vcl.toType(typeString);
-    } catch (const mocca::Error& err) {
+    } catch (const mocca::Error&) {
         throw mocca::Error("init renderer, result ill-formed", __FILE__, __LINE__);
     }
     

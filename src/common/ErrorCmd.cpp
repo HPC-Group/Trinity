@@ -25,6 +25,6 @@ void ErrorCmd::deserialize(std::istream& stream) {
 }
 
 
-const std::string& ErrorCmd::printError() {
+const std::string ErrorCmd::printError() {
     return m_vcl.toString(m_errorCode);
 }
