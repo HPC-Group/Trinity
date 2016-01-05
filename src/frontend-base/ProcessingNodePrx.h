@@ -2,20 +2,18 @@
 
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/IMessageConnection.h"
+
 #include "RendererPrx.h"
 #include "common/Commands.h"
+#include "common/StreamingParams.h"
 
-#include <memory>
-#include <atomic>
 
 namespace trinity {
 namespace frontend {
     
-    class ProcessingNodePrx {
+class ProcessingNodePrx {
     
 public:
-
-    
     /// see mocca::net::Endpoint for details, supports remote and local calls
     ProcessingNodePrx(mocca::net::Endpoint);
     
@@ -25,8 +23,8 @@ public:
     bool connect();
         
     // insert params here?
-        std::unique_ptr<RendererPrx> initRenderer(const common::VclType&,
-                                                  const common::StreamParams&);
+    std::unique_ptr<RendererPrx> initRenderer(const common::VclType&,
+                                              const common::StreamingParams&);
     
 private:
     mocca::net::Endpoint m_endpoint;
@@ -35,8 +33,7 @@ private:
     common::IDGenerator m_ridGen;
     common::Vcl m_vcl;
     
-    // todo
-    std::string getOwnAddr() { return "127.0.0.1:6990"; }
+
 };
 }
 }

@@ -24,10 +24,6 @@ enum class RenderType { DUMMY, GRIDLEAPER };
     
 public:
     
-    RenderSession(const common::VclType& rendererType,
-                  const common::StreamParams& params,
-                  const std::string& protocol);
-        
         
     RenderSession(const common::VclType& rendererType,
                   const common::StreamingParams& params,
@@ -58,7 +54,7 @@ private:
     
     // renderer factory
     static std::unique_ptr<common::IRenderer> createRenderer(const common::VclType&,
-                                                             const common::StreamParams&);
+                                                             const common::StreamingParams&);
     void run() override;
     
         

@@ -8,6 +8,7 @@
 #include "mocca/base/ContainerTools.h"
 
 #include "ProcessingNode.h"
+
 #include "common/Commands.h"
 #include "common/NetConfig.h"
 
@@ -41,63 +42,19 @@ void ProcessingNode::run() {
             auto env = msgEnvelope.release(); // release value from nullable
             std::string cmd = env.message.read(env.message.size());
             LINFO("(p) command: " << cmd); // print cmd
-            std::vector<std::string> args = mocca::splitString<std::string>(cmd, '_');
-
-            std::string reply;
             
+            std::stringstream s1, s2;
+            s1 << cmd;
             
-            if (!m_vcl.isSoundCommand(args)) {
-                reply = m_vcl.assembleError(0, 0, 1);
+            auto handler = m_factory.createHandler(s1);
+            handler->execute();
+            auto reply = handler->getReturnValue();
+            if(reply != nullptr) {
+                reply->serialize(s2);
+                LINFO("(p) reply: " << s2.str());
+                m_aggregator->send(MessageEnvelope(std::move(mocca::ByteArray() << s2.str()),
+                                                   env.connectionID));
             }
-            
-            VclType t = m_vcl.toType(args[0]);
-            
-            switch(t) {
-                case VclType::InitRenderer: {
-                    reply = handleInitRendererCmd(args);
-                    break;
-                }
-                    
-                case VclType::InitConnection: {
-                    LINFO("(p) client connected");
-                    continue;
-                }
-                    
-                default:
-                    reply = m_vcl.assembleError(0, 0, 2);
-            }
-
-            
-            
-            LINFO("(p) reply: " << reply);
-            m_aggregator->send(
-            MessageEnvelope(std::move(mocca::ByteArray() << reply), env.connectionID));
         }
     }
-}
-
-std::string ProcessingNode::handleInitRendererCmd(std::vector<std::string>& args) {
-
-    VclType t;
-    
-    try {
-        t = m_vcl.toType(args[4]);
-    } catch (const mocca::Error& err) {
-        return m_vcl.assembleError(0, stoi(args[4]), 3);
-    }
-
-    StreamParams p(args[5]);
-    std::unique_ptr<RenderSession>
-    session(new RenderSession(t, std::move(p), args[3]));
-    
-    
-    std::string reply = m_vcl.assembleRetInitRenderer(0, stoi(args[2]),
-                                                       session->getSid(),
-                                                       session->getControlPort(),
-                                                       session->getVisPort());
-
-    session->start();
-    m_renderSessions.push_back(std::move(session));
-
-    return reply;
 }

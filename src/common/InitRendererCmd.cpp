@@ -43,7 +43,7 @@ const StreamingParams& InitRendererCmd::getParams() const {
 
 
 /////// Reply
-
+ReplyInitRendererCmd::ReplyInitRendererCmd() : ICommand(0, 0){}
 ReplyInitRendererCmd::ReplyInitRendererCmd(int sid, int rid) : ICommand(sid, rid){}
 ReplyInitRendererCmd::~ReplyInitRendererCmd() {}
 

@@ -31,7 +31,7 @@ TEST_F(SerializationTest, StreamParamsTest) {
 
 TEST_F(SerializationTest, InitRendererCmdTest) {
     StreamingParams params(2048, 1000);
-    InitRendererCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer ,params);
+    InitRendererCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, params);
     std::stringstream s;
     cmd.serialize(s);
     InitRendererCmd newCmd;

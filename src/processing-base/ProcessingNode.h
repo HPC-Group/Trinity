@@ -8,6 +8,7 @@
 #include "mocca/base/Thread.h"
 
 #include "RenderSession.h"
+#include "ProcessingCommandFactory.h"
 
 
 
@@ -32,6 +33,7 @@ private:
     
     std::string handleInitRendererCmd(std::vector<std::string>&);
     common::Vcl m_vcl;
+    ProcessingCommandFactory m_factory;
     
 };
 }

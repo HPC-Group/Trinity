@@ -30,6 +30,7 @@ private:
 class ReplyInitRendererCmd : public ICommand {
     
 public:
+    ReplyInitRendererCmd();
     ReplyInitRendererCmd(int sid, int rid);
     virtual ~ReplyInitRendererCmd();
     

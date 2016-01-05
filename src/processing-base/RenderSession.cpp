@@ -13,20 +13,7 @@ using namespace trinity::common;
 int RenderSession::m_basePort = 5990; // config base port for renderer here
 unsigned int RenderSession::m_nextSid = 1; // sid 0 is considered invalid / dummy
 
-RenderSession::RenderSession(const VclType& rendererType,
-                             const StreamParams& params,
-                             const std::string& protocol) :
-m_sid(m_nextSid++),
-m_controlPort(m_basePort++),
-m_visPort(m_basePort++),
-m_controlEndpoint(protocol, "localhost", std::to_string(m_controlPort)),
-m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort)),
-            std::make_shared<VisStream>(params))
-{
-    m_renderer = createRenderer(rendererType, params);
-    m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
-    m_visSender.startStreaming();
-}
+
 
 RenderSession::RenderSession(const VclType& rendererType,
                              const StreamingParams& params,
@@ -38,10 +25,8 @@ m_controlEndpoint(protocol, "localhost", std::to_string(m_controlPort)),
 m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort)),
             std::make_shared<VisStream>(params))
 {
-    StreamParams p;
-    p.m_resX = params.getResX();
-    p.m_resY = params.getResY();
-    m_renderer = createRenderer(rendererType, p);
+
+    m_renderer = createRenderer(rendererType, params);
     m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
     m_visSender.startStreaming();
 }
@@ -54,7 +39,7 @@ RenderSession::~RenderSession() {
 
 
 std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& rendererType,
-                                                         const StreamParams& params) {
+                                                         const StreamingParams& params) {
     switch (rendererType) {
         case VclType::DummyRenderer: {
 
@@ -107,6 +92,8 @@ void RenderSession::run() {
             if(!bytepacket.isEmpty()) {
                 std::string cmd = bytepacket.read(bytepacket.size());
                 LINFO("(p) command arrived at renderer: " << cmd);  // print cmd
+                
+                /*
                 std::vector<std::string> args = mocca::splitString<std::string>(cmd, '_');
                 
                 std::string reply;
@@ -124,6 +111,7 @@ void RenderSession::run() {
                 }
                 
                 m_controlConnection->send(std::move(mocca::ByteArray() << reply));
+                 */
             }
         } catch (const mocca::net::NetworkError& err) {
             LWARNING("(p) remote session has gone: " << err.what());

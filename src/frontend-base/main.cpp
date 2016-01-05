@@ -52,9 +52,7 @@ int main(int argc, char** argv) {
         }
     }
     try {
-        trinity::common::StreamParams params;
-        params.m_resX = 1024;
-        params.m_resY = 768;
+        trinity::common::StreamingParams params(1024, 768);
         processingNode->initRenderer(trinity::common::VclType::DummyRenderer, params);
     } catch (const mocca::Error& err) {
         LERROR(err.what());
