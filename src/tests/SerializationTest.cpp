@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "common/Icommand.h"
+#include "common/ICommand.h"
 #include "common/ISerializable.h"
 #include "common/StreamingParams.h"
 #include "common/InitRendererCmd.h"
