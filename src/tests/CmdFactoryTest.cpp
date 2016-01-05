@@ -2,7 +2,7 @@
 
 #include "mocca/net/ConnectionFactorySelector.h"
 
-#include "common/Icommand.h"
+#include "common/ICommand.h"
 #include "common/Commands.h"
 #include "common/ICommandHandler.h"
 #include "common/InitRendererCmd.h"
