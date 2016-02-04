@@ -7,13 +7,17 @@ StreamingParams::StreamingParams(int resX, int resY) : m_resX(resX), m_resY(resY
 
 StreamingParams::StreamingParams() : m_resX(1024), m_resY(768) {}
 
-void StreamingParams::serialize(std::ostream& stream) {
-    stream << m_resX << " " << m_resY;
+void StreamingParams::serialize(ISerialObject& serial) {
+
+    serial.append("xres", m_resX);
+    serial.append("yres", m_resY);
 }
 
 
-void StreamingParams::deserialize(std::istream& stream) {
-    stream >> m_resX >> m_resY;
+void StreamingParams::deserialize(ISerialObject& serial) {
+
+    m_resX = serial.getInt("xres");
+    m_resY = serial.getInt("yres");
 }
 
 int StreamingParams::getResX() const { return m_resX; }

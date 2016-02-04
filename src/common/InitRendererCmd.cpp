@@ -1,4 +1,5 @@
 #include "InitRendererCmd.h"
+#include <iostream>
 
 using namespace trinity::common;
 
@@ -18,18 +19,28 @@ VclType InitRendererCmd::getType() const {
 }
 
 
-void InitRendererCmd::serialize(std::ostream& stream) {
-    stream << m_vcl.toString(getType()) << " " << m_sid << " "
-    << m_rid << " " << m_protocol << " " << m_vcl.toString(m_renderType) << " ";
-    m_streamingParams.serialize(stream);
+void InitRendererCmd::serialize(ISerialObject& serial) {
+
+    serial.append("ID", m_vcl.toString(getType()));
+    serial.append("sid", m_sid);
+    serial.append("rid", m_rid);
+    serial.append("protocol", m_protocol);
+    serial.append("rendertype", m_vcl.toString(m_renderType));
+                  
+    m_streamingParams.serialize(serial);
 }
 
 
-void InitRendererCmd::deserialize(std::istream& stream) {
-    std::string typeString;
-    stream >> m_sid >> m_rid >> m_protocol >> typeString;
-    m_renderType = m_vcl.toType(typeString);
-    m_streamingParams.deserialize(stream);
+void InitRendererCmd::deserialize(ISerialObject& serial) {
+    
+    serial.getString("ID"); 
+    m_sid = serial.getInt("sid");
+    m_rid = serial.getInt("rid");
+    m_protocol = serial.getString("protocol");
+    std::string la = serial.getString("rendertype");
+    m_renderType = m_vcl.toType(la);
+    
+    m_streamingParams.deserialize(serial);
 }
 
 
@@ -63,14 +74,26 @@ VclType ReplyInitRendererCmd::getType() const {
     return VclType::TrinityReturn;
 }
 
-void ReplyInitRendererCmd::serialize(std::ostream& stream) {
-    stream << m_vcl.toString(getType()) << " " << m_sid << " " << m_rid << " "
-    << m_controlPort << " " << m_visPort;
+void ReplyInitRendererCmd::serialize(ISerialObject& serial) {
+    
+    serial.append("ID", m_vcl.toString(getType()));
+    serial.append("sid", m_sid);
+    serial.append("rid", m_rid);
+    serial.append("controlport", m_controlPort);
+    serial.append("visport", m_visPort);
+    
 }
 
 
-void ReplyInitRendererCmd::deserialize(std::istream& stream) {
-    stream >> m_sid >> m_rid >> m_controlPort >> m_visPort;
+void ReplyInitRendererCmd::deserialize(ISerialObject& serial) {
+
+    serial.getString("ID");
+    m_sid = serial.getInt("sid");
+    m_rid = serial.getInt("rid");
+    m_controlPort = serial.getInt("controlport");
+    m_visPort = serial.getInt("visport");
+
+
 }
 
 void ReplyInitRendererCmd::setControlPort(const int port) {

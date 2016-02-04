@@ -14,8 +14,8 @@ public:
     
     virtual VclType getType() const = 0;
     
-    virtual void serialize(std::ostream& stream) = 0;
-    virtual void deserialize(std::istream& stream) = 0;
+    virtual void serialize(ISerialObject& serial) = 0;
+    virtual void deserialize(ISerialObject& serial) = 0;
     
     int getSid() const { return m_sid; }
     int getRid() const { return m_rid; }

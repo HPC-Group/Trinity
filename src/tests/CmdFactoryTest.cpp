@@ -6,6 +6,7 @@
 #include "common/Commands.h"
 #include "common/ICommandHandler.h"
 #include "common/InitRendererCmd.h"
+#include "common/ISerialObjectFactory.h"
 
 #include "processing-base/ProcessingCommandFactory.h"
 #include "processing-base/InitRendererHdl.h"
@@ -17,7 +18,7 @@ using namespace trinity::processing;
 class CmdFactoryTest : public ::testing::Test {
 protected:
 
-    CmdFactoryTest() {
+      CmdFactoryTest() {
         mocca::net::ConnectionFactorySelector::addDefaultFactories();
     }
     
@@ -30,10 +31,11 @@ protected:
 
 TEST_F(CmdFactoryTest, RendererExecTest) {
     StreamingParams params(2048, 1000);
-    InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer ,params);
+    InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer, params);
+    auto obj = ISerialObjectFactory::create();
+    cmd.serialize(*obj);
     std::stringstream s;
-    cmd.serialize(s);
-    std::cout << s.str() << std::endl;
+    obj->writeTo(s);
 
     ProcessingCommandFactory factory;
     auto handler = factory.createHandler(s);
@@ -48,10 +50,7 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     ASSERT_TRUE(castedPtr != nullptr);
     ASSERT_EQ(castedPtr->getType(), VclType::TrinityReturn);
     ASSERT_EQ(castedPtr->getVisPort() - castedPtr->getControlPort(), 1);
-     
-     
-     
-     
+    
     
     // todo: execute, get return value
     

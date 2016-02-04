@@ -27,7 +27,6 @@ private:
     
     mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_connection;
-
 };
 }
 }

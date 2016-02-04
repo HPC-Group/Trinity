@@ -17,8 +17,8 @@ public:
     const std::string printError();
     int getErrorCode() const;
     
-    virtual void serialize(std::ostream& stream);
-    virtual void deserialize(std::istream& stream);
+    virtual void serialize(ISerialObject& serial);
+    virtual void deserialize(ISerialObject& serial);
     
 private:
     int m_errorCode;

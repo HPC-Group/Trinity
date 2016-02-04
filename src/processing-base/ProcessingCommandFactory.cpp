@@ -1,5 +1,6 @@
 #include "ProcessingCommandFactory.h"
 #include "common/InitRendererCmd.h"
+#include "common/ISerialObjectFactory.h"
 #include "InitRendererHdl.h"
 #include "mocca/base/Error.h"
 
@@ -11,12 +12,15 @@ ProcessingCommandFactory::createHandler(std::istream& stream) {
     std::string typeString;
     stream >> typeString;
     
+    
     VclType type = m_vcl.toType(typeString);
 
     switch (type) {
         case VclType::InitRenderer: {
             InitRendererCmd cmd;
-            cmd.deserialize(stream);
+            auto obj = ISerialObjectFactory::create();
+            obj->readFrom(stream);
+            cmd.deserialize(*obj);
             return  std::unique_ptr<InitRendererHdl> (new InitRendererHdl(cmd));
             break;
         }

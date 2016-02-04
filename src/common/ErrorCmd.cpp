@@ -13,15 +13,21 @@ VclType ErrorCmd::getType() const {
 }
 
 
-void ErrorCmd::serialize(std::ostream& stream) {
-    stream << m_vcl.toString(getType()) << " " << m_sid << " "
-    << m_rid << " " << m_errorCode;
+void ErrorCmd::serialize(ISerialObject& serial) {
+
+    serial.append("ID", m_vcl.toString(getType()));
+    serial.append("sid", m_sid);
+    serial.append("rid", m_rid);
+    serial.append("code", m_errorCode);
+    
 }
 
 
-void ErrorCmd::deserialize(std::istream& stream) {
-    std::string typeString;
-    stream >> m_sid >> m_rid >> m_errorCode;
+void ErrorCmd::deserialize(ISerialObject& serial) {
+
+    m_sid = serial.getInt("sid");
+    m_rid = serial.getInt("rid");
+    m_errorCode = serial.getInt("code");
 }
 
 

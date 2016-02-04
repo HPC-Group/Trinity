@@ -13,6 +13,7 @@
 #include "common/ErrorCmd.h"
 #include "common/NetConfig.h"
 #include "common/InitRendererCmd.h"
+#include "common/ISerialObjectFactory.h"
 
 using namespace trinity::frontend;
 using namespace trinity::common;
@@ -45,11 +46,16 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
     
     // creating the cmd that will initialize a remote renderer of the given type
     InitRendererCmd cmd(0, m_ridGen.nextID(), m_endpoint.protocol, type, params);
-    std::stringstream s1, s2;
-    cmd.serialize(s1);
+    
+    // one might do this more abstract, w/o going down to the string type here
+    auto serialRequest = ISerialObjectFactory::create();
+    auto serialReply = ISerialObjectFactory::create();
+    std::stringstream requestStream, replyStream;
+    cmd.serialize(*serialRequest);
+    serialRequest->writeTo(requestStream);
     
     // command is sent to processing node
-    m_mainChannel->send(std::move(mocca::ByteArray()<< s1.str()));
+    m_mainChannel->send(std::move(mocca::ByteArray()<< requestStream.str()));
     
     auto byteArray = m_mainChannel->receive(trinity::common::TIMEOUT_REPLY);
     
@@ -59,13 +65,13 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
     
     // the reply is of type ReplyInitRendererCmd
     std::string rep = byteArray.read(byteArray.size());
-    LINFO("(f) cmd : " << s1.str() << "; reply: " << rep);
+    LINFO("(f) cmd : " << requestStream.str() << "; reply: " << rep);
     
-    s2 << rep;
+    replyStream << rep;
     
     // determining result type
     std::string typeString;
-    s2 >> typeString;
+    replyStream >> typeString;
     VclType resultType;
     
     try {
@@ -74,9 +80,11 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
         throw mocca::Error("init renderer, result ill-formed", __FILE__, __LINE__);
     }
     
+    serialReply->readFrom(replyStream);
+    
     if(resultType == VclType::TrinityError) {  // error arrived
         ErrorCmd error;
-        error.deserialize(s2);
+        error.deserialize(*serialReply);
         throw mocca::Error("init renderer: error was returned: " + error.printError(), __FILE__, __LINE__);
     }
     
@@ -84,7 +92,7 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
         throw mocca::Error("init renderer: result not of type RET or ERR", __FILE__, __LINE__);
     
     ReplyInitRendererCmd replyCmd;
-    replyCmd.deserialize(s2);
+    replyCmd.deserialize(*serialReply);
     
     mocca::net::Endpoint controlEndpoint(m_endpoint.protocol,
                                          "localhost",

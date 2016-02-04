@@ -11,6 +11,7 @@
 
 #include "common/Commands.h"
 #include "common/NetConfig.h"
+#include "common/ISerialObjectFactory.h"
 
 using namespace trinity::processing;
 using namespace trinity::common;
@@ -43,17 +44,20 @@ void ProcessingNode::run() {
             std::string cmd = env.message.read(env.message.size());
             LINFO("(p) command: " << cmd); // print cmd
             
-            std::stringstream s1, s2;
-            s1 << cmd;
+            std::stringstream requestStream, replyStream;
+            requestStream << cmd;
             
-            auto handler = m_factory.createHandler(s1);
+            auto handler = m_factory.createHandler(requestStream);
             handler->execute();
             auto reply = handler->getReturnValue();
             if(reply != nullptr) {
-                reply->serialize(s2);
-                LINFO("(p) reply: " << s2.str());
-                m_aggregator->send(MessageEnvelope(std::move(mocca::ByteArray() << s2.str()),
-                                                   env.connectionID));
+                auto serialReply = ISerialObjectFactory::create();
+                reply->serialize(*serialReply);
+                serialReply->writeTo(replyStream);
+                LINFO("(p) reply: " << replyStream.str());
+                m_aggregator->send(MessageEnvelope(std::move(mocca::ByteArray()
+                                                             << replyStream.str()),
+                                                                env.connectionID));
             }
         }
     }

@@ -3,6 +3,7 @@
 #include "common/ISerializable.h"
 #include "common/StreamingParams.h"
 #include "common/InitRendererCmd.h"
+#include "common/ISerialObjectFactory.h""
 
 using namespace trinity::common;
 
@@ -20,10 +21,11 @@ protected:
 
 TEST_F(SerializationTest, StreamParamsTest) {
     StreamingParams params(2048, 1000);
-    std::stringstream s;
-    params.serialize(s);
+    auto obj1 = ISerialObjectFactory::create();
+    params.serialize(*obj1);
+
     StreamingParams p;
-    p.deserialize(s);
+    p.deserialize(*obj1);
     ASSERT_EQ(p.getResX(), params.getResX());
     ASSERT_EQ(p.getResY(), params.getResY());
 }
@@ -32,17 +34,26 @@ TEST_F(SerializationTest, StreamParamsTest) {
 TEST_F(SerializationTest, InitRendererCmdTest) {
     StreamingParams params(2048, 1000);
     InitRendererCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, params);
-    std::stringstream s;
-    cmd.serialize(s);
+    std::stringstream s, ss;
+    auto obj1 = ISerialObjectFactory::create();
+    cmd.serialize(*obj1);
+    obj1->writeTo(s);
+    
+    
     InitRendererCmd newCmd;
     std::string cmdName;
     s >> cmdName;
-    Vcl vcl;
 
+    Vcl vcl;
     ASSERT_EQ(cmdName, vcl.toString(cmd.getType()));
-    newCmd.deserialize(s);
-    std::stringstream ss;
-    newCmd.serialize(ss);
+    
+    auto obj2 = ISerialObjectFactory::create();
+    obj2->readFrom(s);
+    newCmd.deserialize(*obj2);
+    
+    auto obj3 = ISerialObjectFactory::create();
+    newCmd.serialize(*obj3);
+    obj3->writeTo(ss);
     ASSERT_EQ(newCmd.getType(), VclType::InitRenderer);
     ASSERT_EQ(ss.str(), s.str());
 }

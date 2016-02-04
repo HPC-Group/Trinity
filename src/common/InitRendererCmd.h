@@ -11,14 +11,15 @@ public:
     InitRendererCmd();
     InitRendererCmd(int sid, int rid, const std::string& protocol,
                          const VclType& renderType, const StreamingParams& p);
+    
     virtual ~InitRendererCmd();
     
     virtual VclType getType() const;
     const std::string& getProtocol() const;
     const StreamingParams& getParams() const;
     
-    virtual void serialize(std::ostream& stream);
-    virtual void deserialize(std::istream& stream);
+    virtual void serialize(ISerialObject& serial);
+    virtual void deserialize(ISerialObject& serial);
     
 private:
     std::string m_protocol;
@@ -34,15 +35,15 @@ public:
     ReplyInitRendererCmd(int sid, int rid);
     virtual ~ReplyInitRendererCmd();
     
-    virtual VclType getType() const;
+    virtual VclType getType() const override;
     int getControlPort() const;
     int getVisPort() const;
     void setControlPort(const int port);
     void setVisPort(const int port);
     void setNewSid(const int sid);
     
-    virtual void serialize(std::ostream& stream);
-    virtual void deserialize(std::istream& stream);
+    virtual void serialize(ISerialObject& serial) override;
+    virtual void deserialize(ISerialObject& serial) override;
     
 private:
     int m_controlPort;
