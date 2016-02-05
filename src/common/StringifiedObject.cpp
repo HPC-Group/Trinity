@@ -4,12 +4,18 @@
 using namespace trinity::common;
 
 void StringifiedObject::writeTo(std::ostream& stream) {
+    std::string typestring = m_vcl.toString(m_type);
+    stream << typestring << " ";
     stream << m_stream.str();
 }
 
 void StringifiedObject::readFrom(std::istream& stream) {
     std::stringstream& ss = static_cast<std::stringstream&>(stream);
+    std::string typestring;
+    ss >> typestring;
+    m_type = m_vcl.toType(typestring);
     m_stream << ss.str();
+    m_stream >> typestring;  // getting rid of typestring since we dont need it
 }
 
 

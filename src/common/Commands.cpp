@@ -8,6 +8,7 @@ Vcl::Vcl() {
     m_cmdMap.insert("GRN", VclType::GridLeaper);
     m_cmdMap.insert("RET", VclType::TrinityReturn);
     m_cmdMap.insert("ERR", VclType::TrinityError);
+    m_cmdMap.insert("PAR", VclType::StreamingParams);
     
     m_errorCodeMap.insert(std::make_pair(1, "no such command"));
     m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));
@@ -17,12 +18,12 @@ Vcl::Vcl() {
 
 
 
-std::string Vcl::toString(const VclType& t) {
+std::string Vcl::toString(const VclType& t) const {
     return m_cmdMap.getBySecond(t);
 }
 
 // throws Error if entry not found
-VclType Vcl::toType(const std::string& str) {
+VclType Vcl::toType(const std::string& str) const {
     return m_cmdMap.getByFirst(str);
 }
 

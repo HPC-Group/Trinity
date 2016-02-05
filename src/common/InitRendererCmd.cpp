@@ -19,9 +19,9 @@ VclType InitRendererCmd::getType() const {
 }
 
 
-void InitRendererCmd::serialize(ISerialObject& serial) {
+void InitRendererCmd::serialize(ISerialObject& serial) const  {
 
-    serial.append("ID", m_vcl.toString(getType()));
+    serial.setType(getType());
     serial.append("sid", m_sid);
     serial.append("rid", m_rid);
     serial.append("protocol", m_protocol);
@@ -33,7 +33,6 @@ void InitRendererCmd::serialize(ISerialObject& serial) {
 
 void InitRendererCmd::deserialize(ISerialObject& serial) {
     
-    serial.getString("ID"); 
     m_sid = serial.getInt("sid");
     m_rid = serial.getInt("rid");
     m_protocol = serial.getString("protocol");
@@ -74,9 +73,9 @@ VclType ReplyInitRendererCmd::getType() const {
     return VclType::TrinityReturn;
 }
 
-void ReplyInitRendererCmd::serialize(ISerialObject& serial) {
+void ReplyInitRendererCmd::serialize(ISerialObject& serial) const {
     
-    serial.append("ID", m_vcl.toString(getType()));
+    serial.setType(getType());
     serial.append("sid", m_sid);
     serial.append("rid", m_rid);
     serial.append("controlport", m_controlPort);
@@ -87,7 +86,6 @@ void ReplyInitRendererCmd::serialize(ISerialObject& serial) {
 
 void ReplyInitRendererCmd::deserialize(ISerialObject& serial) {
 
-    serial.getString("ID");
     m_sid = serial.getInt("sid");
     m_rid = serial.getInt("rid");
     m_controlPort = serial.getInt("controlport");

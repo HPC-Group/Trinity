@@ -13,7 +13,8 @@ public:
     ISerializable(){}
     virtual ~ISerializable(){}
     
-    virtual void serialize(ISerialObject& serial) = 0;
+    virtual VclType getType() const = 0;
+    virtual void serialize(ISerialObject& serial) const = 0;
     virtual void deserialize(ISerialObject& serial) = 0;
 };
 }

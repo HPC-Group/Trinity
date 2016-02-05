@@ -17,7 +17,7 @@ public:
     const std::string printError();
     int getErrorCode() const;
     
-    virtual void serialize(ISerialObject& serial);
+    virtual void serialize(ISerialObject& serial) const;
     virtual void deserialize(ISerialObject& serial);
     
 private:

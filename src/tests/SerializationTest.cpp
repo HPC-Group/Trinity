@@ -41,19 +41,16 @@ TEST_F(SerializationTest, InitRendererCmdTest) {
     
     
     InitRendererCmd newCmd;
-    std::string cmdName;
-    s >> cmdName;
-
-    Vcl vcl;
-    ASSERT_EQ(cmdName, vcl.toString(cmd.getType()));
-    
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
     newCmd.deserialize(*obj2);
     
+    Vcl vcl;
+    ASSERT_EQ(newCmd.getType(), cmd.getType());
+    
     auto obj3 = ISerialObjectFactory::create();
     newCmd.serialize(*obj3);
     obj3->writeTo(ss);
-    ASSERT_EQ(newCmd.getType(), VclType::InitRenderer);
+
     ASSERT_EQ(ss.str(), s.str());
 }

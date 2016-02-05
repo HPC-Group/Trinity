@@ -16,7 +16,8 @@ enum class VclType {
     TrinityReturn,
     TrinityError,
     DummyRenderer,
-    GridLeaper
+    GridLeaper,
+    StreamingParams
 };
     
 typedef std::unique_ptr<mocca::ByteArray> Frame;
@@ -28,10 +29,10 @@ class Vcl {
 public:
     
     // throws Error if entry not found
-    std::string toString(const VclType& t);
+    std::string toString(const VclType& t) const;
     
     // throws Error if entry not found
-    VclType toType(const std::string& str);
+    VclType toType(const std::string& str) const;
     
     // todo test
     std::string toString(const int errorCode);

@@ -9,23 +9,21 @@ using namespace trinity::processing;
 
 std::unique_ptr<ICommandHandler>
 ProcessingCommandFactory::createHandler(std::istream& stream) {
-    std::string typeString;
-    stream >> typeString;
+
+    auto serialRequest = ISerialObjectFactory::create();
+    serialRequest->readFrom(stream);
     
-    
-    VclType type = m_vcl.toType(typeString);
+    VclType type = serialRequest->getType();
 
     switch (type) {
         case VclType::InitRenderer: {
             InitRendererCmd cmd;
-            auto obj = ISerialObjectFactory::create();
-            obj->readFrom(stream);
-            cmd.deserialize(*obj);
+            cmd.deserialize(*serialRequest);
             return  std::unique_ptr<InitRendererHdl> (new InitRendererHdl(cmd));
             break;
         }
             
         default:
-            throw mocca::Error("command unknown: " + typeString, __FILE__, __LINE__);
+            throw mocca::Error("command unknown: " + (Vcl().toString(type)), __FILE__, __LINE__);
     }
 }

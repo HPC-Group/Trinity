@@ -10,7 +10,8 @@ public:
     StreamingParams();
     StreamingParams(int resX, int resY);
     
-    virtual void serialize(ISerialObject& serial);
+    virtual VclType getType() const;
+    virtual void serialize(ISerialObject& serial) const;
     virtual void deserialize(ISerialObject& serial);
     
     int getResX() const;

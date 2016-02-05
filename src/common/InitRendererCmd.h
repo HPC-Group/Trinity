@@ -18,7 +18,7 @@ public:
     const std::string& getProtocol() const;
     const StreamingParams& getParams() const;
     
-    virtual void serialize(ISerialObject& serial);
+    virtual void serialize(ISerialObject& serial) const;
     virtual void deserialize(ISerialObject& serial);
     
 private:
@@ -42,7 +42,7 @@ public:
     void setVisPort(const int port);
     void setNewSid(const int sid);
     
-    virtual void serialize(ISerialObject& serial) override;
+    virtual void serialize(ISerialObject& serial) const override;
     virtual void deserialize(ISerialObject& serial) override;
     
 private:

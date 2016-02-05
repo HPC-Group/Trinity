@@ -14,6 +14,7 @@ public:
     StringifiedObject(){}
     virtual ~StringifiedObject(){}
     
+    
     virtual void append(const std::string& key, float value);
     virtual void append(const std::string& key, int value);
     virtual void append(const std::string& key, const std::string& value);

@@ -13,9 +13,9 @@ VclType ErrorCmd::getType() const {
 }
 
 
-void ErrorCmd::serialize(ISerialObject& serial) {
+void ErrorCmd::serialize(ISerialObject& serial) const {
 
-    serial.append("ID", m_vcl.toString(getType()));
+    serial.setType(getType());
     serial.append("sid", m_sid);
     serial.append("rid", m_rid);
     serial.append("code", m_errorCode);

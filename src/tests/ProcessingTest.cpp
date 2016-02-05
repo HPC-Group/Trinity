@@ -46,6 +46,7 @@ TEST_F(ProcessingTest, RequestInitRendererTest) {
     
     ASSERT_TRUE(proxy.connect());
     trinity::common::StreamingParams params;
+    proxy.initRenderer(trinity::common::VclType::DummyRenderer, params);
     ASSERT_NO_THROW(proxy.initRenderer(trinity::common::VclType::DummyRenderer, params));
 
     node.interrupt();

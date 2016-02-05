@@ -6,6 +6,8 @@
 #include "RendererPrx.h"
 #include "common/Commands.h"
 #include "common/StreamingParams.h"
+#include "common/CommandInputChannel.h"
+#include "common/InitRendererCmd.h"
 
 
 namespace trinity {
@@ -15,7 +17,7 @@ class ProcessingNodePrx {
     
 public:
     /// see mocca::net::Endpoint for details, supports remote and local calls
-    ProcessingNodePrx(mocca::net::Endpoint);
+    ProcessingNodePrx(const mocca::net::Endpoint&);
     
     ~ProcessingNodePrx();
     
@@ -26,12 +28,15 @@ public:
     std::unique_ptr<RendererPrx> initRenderer(const common::VclType&,
                                               const common::StreamingParams&);
     
+    
 private:
-    mocca::net::Endpoint m_endpoint;
-    std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
-        
+    common::CommandInputChannel m_inputChannel;
     common::IDGenerator m_ridGen;
     common::Vcl m_vcl;
+    
+    std::unique_ptr<RendererPrx>
+    handleInitRendererReply(const common::ReplyInitRendererCmd&,
+                            const common::StreamingParams& params);
     
 
 };
