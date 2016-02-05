@@ -16,9 +16,6 @@ public:
     virtual ~ISerialObjectFactory(){}
     
     static std::unique_ptr<ISerialObject> create();
-    
-    
-
 };
 }
 }

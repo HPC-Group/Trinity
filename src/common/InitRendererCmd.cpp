@@ -26,7 +26,8 @@ void InitRendererCmd::serialize(ISerialObject& serial) const  {
     serial.append("rid", m_rid);
     serial.append("protocol", m_protocol);
     serial.append("rendertype", m_vcl.toString(m_renderType));
-                  
+    
+    serial.append("streamingparams", m_vcl.toString(m_streamingParams.getType()));
     m_streamingParams.serialize(serial);
 }
 
@@ -38,7 +39,10 @@ void InitRendererCmd::deserialize(ISerialObject& serial) {
     m_protocol = serial.getString("protocol");
     std::string la = serial.getString("rendertype");
     m_renderType = m_vcl.toType(la);
-    
+    std::string subclassType = serial.getString("streamingparams");
+    if(subclassType != m_vcl.toString(m_streamingParams.getType())) {
+        throw mocca::Error("subclass type is not streamingparams", __FILE__, __LINE__);
+    }
     m_streamingParams.deserialize(serial);
 }
 

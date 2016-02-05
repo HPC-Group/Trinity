@@ -9,7 +9,6 @@ StreamingParams::StreamingParams() : m_resX(1024), m_resY(768) {}
 
 void StreamingParams::serialize(ISerialObject& serial) const {
 
-    
     serial.append("xres", m_resX);
     serial.append("yres", m_resY);
 }
