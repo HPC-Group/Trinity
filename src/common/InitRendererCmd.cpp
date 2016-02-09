@@ -3,7 +3,6 @@
 
 using namespace trinity::common;
 
-InitRendererCmd::InitRendererCmd() : ICommand(0, 0){}
 
 InitRendererCmd::InitRendererCmd(int sid, int rid,
                                 const std::string& protocol,
@@ -11,6 +10,9 @@ InitRendererCmd::InitRendererCmd(int sid, int rid,
                                 const StreamingParams& p) :
 ICommand(sid, rid), m_protocol(protocol), m_renderType(renderType), m_streamingParams(p) {}
 
+InitRendererCmd::InitRendererCmd(ISerialObject& obj) : ICommand(0,0) {
+    deserialize(obj);
+}
 
 InitRendererCmd::~InitRendererCmd() {}
 
@@ -57,7 +59,9 @@ const StreamingParams& InitRendererCmd::getParams() const {
 
 
 /////// Reply
-ReplyInitRendererCmd::ReplyInitRendererCmd() : ICommand(0, 0){}
+ReplyInitRendererCmd::ReplyInitRendererCmd(ISerialObject& obj) : ICommand(0,0) {
+    deserialize(obj);
+}
 ReplyInitRendererCmd::ReplyInitRendererCmd(int sid, int rid) : ICommand(sid, rid){}
 ReplyInitRendererCmd::~ReplyInitRendererCmd() {}
 

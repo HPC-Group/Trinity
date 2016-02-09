@@ -42,8 +42,7 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
     VclType resultType = serialReply->getType();
     
     if(resultType == VclType::TrinityError) {  // error arrived
-        ErrorCmd error;
-        error.deserialize(*serialReply);
+        ErrorCmd error(*serialReply);
         throw mocca::Error("init renderer: error was returned: " + error.printError(), __FILE__, __LINE__);
     }
     
@@ -51,8 +50,7 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
         throw mocca::Error("init renderer: result not of type RET or ERR", __FILE__, __LINE__);
     
     // return was ok
-    ReplyInitRendererCmd replyCmd;
-    replyCmd.deserialize(*serialReply);
+    ReplyInitRendererCmd replyCmd(*serialReply);
     return handleInitRendererReply(replyCmd, params);
 
 }

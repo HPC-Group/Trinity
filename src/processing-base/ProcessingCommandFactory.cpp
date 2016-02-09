@@ -17,8 +17,7 @@ ProcessingCommandFactory::createHandler(std::istream& stream) {
 
     switch (type) {
         case VclType::InitRenderer: {
-            InitRendererCmd cmd;
-            cmd.deserialize(*serialRequest);
+            InitRendererCmd cmd(*serialRequest);
             return  std::unique_ptr<InitRendererHdl> (new InitRendererHdl(cmd));
             break;
         }

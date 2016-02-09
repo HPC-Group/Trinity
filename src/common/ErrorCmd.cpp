@@ -2,7 +2,9 @@
 
 using namespace trinity::common;
 
-ErrorCmd::ErrorCmd() : ICommand(0, 0){}
+ErrorCmd::ErrorCmd(ISerialObject& obj) : ICommand(0,0) {
+    deserialize(obj);
+}
 
 ErrorCmd::ErrorCmd(int sid, int rid, int errorCode) :
 ICommand(sid, rid), m_errorCode(errorCode) {}

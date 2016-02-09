@@ -8,7 +8,7 @@ namespace common {
 class InitRendererCmd : public ICommand {
     
 public:
-    InitRendererCmd();
+    InitRendererCmd(ISerialObject&);
     InitRendererCmd(int sid, int rid, const std::string& protocol,
                          const VclType& renderType, const StreamingParams& p);
     
@@ -31,7 +31,7 @@ private:
 class ReplyInitRendererCmd : public ICommand {
     
 public:
-    ReplyInitRendererCmd();
+    ReplyInitRendererCmd(ISerialObject&);
     ReplyInitRendererCmd(int sid, int rid);
     virtual ~ReplyInitRendererCmd();
     

@@ -8,7 +8,7 @@ namespace common {
 class ErrorCmd : public ICommand {
     
 public:
-    ErrorCmd();
+    ErrorCmd(ISerialObject&);
     ErrorCmd(int sid, int rid, int errorCode);
     virtual ~ErrorCmd();
     

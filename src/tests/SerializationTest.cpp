@@ -40,10 +40,10 @@ TEST_F(SerializationTest, InitRendererCmdTest) {
     obj1->writeTo(s);
     
     
-    InitRendererCmd newCmd;
+    
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
-    newCmd.deserialize(*obj2);
+    InitRendererCmd newCmd(*obj2);
     
     Vcl vcl;
     ASSERT_EQ(newCmd.getType(), cmd.getType());
