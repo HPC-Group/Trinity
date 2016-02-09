@@ -1,21 +1,33 @@
 #include "Commands.h"
+#include "mocca/log/LogManager.h"
 
 using namespace trinity::common;
 
-Vcl::Vcl() {
-    m_cmdMap.insert("INR", VclType::InitRenderer);
-    m_cmdMap.insert("DRN", VclType::DummyRenderer);
-    m_cmdMap.insert("GRN", VclType::GridLeaper);
-    m_cmdMap.insert("RET", VclType::TrinityReturn);
-    m_cmdMap.insert("ERR", VclType::TrinityError);
-    m_cmdMap.insert("PAR", VclType::StreamingParams);
-    
-    m_errorCodeMap.insert(std::make_pair(1, "no such command"));
-    m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));
-    
+namespace trinity {
+namespace common {
+VclType& operator++(VclType& x) {
+    return x = (VclType)(std::underlying_type<VclType>::type(x) + 1);
 }
 
 
+VclType operator*(VclType c) {return c;}
+
+VclType begin(VclType r) {return VclType::First;}
+VclType end(VclType r)   {VclType l=VclType::Last; return ++l; }
+}
+}
+
+void Vcl::assertCompleteLanguage() const {
+    for(const auto& token : VclType()) {
+        try {
+            m_cmdMap.getBySecond(token);
+        } catch (const mocca::Error& err) {
+            throw mocca::Error("(common) no string entry for enum number "
+                               + std::to_string((int)token), __FILE__, __LINE__);
+        }
+        
+    }
+}
 
 
 std::string Vcl::toString(const VclType& t) const {
