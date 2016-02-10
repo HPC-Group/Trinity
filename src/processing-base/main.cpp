@@ -14,6 +14,7 @@
 #include "ProcessingNode.h"
 
 using namespace trinity::processing;
+using namespace mocca::net;
 
 static int feTCPPort = 5678;
 static int feWSPort = 5679;
@@ -26,20 +27,18 @@ void exitHandler(int s) {
 }
 
 
-void initLogging() {
+void init() {
     using mocca::LogManager;
     LogManager::initialize(LogManager::LogLevel::Debug, true);
     auto console = new mocca::ConsoleLog();
     LogMgr.addLog(console);
+    signal(SIGINT, exitHandler);
+    ConnectionFactorySelector::addDefaultFactories();
 }
 
-using namespace mocca::net;
-
 int main(int argc, char** argv) {
-    initLogging();
-    signal(SIGINT, exitHandler);
+    init();
 
-    ConnectionFactorySelector::addDefaultFactories();
     
     // endpoints
     Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(feTCPPort));

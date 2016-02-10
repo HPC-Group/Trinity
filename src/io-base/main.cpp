@@ -1,32 +1,64 @@
-#include "mocca/net/ConnectionFactorySelector.h"
-#include "mocca/net/IMessageConnectionAcceptor.h"
-#include "mocca/net/Endpoint.h"
-#include "mocca/base/ByteArray.h"
+#include <atomic>
+#include <csignal>
 #include <iostream>
 #include <memory>
+#include <thread>
 
+#include "mocca/net/ConnectionFactorySelector.h"
+#include "mocca/net/Endpoint.h"
+#include "mocca/base/ByteArray.h"
+#include "mocca/log/ConsoleLog.h"
+#include "mocca/log/LogManager.h"
+#include "mocca/base/ContainerTools.h"
+
+#include "IONode.h"
+
+using namespace trinity::io;
 using namespace mocca::net;
 
-// ignore that
-int main(int argc, char** argv)
-{
-    
-    ConnectionFactorySelector::addDefaultFactories();
+static int feTCPPort = 6678;
+static int feWSPort = 6679;
+std::atomic<bool> exitFlag{false};
 
-    auto acceptor = ConnectionFactorySelector::bind(Endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "5678"));
-    // acceptor.getConnection();
-    while (true) {
-        auto conn = acceptor->accept();
-        if(conn) {
-            std::cout << "connection opened" << std::endl;
-            while(true) {
-                auto byteArray = conn->receive();
-                if (!byteArray.isEmpty()) {
-                    std::cout << byteArray.read(byteArray.size()) << std::endl;
-                } else
-                    std::cout << "empty" << std::endl;
-            }
-        }
-    }
+
+void exitHandler(int s) {
+    std::cout << "Trinity exit on signal " << std::to_string(s) << std::endl;
+    exitFlag = true;
+}
+
+
+void init() {
+    using mocca::LogManager;
+    LogManager::initialize(LogManager::LogLevel::Debug, true);
+    auto console = new mocca::ConsoleLog();
+    LogMgr.addLog(console);
+    signal(SIGINT, exitHandler);
+    ConnectionFactorySelector::addDefaultFactories();
+}
+
+
+int main(int argc, char** argv) {
+    init();
     
+    // endpoints
+    Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(feTCPPort));
+    Endpoint e2(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(feWSPort));
+    
+    // connection acceptors for the endpoints
+    std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
+    mocca::makeUniquePtrVec<IMessageConnectionAcceptor>
+    (ConnectionFactorySelector::bind(e1), ConnectionFactorySelector::bind(e2));
+    
+    
+    std::unique_ptr<ConnectionAggregator> aggregator
+    (new ConnectionAggregator(std::move(acceptors),
+                              ConnectionAggregator::DisconnectStrategy::RemoveConnection));
+    
+    IONode node(std::move(aggregator));
+    
+    node.start();
+    while(!exitFlag) {
+        
+    }
+    node.interrupt();
 }

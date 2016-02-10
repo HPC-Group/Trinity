@@ -8,12 +8,13 @@ CreateSourceGroups("${IOBASE_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
 
 list(REMOVE_ITEM IOBASE_SOURCE ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
 
-# add_library(iobaselib OBJECT ${IOBASE_HEADER} ${IOBASE_SOURCE})
+add_library(iobaselib OBJECT ${IOBASE_HEADER} ${IOBASE_SOURCE})
 
 add_executable(iobase 
 				${CMAKE_CURRENT_LIST_DIR}/main.cpp
 				${IOBASE_HEADER} 
 				${IOBASE_SOURCE}
+				$<TARGET_OBJECTS:common>
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 
@@ -22,4 +23,4 @@ IF (WIN32)
 ENDIF ()
 				
 SET_TARGET_PROPERTIES(iobase PROPERTIES FOLDER "base")
-SET_TARGET_PROPERTIES(iobase PROPERTIES FOLDER "base")
+SET_TARGET_PROPERTIES(iobaselib PROPERTIES FOLDER "lib")

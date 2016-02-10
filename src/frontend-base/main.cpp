@@ -9,11 +9,16 @@
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/LogManager.h"
-#include "ProcessingNodePrx.h"
+
 #include "common/Commands.h"
+
+#include "ProcessingNodePrx.h"
+
+using namespace mocca::net;
 
 static int reconnectInSec = 5;
 std::atomic<bool> exitFlag{false};
+
 std::unique_ptr<trinity::frontend::ProcessingNodePrx> processingNode;
 
 void exitHandler(int s) {
@@ -27,21 +32,17 @@ void init() {
     auto console = new mocca::ConsoleLog();
     LogMgr.addLog(console);
     signal(SIGINT, exitHandler);
+    ConnectionFactorySelector::addDefaultFactories();
 }
 
-using namespace mocca::net;
-
 int main(int argc, char** argv) {
+    
     init();
-
-    ConnectionFactorySelector::addDefaultFactories();
-
     Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "5678");
 
     processingNode =
     std::unique_ptr<trinity::frontend::ProcessingNodePrx>
     (new trinity::frontend::ProcessingNodePrx(endpoint));
-
     bool connected = false;
 
     while (!connected && !exitFlag) {
@@ -51,12 +52,18 @@ int main(int argc, char** argv) {
             std::this_thread::sleep_for(std::chrono::seconds(reconnectInSec));
         }
     }
-    try {
-        trinity::common::StreamingParams params(1024, 768);
-        processingNode->initRenderer(trinity::common::VclType::DummyRenderer, params);
-    } catch (const mocca::Error& err) {
-        LERROR(err.what());
-    }
+    trinity::common::StreamingParams params(1024, 768);
+    auto renderer = processingNode->initRenderer(trinity::common::VclType::DummyRenderer, params);
+    renderer->connect();
+    
+    // sending commands
+    renderer->setIsoValue(22);
+    
+    // receiving images
+    auto visStream = renderer->getVisStream();
+    auto frame = visStream->get();
+    if(!frame)
+        LINFO("no frame arrived yet");
 
     while (!exitFlag) {
     };

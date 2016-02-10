@@ -10,7 +10,7 @@
 
 #include "processing-base/ProcessingCommandFactory.h"
 #include "processing-base/InitRendererHdl.h"
-#include "processing-base/SessionManager.h"
+#include "processing-base/RenderSessionManager.h"
 
 using namespace trinity::common;
 using namespace trinity::processing;

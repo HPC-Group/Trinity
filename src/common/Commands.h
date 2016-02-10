@@ -21,6 +21,8 @@ enum class VclType {
     DummyRenderer,
     GridLeaper,
     SetIsoValue,
+    ListFiles,
+    InitIOSession,
     StreamingParams,
     First = InitRenderer,
     Last = StreamingParams,
@@ -56,6 +58,8 @@ public:
         m_cmdMap.insert("ERR", VclType::TrinityError);
         m_cmdMap.insert("PAR", VclType::StreamingParams);
         m_cmdMap.insert("ISO", VclType::SetIsoValue);
+        m_cmdMap.insert("INI", VclType::InitIOSession);
+        m_cmdMap.insert("LST", VclType::ListFiles);
         
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));

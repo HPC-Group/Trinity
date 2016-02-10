@@ -4,7 +4,7 @@ using namespace trinity::common;
 
 
 
-VisStream::VisStream(StreamingParams params) : m_streamingParams(params), m_tail(0), m_head(0) {
+VisStream::VisStream(StreamingParams params) : m_tail(0), m_head(0), m_streamingParams(params) {
 }
 
 VisStream::~VisStream() {

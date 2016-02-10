@@ -6,7 +6,7 @@
 #include "processing-base/ProcessingNode.h"
 #include "frontend-base/ProcessingNodePrx.h"
 #include "common/Commands.h"
-#include "processing-base/SessionManager.h"
+#include "processing-base/RenderSessionManager.h"
 #include "processing-base/DummyRenderer.h"
 
 #include "mocca/net/ConnectionFactorySelector.h"

@@ -1,10 +1,10 @@
-#include "SessionManager.h"
+#include "IOSessionManager.h"
 #include "mocca/log/LogManager.h"
 #include "mocca/base/Error.h"
 
-using namespace trinity::processing;
+using namespace trinity::io;
 
-void SessionManager::addSession(std::unique_ptr<RenderSession> session) {
+void SessionManager::addSession(std::unique_ptr<IOSession> session) {
     m_sessions.push_back(std::move(session));
 }
 
@@ -13,16 +13,16 @@ void SessionManager::endSession(int sid) {
         if(session->getSid() == sid)
             session->interrupt();
     }
-    LWARNING("(p) can't end session with id " + std::to_string(sid) + "(does not exist)");
+    LWARNING("(io) can't end session with id " + std::to_string(sid) + "(does not exist)");
 }
 
 void SessionManager::endAllSessions() {
-    LINFO("(p) renderers to stop: " << m_sessions.size());
+    LINFO("(io) IOers to stop: " << m_sessions.size());
     for (auto& session : m_sessions)
         session->interrupt();
 }
 
-RenderSession& SessionManager::getSession(int sid) {
+IOSession& SessionManager::getSession(int sid) {
     for(auto& session : m_sessions) {
         if(session->getSid() == sid)
             return *session;

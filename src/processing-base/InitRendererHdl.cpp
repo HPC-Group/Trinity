@@ -1,6 +1,6 @@
 #include "InitRendererHdl.h"
 #include "RenderSession.h"
-#include "SessionManager.h"
+#include "RenderSessionManager.h"
 
 using namespace trinity::processing;
 using namespace trinity::common;
