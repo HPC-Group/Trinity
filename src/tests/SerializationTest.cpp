@@ -2,8 +2,8 @@
 #include "common/ICommand.h"
 #include "common/ISerializable.h"
 #include "common/StreamingParams.h"
-#include "common/InitRendererCmd.h"
-#include "common/ISerialObjectFactory.h""
+#include "common/ProcessingNodeCmds.h"
+#include "common/ISerialObjectFactory.h"
 
 using namespace trinity::common;
 
@@ -33,7 +33,7 @@ TEST_F(SerializationTest, StreamParamsTest) {
 
 TEST_F(SerializationTest, InitRendererCmdTest) {
     StreamingParams params(2048, 1000);
-    InitRendererCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, params);
+    InitRendererCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, 0, params);
     std::stringstream s, ss;
     auto obj1 = ISerialObjectFactory::create();
     cmd.serialize(*obj1);

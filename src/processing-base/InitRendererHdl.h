@@ -1,6 +1,6 @@
 #pragma once
 #include "common/ICommandHandler.h"
-#include "common/InitRendererCmd.h"
+#include "common/ProcessingNodeCmds.h"
 
 namespace trinity {
 namespace processing {

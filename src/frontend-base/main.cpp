@@ -53,7 +53,8 @@ int main(int argc, char** argv) {
         }
     }
     trinity::common::StreamingParams params(1024, 768);
-    auto renderer = processingNode->initRenderer(trinity::common::VclType::DummyRenderer, params);
+    int ioSessionId = 0; // get that from io node first
+    auto renderer = processingNode->initRenderer(trinity::common::VclType::DummyRenderer, ioSessionId, params);
     renderer->connect();
     
     // sending commands

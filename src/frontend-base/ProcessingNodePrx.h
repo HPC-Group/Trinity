@@ -7,7 +7,7 @@
 #include "common/Commands.h"
 #include "common/StreamingParams.h"
 #include "common/CommandInputChannel.h"
-#include "common/InitRendererCmd.h"
+#include "common/ProcessingNodeCmds.h"
 
 
 namespace trinity {
@@ -26,6 +26,7 @@ public:
         
     // insert params here?
     std::unique_ptr<RendererPrx> initRenderer(const common::VclType&,
+                                              int ioSid,
                                               const common::StreamingParams&);
     
     

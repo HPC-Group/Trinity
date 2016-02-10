@@ -5,7 +5,7 @@
 #include "common/ICommand.h"
 #include "common/Commands.h"
 #include "common/ICommandHandler.h"
-#include "common/InitRendererCmd.h"
+#include "common/ProcessingNodeCmds.h"
 #include "common/ISerialObjectFactory.h"
 
 #include "processing-base/ProcessingCommandFactory.h"
@@ -35,7 +35,7 @@ TEST_F(CmdFactoryTest, VCLCompleteTest) {
 
 TEST_F(CmdFactoryTest, RendererExecTest) {
     StreamingParams params(2048, 1000);
-    InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer, params);
+    InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer, 0, params);
     auto obj = ISerialObjectFactory::create();
     cmd.serialize(*obj);
     std::stringstream s;

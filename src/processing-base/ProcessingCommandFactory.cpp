@@ -1,5 +1,5 @@
 #include "ProcessingCommandFactory.h"
-#include "common/InitRendererCmd.h"
+#include "common/ProcessingNodeCmds.h"
 #include "common/ISerialObjectFactory.h"
 #include "InitRendererHdl.h"
 #include "SimpleRenderingCmdsHdl.h"

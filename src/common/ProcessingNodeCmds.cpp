@@ -1,4 +1,4 @@
-#include "InitRendererCmd.h"
+#include "common/ProcessingNodeCmds.h"
 #include <iostream>
 
 using namespace trinity::common;
@@ -7,8 +7,13 @@ using namespace trinity::common;
 InitRendererCmd::InitRendererCmd(int sid, int rid,
                                 const std::string& protocol,
                                 const VclType& renderType,
+                                int ioSid,
                                 const StreamingParams& p) :
-ICommand(sid, rid), m_protocol(protocol), m_renderType(renderType), m_streamingParams(p) {}
+ICommand(sid, rid),
+m_protocol(protocol),
+m_renderType(renderType),
+m_ioSid(ioSid),
+m_streamingParams(p) {}
 
 InitRendererCmd::InitRendererCmd(ISerialObject& obj) : ICommand(0,0) {
     deserialize(obj);
@@ -26,7 +31,7 @@ void InitRendererCmd::serialize(ISerialObject& serial) const  {
     ICommand::serialize(serial);
     serial.append("protocol", m_protocol);
     serial.append("rendertype", m_vcl.toString(m_renderType));
-    
+    serial.append("iosid", m_ioSid);
     serial.append("streamingparams", m_vcl.toString(m_streamingParams.getType()));
     m_streamingParams.serialize(serial);
 }
@@ -38,6 +43,7 @@ void InitRendererCmd::deserialize(ISerialObject& serial) {
     m_protocol = serial.getString("protocol");
     std::string la = serial.getString("rendertype");
     m_renderType = m_vcl.toType(la);
+    m_ioSid = serial.getInt("iosid");
     std::string subclassType = serial.getString("streamingparams");
     if(subclassType != m_vcl.toString(m_streamingParams.getType())) {
         throw mocca::Error("subclass type is not streamingparams", __FILE__, __LINE__);

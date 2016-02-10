@@ -48,8 +48,8 @@ TEST_F(ProcessingTest, RequestInitRendererTest) {
     
     ASSERT_TRUE(proxy.connect());
     trinity::common::StreamingParams params;
-    proxy.initRenderer(trinity::common::VclType::DummyRenderer, params);
-    ASSERT_NO_THROW(proxy.initRenderer(trinity::common::VclType::DummyRenderer, params));
+    proxy.initRenderer(trinity::common::VclType::DummyRenderer, 0, params);
+    ASSERT_NO_THROW(proxy.initRenderer(trinity::common::VclType::DummyRenderer,0 , params));
 
     node.interrupt();
 }
@@ -71,7 +71,7 @@ TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
     std::unique_ptr<trinity::frontend::RendererPrx> renderer;
 
     trinity::common::StreamingParams params;
-    renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer, params);
+    renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer, 0, params);
     ASSERT_TRUE(renderer->connect());
     node.interrupt();
 }
@@ -92,7 +92,7 @@ TEST_F(ProcessingTest, SetIsoValueTest) {
     proxy.connect();
     std::unique_ptr<trinity::frontend::RendererPrx> renderer;
     trinity::common::StreamingParams params;
-    renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer, params);
+    renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer, 0, params);
     renderer->connect();
     // end of code duplication
     
@@ -125,7 +125,7 @@ TEST_F(ProcessingTest, StreamInitTest1Sec) {
     std::unique_ptr<trinity::frontend::RendererPrx> renderer;
     
     trinity::common::StreamingParams params;
-    renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer, params);
+    renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer, 0, params);
     renderer->connect();
     //std::this_thread::sleep_for(std::chrono::seconds(1));
     

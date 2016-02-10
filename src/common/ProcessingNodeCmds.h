@@ -10,7 +10,7 @@ class InitRendererCmd : public ICommand {
 public:
     InitRendererCmd(ISerialObject&);
     InitRendererCmd(int sid, int rid, const std::string& protocol,
-                         const VclType& renderType, const StreamingParams& p);
+                         const VclType& renderType, int ioSid, const StreamingParams& p);
     
     virtual ~InitRendererCmd();
     
@@ -24,6 +24,7 @@ public:
 private:
     std::string m_protocol;
     VclType m_renderType;
+    int m_ioSid;
     StreamingParams m_streamingParams;
 };
 

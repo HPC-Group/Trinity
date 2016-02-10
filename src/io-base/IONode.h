@@ -22,7 +22,10 @@ public:
     
     IONode(std::unique_ptr<mocca::net::ConnectionAggregator>);
     ~IONode();
-        
+    
+    
+    // frontend can connect, list, and init sessions
+    // processing has a "joinSession(sid) which returns connection parameters
  
 private:
     common::Vcl m_vcl;
@@ -31,8 +34,6 @@ private:
     void run() override;
     std::unique_ptr<mocca::net::ConnectionAggregator> m_aggregator;
     std::vector<std::unique_ptr<IOSession> > m_ioSessions;
-    
-    
 };
 }
 }
