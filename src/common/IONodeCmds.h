@@ -19,18 +19,40 @@ public:
 
 };
     
-class InitIOSession : public ICommand {
+class InitIOSessionCmd : public ICommand {
     
 public:
-    InitIOSession(ISerialObject&);
-    InitIOSession(int sid, int rid);
-    virtual ~InitIOSession();
+    InitIOSessionCmd(ISerialObject&);
+    InitIOSessionCmd(int sid, int rid, const std::string& protocol, int fileId);
+    virtual ~InitIOSessionCmd();
     
     virtual VclType getType() const;
     
     virtual void serialize(ISerialObject& serial) const;
     virtual void deserialize(ISerialObject& serial);
     
+    const std::string& getProtocol() const;
+    int getFileId() const;
+    
+private:
+    std::string m_protocol;
+    int m_fileId;
+};
+    
+class ReplyInitIOSessionCmd : public ICommand {
+    
+public:
+    ReplyInitIOSessionCmd(ISerialObject&);
+    ReplyInitIOSessionCmd(int sid, int rid);
+    virtual ~ReplyInitIOSessionCmd();
+    
+    virtual VclType getType() const;
+    
+    virtual void serialize(ISerialObject& serial) const;
+    virtual void deserialize(ISerialObject& serial);
+    
+    int getFileId() const;
+    void setNewSid(int sid);
 };
 }
 }

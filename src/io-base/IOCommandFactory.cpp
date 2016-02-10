@@ -1,5 +1,8 @@
 #include "IOCommandFactory.h"
+#include "IONodeCmdsHdl.h"
+
 #include "common/ISerialObjectFactory.h"
+#include "common/IONodeCmds.h"
 
 #include "mocca/base/Error.h"
 
@@ -17,10 +20,11 @@ IOCommandFactory::createHandler(std::istream& stream) {
     switch (type) {
             
         case VclType::InitIOSession: {
-            /*
-            InitRendererCmd cmd(*serialRequest);
-            return  std::unique_ptr<InitRendererHdl> (new InitRendererHdl(cmd));
-             */
+            
+            InitIOSessionCmd cmd(*serialRequest);
+            return  std::unique_ptr<InitIOSessionHdl> (new InitIOSessionHdl(cmd));
+             
+            throw mocca::Error("command not implemented: " + (Vcl().toString(type)), __FILE__, __LINE__);
             break;
         }
         
@@ -29,6 +33,7 @@ IOCommandFactory::createHandler(std::istream& stream) {
             SetIsoValueCmd cmd(*serialRequest);
             return  std::unique_ptr<SetIsoValueHdl> (new SetIsoValueHdl(cmd));
              */
+            throw mocca::Error("command not implemented: " + (Vcl().toString(type)), __FILE__, __LINE__);
             break;
         }
             

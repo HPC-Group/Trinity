@@ -20,7 +20,8 @@ public:
     /// true on success. Does not throw any errors. Disconnect happens in dtor
     bool connect();
     
-    
+    // return session id that has to be passed to processing
+    int initIO(int fileId);
     
 private:
     common::CommandInputChannel m_inputChannel;

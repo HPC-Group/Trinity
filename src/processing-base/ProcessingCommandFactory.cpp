@@ -1,7 +1,7 @@
 #include "ProcessingCommandFactory.h"
 #include "common/ProcessingNodeCmds.h"
 #include "common/ISerialObjectFactory.h"
-#include "InitRendererHdl.h"
+#include "ProcessingNodeCmdsHdl.h"
 #include "SimpleRenderingCmdsHdl.h"
 #include "mocca/base/Error.h"
 

@@ -13,6 +13,7 @@
 #include "common/Commands.h"
 
 #include "ProcessingNodePrx.h"
+#include "IONodePrx.h"
 
 using namespace mocca::net;
 
@@ -20,6 +21,7 @@ static int reconnectInSec = 5;
 std::atomic<bool> exitFlag{false};
 
 std::unique_ptr<trinity::frontend::ProcessingNodePrx> processingNode;
+std::unique_ptr<trinity::frontend::IONodePrx> ioNode;
 
 void exitHandler(int s) {
     std::cout << "Trinity exit on signal " << std::to_string(s) << std::endl;
@@ -39,21 +41,37 @@ int main(int argc, char** argv) {
     
     init();
     Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "5678");
+    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
 
+    
+    ioNode =
+    std::unique_ptr<trinity::frontend::IONodePrx>
+    (new trinity::frontend::IONodePrx(endpointIO));
+    bool connected = false;
+    
+    while (!connected && !exitFlag) {
+        connected = ioNode->connect();
+        if (!connected) {
+            LINFO("reconnecting to io in " << std::to_string(reconnectInSec) << " seconds");
+            std::this_thread::sleep_for(std::chrono::seconds(reconnectInSec));
+        }
+    }
+    // todo: ask for files first
+    int ioSessionId = ioNode->initIO(0);
+    
     processingNode =
     std::unique_ptr<trinity::frontend::ProcessingNodePrx>
     (new trinity::frontend::ProcessingNodePrx(endpoint));
-    bool connected = false;
+    connected = false;
 
     while (!connected && !exitFlag) {
         connected = processingNode->connect();
         if (!connected) {
-            LINFO("reconnecting in " << std::to_string(reconnectInSec) << " seconds");
+            LINFO("reconnecting to processing in " << std::to_string(reconnectInSec) << " seconds");
             std::this_thread::sleep_for(std::chrono::seconds(reconnectInSec));
         }
     }
     trinity::common::StreamingParams params(1024, 768);
-    int ioSessionId = 0; // get that from io node first
     auto renderer = processingNode->initRenderer(trinity::common::VclType::DummyRenderer, ioSessionId, params);
     renderer->connect();
     
@@ -67,5 +85,6 @@ int main(int argc, char** argv) {
         LINFO("no frame arrived yet");
 
     while (!exitFlag) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     };
 }

@@ -9,7 +9,7 @@
 #include "common/ISerialObjectFactory.h"
 
 #include "processing-base/ProcessingCommandFactory.h"
-#include "processing-base/InitRendererHdl.h"
+#include "processing-base/ProcessingNodeCmdsHdl.h"
 #include "processing-base/RenderSessionManager.h"
 
 using namespace trinity::common;

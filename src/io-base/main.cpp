@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
     
     node.start();
     while(!exitFlag) {
-        
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     node.interrupt();
 }

@@ -22,11 +22,11 @@ bool CommandInputChannel::connect() {
         m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
         
     } catch (const mocca::net::ConnectFailedError&) {
-        LWARNING("(f) no connection to processing  at \"" << m_endpoint << "\": ");
+        LWARNING("(f) no connection to a node  at \"" << m_endpoint << "\": ");
         return false;
     }
     
-    LINFO("(f) successfully connected to processing");
+    LINFO("(f) successfully connected to a node");
     return true;
 }
 

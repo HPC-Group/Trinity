@@ -39,9 +39,9 @@ public:
     virtual VclType getType() const override;
     int getControlPort() const;
     int getVisPort() const;
-    void setControlPort(const int port);
-    void setVisPort(const int port);
-    void setNewSid(const int sid);
+    void setControlPort(int port);
+    void setVisPort(int port);
+    void setNewSid(int sid);
     
     virtual void serialize(ISerialObject& serial) const override;
     virtual void deserialize(ISerialObject& serial) override;

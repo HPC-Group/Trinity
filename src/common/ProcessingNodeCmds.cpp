@@ -76,7 +76,7 @@ int ReplyInitRendererCmd::getVisPort() const {
     return m_visPort;
 }
 
-void ReplyInitRendererCmd::setNewSid(const int sid) {
+void ReplyInitRendererCmd::setNewSid(int sid) {
     m_sid = sid;
 }
 
@@ -102,10 +102,10 @@ void ReplyInitRendererCmd::deserialize(ISerialObject& serial) {
 
 }
 
-void ReplyInitRendererCmd::setControlPort(const int port) {
+void ReplyInitRendererCmd::setControlPort(int port) {
     m_controlPort = port;
 }
 
-void ReplyInitRendererCmd::setVisPort(const int port) {
+void ReplyInitRendererCmd::setVisPort(int port) {
     m_visPort = port;
 }
