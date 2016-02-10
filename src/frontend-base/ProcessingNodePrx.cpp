@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iostream>
 #include <thread>
 
 #include "mocca/base/Error.h"
@@ -45,7 +46,6 @@ std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type
         ErrorCmd error(*serialReply);
         throw mocca::Error("init renderer: error was returned: " + error.printError(), __FILE__, __LINE__);
     }
-    
     if(resultType != VclType::TrinityReturn)  // sth strange arrived
         throw mocca::Error("init renderer: result not of type RET or ERR", __FILE__, __LINE__);
     

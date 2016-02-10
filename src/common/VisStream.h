@@ -10,9 +10,11 @@
 namespace trinity {
 namespace common {
     
+typedef std::unique_ptr<mocca::ByteArray> Frame;
+    
 class VisStream {
 
-#define CAPACITY 2
+#define CAPACITY 3
     
 public:
     

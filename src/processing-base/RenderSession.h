@@ -10,6 +10,8 @@
 #include "common/IRenderer.h"
 #include "common/Commands.h"
 #include "common/StreamingParams.h"
+
+#include "ProcessingCommandFactory.h"
 #include "VisStreamSender.h"
 
 
@@ -34,6 +36,7 @@ public:
     unsigned int getSid() const;
     int getControlPort() const;
     int getVisPort() const;
+    common::IRenderer& getRenderer();
         
         
 private:
@@ -51,6 +54,7 @@ private:
     std::unique_ptr<mocca::net::IMessageConnection>         m_controlConnection;
         
     common::Vcl m_vcl;
+    ProcessingCommandFactory m_factory;
     
     // renderer factory
     static std::unique_ptr<common::IRenderer> createRenderer(const common::VclType&,

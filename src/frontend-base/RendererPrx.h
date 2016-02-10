@@ -4,6 +4,7 @@
 #include "common/IRenderer.h"
 #include "mocca/net/IMessageConnection.h"
 #include "common/Commands.h"
+#include "common/CommandInputChannel.h"
 #include "VisStreamReceiver.h"
 
 namespace trinity {
@@ -23,11 +24,14 @@ public:
     bool connect();
     ~RendererPrx();
     
+    virtual void setIsoValue(const float);
+    int getRemoteSessionId() const;
+    
     
 private:
     VisStreamReceiver m_visReceiver;
     mocca::net::Endpoint m_controlEndpoint;
-    std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
+    common::CommandInputChannel m_inputChannel;
     const unsigned int m_sid;
     static int m_basePort;
     

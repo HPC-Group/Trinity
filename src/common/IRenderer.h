@@ -16,6 +16,9 @@ public:
     virtual ~IRenderer() {};
     std::shared_ptr<VisStream> getVisStream() { return m_visStream; };
     
+    // base rendering api
+    virtual void setIsoValue(const float) = 0;
+    
 protected:
     std::shared_ptr<VisStream> m_visStream;
 };

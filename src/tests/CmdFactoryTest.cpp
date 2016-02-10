@@ -33,7 +33,6 @@ TEST_F(CmdFactoryTest, VCLCompleteTest) {
     ASSERT_NO_THROW(Vcl());
 }
 
-
 TEST_F(CmdFactoryTest, RendererExecTest) {
     StreamingParams params(2048, 1000);
     InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer, params);

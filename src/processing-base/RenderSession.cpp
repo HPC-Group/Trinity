@@ -1,11 +1,14 @@
-#include "RenderSession.h"
 #include "mocca/base/Error.h"
-#include "DummyRenderer.h"
 #include "mocca/log/LogManager.h"
 #include "mocca/net/NetworkError.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/base/StringTools.h"
+
 #include "common/Commands.h"
+#include "common/ISerialObjectFactory.h"
+
+#include "DummyRenderer.h"
+#include "RenderSession.h"
 
 using namespace trinity::processing;
 using namespace trinity::common;
@@ -71,6 +74,10 @@ int RenderSession::getVisPort() const {
     return m_visPort;
 }
 
+IRenderer& RenderSession::getRenderer() {
+    return *m_renderer;
+}
+
 
 void RenderSession::run() {
     
@@ -93,25 +100,22 @@ void RenderSession::run() {
                 std::string cmd = bytepacket.read(bytepacket.size());
                 LINFO("(p) command arrived at renderer: " << cmd);  // print cmd
                 
-                /*
-                std::vector<std::string> args = mocca::splitString<std::string>(cmd, '_');
-                
-                std::string reply;
-                
-                if (!m_vcl.isSoundCommand(args)) {
-                    reply = m_vcl.assembleError(0, 0, 1);
+                std::stringstream requestStream, replyStream;
+                requestStream << cmd;
+
+                auto handler = m_factory.createHandler(requestStream);
+                handler->execute();
+                auto reply = handler->getReturnValue();
+                if(reply != nullptr) {  // not tested yet
+                    auto serialReply = ISerialObjectFactory::create();
+                    reply->serialize(*serialReply);
+                    serialReply->writeTo(replyStream);
+                    LINFO("(p) reply: " << replyStream.str());
+                    m_controlConnection->send(std::move(mocca::ByteArray()
+                                                        << replyStream.str()));
                 }
                 
-                VclType t = m_vcl.toType(args[0]);
                 
-                // we don't have any commands yet
-                switch(t) {
-                    default:
-                        reply = m_vcl.assembleError(0, stoi(args[2]), 2);
-                }
-                
-                m_controlConnection->send(std::move(mocca::ByteArray() << reply));
-                 */
             }
         } catch (const mocca::net::NetworkError& err) {
             LWARNING("(p) remote session has gone: " << err.what());

@@ -16,19 +16,14 @@ VclType ErrorCmd::getType() const {
 
 
 void ErrorCmd::serialize(ISerialObject& serial) const {
-
-    serial.setType(getType());
-    serial.append("sid", m_sid);
-    serial.append("rid", m_rid);
+    ICommand::serialize(serial);
     serial.append("code", m_errorCode);
     
 }
 
 
 void ErrorCmd::deserialize(ISerialObject& serial) {
-
-    m_sid = serial.getInt("sid");
-    m_rid = serial.getInt("rid");
+    ICommand::deserialize(serial);
     m_errorCode = serial.getInt("code");
 }
 

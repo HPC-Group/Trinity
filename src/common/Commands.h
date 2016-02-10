@@ -20,6 +20,7 @@ enum class VclType {
     TrinityError,
     DummyRenderer,
     GridLeaper,
+    SetIsoValue,
     StreamingParams,
     First = InitRenderer,
     Last = StreamingParams,
@@ -54,6 +55,7 @@ public:
         m_cmdMap.insert("RET", VclType::TrinityReturn);
         m_cmdMap.insert("ERR", VclType::TrinityError);
         m_cmdMap.insert("PAR", VclType::StreamingParams);
+        m_cmdMap.insert("ISO", VclType::SetIsoValue);
         
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));
@@ -77,8 +79,6 @@ public:
     IDGenerator();
     int nextID();
 };
-    
-typedef std::unique_ptr<mocca::ByteArray> Frame;
     
 }
 } // end trinity

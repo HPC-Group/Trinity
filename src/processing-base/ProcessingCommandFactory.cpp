@@ -2,6 +2,7 @@
 #include "common/InitRendererCmd.h"
 #include "common/ISerialObjectFactory.h"
 #include "InitRendererHdl.h"
+#include "SimpleRenderingCmdsHdl.h"
 #include "mocca/base/Error.h"
 
 using namespace trinity::common;
@@ -19,6 +20,12 @@ ProcessingCommandFactory::createHandler(std::istream& stream) {
         case VclType::InitRenderer: {
             InitRendererCmd cmd(*serialRequest);
             return  std::unique_ptr<InitRendererHdl> (new InitRendererHdl(cmd));
+            break;
+        }
+            
+        case VclType::SetIsoValue: {
+            SetIsoValueCmd cmd(*serialRequest);
+            return  std::unique_ptr<SetIsoValueHdl> (new SetIsoValueHdl(cmd));
             break;
         }
             

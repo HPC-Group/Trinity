@@ -6,6 +6,7 @@
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/base/StringTools.h"
 #include "common/NetConfig.h"
+#include "common/SimpleRenderingCmds.h"
 
 using namespace trinity::frontend;
 using namespace trinity::common;
@@ -16,9 +17,10 @@ RendererPrx::RendererPrx(std::shared_ptr<VisStream> s,
                          mocca::net::Endpoint controlEndpoint,
                          mocca::net::Endpoint visEndpoint,
                          const unsigned int& sid) :
-m_visReceiver(std::move(visEndpoint), s),
 IRenderer(s),
+m_visReceiver(std::move(visEndpoint), s),
 m_controlEndpoint(controlEndpoint),
+m_inputChannel(m_controlEndpoint),
 m_sid(sid) {
 }
 
@@ -29,35 +31,16 @@ RendererPrx::~RendererPrx() {
 
 bool RendererPrx::connect() {
     LINFO("(f) connecing to remote renderer at " << m_controlEndpoint);
-    try {
-        m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_controlEndpoint);
-        m_visReceiver.startStreaming();
-    } catch (const mocca::net::NetworkError&) {
-        LERROR("(f) no connection to render session at \"" << m_controlEndpoint);
-        return false;
-    }
-    LINFO("(f) connected");
-    return true;
+    return m_inputChannel.connect();
 }
 
-/*
-
-VideoPipeline& RendererPrx::getVideoPipeline() {
-    
-    std::string cmd = m_vcl.assembleGetFrameBuffer(m_sid, m_ridGen.nextID());
-    m_mainChannel->send(std::move(mocca::ByteArray()<< cmd));
-
-    
-    auto byteArray = m_mainChannel->receive(trinity::config::TIMEOUT_REPLY);
-    
-    if(byteArray.isEmpty()) {
-        throw mocca::Error("cannot get framebuffer, no reply arrived",
-                           __FILE__, __LINE__);
-    }
-    
-    std::string rep = byteArray.read(byteArray.size());
-    LINFO("(f) cmd : " << cmd << "; reply: " << rep);
-    // std::vector<std::string> args = mocca::splitString<std::string>(rep, '_');
-    return m_remoteBuffer;
+int RendererPrx::getRemoteSessionId() const {
+    return m_sid;
 }
-*/
+
+void RendererPrx::setIsoValue(const float value) {
+    SetIsoValueCmd cmd(m_sid, m_ridGen.nextID(), value);
+    
+    // send cmd, receive reply
+    m_inputChannel.sendCommand(cmd);
+}
