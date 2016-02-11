@@ -33,7 +33,7 @@ TEST_F(SerializationTest, StreamParamsTest) {
 
 TEST_F(SerializationTest, InitRendererCmdTest) {
     StreamingParams params(2048, 1000);
-    InitRendererCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, 0, params);
+    InitRendererCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, 0,"loopback",  params);
     std::stringstream s, ss;
     auto obj1 = ISerialObjectFactory::create();
     cmd.serialize(*obj1);

@@ -23,6 +23,8 @@ public:
     // return session id that has to be passed to processing
     int initIO(int fileId);
     
+    // todo list files
+    
 private:
     common::CommandInputChannel m_inputChannel;
     common::IDGenerator m_ridGen;

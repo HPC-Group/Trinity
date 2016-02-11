@@ -2,6 +2,8 @@
 #include "common/ICommandHandler.h"
 #include "common/ProcessingNodeCmds.h"
 
+#include "IONodeProcessingPrx.h"
+
 namespace trinity {
 namespace processing {
 
@@ -18,6 +20,7 @@ private:
     common::StreamingParams m_params;
     std::string m_protocol;
     common::ReplyInitRendererCmd m_reply;
+    IONodeProcessingPrx m_ioProxy;
 };
 }
 }

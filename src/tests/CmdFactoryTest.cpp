@@ -12,8 +12,11 @@
 #include "processing-base/ProcessingNodeCmdsHdl.h"
 #include "processing-base/RenderSessionManager.h"
 
+#include "mocca/base/ContainerTools.h"
+
 using namespace trinity::common;
 using namespace trinity::processing;
+using namespace mocca::net;
 
 class CmdFactoryTest : public ::testing::Test {
 protected:
@@ -35,7 +38,12 @@ TEST_F(CmdFactoryTest, VCLCompleteTest) {
 
 TEST_F(CmdFactoryTest, RendererExecTest) {
     StreamingParams params(2048, 1000);
-    InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer, 0, params);
+    mocca::net::Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
+    
+    std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
+    mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(endpoint));
+    
+    InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer, 0, endpoint.toString(), params);
     auto obj = ISerialObjectFactory::create();
     cmd.serialize(*obj);
     std::stringstream s;
@@ -54,7 +62,6 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     ASSERT_TRUE(castedPtr != nullptr);
     ASSERT_EQ(castedPtr->getType(), VclType::TrinityReturn);
     ASSERT_EQ(castedPtr->getVisPort() - castedPtr->getControlPort(), 1);
-    
     
     // todo: execute, get return value
     

@@ -9,30 +9,31 @@
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/base/StringTools.h"
 
-#include "IONodePrx.h"
+#include "IONodeProcessingPrx.h"
+#include "IOSessionPrx.h"
 
 #include "common/ErrorCmd.h"
 #include "common/NetConfig.h"
 #include "common/ISerialObjectFactory.h"
 #include "common/IONodeCmds.h"
 
-using namespace trinity::frontend;
+using namespace trinity::processing;
 using namespace trinity::common;
 
 //static std::chrono::milliseconds receiveTimeout(50);
 
-IONodePrx::~IONodePrx() {}
+IONodeProcessingPrx::~IONodeProcessingPrx() {}
 
-IONodePrx::IONodePrx(const mocca::net::Endpoint& endpoint) :
+IONodeProcessingPrx::IONodeProcessingPrx(const mocca::net::Endpoint& endpoint) :
 m_inputChannel(endpoint) {}
 
 
-bool IONodePrx::connect() { return m_inputChannel.connect(); }
+bool IONodeProcessingPrx::connect() { return m_inputChannel.connect(); }
 
 
-int IONodePrx::initIO(int fileId) {
+std::unique_ptr<IOSessionPrx> IONodeProcessingPrx::initIO(int fileId) {
+
     InitIOSessionCmd cmd(0, m_ridGen.nextID(), m_inputChannel.getEndpoint().protocol, 0);
-    
     // send cmd, receive reply
     m_inputChannel.sendCommand(cmd);
     
@@ -50,5 +51,11 @@ int IONodePrx::initIO(int fileId) {
     
     // return was ok
     ReplyInitIOSessionCmd replyCmd(*serialReply);
-    return replyCmd.getSid();
+    // todo: factory, too?
+    
+    mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint().protocol,
+                                     m_inputChannel.getEndpoint().address(),
+                                     std::to_string(replyCmd.getControlPort()));
+
+    return std::unique_ptr<IOSessionPrx>(new IOSessionPrx(replyCmd.getSid(), controlEndpoint));
 }

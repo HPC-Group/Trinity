@@ -13,7 +13,7 @@
 #include "common/Commands.h"
 
 #include "ProcessingNodePrx.h"
-#include "IONodePrx.h"
+#include "IONodeFrontendPrx.h"
 
 using namespace mocca::net;
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
         }
     }
     // todo: ask for files first
-    int ioSessionId = ioNode->initIO(0);
+    //int ioSessionId = ioNode->initIO(0);
     
     processingNode =
     std::unique_ptr<trinity::frontend::ProcessingNodePrx>
@@ -71,8 +71,10 @@ int main(int argc, char** argv) {
             std::this_thread::sleep_for(std::chrono::seconds(reconnectInSec));
         }
     }
+    
+    int fileId = 12;
     trinity::common::StreamingParams params(1024, 768);
-    auto renderer = processingNode->initRenderer(trinity::common::VclType::DummyRenderer, ioSessionId, params);
+    auto renderer = processingNode->initRenderer(trinity::common::VclType::DummyRenderer, fileId, endpointIO.toString(), params);
     renderer->connect();
     
     // sending commands

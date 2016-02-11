@@ -26,7 +26,8 @@ public:
         
     // insert params here?
     std::unique_ptr<RendererPrx> initRenderer(const common::VclType&,
-                                              int ioSid,
+                                              int fileId,
+                                              const mocca::net::Endpoint&,
                                               const common::StreamingParams&);
     
     

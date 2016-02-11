@@ -96,3 +96,11 @@ void ReplyInitIOSessionCmd::setNewSid(int sid) {
 }
 
 
+void ReplyInitIOSessionCmd::setControlPort(const int port) {
+    m_controlPort = port;
+}
+
+int ReplyInitIOSessionCmd::getControlPort() const {
+    return m_controlPort;
+}
+

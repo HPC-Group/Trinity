@@ -29,12 +29,20 @@ m_inputChannel(endpoint) {}
 bool ProcessingNodePrx::connect() { return m_inputChannel.connect(); }
 
 
-std::unique_ptr<RendererPrx> ProcessingNodePrx::initRenderer(const VclType& type,
-                                                             int ioSid,
-                                                             const StreamingParams& params) {
+std::unique_ptr<RendererPrx>
+ProcessingNodePrx::initRenderer(const VclType& type,
+                                int fileId,
+                                const mocca::net::Endpoint& endpoint,
+                                const StreamingParams& params) {
     
     // creating the cmd that will initialize a remote renderer of the given type
-    InitRendererCmd cmd(0, m_ridGen.nextID(), m_inputChannel.getEndpoint().protocol, type, ioSid, params);
+    InitRendererCmd cmd(0,
+                        m_ridGen.nextID(),
+                        m_inputChannel.getEndpoint().protocol,
+                        type,
+                        fileId,
+                        endpoint.toString(),
+                        params);
     
     // send cmd, receive reply
     m_inputChannel.sendCommand(cmd);

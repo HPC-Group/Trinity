@@ -51,8 +51,14 @@ public:
     virtual void serialize(ISerialObject& serial) const;
     virtual void deserialize(ISerialObject& serial);
     
+    void setControlPort(const int port);
+    int getControlPort() const;
+    
     int getFileId() const;
     void setNewSid(int sid);
+    
+private:
+    int m_controlPort;
 };
 }
 }

@@ -1,4 +1,7 @@
 #pragma once
+
+#include "mocca/net/Endpoint.h"
+
 #include "ICommand.h"
 #include "StreamingParams.h"
 
@@ -10,12 +13,15 @@ class InitRendererCmd : public ICommand {
 public:
     InitRendererCmd(ISerialObject&);
     InitRendererCmd(int sid, int rid, const std::string& protocol,
-                         const VclType& renderType, int ioSid, const StreamingParams& p);
+                    const VclType& renderType, int fileId,
+                    const std::string& stringifiedIoEndpoint, const StreamingParams& p);
     
     virtual ~InitRendererCmd();
     
     virtual VclType getType() const;
     const std::string& getProtocol() const;
+    const std::string& getStringifiedEndpoint() const;
+    int getFileId() const;
     const StreamingParams& getParams() const;
     
     virtual void serialize(ISerialObject& serial) const;
@@ -24,8 +30,10 @@ public:
 private:
     std::string m_protocol;
     VclType m_renderType;
-    int m_ioSid;
+    int m_fileId;
+    std::string m_stringifiedEndpoint;
     StreamingParams m_streamingParams;
+
 };
 
 

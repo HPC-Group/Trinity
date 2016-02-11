@@ -7,7 +7,7 @@
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ContainerTools.h"
 
-#include "frontend-base/IONodePrx.h"
+#include "frontend-base/IONodeFrontendPrx.h"
 
 #include "io-base/IONode.h"
 
