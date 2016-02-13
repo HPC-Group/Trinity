@@ -23,6 +23,7 @@ m_controlPort(m_basePort++),
 m_controlEndpoint(protocol, "localhost", std::to_string(m_controlPort))
 {
     m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
+    m_io = createIO(fileId);
 }
 
 unsigned int IOSession::getSid() const {
@@ -76,9 +77,28 @@ void IOSession::run() {
                 
             }
         } catch (const mocca::net::NetworkError& err) {
-            LWARNING("(io) remote session has gone: " << err.what());
+            LWARNING("(io) interrupting because remote session has gone: " << err.what());
+            interrupt();
         }
-
     }
-
 }
+
+std::unique_ptr<IIO> IOSession::createIO(int fileId, const VclType& type) {
+    switch (type) {
+        case VclType::DummyIO: {
+            
+            return std::unique_ptr<DummyIO>(new DummyIO());
+            break;
+        }
+            
+        case VclType::FractalIO:
+            throw mocca::Error("fractals not supported yet", __FILE__, __LINE__);
+            break;
+            
+        default:
+            throw mocca::Error("can't create renderer: no such type", __FILE__, __LINE__);
+            break;
+    }
+}
+
+int IOSession::getControlPort() const { return m_controlPort; }

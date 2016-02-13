@@ -20,7 +20,10 @@ enum class VclType {
     TrinityError,
     DummyRenderer,
     GridLeaper,
+    DummyIO,
+    FractalIO,
     SetIsoValue,
+    GetLODLevelCount,
     ListFiles,
     InitIOSession,
     StreamingParams,
@@ -60,6 +63,9 @@ public:
         m_cmdMap.insert("ISO", VclType::SetIsoValue);
         m_cmdMap.insert("INI", VclType::InitIOSession);
         m_cmdMap.insert("LST", VclType::ListFiles);
+        m_cmdMap.insert("LOD", VclType::GetLODLevelCount);
+        m_cmdMap.insert("DIO", VclType::DummyIO);
+        m_cmdMap.insert("FIO", VclType::FractalIO);
         
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));

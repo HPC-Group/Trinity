@@ -28,7 +28,9 @@ IONodeProcessingPrx::IONodeProcessingPrx(const mocca::net::Endpoint& endpoint) :
 m_inputChannel(endpoint) {}
 
 
-bool IONodeProcessingPrx::connect() { return m_inputChannel.connect(); }
+bool IONodeProcessingPrx::connect() {
+    LINFO("(p) connecting to io node at " + m_inputChannel.getEndpoint().toString());
+    return m_inputChannel.connect(); }
 
 
 std::unique_ptr<IOSessionPrx> IONodeProcessingPrx::initIO(int fileId) {
@@ -53,9 +55,11 @@ std::unique_ptr<IOSessionPrx> IONodeProcessingPrx::initIO(int fileId) {
     ReplyInitIOSessionCmd replyCmd(*serialReply);
     // todo: factory, too?
     
-    mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint().protocol,
-                                     m_inputChannel.getEndpoint().address(),
-                                     std::to_string(replyCmd.getControlPort()));
+
+    
+    // BIG TODO HERE!!!
+    mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint());
+    controlEndpoint.port = std::to_string(replyCmd.getControlPort());
 
     return std::unique_ptr<IOSessionPrx>(new IOSessionPrx(replyCmd.getSid(), controlEndpoint));
 }

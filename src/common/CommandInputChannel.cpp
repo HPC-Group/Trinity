@@ -22,11 +22,11 @@ bool CommandInputChannel::connect() {
         m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
         
     } catch (const mocca::net::ConnectFailedError&) {
-        LWARNING("(f) no connection to a node  at \"" << m_endpoint << "\": ");
+        LWARNING("(chn) no connection to a node  at \"" << m_endpoint << "\": ");
         return false;
     }
     
-    LINFO("(f) successfully connected to a node");
+    LINFO("(chn) successfully connected to a node");
     return true;
 }
 
@@ -57,7 +57,7 @@ std::unique_ptr<ISerialObject> CommandInputChannel::getReply(const std::chrono::
     
     // the reply is of type ReplyInitRendererCmd
     std::string rep = byteArray.read(byteArray.size());
-    LINFO("(f) reply: " << rep);
+    LINFO("(chn) reply: " << rep);
     
     std::stringstream replyStream;
     replyStream << rep;

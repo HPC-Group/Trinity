@@ -20,7 +20,8 @@ unsigned int RenderSession::m_nextSid = 1; // sid 0 is considered invalid / dumm
 
 RenderSession::RenderSession(const VclType& rendererType,
                              const StreamingParams& params,
-                             const std::string& protocol) :
+                             const std::string& protocol,
+                             std::unique_ptr<IOSessionPrx> ioSession) :
 m_sid(m_nextSid++),
 m_controlPort(m_basePort++),
 m_visPort(m_basePort++),
@@ -28,8 +29,8 @@ m_controlEndpoint(protocol, "localhost", std::to_string(m_controlPort)),
 m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort)),
             std::make_shared<VisStream>(params))
 {
-
-    m_renderer = createRenderer(rendererType, params);
+    ioSession->connect();
+    m_renderer = createRenderer(rendererType, params, std::move(ioSession));
     m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
     m_visSender.startStreaming();
 }
@@ -42,12 +43,13 @@ RenderSession::~RenderSession() {
 
 
 std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& rendererType,
-                                                         const StreamingParams& params) {
+                                                         const StreamingParams& params,
+                                                         std::unique_ptr<IOSessionPrx> ioSession) {
     switch (rendererType) {
         case VclType::DummyRenderer: {
 
             std::shared_ptr<VisStream> stream = std::make_shared<VisStream>(params);
-            return std::unique_ptr<IRenderer>(new DummyRenderer(stream));
+            return std::unique_ptr<IRenderer>(new DummyRenderer(stream, std::move(ioSession)));
             break;
         }
             
@@ -118,7 +120,8 @@ void RenderSession::run() {
                 
             }
         } catch (const mocca::net::NetworkError& err) {
-            LWARNING("(p) remote session has gone: " << err.what());
+            LWARNING("(p) interrupting because remote session has gone: " << err.what());
+            interrupt();
         }
 
     }

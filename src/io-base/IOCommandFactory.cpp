@@ -3,6 +3,8 @@
 
 #include "common/ISerialObjectFactory.h"
 #include "common/IONodeCmds.h"
+#include "common/SimpleIOCmds.h"
+#include "SimpleIOCmdsHdl.h"
 
 #include "mocca/base/Error.h"
 
@@ -23,8 +25,13 @@ IOCommandFactory::createHandler(std::istream& stream) {
             
             InitIOSessionCmd cmd(*serialRequest);
             return  std::unique_ptr<InitIOSessionHdl> (new InitIOSessionHdl(cmd));
-             
-            throw mocca::Error("command not implemented: " + (Vcl().toString(type)), __FILE__, __LINE__);
+            break;
+        }
+            
+        case VclType::GetLODLevelCount: {
+            
+            GetLODLevelCountCmd cmd(*serialRequest);
+            return  std::unique_ptr<GetLODLevelCountHdl> (new GetLODLevelCountHdl(cmd));
             break;
         }
         
@@ -36,6 +43,7 @@ IOCommandFactory::createHandler(std::istream& stream) {
             throw mocca::Error("command not implemented: " + (Vcl().toString(type)), __FILE__, __LINE__);
             break;
         }
+            
             
         default:
             throw mocca::Error("command unknown: " + (Vcl().toString(type)), __FILE__, __LINE__);

@@ -13,7 +13,7 @@
 
 #include "ProcessingCommandFactory.h"
 #include "VisStreamSender.h"
-
+#include "IOSessionPrx.h"
 
 
 
@@ -29,7 +29,8 @@ public:
         
     RenderSession(const common::VclType& rendererType,
                   const common::StreamingParams& params,
-                  const std::string& protocol);
+                  const std::string& protocol,
+                  std::unique_ptr<IOSessionPrx> ioSession);
         
         
     ~RenderSession();
@@ -57,8 +58,9 @@ private:
     ProcessingCommandFactory m_factory;
     
     // renderer factory
-    static std::unique_ptr<common::IRenderer> createRenderer(const common::VclType&,
-                                                             const common::StreamingParams&);
+    std::unique_ptr<common::IRenderer> createRenderer(const common::VclType&,
+                                                             const common::StreamingParams&,
+                                                             std::unique_ptr<IOSessionPrx>);
     void run() override;
     
         

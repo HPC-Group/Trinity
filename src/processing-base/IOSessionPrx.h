@@ -15,7 +15,7 @@ public:
     IOSessionPrx(const int sid, const mocca::net::Endpoint& ioEndpoint);
     ~IOSessionPrx();
     bool connect();
-    virtual int getLODLevelCount() const;
+    virtual int getLODLevelCount();
     /*
 public:
     
@@ -46,6 +46,7 @@ private:
     common::Vcl m_vcl;
      */
     const int m_sid;
+    common::IDGenerator m_ridGen;
     mocca::net::Endpoint m_controlEndpoint;
     common::CommandInputChannel m_inputChannel;
 };

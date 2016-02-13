@@ -83,18 +83,19 @@ VclType ReplyInitIOSessionCmd::getType() const {
 void ReplyInitIOSessionCmd::serialize(ISerialObject& serial) const {
     
     ICommand::serialize(serial);
+    serial.append("controlport", m_controlPort);
 }
 
 
 void ReplyInitIOSessionCmd::deserialize(ISerialObject& serial) {
     
     ICommand::deserialize(serial);
+    m_controlPort = serial.getInt("controlport");
 }
 
 void ReplyInitIOSessionCmd::setNewSid(int sid) {
     m_sid = sid;
 }
-
 
 void ReplyInitIOSessionCmd::setControlPort(const int port) {
     m_controlPort = port;

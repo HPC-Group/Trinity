@@ -9,6 +9,8 @@
 #include "processing-base/RenderSessionManager.h"
 #include "processing-base/DummyRenderer.h"
 
+#include "io-base/IONode.h"
+
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ContainerTools.h"
@@ -22,6 +24,7 @@ protected:
     
     ProcessingTest() {
         ConnectionFactorySelector::addDefaultFactories();
+
     }
 
     virtual ~ProcessingTest() {
@@ -30,6 +33,21 @@ protected:
 };
 
 TEST_F(ProcessingTest, RequestInitRendererTest) {
+    
+    //////////////// IO NODE ////////////////
+    mocca::net::Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "7678");
+    
+    std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> ioAcceptors =
+    mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(ioEndpoint));
+    
+    
+    std::unique_ptr<ConnectionAggregator> ioAggregator
+    (new ConnectionAggregator(std::move(ioAcceptors),
+                              ConnectionAggregator::DisconnectStrategy::RemoveConnection));
+    trinity::io::IONode ioNode(std::move(ioAggregator));
+    ioNode.start();
+    //////////////////////////////////////////
+    
     
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
     
@@ -50,7 +68,7 @@ TEST_F(ProcessingTest, RequestInitRendererTest) {
     trinity::common::StreamingParams params;
     ASSERT_NO_THROW(proxy.initRenderer(trinity::common::VclType::DummyRenderer,
                                        0 ,
-                                       endpoint.toString(),
+                                       ioEndpoint.toString(),
                                        params));
 
     node.interrupt();
@@ -59,6 +77,21 @@ TEST_F(ProcessingTest, RequestInitRendererTest) {
 
 
 TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
+    
+    //////////////// IO NODE ////////////////
+    mocca::net::Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "7678");
+    
+    std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> ioAcceptors =
+    mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(ioEndpoint));
+    
+    
+    std::unique_ptr<ConnectionAggregator> ioAggregator
+    (new ConnectionAggregator(std::move(ioAcceptors),
+                              ConnectionAggregator::DisconnectStrategy::RemoveConnection));
+    trinity::io::IONode ioNode(std::move(ioAggregator));
+    ioNode.start();
+    //////////////////////////////////////////
+    
     
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
@@ -75,7 +108,7 @@ TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
     trinity::common::StreamingParams params;
     renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer,
                                                0 ,
-                                               endpoint.toString(),
+                                               ioEndpoint.toString(),
                                                params);
     ASSERT_TRUE(renderer->connect());
     node.interrupt();
@@ -83,6 +116,20 @@ TEST_F(ProcessingTest, ConnectToRemoteRendererTest) {
 
 
 TEST_F(ProcessingTest, SetIsoValueTest) {
+    
+    //////////////// IO NODE ////////////////
+    mocca::net::Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "7678");
+    
+    std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> ioAcceptors =
+    mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(ioEndpoint));
+    
+    
+    std::unique_ptr<ConnectionAggregator> ioAggregator
+    (new ConnectionAggregator(std::move(ioAcceptors),
+                              ConnectionAggregator::DisconnectStrategy::RemoveConnection));
+    trinity::io::IONode ioNode(std::move(ioAggregator));
+    ioNode.start();
+    //////////////////////////////////////////
     
     // this is code duplication
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
@@ -99,7 +146,7 @@ TEST_F(ProcessingTest, SetIsoValueTest) {
     trinity::common::StreamingParams params;
     renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer,
                                   0 ,
-                                  endpoint.toString(),
+                                  ioEndpoint.toString(),
                                   params);
     renderer->connect();
     // end of code duplication
@@ -113,7 +160,23 @@ TEST_F(ProcessingTest, SetIsoValueTest) {
 }
 
 
+
+
+
 TEST_F(ProcessingTest, StreamInitTest1Sec) {
+    //////////////// IO NODE ////////////////
+    mocca::net::Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "7678");
+    
+    std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> ioAcceptors =
+    mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(ioEndpoint));
+    
+    
+    std::unique_ptr<ConnectionAggregator> ioAggregator
+    (new ConnectionAggregator(std::move(ioAcceptors),
+                              ConnectionAggregator::DisconnectStrategy::RemoveConnection));
+    trinity::io::IONode ioNode(std::move(ioAggregator));
+    ioNode.start();
+    //////////////////////////////////////////
     
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
     
@@ -135,7 +198,7 @@ TEST_F(ProcessingTest, StreamInitTest1Sec) {
     trinity::common::StreamingParams params;
     renderer = proxy.initRenderer(trinity::common::VclType::DummyRenderer,
                                   0 ,
-                                  endpoint.toString(),
+                                  ioEndpoint.toString(),
                                   params);
     renderer->connect();
     //std::this_thread::sleep_for(std::chrono::seconds(1));

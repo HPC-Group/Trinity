@@ -20,6 +20,7 @@ void InitIOSessionHdl::execute() {
     session(new IOSession(m_protocol, m_fileId));
     session->start();
     m_reply.setNewSid(session->getSid());
+    m_reply.setControlPort(session->getControlPort());
     
     SessionManagerSingleton::instance()->addSession(std::move(session));
 }

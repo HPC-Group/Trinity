@@ -17,8 +17,7 @@ public:
     ~InitRendererHdl();
     
 private:
-    common::StreamingParams m_params;
-    std::string m_protocol;
+    common::InitRendererCmd m_cmd;
     common::ReplyInitRendererCmd m_reply;
     IONodeProcessingPrx m_ioProxy;
 };

@@ -12,6 +12,8 @@
 #include "processing-base/ProcessingNodeCmdsHdl.h"
 #include "processing-base/RenderSessionManager.h"
 
+#include "io-base/IONode.h"
+
 #include "mocca/base/ContainerTools.h"
 
 using namespace trinity::common;
@@ -42,6 +44,14 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
     mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(endpoint));
+
+    
+    std::unique_ptr<ConnectionAggregator> aggregator
+    (new ConnectionAggregator(std::move(acceptors),
+                              ConnectionAggregator::DisconnectStrategy::RemoveConnection));
+    
+    trinity::io::IONode node(std::move(aggregator));
+    node.start();
     
     InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer, 0, endpoint.toString(), params);
     auto obj = ISerialObjectFactory::create();

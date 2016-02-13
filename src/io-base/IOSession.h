@@ -25,6 +25,7 @@ public:
     ~IOSession();
     unsigned int getSid() const;
     common::IIO& getIO();
+    int getControlPort() const;
     
 private:
     
@@ -40,6 +41,9 @@ private:
     
     static unsigned int m_nextSid;
     static int m_basePort;
+    
+    std::unique_ptr<common::IIO>
+    createIO(int fileId, const common::VclType& ioType = common::VclType::DummyIO);
     
     void run() override;
 };

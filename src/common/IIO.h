@@ -9,7 +9,7 @@ class IIO {
     
 public:
     
-    virtual int getLODLevelCount() const = 0;
+    virtual int getLODLevelCount() = 0;
     
 };
 }

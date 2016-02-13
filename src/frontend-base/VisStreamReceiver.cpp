@@ -49,8 +49,6 @@ void VisStreamReceiver::run() {
         auto bytepacket = m_connection->receive();
         
         if(!bytepacket.isEmpty()) {
-            std::string x = bytepacket.read(bytepacket.size());
-            LINFO("(f) rec: " + x);
             
             m_visStream->put(std::unique_ptr<mocca::ByteArray>
                              (new mocca::ByteArray(bytepacket.clone())));
