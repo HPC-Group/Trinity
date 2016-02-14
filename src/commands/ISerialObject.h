@@ -2,11 +2,11 @@
 #include <istream>
 #include <ostream>
 
-#include "Commands.h"
+#include "Vcl.h"
 
 
 namespace trinity {
-namespace common {
+namespace commands {
 
 class ISerializable;
 class ISerialObject

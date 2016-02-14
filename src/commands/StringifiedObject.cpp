@@ -2,7 +2,7 @@
 #include "ISerializable.h"
 #include <iostream>
 
-using namespace trinity::common;
+using namespace trinity::commands;
 
 void StringifiedObject::writeTo(std::ostream& stream) {
     std::string typestring = m_vcl.toString(m_type);

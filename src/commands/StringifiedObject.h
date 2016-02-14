@@ -4,10 +4,10 @@
 #include <sstream>
 
 #include "ISerialObject.h"
-#include "Commands.h"
+#include "Vcl.h"
 
 namespace trinity {
-namespace common {
+namespace commands {
 
 class StringifiedObject : public ISerialObject
 {

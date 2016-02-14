@@ -1,10 +1,34 @@
-#include "common/ProcessingNodeCmds.h"
-#include <iostream>
+#include "ProcessingCommands.h"
 
-using namespace trinity::common;
+using namespace trinity::commands;
 
 
-InitRendererCmd::InitRendererCmd(int sid, int rid,
+StreamingParams::StreamingParams(int resX, int resY) : m_resX(resX), m_resY(resY) {}
+
+StreamingParams::StreamingParams() : m_resX(1024), m_resY(768) {}
+
+void StreamingParams::serialize(ISerialObject& serial) const {
+    
+    serial.append("xres", m_resX);
+    serial.append("yres", m_resY);
+}
+
+
+void StreamingParams::deserialize(ISerialObject& serial) {
+    
+    m_resX = serial.getInt("xres");
+    m_resY = serial.getInt("yres");
+}
+
+int StreamingParams::getResX() const { return m_resX; }
+int StreamingParams::getResY() const { return m_resY; }
+
+VclType StreamingParams::getType() const {
+    return VclType::StreamingParams;
+}
+
+
+InitProcessingSessionCmd::InitProcessingSessionCmd(int sid, int rid,
                                 const std::string& protocol,
                                 const VclType& renderType,
                                 int fileId,
@@ -17,18 +41,18 @@ m_fileId(fileId),
 m_stringifiedEndpoint(endpoint),
 m_streamingParams(p) {}
 
-InitRendererCmd::InitRendererCmd(ISerialObject& obj) : ICommand(0,0) {
+InitProcessingSessionCmd::InitProcessingSessionCmd(ISerialObject& obj) : ICommand(0,0) {
     deserialize(obj);
 }
 
-InitRendererCmd::~InitRendererCmd() {}
+InitProcessingSessionCmd::~InitProcessingSessionCmd() {}
 
-VclType InitRendererCmd::getType() const {
+VclType InitProcessingSessionCmd::getType() const {
     return VclType::InitRenderer;
 }
 
 
-void InitRendererCmd::serialize(ISerialObject& serial) const  {
+void InitProcessingSessionCmd::serialize(ISerialObject& serial) const  {
 
     ICommand::serialize(serial);
     serial.append("protocol", m_protocol);
@@ -44,7 +68,7 @@ void InitRendererCmd::serialize(ISerialObject& serial) const  {
 }
 
 
-void InitRendererCmd::deserialize(ISerialObject& serial) {
+void InitProcessingSessionCmd::deserialize(ISerialObject& serial) {
     
     ICommand::deserialize(serial);
     m_protocol = serial.getString("protocol");
@@ -60,46 +84,46 @@ void InitRendererCmd::deserialize(ISerialObject& serial) {
 }
 
 
-const std::string& InitRendererCmd::getProtocol() const {
+const std::string& InitProcessingSessionCmd::getProtocol() const {
     return m_protocol;
 }
 
-int InitRendererCmd::getFileId() const {
+int InitProcessingSessionCmd::getFileId() const {
     return m_fileId;
 }
 
-const StreamingParams& InitRendererCmd::getParams() const {
+const StreamingParams& InitProcessingSessionCmd::getParams() const {
     return m_streamingParams;
 }
 
-const std::string& InitRendererCmd::getStringifiedEndpoint() const {
+const std::string& InitProcessingSessionCmd::getStringifiedEndpoint() const {
     return m_stringifiedEndpoint;
 }
 
 /////// Reply
-ReplyInitRendererCmd::ReplyInitRendererCmd(ISerialObject& obj) : ICommand(0,0) {
+ReplyInitProcessingSessionCmd::ReplyInitProcessingSessionCmd(ISerialObject& obj) : ICommand(0,0) {
     deserialize(obj);
 }
-ReplyInitRendererCmd::ReplyInitRendererCmd(int sid, int rid) : ICommand(sid, rid){}
-ReplyInitRendererCmd::~ReplyInitRendererCmd() {}
+ReplyInitProcessingSessionCmd::ReplyInitProcessingSessionCmd(int sid, int rid) : ICommand(sid, rid){}
+ReplyInitProcessingSessionCmd::~ReplyInitProcessingSessionCmd() {}
 
-int ReplyInitRendererCmd::getControlPort() const {
+int ReplyInitProcessingSessionCmd::getControlPort() const {
     return m_controlPort;
 }
 
-int ReplyInitRendererCmd::getVisPort() const {
+int ReplyInitProcessingSessionCmd::getVisPort() const {
     return m_visPort;
 }
 
-void ReplyInitRendererCmd::setNewSid(int sid) {
+void ReplyInitProcessingSessionCmd::setNewSid(int sid) {
     m_sid = sid;
 }
 
-VclType ReplyInitRendererCmd::getType() const {
+VclType ReplyInitProcessingSessionCmd::getType() const {
     return VclType::TrinityReturn;
 }
 
-void ReplyInitRendererCmd::serialize(ISerialObject& serial) const {
+void ReplyInitProcessingSessionCmd::serialize(ISerialObject& serial) const {
     
     ICommand::serialize(serial);
     serial.append("controlport", m_controlPort);
@@ -108,7 +132,7 @@ void ReplyInitRendererCmd::serialize(ISerialObject& serial) const {
 }
 
 
-void ReplyInitRendererCmd::deserialize(ISerialObject& serial) {
+void ReplyInitProcessingSessionCmd::deserialize(ISerialObject& serial) {
 
     ICommand::deserialize(serial);
     m_controlPort = serial.getInt("controlport");
@@ -117,10 +141,10 @@ void ReplyInitRendererCmd::deserialize(ISerialObject& serial) {
 
 }
 
-void ReplyInitRendererCmd::setControlPort(int port) {
+void ReplyInitProcessingSessionCmd::setControlPort(int port) {
     m_controlPort = port;
 }
 
-void ReplyInitRendererCmd::setVisPort(int port) {
+void ReplyInitProcessingSessionCmd::setVisPort(int port) {
     m_visPort = port;
 }

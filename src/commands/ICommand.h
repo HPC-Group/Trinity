@@ -1,9 +1,10 @@
 #pragma once
+
 #include "ISerializable.h"
-#include "Commands.h"
+#include "Vcl.h"
 
 namespace trinity {
-namespace common {
+namespace commands {
 
 class ICommand : public ISerializable {
     

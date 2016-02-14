@@ -3,7 +3,7 @@
 #include "ICommand.h"
 
 namespace trinity {
-namespace common {
+namespace commands {
 
 // command-pattern like execution of trinity commands
 class ICommandHandler {
