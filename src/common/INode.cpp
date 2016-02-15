@@ -13,6 +13,7 @@
 #include "INode.h"
 
 using namespace trinity::common;
+using namespace trinity::commands;
 using namespace mocca::net;
 
 
@@ -25,7 +26,7 @@ INode::~INode() {
 }
 
 INode::INode(std::unique_ptr<ConnectionAggregator> aggregator,
-             std::unique_ptr<commands::ICommandFactory> factory) :
+             std::unique_ptr<ICommandFactory> factory) :
 m_factory(std::move(factory)),
 m_aggregator(std::move(aggregator))
 {

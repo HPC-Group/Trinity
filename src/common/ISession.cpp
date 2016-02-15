@@ -10,11 +10,12 @@
 //#include "IserialObjectFactory.h"
 
 using namespace trinity::common;
+using namespace trinity::commands;
 int ISession::m_basePort = 5990;
 int ISession::m_nextSid = 1;
 
 ISession::ISession(const std::string& protocol,
-                   std::unique_ptr<commands::ICommandFactory>  factory) :
+                   std::unique_ptr<ICommandFactory>  factory) :
 m_sid(m_nextSid++),
 m_controlPort(m_basePort++),
 m_controlEndpoint(protocol, "localhost", std::to_string(m_controlPort)),
@@ -64,7 +65,7 @@ void ISession::run() {
                 handler->execute();
                 auto reply = handler->getReturnValue();
                 if(reply != nullptr) {  // not tested yet
-                    auto serialReply = commands::ISerialObjectFactory::create();
+                    auto serialReply = ISerialObjectFactory::create();
                     reply->serialize(*serialReply);
                     serialReply->writeTo(replyStream);
                     LINFO("(session) reply: " << replyStream.str());
