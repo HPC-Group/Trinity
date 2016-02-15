@@ -7,9 +7,6 @@
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ContainerTools.h"
 
-#include "frontend-base/IONodeFrontendPrx.h"
-
-#include "io-base/IONode.h"
 
 
 
@@ -27,6 +24,7 @@ protected:
     }
 };
 
+/*
 TEST_F(IOTest, ConnectTest) {
     
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
@@ -74,5 +72,6 @@ TEST_F(IOTest, RequestInitIOSessionTest) {
     ASSERT_EQ(1, sid2 - sid1);
     node.interrupt();
 }
+ */
 
 

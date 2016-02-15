@@ -3,21 +3,18 @@
 #include <map>
 #include <istream>
 
-#include "common/ICommandHandler.h"
-#include "common/ICommand.h"
-#include "common/Commands.h"
+#include "commands/ICommandHandler.h"
+#include "commands/ICommandFactory.h"
 
 namespace trinity {
 namespace processing {
     
-class ProcessingCommandFactory {
+class ProcessingCommandFactory : public commands::ICommandFactory {
     
 public:
     
-    std::unique_ptr<common::ICommandHandler> createHandler(std::istream&);
+    std::unique_ptr<commands::ICommandHandler> createHandler(std::istream&);
     
-private:
-    common::Vcl m_vcl;
 };
 }
 }

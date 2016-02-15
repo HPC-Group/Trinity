@@ -1,8 +1,7 @@
 #include "VisStream.h"
 
 using namespace trinity::common;
-
-
+using namespace trinity::commands;
 
 VisStream::VisStream(StreamingParams params) : m_tail(0), m_head(0), m_streamingParams(params) {
 }

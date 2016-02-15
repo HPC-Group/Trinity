@@ -3,14 +3,6 @@
 
 #include "gtest/gtest.h"
 
-#include "processing-base/ProcessingNode.h"
-#include "frontend-base/ProcessingNodePrx.h"
-#include "common/Commands.h"
-#include "processing-base/RenderSessionManager.h"
-#include "processing-base/DummyRenderer.h"
-
-#include "io-base/IONode.h"
-
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/base/ContainerTools.h"
@@ -32,6 +24,7 @@ protected:
     }
 };
 
+/*
 TEST_F(ProcessingTest, RequestInitRendererTest) {
     
     //////////////// IO NODE ////////////////
@@ -258,3 +251,4 @@ TEST_F(ProcessingTest, VisStreamTest) {
     ASSERT_EQ("123", ff1->read(ff1->size()));
     ASSERT_EQ("456", ff2->read(ff2->size()));
 }
+*/

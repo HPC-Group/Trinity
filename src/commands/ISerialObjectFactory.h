@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "ISerialObject.h"
+#include "StringifiedObject.h"
 
 namespace trinity {
 namespace commands {
@@ -15,7 +16,9 @@ public:
     ISerialObjectFactory(){}
     virtual ~ISerialObjectFactory(){}
     
-    static std::unique_ptr<ISerialObject> create();
+    static std::unique_ptr<ISerialObject> create() {
+        return std::unique_ptr<ISerialObject>(new StringifiedObject);
+    }
 };
 }
 }

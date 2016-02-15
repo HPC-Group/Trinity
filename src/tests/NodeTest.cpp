@@ -1,6 +1,4 @@
 #include "gtest/gtest.h"
-#include "processing-base/ProcessingNode.h"
-#include "frontend-base/ProcessingNodePrx.h"
 
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/base/ContainerTools.h"
@@ -21,6 +19,7 @@ protected:
     }
 };
 
+/*
 TEST_F(NodeTest, StartNodeTest) {
     
     Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
@@ -38,3 +37,4 @@ TEST_F(NodeTest, StartNodeTest) {
     ASSERT_NO_THROW(node.start());
     ASSERT_NO_THROW(node.interrupt());
 }
+*/

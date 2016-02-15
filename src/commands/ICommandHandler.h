@@ -1,5 +1,6 @@
 #pragma once
-#include "Commands.h"
+
+#include "Vcl.h"
 #include "ICommand.h"
 
 namespace trinity {

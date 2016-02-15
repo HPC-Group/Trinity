@@ -11,7 +11,8 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/base/ContainerTools.h"
 
-#include "IONode.h"
+#include "common/INode.h"
+#include "IOCommandFactory.h"
 
 using namespace trinity::io;
 using namespace mocca::net;
@@ -54,7 +55,8 @@ int main(int argc, char** argv) {
     (new ConnectionAggregator(std::move(acceptors),
                               ConnectionAggregator::DisconnectStrategy::RemoveConnection));
     
-    IONode node(std::move(aggregator));
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new IOCommandFactory);
+    trinity::common::INode node(std::move(aggregator), std::move(factory));
     
     node.start();
     while(!exitFlag) {

@@ -1,23 +1,10 @@
 #include "gtest/gtest.h"
 
 #include "mocca/net/ConnectionFactorySelector.h"
-
-#include "common/ICommand.h"
-#include "common/Commands.h"
-#include "common/ICommandHandler.h"
-#include "common/ProcessingNodeCmds.h"
-#include "common/ISerialObjectFactory.h"
-
-#include "processing-base/ProcessingCommandFactory.h"
-#include "processing-base/ProcessingNodeCmdsHdl.h"
-#include "processing-base/RenderSessionManager.h"
-
-#include "io-base/IONode.h"
-
 #include "mocca/base/ContainerTools.h"
+#include "common/ISession.h"
 
 using namespace trinity::common;
-using namespace trinity::processing;
 using namespace mocca::net;
 
 class CmdFactoryTest : public ::testing::Test {
@@ -33,6 +20,7 @@ protected:
     }
 };
 
+/*
 
 TEST_F(CmdFactoryTest, VCLCompleteTest) {
     ASSERT_NO_THROW(Vcl());
@@ -76,3 +64,4 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     // todo: execute, get return value
     
 }
+*/

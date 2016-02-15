@@ -1,11 +1,12 @@
 #include "ProcessingCommandFactory.h"
-#include "common/ProcessingNodeCmds.h"
-#include "common/ISerialObjectFactory.h"
-#include "ProcessingNodeCmdsHdl.h"
-#include "SimpleRenderingCmdsHdl.h"
+
+#include "commands/ProcessingCommands.h"
+#include "commands/ISerialObjectFactory.h"
+#include "ProcessingCommandsHandler.h"
+
 #include "mocca/base/Error.h"
 
-using namespace trinity::common;
+using namespace trinity::commands;
 using namespace trinity::processing;
 
 std::unique_ptr<ICommandHandler>
@@ -18,8 +19,8 @@ ProcessingCommandFactory::createHandler(std::istream& stream) {
 
     switch (type) {
         case VclType::InitRenderer: {
-            InitRendererCmd cmd(*serialRequest);
-            return  std::unique_ptr<InitRendererHdl> (new InitRendererHdl(cmd));
+            InitProcessingSessionCmd cmd(*serialRequest);
+            return  std::unique_ptr<InitProcessingSessionHdl> (new InitProcessingSessionHdl(cmd));
             break;
         }
             

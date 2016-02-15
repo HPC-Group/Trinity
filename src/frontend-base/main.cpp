@@ -10,18 +10,18 @@
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/LogManager.h"
 
-#include "common/Commands.h"
+#include "commands/Vcl.h"
 
-#include "ProcessingNodePrx.h"
-#include "IONodeFrontendPrx.h"
+#include "ProcessingNodeProxy.h"
+#include "common/IONodeProxy.h"
 
 using namespace mocca::net;
 
 static int reconnectInSec = 5;
 std::atomic<bool> exitFlag{false};
 
-std::unique_ptr<trinity::frontend::ProcessingNodePrx> processingNode;
-std::unique_ptr<trinity::frontend::IONodePrx> ioNode;
+std::unique_ptr<trinity::frontend::ProcessingNodeProxy> processingNode;
+std::unique_ptr<trinity::common::IONodeProxy> ioNode;
 
 void exitHandler(int s) {
     std::cout << "Trinity exit on signal " << std::to_string(s) << std::endl;
@@ -45,8 +45,8 @@ int main(int argc, char** argv) {
 
     
     ioNode =
-    std::unique_ptr<trinity::frontend::IONodePrx>
-    (new trinity::frontend::IONodePrx(endpointIO));
+    std::unique_ptr<trinity::common::IONodeProxy>
+    (new trinity::common::IONodeProxy(endpointIO));
     bool connected = false;
     
     while (!connected && !exitFlag) {
@@ -57,11 +57,11 @@ int main(int argc, char** argv) {
         }
     }
     // todo: ask for files first
-    //int ioSessionId = ioNode->initIO(0);
+    //ioNode->initIO(20);
     
     processingNode =
-    std::unique_ptr<trinity::frontend::ProcessingNodePrx>
-    (new trinity::frontend::ProcessingNodePrx(endpoint));
+    std::unique_ptr<trinity::frontend::ProcessingNodeProxy>
+    (new trinity::frontend::ProcessingNodeProxy(endpoint));
     connected = false;
 
     while (!connected && !exitFlag) {
@@ -73,8 +73,8 @@ int main(int argc, char** argv) {
     }
     
     int fileId = 12;
-    trinity::common::StreamingParams params(1024, 768);
-    auto renderer = processingNode->initRenderer(trinity::common::VclType::DummyRenderer, fileId, endpointIO.toString(), params);
+    trinity::commands::StreamingParams params(1024, 768);
+    auto renderer = processingNode->initRenderer(trinity::commands::VclType::DummyRenderer, fileId, endpointIO.toString(), params);
     renderer->connect();
     
     // sending commands

@@ -3,9 +3,11 @@
 #include <memory>
 #include <thread>
 #include <cassert>
+
 #include "mocca/base/ByteArray.h"
-#include "Commands.h"
-#include "StreamingParams.h"
+
+#include "commands/Vcl.h"
+#include "commands/ProcessingCommands.h"
 
 namespace trinity {
 namespace common {
@@ -20,10 +22,10 @@ public:
     
     // read/write access to the last (newest) frame
     
-    VisStream(StreamingParams params);
+    VisStream(commands::StreamingParams params);
     ~VisStream();  // free buffers here
     
-    const StreamingParams& getStreamingParams() const;
+    const commands::StreamingParams& getStreamingParams() const;
     
     bool put(Frame frame); // false if stream full
     Frame get();
@@ -37,7 +39,7 @@ private:
     std::atomic<size_t> m_head;
     Frame m_data[CAPACITY];
     
-    StreamingParams m_streamingParams;
+    commands::StreamingParams m_streamingParams;
 };
 }
 }

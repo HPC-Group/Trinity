@@ -15,6 +15,7 @@ add_executable(iobase
 				${IOBASE_HEADER} 
 				${IOBASE_SOURCE}
 				$<TARGET_OBJECTS:common>
+				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 

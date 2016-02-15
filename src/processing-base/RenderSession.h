@@ -8,64 +8,42 @@
 #include "mocca/base/Thread.h"
 
 #include "common/IRenderer.h"
-#include "common/Commands.h"
-#include "common/StreamingParams.h"
+#include "common/ISession.h"
+#include "common/IOSessionProxy.h"
 
-#include "ProcessingCommandFactory.h"
+#include "commands/ICommandFactory.h"
 #include "VisStreamSender.h"
-#include "IOSessionPrx.h"
-
 
 
 namespace trinity {
 namespace processing {
+
     
-enum class RenderType { DUMMY, GRIDLEAPER };
-    
-    class RenderSession : public mocca::Runnable {
+class RenderSession : public common::ISession  {
     
 public:
     
-        
-    RenderSession(const common::VclType& rendererType,
-                  const common::StreamingParams& params,
+    RenderSession(std::unique_ptr<commands::ICommandFactory> factory,
+                  const commands::VclType& rendererType,
+                  const commands::StreamingParams& params,
                   const std::string& protocol,
-                  std::unique_ptr<IOSessionPrx> ioSession);
+                  std::unique_ptr<common::IOSessionProxy> ioSession);
         
         
     ~RenderSession();
-    unsigned int getSid() const;
-    int getControlPort() const;
     int getVisPort() const;
     common::IRenderer& getRenderer();
         
         
 private:
-    
-    unsigned int                m_sid;
-    static unsigned int         m_nextSid;
-    static int                  m_basePort;
-    int                         m_controlPort;
-    int                         m_visPort;
+    int m_visPort;
 
-    std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;
-    std::unique_ptr<common::IRenderer>                      m_renderer;
-    mocca::net::Endpoint                                    m_controlEndpoint;
-    VisStreamSender                                         m_visSender;
-    std::unique_ptr<mocca::net::IMessageConnection>         m_controlConnection;
-        
-    common::Vcl m_vcl;
-    ProcessingCommandFactory m_factory;
-    
-    // renderer factory
-    std::unique_ptr<common::IRenderer> createRenderer(const common::VclType&,
-                                                             const common::StreamingParams&,
-                                                             std::unique_ptr<IOSessionPrx>);
-    void run() override;
-    
-        
-        
-// todo: one day, we might want to release ids
+    std::unique_ptr<common::IRenderer> m_renderer;
+    VisStreamSender m_visSender;
+
+    std::unique_ptr<common::IRenderer> createRenderer(const commands::VclType&,
+                                                      const commands::StreamingParams&,
+                                                      std::unique_ptr<common::IOSessionProxy>);
 };
 }
 }

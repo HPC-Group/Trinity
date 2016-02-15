@@ -15,6 +15,7 @@ add_executable(frontendbase
 				${FRONTENDBASE_SOURCE}
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:common>
+				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:silverbullet>)
 
 IF (WIN32)

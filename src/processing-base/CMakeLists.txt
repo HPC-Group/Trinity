@@ -13,6 +13,7 @@ add_executable(processingbase
 				${PROCESSINGBASE_HEADER} 
 				${PROCESSINGBASE_SOURCE}
 				$<TARGET_OBJECTS:common>
+				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>)
 

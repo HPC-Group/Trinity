@@ -4,35 +4,30 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/base/StringTools.h"
 
-#include "common/Commands.h"
-#include "common/ISerialObjectFactory.h"
+#include "commands/ISerialObjectFactory.h"
 
 #include "DummyRenderer.h"
 #include "RenderSession.h"
 
 using namespace trinity::processing;
+using namespace trinity::commands;
 using namespace trinity::common;
 
-int RenderSession::m_basePort = 5990; // config base port for renderer here
-unsigned int RenderSession::m_nextSid = 1; // sid 0 is considered invalid / dummy
 
-
-
-RenderSession::RenderSession(const VclType& rendererType,
+RenderSession::RenderSession(std::unique_ptr<commands::ICommandFactory> factory,
+                             const VclType& rendererType,
                              const StreamingParams& params,
                              const std::string& protocol,
-                             std::unique_ptr<IOSessionPrx> ioSession) :
-m_sid(m_nextSid++),
-m_controlPort(m_basePort++),
+                             std::unique_ptr<IOSessionProxy> ioSession) :
+common::ISession(protocol, std::move(factory)),
 m_visPort(m_basePort++),
-m_controlEndpoint(protocol, "localhost", std::to_string(m_controlPort)),
 m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort)),
-            std::make_shared<VisStream>(params))
+            std::make_shared<common::VisStream>(params))
 {
     ioSession->connect();
     m_renderer = createRenderer(rendererType, params, std::move(ioSession));
-    m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
     m_visSender.startStreaming();
+    LINFO("(p) render session started streaming");
 }
 
 RenderSession::~RenderSession() {
@@ -42,13 +37,14 @@ RenderSession::~RenderSession() {
 
 
 
-std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& rendererType,
-                                                         const StreamingParams& params,
-                                                         std::unique_ptr<IOSessionPrx> ioSession) {
+std::unique_ptr<IRenderer>
+RenderSession::createRenderer(const VclType& rendererType,
+                              const StreamingParams& params,
+                              std::unique_ptr<IOSessionProxy> ioSession) {
     switch (rendererType) {
         case VclType::DummyRenderer: {
 
-            std::shared_ptr<VisStream> stream = std::make_shared<VisStream>(params);
+            std::shared_ptr<common::VisStream> stream = std::make_shared<VisStream>(params);
             return std::unique_ptr<IRenderer>(new DummyRenderer(stream, std::move(ioSession)));
             break;
         }
@@ -64,14 +60,6 @@ std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& renderer
 }
 
 
-unsigned int RenderSession::getSid() const {
-    return m_sid;
-}
-
-int RenderSession::getControlPort() const {
-    return m_controlPort;
-}
-
 int RenderSession::getVisPort() const {
     return m_visPort;
 }
@@ -80,50 +68,3 @@ IRenderer& RenderSession::getRenderer() {
     return *m_renderer;
 }
 
-
-void RenderSession::run() {
-    
-    LINFO("(p) render session control at \"" + m_controlEndpoint.toString() + "\"");
-    
-    try {
-        while(!m_controlConnection && !isInterrupted()) {
-            m_controlConnection = m_acceptor->accept(); // auto-timeout
-        }
-        
-    } catch (const mocca::net::NetworkError& err) {
-        LERROR("(p) cannot bind the render session: " << err.what());
-        return;
-    }
-    
-    while(!isInterrupted()) {
-        try {
-            auto bytepacket = m_controlConnection->receive();
-            if(!bytepacket.isEmpty()) {
-                std::string cmd = bytepacket.read(bytepacket.size());
-                LINFO("(p) command arrived at renderer: " << cmd);  // print cmd
-                
-                std::stringstream requestStream, replyStream;
-                requestStream << cmd;
-
-                auto handler = m_factory.createHandler(requestStream);
-                handler->execute();
-                auto reply = handler->getReturnValue();
-                if(reply != nullptr) {  // not tested yet
-                    auto serialReply = ISerialObjectFactory::create();
-                    reply->serialize(*serialReply);
-                    serialReply->writeTo(replyStream);
-                    LINFO("(p) reply: " << replyStream.str());
-                    m_controlConnection->send(std::move(mocca::ByteArray()
-                                                        << replyStream.str()));
-                }
-                
-                
-            }
-        } catch (const mocca::net::NetworkError& err) {
-            LWARNING("(p) interrupting because remote session has gone: " << err.what());
-            interrupt();
-        }
-
-    }
-
-}

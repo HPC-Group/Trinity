@@ -1,14 +1,13 @@
 #include "IOCommandFactory.h"
-#include "IONodeCmdsHdl.h"
+#include "IOCommandsHandler.h"
 
-#include "common/ISerialObjectFactory.h"
-#include "common/IONodeCmds.h"
-#include "common/SimpleIOCmds.h"
-#include "SimpleIOCmdsHdl.h"
+#include "commands/ISerialObjectFactory.h"
+#include "commands/IOCommands.h"
+#include "IOCommandsHandler.h"
 
 #include "mocca/base/Error.h"
 
-using namespace trinity::common;
+using namespace trinity::commands;
 using namespace trinity::io;
 
 std::unique_ptr<ICommandHandler>
