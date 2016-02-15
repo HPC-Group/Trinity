@@ -8,7 +8,7 @@ using namespace trinity::common;
 using namespace trinity::commands;
 
 #include <iostream>
-InitProcessingSessionHdl::InitProcessingSessionHdl(commands::InitProcessingSessionCmd cmd) :
+InitProcessingSessionHdl::InitProcessingSessionHdl(InitProcessingSessionCmd cmd) :
 m_cmd(cmd),
 m_reply(cmd.getSid(), cmd.getRid()),
 m_ioProxy(mocca::net::Endpoint(cmd.getStringifiedEndpoint()))
@@ -28,11 +28,11 @@ void InitProcessingSessionHdl::execute() {
     // create an IO node proxy and pass it to the renderer
     auto ioSessionProxy = m_ioProxy.initIO(m_cmd.getFileId());
     
-    std::unique_ptr<commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    std::unique_ptr<ICommandFactory> factory(new ProcessingCommandFactory);
     
     std::unique_ptr<RenderSession>
     session(new RenderSession(std::move(factory),
-                              commands::VclType::DummyRenderer,
+                              VclType::DummyRenderer,
                               m_cmd.getParams(),
                               m_cmd.getProtocol(),
                               std::move(ioSessionProxy)));

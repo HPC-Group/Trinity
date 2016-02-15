@@ -14,7 +14,7 @@ using namespace trinity::commands;
 using namespace trinity::common;
 
 
-RenderSession::RenderSession(std::unique_ptr<commands::ICommandFactory> factory,
+RenderSession::RenderSession(std::unique_ptr<ICommandFactory> factory,
                              const VclType& rendererType,
                              const StreamingParams& params,
                              const std::string& protocol,
