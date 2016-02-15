@@ -4,7 +4,7 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/base/StringTools.h"
 
-#include "Isession.h"
+#include "ISession.h"
 
 #include "commands/IserialObjectFactory.h"
 //#include "IserialObjectFactory.h"
