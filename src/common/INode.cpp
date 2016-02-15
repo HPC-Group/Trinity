@@ -8,6 +8,7 @@
 #include "commands/Vcl.h"
 #include "NetConfig.h"
 #include "commands/ISerialObjectFactory.h"
+#include "commands/ICommandFactory.h"
 
 #include "INode.h"
 
