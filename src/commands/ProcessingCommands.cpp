@@ -51,6 +51,7 @@ VclType InitProcessingSessionCmd::getType() const {
     return VclType::InitRenderer;
 }
 
+VclType InitProcessingSessionCmd::getRenderType() const { return m_renderType; }
 
 void InitProcessingSessionCmd::serialize(ISerialObject& serial) const  {
 

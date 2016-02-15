@@ -1,1 +1,0 @@
-ADD_LIBRARY(jsoncpp OBJECT "jsoncpp.cpp")

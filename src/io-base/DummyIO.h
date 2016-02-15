@@ -13,8 +13,7 @@ namespace io {
     public:
         
         // testing purpose
-        int getLODLevelCount()  {
-            return 42; }
+        virtual int getLODLevelCount()  { return 42; }
 };
 }
 }

@@ -1,0 +1,207 @@
+#include "gtest/gtest.h"
+
+#include "mocca/net/ConnectionFactorySelector.h"
+#include "mocca/net/ConnectionAggregator.h"
+#include "mocca/base/ContainerTools.h"
+#include "mocca/net/Endpoint.h"
+
+#include "common/INode.h"
+#include "common/IONodeProxy.h"
+
+#include "processing-base/ProcessingCommandFactory.h"
+#include "frontend-base/ProcessingNodeProxy.h"
+#include "io-base/IOCommandFactory.h"
+
+using namespace mocca::net;
+using namespace trinity::processing;
+using namespace trinity::io;
+using namespace trinity::frontend;
+using namespace trinity::common;
+using namespace trinity::commands;
+
+class NodeTest : public ::testing::Test {
+protected:
+    
+    NodeTest() {
+        ConnectionFactorySelector::addDefaultFactories();
+    }
+
+    virtual ~NodeTest() {
+        ConnectionFactorySelector::removeAll();
+    }
+};
+
+std::unique_ptr<INode> createNode(std::unique_ptr<ICommandFactory> factory, const std::string& port) {
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", port);
+    
+    std::vector<std::unique_ptr<IMessageConnectionAcceptor>> acceptors =
+    mocca::makeUniquePtrVec<IMessageConnectionAcceptor> (ConnectionFactorySelector::bind(endpoint));
+    
+    
+    std::unique_ptr<ConnectionAggregator> aggregator
+    (new ConnectionAggregator(std::move(acceptors),
+                              ConnectionAggregator::DisconnectStrategy::RemoveConnection));
+    return std::unique_ptr<INode>(new INode(std::move(aggregator), std::move(factory)));
+}
+
+TEST_F(NodeTest, StartProcessingNodeTest) {
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    auto node = createNode(std::move(factory), "5678");
+    ASSERT_NO_THROW(node->start());
+    ASSERT_NO_THROW(node->interrupt());
+}
+
+TEST_F(NodeTest, StartIONodeTest) {
+
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    auto node = createNode(std::move(factory), "5678");
+    ASSERT_NO_THROW(node->start());
+    ASSERT_NO_THROW(node->interrupt());
+}
+
+TEST_F(NodeTest, ConnectToProcessingTest) {
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    auto processingNode = createNode(std::move(factory), "5678");
+    processingNode->start();
+    
+    
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
+    ProcessingNodeProxy proxy(endpoint);
+    ASSERT_TRUE(proxy.connect());
+    
+    processingNode->interrupt();
+}
+
+TEST_F(NodeTest, ConnectToIOTest) {
+    
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> ioFactory(new IOCommandFactory);
+    auto ioNode = createNode(std::move(ioFactory), "6678");
+    ioNode->start();
+    
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "6678");
+    IONodeProxy proxy(endpoint);
+    ASSERT_TRUE(proxy.connect());
+    
+    ioNode->interrupt();
+}
+
+
+
+TEST_F(NodeTest, InitDummyRendererTest) {
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    auto processingNode = createNode(std::move(factory), "5678");
+    processingNode->start();
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> ioFactory(new IOCommandFactory);
+    auto ioNode = createNode(std::move(ioFactory), "6678");
+    ioNode->start();
+    
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
+    Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "6678");
+    ProcessingNodeProxy proxy(endpoint);
+    proxy.connect();
+    
+    StreamingParams params(2048, 1000);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, 0, ioEndpoint, params);
+    ASSERT_TRUE(renderer->connect());
+    processingNode->interrupt();
+    ioNode->interrupt();
+}
+
+TEST_F(NodeTest, CallRemoteRendererWithoutConnectingTest) {
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    auto processingNode = createNode(std::move(factory), "5678");
+    processingNode->start();
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> ioFactory(new IOCommandFactory);
+    auto ioNode = createNode(std::move(ioFactory), "6678");
+    ioNode->start();
+    
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
+    Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "6678");
+    ProcessingNodeProxy proxy(endpoint);
+    proxy.connect();
+    
+    StreamingParams params(2048, 1000);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, 0, ioEndpoint, params);
+    ASSERT_THROW(renderer->setIsoValue(22), mocca::Error);
+    processingNode->interrupt();
+    ioNode->interrupt();
+}
+
+
+TEST_F(NodeTest, InitWrongRendererTest) {
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    auto processingNode = createNode(std::move(factory), "5678");
+    processingNode->start();
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> ioFactory(new IOCommandFactory);
+    auto ioNode = createNode(std::move(ioFactory), "6678");
+    ioNode->start();
+    
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
+    Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "6678");
+    ProcessingNodeProxy proxy(endpoint);
+    proxy.connect();
+    
+    StreamingParams params(2048, 1000);
+    ASSERT_THROW(proxy.initRenderer(VclType::FractalIO, 0, ioEndpoint, params), mocca::Error);
+    
+    processingNode->interrupt();
+    ioNode->interrupt();
+}
+
+
+TEST_F(NodeTest, SetIsovalueOnGridLeaperTest) {
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    auto processingNode = createNode(std::move(factory), "5678");
+    processingNode->start();
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> ioFactory(new IOCommandFactory);
+    auto ioNode = createNode(std::move(ioFactory), "6678");
+    ioNode->start();
+    
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
+    Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "6678");
+    ProcessingNodeProxy proxy(endpoint);
+    proxy.connect();
+    
+    StreamingParams params(2048, 1000);
+    auto renderer = proxy.initRenderer(VclType::GridLeaper, 0, ioEndpoint, params);
+    renderer->connect();
+    renderer->setIsoValue(123);
+    
+    processingNode->interrupt();
+    ioNode->interrupt();
+}
+
+TEST_F(NodeTest, CallLodFromDummyRendererTest) {
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
+    auto processingNode = createNode(std::move(factory), "5678");
+    processingNode->start();
+    
+    std::unique_ptr<trinity::commands::ICommandFactory> ioFactory(new IOCommandFactory);
+    auto ioNode = createNode(std::move(ioFactory), "6678");
+    ioNode->start();
+    
+    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
+    Endpoint ioEndpoint (ConnectionFactorySelector::loopback(), "localhost", "6678");
+    ProcessingNodeProxy proxy(endpoint);
+    proxy.connect();
+    
+    StreamingParams params(2048, 1000);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, 24, ioEndpoint, params);
+    renderer->connect();
+    renderer->setIsoValue(123);
+    
+    processingNode->interrupt();
+    ioNode->interrupt();
+}

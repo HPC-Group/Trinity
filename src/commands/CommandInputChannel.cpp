@@ -33,6 +33,9 @@ bool CommandInputChannel::connect() {
 
 void CommandInputChannel::sendCommand(const ICommand& cmd) {
     
+    if(!m_mainChannel)
+        throw mocca::Error("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
+    
     auto serialRequest = ISerialObjectFactory::create();
     std::stringstream requestStream;
     cmd.serialize(*serialRequest);
@@ -53,7 +56,7 @@ std::unique_ptr<ISerialObject> CommandInputChannel::getReply(const std::chrono::
     auto byteArray = m_mainChannel->receive(ms);
     
     if(byteArray.isEmpty()) {
-        throw mocca::Error("no reply arrived", __FILE__, __LINE__);
+        throw mocca::Error("(chn) no reply arrived", __FILE__, __LINE__);
     }
     
     // the reply is of type ReplyInitRendererCmd

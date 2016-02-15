@@ -3,6 +3,10 @@
 #include <IOManager.h>
 #include <FractalIO.h>
 
+/**
+ OLD FILE - use it only as an inspiration
+ */
+
 namespace Trinity {
   namespace IO {
     

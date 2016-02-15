@@ -1,6 +1,7 @@
 #include "FractalIO.h"
 #include "mocca/base/Error.h"
 
+/*
 using namespace Core::Math;
 
 namespace Trinity {
@@ -171,3 +172,4 @@ bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const 
 }
 }
 }
+*/

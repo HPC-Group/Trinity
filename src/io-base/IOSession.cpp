@@ -8,6 +8,7 @@
 #include "commands/ISerialObjectFactory.h"
 
 #include "DummyIO.h"
+#include "fractal/FractalIO.h"
 #include "IOSession.h"
 
 using namespace trinity::io;
@@ -28,16 +29,16 @@ IOSession::~IOSession() {}
 
 
 
-std::unique_ptr<trinity::common::IIO> IOSession::createIO(int fileId, const VclType& type) {
-    switch (type) {
-        case VclType::DummyIO: {
+std::unique_ptr<trinity::common::IIO> IOSession::createIO(int fileId) {
+    switch (fileId) {
+        case 0: {  // Dummy File
             
             return std::unique_ptr<DummyIO>(new DummyIO());
             break;
         }
             
-        case VclType::FractalIO:
-            throw mocca::Error("fractals not supported yet", __FILE__, __LINE__);
+        case 24:  // Fractal File
+            return std::unique_ptr<FractalIO>(new FractalIO());
             break;
             
         default:

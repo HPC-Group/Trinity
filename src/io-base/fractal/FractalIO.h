@@ -1,13 +1,27 @@
 #pragma once
 
-#include "IOInterface.h"
+#include "mocca/log/LogManager.h"
+#include "common/IIO.h"
 #include "Mandelbulb.h"
 
-namespace Trinity {
-namespace IO {
+/**
+ OLD FILE - modified to fit the IIO
+ */
+
+namespace trinity {
+namespace io {
         
-class FractalIO : public IOInterface {
+class FractalIO : public common::IIO {
 public:
+    
+    FractalIO() {
+        LINFO("(io) fractal io created");
+    }
+    // testing purpose
+    virtual int getLODLevelCount()  { return 44; }
+    
+    
+    /*
     FractalIO(uint64_t sx, uint64_t sy, uint64_t sz,
               uint64_t bx, uint64_t by, uint64_t bz);
     
@@ -44,6 +58,7 @@ private:
     Core::Math::Vec3ui64 m_brickSize;
     bool m_bFlat;
     Mandelbulb<uint8_t> m_mbGenerator;
+     */
     
 };
 }

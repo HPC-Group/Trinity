@@ -1,10 +1,20 @@
 #include "gtest/gtest.h"
 
 #include "mocca/net/ConnectionFactorySelector.h"
+#include "mocca/net/ConnectionAggregator.h"
 #include "mocca/base/ContainerTools.h"
+
+#include "commands/ProcessingCommands.h"
+#include "commands/ISerialObjectFactory.h"
+
+#include "common/INode.h"
 #include "common/ISession.h"
 
+#include "io-base/IOCommandFactory.h"
+#include "processing-base/ProcessingCommandFactory.h"
+
 using namespace trinity::common;
+using namespace trinity::commands;
 using namespace mocca::net;
 
 class CmdFactoryTest : public ::testing::Test {
@@ -20,11 +30,29 @@ protected:
     }
 };
 
-/*
 
 TEST_F(CmdFactoryTest, VCLCompleteTest) {
     ASSERT_NO_THROW(Vcl());
 }
+
+TEST_F(CmdFactoryTest, WrongStreamTest) {
+    trinity::processing::ProcessingCommandFactory factory;
+    std::stringstream s;
+    s << "this is not a command";
+    ASSERT_THROW(factory.createHandler(s), mocca::Error);
+}
+
+TEST_F(CmdFactoryTest, WrongCommandTest) {
+    trinity::io::IOCommandFactory factory;
+    StreamingParams params(2048, 1000);
+    InitProcessingSessionCmd cmd(1, 2, "loopback", VclType::DummyRenderer, 0, "tcp.Prefixed:loopback:5678", params);
+    auto obj = ISerialObjectFactory::create();
+    cmd.serialize(*obj);
+    std::stringstream s;
+    obj->writeTo(s);
+    ASSERT_THROW(factory.createHandler(s), mocca::Error);
+}
+
 
 TEST_F(CmdFactoryTest, RendererExecTest) {
     StreamingParams params(2048, 1000);
@@ -38,17 +66,18 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     (new ConnectionAggregator(std::move(acceptors),
                               ConnectionAggregator::DisconnectStrategy::RemoveConnection));
     
-    trinity::io::IONode node(std::move(aggregator));
+    std::unique_ptr<trinity::commands::ICommandFactory> factory(new trinity::io::IOCommandFactory);
+    trinity::common::INode node(std::move(aggregator), std::move(factory));
     node.start();
     
-    InitRendererCmd cmd(1, 2, "loopback", VclType::DummyRenderer, 0, endpoint.toString(), params);
+    InitProcessingSessionCmd cmd(1, 2, "loopback", VclType::DummyRenderer, 0, endpoint.toString(), params);
     auto obj = ISerialObjectFactory::create();
     cmd.serialize(*obj);
     std::stringstream s;
     obj->writeTo(s);
 
-    ProcessingCommandFactory factory;
-    auto handler = factory.createHandler(s);
+    trinity::processing::ProcessingCommandFactory f;
+    auto handler = f.createHandler(s);
     
     handler->execute();
     
@@ -56,12 +85,8 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     ASSERT_TRUE(rep != nullptr);
     
     ICommand* repPtr = rep.release();
-    ReplyInitRendererCmd* castedPtr = dynamic_cast<ReplyInitRendererCmd*>(repPtr);
+    ReplyInitProcessingSessionCmd* castedPtr = dynamic_cast<ReplyInitProcessingSessionCmd*>(repPtr);
     ASSERT_TRUE(castedPtr != nullptr);
     ASSERT_EQ(castedPtr->getType(), VclType::TrinityReturn);
     ASSERT_EQ(castedPtr->getVisPort() - castedPtr->getControlPort(), 1);
-    
-    // todo: execute, get return value
-    
 }
-*/

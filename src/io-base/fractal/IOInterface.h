@@ -5,6 +5,13 @@
 #include "silverbullet/math/MinMaxBlock.h"
 #include "silverbullet/dataio/base/Brick.h"
 
+
+/**
+ OLD FILE - use it only as an inspiration
+ the new IO interface is in common/IIO.h
+ */
+
+
 using namespace Tuvok;
 namespace Trinity {
   namespace IO {

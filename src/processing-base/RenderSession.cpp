@@ -7,6 +7,7 @@
 #include "commands/ISerialObjectFactory.h"
 
 #include "DummyRenderer.h"
+#include "gridleaper/GridLeaper.h"
 #include "RenderSession.h"
 
 using namespace trinity::processing;
@@ -36,21 +37,20 @@ RenderSession::~RenderSession() {
 }
 
 
-
 std::unique_ptr<IRenderer>
 RenderSession::createRenderer(const VclType& rendererType,
                               const StreamingParams& params,
                               std::unique_ptr<IOSessionProxy> ioSession) {
+    
+    std::shared_ptr<common::VisStream> stream = std::make_shared<VisStream>(params);
     switch (rendererType) {
         case VclType::DummyRenderer: {
-
-            std::shared_ptr<common::VisStream> stream = std::make_shared<VisStream>(params);
             return std::unique_ptr<IRenderer>(new DummyRenderer(stream, std::move(ioSession)));
             break;
         }
             
         case VclType::GridLeaper:
-            throw mocca::Error("grid leaper not supported yet", __FILE__, __LINE__);
+            return std::unique_ptr<IRenderer>(new GridLeaper(stream, std::move(ioSession)));
             break;
             
         default:

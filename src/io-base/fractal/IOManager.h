@@ -2,6 +2,11 @@
 
 #include <stdexcept>
 
+/**
+ OLD FILE - use it only as an inspiration
+ the new "manager" is available in common/IONodeProxy.h
+ */
+
 namespace Trinity {
   namespace IO {
     

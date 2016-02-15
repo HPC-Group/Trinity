@@ -1,6 +1,7 @@
 #pragma once
 #include "commands/ICommandHandler.h"
 #include "commands/ProcessingCommands.h"
+#include "commands/ErrorCommands.h"
 #include "common/IONodeProxy.h"
 
 namespace trinity {
@@ -18,6 +19,7 @@ public:
 private:
     commands::InitProcessingSessionCmd m_cmd;
     commands::ReplyInitProcessingSessionCmd m_reply;
+    std::unique_ptr<commands::ErrorCmd> m_errorReply;
     common::IONodeProxy m_ioProxy;
 };
     

@@ -31,7 +31,7 @@ public:
 private:
     std::unique_ptr<common::IIO> m_io;
     std::unique_ptr<common::IIO>
-    createIO(int fileId, const commands::VclType& ioType = commands::VclType::DummyIO);
+    createIO(int fileId);
 };
 }
 }

@@ -39,6 +39,7 @@ public:
     const std::string& getProtocol() const;
     const std::string& getStringifiedEndpoint() const;
     int getFileId() const;
+    VclType getRenderType() const;
     const StreamingParams& getParams() const;
     
     virtual void serialize(ISerialObject& serial) const;
