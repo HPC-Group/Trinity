@@ -5,8 +5,8 @@
 #include "mocca/base/StringTools.h"
 
 #include "ISession.h"
+#include "commands/ISerialObjectFactory.h"
 
-#include "commands/IserialObjectFactory.h"
 //#include "IserialObjectFactory.h"
 
 using namespace trinity::common;
