@@ -29,6 +29,9 @@ enum class VclType {
     ListFiles,
     InitIOSession,
     StreamingParams,
+    IOData,
+    TrinityFile,
+    TrinityDirectory,
     First = InitRenderer,
     Last = StreamingParams,
 };
@@ -68,6 +71,9 @@ public:
         m_cmdMap.insert("LOD", VclType::GetLODLevelCount);
         m_cmdMap.insert("DIO", VclType::DummyIO);
         m_cmdMap.insert("FIO", VclType::FractalIO);
+        m_cmdMap.insert("DIR", VclType::TrinityDirectory);
+        m_cmdMap.insert("FIL", VclType::TrinityFile);
+        m_cmdMap.insert("IOD", VclType::IOData);
         
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));

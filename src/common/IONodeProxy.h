@@ -13,7 +13,11 @@ class IONodeProxy : public common::IProxy {
     
 public:
     IONodeProxy(const mocca::net::Endpoint& ep) : common::IProxy(ep) {}
+    
     std::unique_ptr<IOSessionProxy> initIO(int fileId);
+    
+    // list data goes here
+    
 };
 }
 }

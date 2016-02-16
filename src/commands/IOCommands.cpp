@@ -160,3 +160,36 @@ void ReplyGetLODLevelCountCmd::deserialize(ISerialObject& serial) {
 
 int ReplyGetLODLevelCountCmd::getLODLevelCount() const { return m_lodCount; }
 void ReplyGetLODLevelCountCmd::setLODLevelCount(int lod) { m_lodCount = lod; }
+
+
+IOData::IOData(const std::string& name, int fileId, const VclType& dataType) :
+m_name(name), m_fileId(fileId), m_dataType(dataType) {
+    
+}
+
+VclType IOData::getType() const { return VclType::IOData; }
+
+
+std::string IOData::getName() const { return m_name; }
+int IOData::getFileId() const { return m_fileId; }
+VclType IOData::getDataType() const { return m_dataType; }
+
+
+
+void IOData::serialize(ISerialObject& serial) const {
+    
+    serial.append("name", m_name);
+    serial.append("fileid", m_fileId);
+    Vcl vcl;
+    serial.append("datatype", vcl.toString(m_dataType));
+}
+
+void IOData::deserialize(ISerialObject& serial) {
+    
+    serial.append("name", m_name);
+    m_name = serial.getString("name");
+    serial.append("fileid", m_fileId);
+    m_fileId = serial.getInt("fileid");
+    Vcl vcl;
+    m_dataType = vcl.toType(serial.getString("datatype"));
+}

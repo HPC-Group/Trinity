@@ -84,5 +84,29 @@ public:
 private:
     int m_lodCount;
 };
+    
+    
+class IOData : public ISerializable {
+    
+public:
+
+    IOData(const std::string& name, int fileId, const VclType& dataType);
+    
+    virtual VclType getType() const;
+    virtual void serialize(ISerialObject& serial) const;
+    virtual void deserialize(ISerialObject& serial);
+    
+    std::string getName() const;
+    int getFileId() const;
+    VclType getDataType() const;
+    
+private:
+    std::string m_name;
+    int m_fileId;
+    VclType m_dataType;
+};
+   
+    
+
 }
 }
