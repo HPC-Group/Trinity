@@ -108,8 +108,8 @@ TEST_F(NodeTest, InitDummyRendererTest) {
     StreamingParams params(2048, 1000);
     auto renderer = proxy.initRenderer(VclType::DummyRenderer, 0, ioEndpoint, params);
     ASSERT_TRUE(renderer->connect());
-    processingNode->interrupt();
-    ioNode->interrupt();
+    processingNode->interrupt(); // dmc: join
+    ioNode->interrupt(); // dmc: join (analogously for all the other test cases)
 }
 
 TEST_F(NodeTest, CallRemoteRendererWithoutConnectingTest) {

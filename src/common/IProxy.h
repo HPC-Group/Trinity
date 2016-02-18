@@ -10,6 +10,7 @@
 namespace trinity {
 namespace common {
     
+// dmc: does IProxy really define a genuine interface? is it really used in a rumtime polymorphic way?
 class IProxy {
     
 public:

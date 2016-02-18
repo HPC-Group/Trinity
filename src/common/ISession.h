@@ -15,6 +15,8 @@
 namespace trinity {
 namespace common {
 
+// dmc: are subclasses of ISession really used in a runtime polymorphic way, or do they actually just inherit the implementation?
+
 class ISession : public mocca::Runnable {
     
 public:
@@ -47,7 +49,10 @@ protected:
         
 // todo: one day, we might want to release ids
 };
-    
+
+// dmc: as far as I can see, sessions in the session manager are not used in a polymorphic way,
+// i.e., they are dynamic_casted to the right type. why not have two session managers (for
+// io-sessions and renderer-sessions) and avoid code duplication by templateizing the manager?
 class SessionManager {
     
 public:

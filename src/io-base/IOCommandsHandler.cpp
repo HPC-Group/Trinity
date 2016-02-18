@@ -42,7 +42,7 @@ GetLODLevelCountHdl::~GetLODLevelCountHdl() {}
 void GetLODLevelCountHdl::execute() {
     
     auto& session = common::SessionManagerSingleton::instance()->getSession(m_sid);
-    IOSession* ioSession = dynamic_cast<IOSession*>(&session);
+    IOSession* ioSession = dynamic_cast<IOSession*>(&session); // dmc: see comments in ISession.h
     auto& io = ioSession->getIO();
     m_reply.setLODLevelCount(io.getLODLevelCount());
 }

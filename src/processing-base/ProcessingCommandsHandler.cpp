@@ -75,7 +75,7 @@ SetIsoValueHdl::~SetIsoValueHdl() {}
 void SetIsoValueHdl::execute() {
     
     auto& session = SessionManagerSingleton::instance()->getSession(m_sid);
-    RenderSession* renderSession = dynamic_cast<RenderSession*>(&session);
+    RenderSession* renderSession = dynamic_cast<RenderSession*>(&session); // dmc: see comments in ISession.h
     auto& renderer = renderSession->getRenderer();
     renderer.setIsoValue(m_isoValue);
     

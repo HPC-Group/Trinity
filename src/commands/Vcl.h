@@ -43,7 +43,21 @@ VclType operator*(VclType c);
 VclType begin(VclType r);
 VclType end(VclType r);
 
-    
+
+// dmc: this class is immutable, isn't it? wouldn't it be more cleaner and more efficient to access it statically, i.e. something like this?
+//class Vcl {
+//public:
+//    const Vcl& mapper() const {
+//        static Vcl instance;
+//        return instance;
+//    }
+//
+//private:
+//    Vcl() {
+//        // init map
+//    }
+//}
+
 // use this class to create and parse trinity commands
 class Vcl {
 public:

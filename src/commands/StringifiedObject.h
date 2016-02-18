@@ -15,7 +15,8 @@ public:
     StringifiedObject(){}
     virtual ~StringifiedObject(){}
     
-    
+    // dmc: I'd suggest this way of declaring methods in interface implementations
+	// void append(const std::string& key, float value) override;
     virtual void append(const std::string& key, float value);
     virtual void append(const std::string& key, int value);
     virtual void append(const std::string& key, const std::string& value);
@@ -30,7 +31,7 @@ public:
     
 private:
     std::stringstream m_stream;
-    Vcl m_vcl;
+    Vcl m_vcl; //dmc: multiple copies of immutable object? see Vcl.h
 };
 }
 }

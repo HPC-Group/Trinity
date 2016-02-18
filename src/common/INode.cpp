@@ -32,6 +32,10 @@ m_aggregator(std::move(aggregator))
 {
 }
 
+// dmc: question: does a node (io or processing) ever receive a command other than InitIO or
+// InitProcessing? all other commands seem to presuppose a session, so maybe a node that can accept
+// all kinds of commands is overgeneralized? or maybe there are two distinct types of commands:
+// node-commands and session-commands?
 void INode::run() {
     LINFO("(node) listening... ");
     
