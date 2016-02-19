@@ -10,7 +10,6 @@ namespace commands {
 class ISerializable
 {
 public:
-    ISerializable(){}
     virtual ~ISerializable(){}
     
     virtual VclType getType() const = 0;

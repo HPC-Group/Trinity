@@ -1,5 +1,7 @@
 #include "StringifiedObject.h"
+
 #include "ISerializable.h"
+
 #include <iostream>
 
 using namespace trinity::commands;
@@ -16,9 +18,8 @@ void StringifiedObject::readFrom(std::istream& stream) {
     ss >> typestring;
     m_type = Vcl::instance().toType(typestring);
     m_stream << ss.str();
-    m_stream >> typestring;  // getting rid of typestring since we dont need it
+    m_stream >> typestring; // getting rid of typestring since we dont need it
 }
-
 
 void StringifiedObject::append(const std::string& key, float value) {
     m_stream << value << " ";
@@ -50,6 +51,18 @@ std::string StringifiedObject::getString(const std::string& key) {
     return x;
 }
 
-void StringifiedObject::append(const std::string& key, const ISerializable* obj) {
-    append(key, Vcl::instance().toString(obj->getType()));
+void StringifiedObject::getSerializable(const std::string& key, ISerializable& obj) {
+    std::string subclassType = getString(key);
+    std::string expectedSubclassType = Vcl::instance().toString(obj.getType());
+    if (subclassType != expectedSubclassType) {
+        throw mocca::Error("subclass type is incorrect (is " + subclassType + ", should be " +
+                               expectedSubclassType + ")",
+                           __FILE__, __LINE__);
+    }
+    obj.deserialize(*this);
+}
+
+void StringifiedObject::append(const std::string& key, const ISerializable& obj) {
+    append(key, Vcl::instance().toString(obj.getType()));
+    obj.serialize(*this);
 }

@@ -12,19 +12,18 @@ namespace commands {
 class StringifiedObject : public ISerialObject
 {
 public:
-    // dmc: I'd suggest this way of declaring methods in interface implementations
-	// void append(const std::string& key, float value) override;
-    virtual void append(const std::string& key, float value);
-    virtual void append(const std::string& key, int value);
-    virtual void append(const std::string& key, const std::string& value);
-    virtual void append(const std::string& key, const ISerializable* obj);
+    void append(const std::string& key, float value) override;
+    void append(const std::string& key, int value) override;
+    void append(const std::string& key, const std::string& value) override;
+    void append(const std::string& key, const ISerializable& obj) override;
     
-    virtual float getFloat(const std::string& key);
-    virtual int getInt(const std::string& key);
-    virtual std::string getString(const std::string& key);
+    float getFloat(const std::string& key) override;
+    int getInt(const std::string& key) override;
+    std::string getString(const std::string& key) override;
+    void getSerializable(const std::string& key, ISerializable& obj) override;
     
-    virtual void writeTo(std::ostream& stream);
-    virtual void readFrom(std::istream& stream);
+    void writeTo(std::ostream& stream) override;
+    void readFrom(std::istream& stream) override;
     
 private:
     std::stringstream m_stream;

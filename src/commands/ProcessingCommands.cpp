@@ -63,25 +63,18 @@ void InitProcessingSessionCmd::serialize(ISerialObject& serial) const  {
     //serial.append("streamingparams", m_vcl.toString(m_streamingParams.getType()));
     //serial.append("streamingparams", m_streamingParams);
     //ISerializable* obj = static_cast<ISerializable*>(&m_streamingParams);
-    serial.append("streamingparams", &m_streamingParams);
-    
-    m_streamingParams.serialize(serial);
+    serial.append("streamingparams", m_streamingParams);
 }
 
 
 void InitProcessingSessionCmd::deserialize(ISerialObject& serial) {
-    
     ICommand::deserialize(serial);
     m_protocol = serial.getString("protocol");
     std::string la = serial.getString("rendertype");
     m_renderType = Vcl::instance().toType(la);
     m_fileId = serial.getInt("fileid");
     m_stringifiedEndpoint  = serial.getString("endpoint");
-    std::string subclassType = serial.getString("streamingparams");
-    if(subclassType != Vcl::instance().toString(m_streamingParams.getType())) {
-        throw mocca::Error("subclass type is not streamingparams", __FILE__, __LINE__);
-    }
-    m_streamingParams.deserialize(serial);
+    serial.getSerializable("streamingparams", m_streamingParams);
 }
 
 

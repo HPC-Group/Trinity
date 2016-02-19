@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+
 #include "commands/Vcl.h"
 #include "commands/StringifiedObject.h"
 #include "commands/ErrorCommands.h"

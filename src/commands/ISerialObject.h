@@ -17,11 +17,12 @@ public:
     virtual void append(const std::string& key, float value) = 0;
     virtual void append(const std::string& key, int value) = 0;
     virtual void append(const std::string& key, const std::string& value) = 0;
-    virtual void append(const std::string& key, const ISerializable* obj) = 0;
+    virtual void append(const std::string& key, const ISerializable& obj) = 0;
     
     virtual float getFloat(const std::string& key) = 0;
     virtual int getInt(const std::string& key) = 0;
     virtual std::string getString(const std::string& key) = 0;
+    virtual void getSerializable(const std::string& key, ISerializable& obj) = 0;
 
     // dmc: do we really need to be able to write to / read from streams? until now, a serial object
     // is always created from data read from a connection or used to create data that's sent through
