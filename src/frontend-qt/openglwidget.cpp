@@ -4,11 +4,11 @@
 
 #include "mocca/log/LogManager.h"
 
+
 OpenGLWidget::OpenGLWidget(QWidget *parent):
     QOpenGLWidget(parent),
     _width(255),
-    _height(255)
-{
+    _height(255) {
 
     for(int x = 0; x < _width;++x){
         for(int y = 0; y < _height;++y){
@@ -21,36 +21,33 @@ OpenGLWidget::OpenGLWidget(QWidget *parent):
 }
 
 
-OpenGLWidget::~OpenGLWidget()
-{
+OpenGLWidget::~OpenGLWidget() {
 
 }
 
- void OpenGLWidget::initializeGL()
- {
-     makeCurrent();
-     initializeOpenGLFunctions();
+void OpenGLWidget::initializeGL() {
+    makeCurrent();
+    initializeOpenGLFunctions();
+    std::string versionString = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    LINFO("OpenGL Version : "<< versionString);
+}
 
-     const char* versionString = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-     std::string t(versionString, 0, 17);
-     LINFO("OpenGL Version : "<< t);
- }
+void OpenGLWidget::paintGL() {
+glClearColor(0.0, 0.0, 0.0, 0.0);
 
- void OpenGLWidget::paintGL()
- {
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    /*
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+glOrtho(0, this->width(), 0, this->height(), 0, 1);
+glMatrixMode(GL_MODELVIEW);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, this->width(), 0, this->height(), 0, 1);
-    glMatrixMode(GL_MODELVIEW);
+glShadeModel(GL_FLAT);
+glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    glShadeModel(GL_FLAT);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+glViewport(0, 0, this->width(), this->height());
+glPixelZoom(this->width() / (double) _width, this->height() / (double) _height);
 
-    glViewport(0, 0, this->width(), this->height());
-    glPixelZoom(this->width() / (double) _width, this->height() / (double) _height);
-
-    glRasterPos2i(0,0);
-    glDrawPixels(_width,_height,GL_RGBA,GL_UNSIGNED_BYTE,&_imgdata[0]);
- }
+glRasterPos2i(0,0);
+glDrawPixels(_width,_height,GL_RGBA,GL_UNSIGNED_BYTE,&_imgdata[0]);
+    */
+}

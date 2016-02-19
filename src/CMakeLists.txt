@@ -14,9 +14,13 @@ add_subdirectory(common)
 add_subdirectory(silverbullet)
 add_subdirectory(io-base)
 add_subdirectory(frontend-base)
-add_subdirectory(frontend-qt)
+
 add_subdirectory(processing-base)
 
+option(TRINITY_BUILD_QT_FRONTEND "Build qt frontend for trinity" off)
+if (TRINITY_BUILD_QT_FRONTEND)
+    add_subdirectory(frontend-qt)
+endif()
 
 option(TRINITY_BUILD_TESTS "Build tests for trinity" on)
 if (TRINITY_BUILD_TESTS)
