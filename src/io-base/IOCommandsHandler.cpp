@@ -10,9 +10,6 @@ m_protocol(cmd.getProtocol()),
 m_fileId(cmd.getFileId())
 {}
 
-InitIOSessionHdl::~InitIOSessionHdl() {}
-
-
 void InitIOSessionHdl::execute() {
     
     std::unique_ptr<commands::ICommandFactory> factory(new IOCommandFactory);
@@ -35,9 +32,6 @@ GetLODLevelCountHdl::GetLODLevelCountHdl(GetLODLevelCountCmd cmd) :
 m_reply(cmd.getSid(), cmd.getRid()),
 m_sid(cmd.getSid())
 {}
-
-GetLODLevelCountHdl::~GetLODLevelCountHdl() {}
-
 
 void GetLODLevelCountHdl::execute() {
     

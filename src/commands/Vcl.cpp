@@ -22,7 +22,7 @@ void Vcl::assertCompleteLanguage() const {
     for(const auto& token : VclType()) {
         try {
             m_cmdMap.getBySecond(token);
-        } catch (const mocca::Error& err) {
+        } catch (const mocca::Error&) {
             throw mocca::Error("(common) no string entry for enum number "
                                + std::to_string((int)token), __FILE__, __LINE__);
         }

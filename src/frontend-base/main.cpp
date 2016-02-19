@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     trinity::commands::StreamingParams params(1024, 768);
     auto renderer = processingNode->initRenderer(trinity::commands::VclType::DummyRenderer,
                                                  fileId,
-                                                 endpointIO.toString(),
+                                                 endpointIO,
                                                  params);
     renderer->connect();
     

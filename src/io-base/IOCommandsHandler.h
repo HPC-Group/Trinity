@@ -12,7 +12,7 @@ public:
     virtual void execute();
     virtual std::unique_ptr<commands::ICommand> getReturnValue();
     InitIOSessionHdl(commands::InitIOSessionCmd cmd);
-    ~InitIOSessionHdl(); // dmc: not necessary (or = default)
+    ~InitIOSessionHdl() = default;
     
 private:
 
@@ -27,7 +27,7 @@ class GetLODLevelCountHdl : public commands::ICommandHandler {
 public:
     virtual void execute();
     GetLODLevelCountHdl(commands::GetLODLevelCountCmd cmd);
-    ~GetLODLevelCountHdl(); // dmc: not necessary (or = default)
+    ~GetLODLevelCountHdl() = default;
     
     virtual std::unique_ptr<commands::ICommand> getReturnValue();
     

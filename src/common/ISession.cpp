@@ -25,7 +25,7 @@ m_factory(std::move(factory))
         try {
             m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
             
-        } catch (const mocca::net::NetworkError& err) {
+        } catch (const mocca::net::NetworkError&) {
             LINFO("(session) cannot bind on port " << m_basePort <<", rebinding...");
             m_controlEndpoint.port = std::to_string(m_basePort++);
         }

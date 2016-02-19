@@ -10,8 +10,7 @@ namespace commands {
 class ICommandHandler {
     
 public:
-    // dmc: should have a virtual destructor
-    // ~ICommandHandler() {}
+    ~ICommandHandler() {}
     virtual void execute() = 0;
     virtual std::unique_ptr<ICommand> getReturnValue() { return nullptr; }
 };

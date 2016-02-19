@@ -93,7 +93,7 @@ public:
     float getIsoValue() const;
     
 private:
-    int m_isoValue;
+    float m_isoValue;
 };
     
 }
