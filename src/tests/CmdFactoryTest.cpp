@@ -32,7 +32,7 @@ protected:
 
 
 TEST_F(CmdFactoryTest, VCLCompleteTest) {
-    ASSERT_NO_THROW(Vcl());
+    ASSERT_NO_THROW(Vcl::instance());
 }
 
 TEST_F(CmdFactoryTest, WrongStreamTest) {

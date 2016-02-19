@@ -6,6 +6,12 @@ using namespace trinity::commands;
 
 namespace trinity {
 namespace commands {
+
+const Vcl& trinity::commands::Vcl::instance() {
+    static Vcl inst;
+    return inst;
+}
+
 VclType& operator++(VclType& x) {
     return x = (VclType)(std::underlying_type<VclType>::type(x) + 1);
 }
@@ -40,8 +46,9 @@ VclType Vcl::toType(const std::string& str) const {
     return m_cmdMap.getByFirst(str);
 }
 
-std::string Vcl::toString(const int errorCode) {
-    return m_errorCodeMap[errorCode];
+std::string Vcl::toString(const int errorCode) const {
+    auto it = m_errorCodeMap.find(errorCode);
+    return it->second;
 }
 
 

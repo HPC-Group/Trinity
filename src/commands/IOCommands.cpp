@@ -180,8 +180,7 @@ void IOData::serialize(ISerialObject& serial) const {
     
     serial.append("name", m_name);
     serial.append("fileid", m_fileId);
-    Vcl vcl;
-    serial.append("datatype", vcl.toString(m_dataType));
+    serial.append("datatype", Vcl::instance().toString(m_dataType));
 }
 
 void IOData::deserialize(ISerialObject& serial) {
@@ -190,6 +189,5 @@ void IOData::deserialize(ISerialObject& serial) {
     m_name = serial.getString("name");
     serial.append("fileid", m_fileId);
     m_fileId = serial.getInt("fileid");
-    Vcl vcl;
-    m_dataType = vcl.toType(serial.getString("datatype"));
+    m_dataType = Vcl::instance().toType(serial.getString("datatype"));
 }

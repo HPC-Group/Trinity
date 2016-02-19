@@ -62,6 +62,8 @@ VclType end(VclType r);
 class Vcl {
 public:
     
+    static const Vcl& instance();
+
     // throws Error if entry not found
     std::string toString(const VclType& t) const;
     
@@ -69,7 +71,9 @@ public:
     VclType toType(const std::string& str) const;
     
     // todo test
-    std::string toString(const int errorCode);
+    std::string toString(const int errorCode) const;
+
+private:
 
     // keep these synchronized with the VclType enums
     Vcl() {
@@ -95,7 +99,6 @@ public:
         assertCompleteLanguage();
     }
     
-private:
     mocca::BidirectionalMap<std::string, VclType> m_cmdMap;
     std::map<int, std::string> m_errorCodeMap;
     void assertCompleteLanguage() const;

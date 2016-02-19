@@ -30,7 +30,6 @@ public:
 protected:
     int m_sid;
     int m_rid;
-    Vcl m_vcl;
 };
 }
 }

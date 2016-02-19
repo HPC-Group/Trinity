@@ -31,6 +31,6 @@ ProcessingCommandFactory::createHandler(std::istream& stream) {
         }
             
         default:
-            throw mocca::Error("command unknown: " + (Vcl().toString(type)), __FILE__, __LINE__);
+            throw mocca::Error("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }
 }

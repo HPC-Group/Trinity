@@ -28,7 +28,6 @@ public:
     // processing has a "joinSession(sid) which returns connection parameters
  
 private:
-    commands::Vcl m_vcl;
     std::unique_ptr<commands::ICommandFactory> m_factory;
     
     void run() override;

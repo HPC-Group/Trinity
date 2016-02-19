@@ -29,7 +29,7 @@ void ErrorCmd::deserialize(ISerialObject& serial) {
 
 
 const std::string ErrorCmd::printError() {
-    return m_vcl.toString(m_errorCode);
+    return Vcl::instance().toString(m_errorCode);
 }
 
 int ErrorCmd::getErrorCode() const {

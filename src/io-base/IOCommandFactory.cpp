@@ -39,12 +39,12 @@ IOCommandFactory::createHandler(std::istream& stream) {
             SetIsoValueCmd cmd(*serialRequest);
             return  std::unique_ptr<SetIsoValueHdl> (new SetIsoValueHdl(cmd));
              */
-            throw mocca::Error("command not implemented: " + (Vcl().toString(type)), __FILE__, __LINE__);
+            throw mocca::Error("command not implemented: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
             break;
         }
             
             
         default:
-            throw mocca::Error("command unknown: " + (Vcl().toString(type)), __FILE__, __LINE__);
+            throw mocca::Error("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }
 }

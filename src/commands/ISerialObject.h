@@ -12,6 +12,7 @@ class ISerializable;
 class ISerialObject
 {
 public:
+    virtual ~ISerialObject() {}
 
     virtual void append(const std::string& key, float value) = 0;
     virtual void append(const std::string& key, int value) = 0;
@@ -37,7 +38,6 @@ public:
     
 protected:
     VclType m_type;
-    Vcl m_vcl;
 };
 }
 }

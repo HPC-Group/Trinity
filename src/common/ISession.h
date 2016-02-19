@@ -40,7 +40,6 @@ protected:
     mocca::net::Endpoint                                    m_controlEndpoint;
     std::unique_ptr<mocca::net::IMessageConnection>         m_controlConnection;
         
-    commands::Vcl m_vcl;
     std::unique_ptr<commands::ICommandFactory> m_factory;
     
     void run() override;

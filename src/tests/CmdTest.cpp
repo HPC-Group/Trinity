@@ -57,7 +57,6 @@ TEST_F(CmdTest, InitRendererCmdTest) {
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
     InitProcessingSessionCmd newCmd(*obj2);
-    Vcl vcl;
     ASSERT_EQ(newCmd.getType(), cmd.getType());
     auto obj3 = ISerialObjectFactory::create();
     newCmd.serialize(*obj3);
@@ -76,7 +75,6 @@ TEST_F(CmdTest, InitIOCmdTest) {
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
     InitIOSessionCmd newCmd(*obj2);
-    Vcl vcl;
     ASSERT_EQ(newCmd.getType(), cmd.getType());
     auto obj3 = ISerialObjectFactory::create();
     newCmd.serialize(*obj3);
@@ -102,7 +100,6 @@ TEST_F(CmdTest, InitProcessingReplyTest) {
     obj2->readFrom(s);
     ReplyInitProcessingSessionCmd newCmd(*obj2);
     
-    Vcl vcl;
     ASSERT_EQ(newCmd.getType(), cmd.getType());
     ASSERT_EQ(8080, newCmd.getControlPort());
     ASSERT_EQ(8090, newCmd.getVisPort());
@@ -123,7 +120,6 @@ TEST_F(CmdTest, InitIOReplyTest) {
     obj2->readFrom(s);
     ReplyInitIOSessionCmd newCmd(*obj2);
     
-    Vcl vcl;
     ASSERT_EQ(newCmd.getType(), cmd.getType());
     ASSERT_EQ(8080, newCmd.getControlPort());
     ASSERT_EQ(cmd.getSid(), newCmd.getSid());
@@ -141,7 +137,6 @@ TEST_F(CmdTest, GetLodCountTest) {
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
     GetLODLevelCountCmd newCmd(*obj2);
-    Vcl vcl;
     ASSERT_EQ(newCmd.getType(), cmd.getType());
     ASSERT_EQ(cmd.getSid(), newCmd.getSid());
     ASSERT_EQ(cmd.getRid(), newCmd.getRid());
@@ -157,7 +152,6 @@ TEST_F(CmdTest, GetLodCountReplyTest) {
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
     ReplyGetLODLevelCountCmd newCmd(*obj2);
-    Vcl vcl;
     ASSERT_EQ(newCmd.getType(), cmd.getType());
     ASSERT_EQ(cmd.getSid(), newCmd.getSid());
     ASSERT_EQ(cmd.getRid(), newCmd.getRid());

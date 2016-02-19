@@ -24,8 +24,6 @@ public:
 protected:
     commands::CommandInputChannel m_inputChannel;
     commands::IDGenerator m_ridGen;
-    commands::Vcl m_vcl;
-    
 };
 }
 }
