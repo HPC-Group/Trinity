@@ -14,6 +14,7 @@ add_subdirectory(common)
 add_subdirectory(silverbullet)
 add_subdirectory(io-base)
 add_subdirectory(frontend-base)
+add_subdirectory(frontend-qt)
 add_subdirectory(processing-base)
 
 
