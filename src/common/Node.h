@@ -15,13 +15,13 @@ namespace trinity {
 namespace common {
 
 // todo: IO and processing nodes feel like they are the same -> refactor
-class INode : public mocca::Runnable {
+class Node : public mocca::Runnable {
     
 public:
     
-    INode(std::unique_ptr<mocca::net::ConnectionAggregator>,
+    Node(std::unique_ptr<mocca::net::ConnectionAggregator>,
           std::unique_ptr<commands::ICommandFactory>);
-    ~INode();
+    ~Node();
     
     
     // frontend can connect, list, and init sessions

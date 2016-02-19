@@ -51,7 +51,7 @@ void ISession::run() {
         return;
     }
     
-    // dmc: isn't this code very similar to the code in INode.cpp? maybe related to the comment in INode.cpp
+    // dmc: isn't this code very similar to the code in Node.cpp? maybe related to the comment in Node.cpp
     while(!isInterrupted()) {
         try {
             auto bytepacket = m_controlConnection->receive();

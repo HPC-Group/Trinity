@@ -7,7 +7,7 @@
 #include "commands/ProcessingCommands.h"
 #include "commands/ISerialObjectFactory.h"
 
-#include "common/INode.h"
+#include "common/Node.h"
 #include "common/ISession.h"
 
 #include "io-base/IOCommandFactory.h"
@@ -67,7 +67,7 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
                               ConnectionAggregator::DisconnectStrategy::RemoveConnection));
     
     std::unique_ptr<trinity::commands::ICommandFactory> factory(new trinity::io::IOCommandFactory);
-    trinity::common::INode node(std::move(aggregator), std::move(factory));
+    trinity::common::Node node(std::move(aggregator), std::move(factory));
     node.start();
     
     InitProcessingSessionCmd cmd(1, 2, "loopback", VclType::DummyRenderer, 0, endpoint.toString(), params);

@@ -8,7 +8,7 @@
 #include "mocca/base/ContainerTools.h"
 #include "mocca/net/Endpoint.h"
 
-#include "common/INode.h"
+#include "common/Node.h"
 #include "common/IONodeProxy.h"
 
 #include "processing-base/ProcessingCommandFactory.h"

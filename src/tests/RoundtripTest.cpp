@@ -5,7 +5,7 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 
-#include "common/INode.h"
+#include "common/Node.h"
 #include "common/IONodeProxy.h"
 
 #include "frontend-base/ProcessingNodeProxy.h"
@@ -26,7 +26,7 @@ protected:
     virtual ~NodeTest() { ConnectionFactorySelector::removeAll(); }
 };
 
-std::unique_ptr<INode> createNode(std::unique_ptr<ICommandFactory> factory,
+std::unique_ptr<Node> createNode(std::unique_ptr<ICommandFactory> factory,
                                   const std::string& port) {
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", port);
 
@@ -36,7 +36,7 @@ std::unique_ptr<INode> createNode(std::unique_ptr<ICommandFactory> factory,
 
     std::unique_ptr<ConnectionAggregator> aggregator(new ConnectionAggregator(
         std::move(acceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
-    return std::unique_ptr<INode>(new INode(std::move(aggregator), std::move(factory)));
+    return std::unique_ptr<Node>(new Node(std::move(aggregator), std::move(factory)));
 }
 
 TEST_F(NodeTest, StartProcessingNodeTest) {

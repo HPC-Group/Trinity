@@ -10,7 +10,7 @@
 #include "commands/ISerialObjectFactory.h"
 #include "commands/ICommandFactory.h"
 
-#include "INode.h"
+#include "Node.h"
 
 using namespace trinity::common;
 using namespace trinity::commands;
@@ -18,14 +18,14 @@ using namespace mocca::net;
 
 
 
-INode::~INode() {
+Node::~Node() {
     LINFO("(node) sessions to stop: " << m_sessions.size());
     for (auto& session : m_sessions)
         session->interrupt();
     join();
 }
 
-INode::INode(std::unique_ptr<ConnectionAggregator> aggregator,
+Node::Node(std::unique_ptr<ConnectionAggregator> aggregator,
              std::unique_ptr<ICommandFactory> factory) :
 m_factory(std::move(factory)),
 m_aggregator(std::move(aggregator))
@@ -36,7 +36,7 @@ m_aggregator(std::move(aggregator))
 // InitProcessing? all other commands seem to presuppose a session, so maybe a node that can accept
 // all kinds of commands is overgeneralized? or maybe there are two distinct types of commands:
 // node-commands and session-commands?
-void INode::run() {
+void Node::run() {
     LINFO("(node) listening... ");
     
     // listening for incoming requests

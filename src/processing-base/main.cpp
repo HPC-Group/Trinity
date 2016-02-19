@@ -11,7 +11,7 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/base/ContainerTools.h"
 
-#include "common/INode.h"
+#include "common/Node.h"
 #include "ProcessingCommandFactory.h"
 
 using namespace trinity::processing;
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
                             ConnectionAggregator::DisconnectStrategy::RemoveConnection));
     
     std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
-    trinity::common::INode node(std::move(aggregator), std::move(factory));
+    trinity::common::Node node(std::move(aggregator), std::move(factory));
 
     node.start();
     while(!exitFlag) {
