@@ -52,13 +52,13 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
 
 TYPED_TEST(SerialObjectTest, SubObjects) {
     TypeParam target;
-    MySerializable subObject{2.718f, "World"};
+    typename SerialObjectTest<TypeParam>::MySerializable subObject{2.718f, "World"};
     target.append("float", 3.14f);
     target.append("subObject", subObject);
     target.append("string", "Hello");
 
     ASSERT_EQ(3.14f, target.getFloat("float"));
-    MySerializable resultSubObject;
+    typename SerialObjectTest<TypeParam>::MySerializable resultSubObject;
     target.getSerializable("subObject", resultSubObject);
     ASSERT_EQ(2.718f, resultSubObject.myFloat);
     ASSERT_EQ("World", resultSubObject.myString);
@@ -88,7 +88,7 @@ TYPED_TEST(SerialObjectTest, MismatchingSubObjects) {
 
 TYPED_TEST(SerialObjectTest, ReadWrite) {
     TypeParam obj1;
-    MySerializable subObject{ 2.718f, "World" };
+    typename SerialObjectTest<TypeParam>::MySerializable subObject{ 2.718f, "World" };
     obj1.append("float", 3.14f);
     obj1.append("subObject", subObject);
     obj1.append("string", "Hello");
@@ -101,7 +101,7 @@ TYPED_TEST(SerialObjectTest, ReadWrite) {
     obj2.readFrom(stream2);
     
     ASSERT_EQ(3.14f, obj2.getFloat("float"));
-    MySerializable resultSubObject;
+    typename SerialObjectTest<TypeParam>::MySerializable resultSubObject;
     obj2.getSerializable("subObject", resultSubObject);
     ASSERT_EQ(2.718f, resultSubObject.myFloat);
     ASSERT_EQ("World", resultSubObject.myString);
