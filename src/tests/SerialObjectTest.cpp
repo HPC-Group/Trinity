@@ -88,6 +88,7 @@ TYPED_TEST(SerialObjectTest, MismatchingSubObjects) {
 
 TYPED_TEST(SerialObjectTest, ReadWrite) {
     TypeParam obj1;
+    obj1.setType(VclType::DummyIO);
     typename SerialObjectTest<TypeParam>::MySerializable subObject{ 2.718f, "World" };
     obj1.append("float", 3.14f);
     obj1.append("subObject", subObject);
