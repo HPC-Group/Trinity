@@ -10,8 +10,7 @@ class ICommand : public ISerializable {
     
 public:
     ICommand(int sid, int rid) : m_sid(sid), m_rid(rid) {}
-    virtual ~ICommand(){}
-    
+
     virtual VclType getType() const = 0;
     
     virtual void serialize(ISerialObject& serial) const {

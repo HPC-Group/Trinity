@@ -2,28 +2,17 @@
 
 #include "commands/ISerializable.h"
 #include "commands/StringifiedObject.h"
+#include "commands/JsonObject.h"
 
 using namespace trinity::commands;
 
-class StringifiedObjectTest : public ::testing::Test {
+template <typename T>
+class SerialObjectTest : public ::testing::Test {
 protected:
-    StringifiedObjectTest() {}
+    SerialObjectTest() {}
 
-    virtual ~StringifiedObjectTest() {}
-};
+    virtual ~SerialObjectTest() {}
 
-TEST_F(StringifiedObjectTest, BasicTypes) {
-    StringifiedObject target;
-    target.append("float", 3.14f);
-    target.append("int", 42);
-    target.append("string", "Hello");
-
-    ASSERT_EQ(3.14f, target.getFloat("float"));
-    ASSERT_EQ(42, target.getInt("int"));
-    ASSERT_EQ("Hello", target.getString("string"));
-}
-
-TEST_F(StringifiedObjectTest, SubObjects) {
     struct MySerializable : public ISerializable {
         MySerializable()
             : myFloat(.0f)
@@ -45,8 +34,24 @@ TEST_F(StringifiedObjectTest, SubObjects) {
         float myFloat;
         std::string myString;
     };
+};
 
-    StringifiedObject target;
+typedef ::testing::Types<StringifiedObject, JsonObject> MyTypes;
+TYPED_TEST_CASE(SerialObjectTest, MyTypes);
+
+TYPED_TEST(SerialObjectTest, BasicTypes) {
+    TypeParam target;
+    target.append("float", 3.14f);
+    target.append("int", 42);
+    target.append("string", "Hello");
+
+    ASSERT_EQ(3.14f, target.getFloat("float"));
+    ASSERT_EQ(42, target.getInt("int"));
+    ASSERT_EQ("Hello", target.getString("string"));
+}
+
+TYPED_TEST(SerialObjectTest, SubObjects) {
+    TypeParam target;
     MySerializable subObject{2.718f, "World"};
     target.append("float", 3.14f);
     target.append("subObject", subObject);
@@ -60,7 +65,7 @@ TEST_F(StringifiedObjectTest, SubObjects) {
     ASSERT_EQ("Hello", target.getString("string"));
 }
 
-TEST_F(StringifiedObjectTest, MismatchingSubObjects) {
+TYPED_TEST(SerialObjectTest, MismatchingSubObjects) {
     struct MySerializable1 : public ISerializable {
         VclType getType() const override { return VclType::DummyIO; }
         void serialize(ISerialObject& serial) const override {}
@@ -73,10 +78,32 @@ TEST_F(StringifiedObjectTest, MismatchingSubObjects) {
         void deserialize(ISerialObject& serial) override {}
     };
 
-    StringifiedObject target;
+    TypeParam target;
     MySerializable1 subObject1;
     target.append("sub", subObject1);
     
     MySerializable2 subObject2;
     ASSERT_THROW(target.getSerializable("sub", subObject2), mocca::Error);
+}
+
+TYPED_TEST(SerialObjectTest, ReadWrite) {
+    TypeParam obj1;
+    MySerializable subObject{ 2.718f, "World" };
+    obj1.append("float", 3.14f);
+    obj1.append("subObject", subObject);
+    obj1.append("string", "Hello");
+
+    std::stringstream stream1;
+    obj1.writeTo(stream1);
+
+    std::stringstream stream2(stream1.str());
+    TypeParam obj2;
+    obj2.readFrom(stream2);
+    
+    ASSERT_EQ(3.14f, obj2.getFloat("float"));
+    MySerializable resultSubObject;
+    obj2.getSerializable("subObject", resultSubObject);
+    ASSERT_EQ(2.718f, resultSubObject.myFloat);
+    ASSERT_EQ("World", resultSubObject.myString);
+    ASSERT_EQ("Hello", obj2.getString("string"));
 }

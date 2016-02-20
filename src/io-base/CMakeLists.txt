@@ -20,7 +20,8 @@ add_executable(iobase
 				$<TARGET_OBJECTS:common>
 				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:mocca>
-				$<TARGET_OBJECTS:silverbullet>)
+				$<TARGET_OBJECTS:silverbullet>
+				$<TARGET_OBJECTS:jsoncpp>)
 
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(iobase Shlwapi.lib)

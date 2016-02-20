@@ -45,8 +45,6 @@ InitProcessingSessionCmd::InitProcessingSessionCmd(ISerialObject& obj) : IComman
     deserialize(obj);
 }
 
-InitProcessingSessionCmd::~InitProcessingSessionCmd() {}
-
 VclType InitProcessingSessionCmd::getType() const {
     return VclType::InitRenderer;
 }
@@ -60,9 +58,6 @@ void InitProcessingSessionCmd::serialize(ISerialObject& serial) const  {
     serial.append("rendertype", Vcl::instance().toString(m_renderType));
     serial.append("fileid", m_fileId);
     serial.append("endpoint", m_stringifiedEndpoint);
-    //serial.append("streamingparams", m_vcl.toString(m_streamingParams.getType()));
-    //serial.append("streamingparams", m_streamingParams);
-    //ISerializable* obj = static_cast<ISerializable*>(&m_streamingParams);
     serial.append("streamingparams", m_streamingParams);
 }
 

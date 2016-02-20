@@ -1,6 +1,7 @@
 #include "StringifiedObject.h"
 
 #include "ISerializable.h"
+#include "Vcl.h"
 
 #include <iostream>
 

@@ -17,7 +17,8 @@ add_executable(processingbase
 				$<TARGET_OBJECTS:common>
 				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:mocca>
-				$<TARGET_OBJECTS:silverbullet>)
+				$<TARGET_OBJECTS:silverbullet>
+				$<TARGET_OBJECTS:jsoncpp>)
 
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(processingbase Shlwapi.lib)

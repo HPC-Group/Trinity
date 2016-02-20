@@ -23,6 +23,7 @@ add_executable(tests ${TRINITY_TEST_HEADER} ${TRINITY_TEST_SOURCE}
                      $<TARGET_OBJECTS:common>
                      $<TARGET_OBJECTS:iobaselib>
                      $<TARGET_OBJECTS:mocca>
+					 $<TARGET_OBJECTS:jsoncpp>
 					 ${CMAKE_CURRENT_LIST_DIR}/main.cpp)					 
 target_link_libraries(tests gmock)
 

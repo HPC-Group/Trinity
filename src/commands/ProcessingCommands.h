@@ -33,8 +33,6 @@ public:
                     const VclType& renderType, int fileId,
                     const std::string& stringifiedIoEndpoint, const StreamingParams& p);
     
-    virtual ~InitProcessingSessionCmd();
-    
     virtual VclType getType() const;
     const std::string& getProtocol() const;
     const std::string& getStringifiedEndpoint() const;
