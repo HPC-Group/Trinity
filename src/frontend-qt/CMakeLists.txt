@@ -25,7 +25,8 @@ add_executable(qtfrontend
 			$<TARGET_OBJECTS:common>
 			$<TARGET_OBJECTS:commands>
 			$<TARGET_OBJECTS:silverbullet>
-			$<TARGET_OBJECTS:frontendbaselib>)
+			$<TARGET_OBJECTS:frontendbaselib>
+		        $<TARGET_OBJECTS:jsoncpp>)
 
 TARGET_LINK_LIBRARIES(qtfrontend Qt5::Widgets)
 TARGET_LINK_LIBRARIES(qtfrontend Qt5::OpenGL)

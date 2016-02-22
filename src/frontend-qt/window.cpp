@@ -54,7 +54,7 @@ void Window::initRenderer(){
     int fileId = 12;
     _renderer = _processingNode->initRenderer(trinity::commands::VclType::DummyRenderer,
                                                  fileId,
-                                                 endpointIO.toString(),
+                                                 endpointIO,
                                                  params);
     _renderer->connect();
 }
