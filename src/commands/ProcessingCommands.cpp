@@ -22,8 +22,7 @@ void StreamingParams::deserialize(ISerialObject& serial) {
 
 std::string StreamingParams::toString() const {
     std::stringstream stream;
-    stream << ISerializable::toString() << "resX: " << m_resX << std::endl
-           << "resY: " << m_resX << std::endl;
+    stream << ISerializable::toString() << "resX: " << m_resX << std::endl << "resY: " << m_resX << std::endl;
     return stream.str();
 }
 
@@ -38,10 +37,8 @@ VclType StreamingParams::getType() const {
     return VclType::StreamingParams;
 }
 
-InitProcessingSessionCmd::InitProcessingSessionCmd(int sid, int rid, const std::string& protocol,
-                                                   const VclType& renderType, int fileId,
-                                                   const std::string& endpoint,
-                                                   const StreamingParams& p)
+InitProcessingSessionCmd::InitProcessingSessionCmd(int sid, int rid, const std::string& protocol, const VclType& renderType, int fileId,
+                                                   const std::string& endpoint, const StreamingParams& p)
     : ICommand(sid, rid)
     , m_protocol(protocol)
     , m_renderType(renderType)
@@ -183,8 +180,7 @@ void SetIsoValueCmd::deserialize(ISerialObject& serial) {
 
 std::string SetIsoValueCmd::toString() const {
     std::stringstream stream;
-    stream << ICommand::toString() << "protocol: " << m_sid << std::endl
-           << "isovalue: " << m_isoValue << std::endl;
+    stream << ICommand::toString() << "protocol: " << m_sid << std::endl << "isovalue: " << m_isoValue << std::endl;
     return stream.str();
 }
 

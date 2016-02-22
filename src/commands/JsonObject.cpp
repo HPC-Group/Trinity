@@ -41,9 +41,8 @@ void JsonObject::getSerializable(const std::string& key, ISerializable& obj) {
     std::string subclassType = subObject.getString(key);
     std::string expectedSubclassType = Vcl::instance().toString(obj.getType());
     if (subclassType != expectedSubclassType) {
-        throw mocca::Error("subclass type is incorrect (is " + subclassType + ", should be " +
-                               expectedSubclassType + ")",
-                           __FILE__, __LINE__);
+        throw mocca::Error("subclass type is incorrect (is " + subclassType + ", should be " + expectedSubclassType + ")", __FILE__,
+                           __LINE__);
     }
     obj.deserialize(subObject);
 }

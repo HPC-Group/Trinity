@@ -148,12 +148,12 @@ uint64_t FractalIO::getTotalBrickCount() const {
 
 bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const {
     bool created = false;
-    
+
     if (data.size() < getMaxBrickSize().volume()) {
         data.reserve(getMaxBrickSize().volume());
         created = true;
     }
-    
+
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -166,7 +166,7 @@ bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const 
                 }
             }
         }
-        
+
     }
     return created;
 }

@@ -5,17 +5,16 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 
-#include "commands/Vcl.h"
 #include "NetConfig.h"
-#include "commands/ISerialObjectFactory.h"
 #include "commands/ICommandFactory.h"
+#include "commands/ISerialObjectFactory.h"
+#include "commands/Vcl.h"
 
 #include "Node.h"
 
 using namespace trinity::common;
 using namespace trinity::commands;
 using namespace mocca::net;
-
 
 
 Node::~Node() {
@@ -25,12 +24,9 @@ Node::~Node() {
     join();
 }
 
-Node::Node(std::unique_ptr<ConnectionAggregator> aggregator,
-             std::unique_ptr<ICommandFactory> factory) :
-m_factory(std::move(factory)),
-m_aggregator(std::move(aggregator))
-{
-}
+Node::Node(std::unique_ptr<ConnectionAggregator> aggregator, std::unique_ptr<ICommandFactory> factory)
+    : m_factory(std::move(factory))
+    , m_aggregator(std::move(aggregator)) {}
 
 // dmc: question: does a node (io or processing) ever receive a command other than InitIO or
 // InitProcessing? all other commands seem to presuppose a session, so maybe a node that can accept
@@ -38,7 +34,7 @@ m_aggregator(std::move(aggregator))
 // node-commands and session-commands?
 void Node::run() {
     LINFO("(node) listening... ");
-    
+
     // listening for incoming requests
     while (!isInterrupted()) {
 
@@ -49,21 +45,19 @@ void Node::run() {
             auto env = msgEnvelope.release(); // release value from nullable
             std::string cmd = env.message.read(env.message.size());
             LINFO("(io) command: " << cmd); // print cmd
-            
+
             std::stringstream requestStream, replyStream;
             requestStream << cmd;
-            
+
             auto handler = m_factory->createHandler(requestStream);
             handler->execute();
             auto reply = handler->getReturnValue();
-            if(reply != nullptr) {
+            if (reply != nullptr) {
                 auto serialReply = commands::ISerialObjectFactory::create();
                 reply->serialize(*serialReply);
                 serialReply->writeTo(replyStream);
                 LINFO("(io) reply: " << replyStream.str());
-                m_aggregator->send(MessageEnvelope(std::move(mocca::ByteArray()
-                                                             << replyStream.str()),
-                                                            env.connectionID));
+                m_aggregator->send(MessageEnvelope(std::move(mocca::ByteArray() << replyStream.str()), env.connectionID));
             }
         }
     }

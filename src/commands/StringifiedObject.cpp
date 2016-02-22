@@ -56,9 +56,8 @@ void StringifiedObject::getSerializable(const std::string& key, ISerializable& o
     std::string subclassType = getString(key);
     std::string expectedSubclassType = Vcl::instance().toString(obj.getType());
     if (subclassType != expectedSubclassType) {
-        throw mocca::Error("subclass type is incorrect (is " + subclassType + ", should be " +
-                               expectedSubclassType + ")",
-                           __FILE__, __LINE__);
+        throw mocca::Error("subclass type is incorrect (is " + subclassType + ", should be " + expectedSubclassType + ")", __FILE__,
+                           __LINE__);
     }
     obj.deserialize(*this);
 }

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <map>
 #include <istream>
+#include <map>
 
-#include "ICommandHandler.h"
 #include "ICommand.h"
+#include "ICommandHandler.h"
 #include "Vcl.h"
 
 namespace trinity {

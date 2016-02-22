@@ -24,7 +24,7 @@ public:
 
     void writeTo(std::ostream& stream) override;
     void readFrom(std::istream& stream) override;
-    
+
 private:
     JsonCpp::Value m_root;
 };

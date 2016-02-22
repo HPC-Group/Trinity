@@ -1,9 +1,9 @@
 #include "window.h"
 #include <QApplication>
 
-#include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/LogManager.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 
 using namespace mocca::net;
 
@@ -15,8 +15,7 @@ void init() {
     ConnectionFactorySelector::addDefaultFactories();
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
     init();
 
     QApplication a(argc, argv);

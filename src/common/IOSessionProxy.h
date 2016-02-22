@@ -9,15 +9,14 @@
 
 namespace trinity {
 namespace common {
-    
+
 class IOSessionProxy : public common::IIO, public common::IProxy {
 
 public:
     IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint);
     virtual int getLODLevelCount();
-    
-private:
 
+private:
     const int m_remoteSid;
 };
 }

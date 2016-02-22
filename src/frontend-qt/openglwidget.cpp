@@ -5,13 +5,13 @@
 #include "mocca/log/LogManager.h"
 
 
-OpenGLWidget::OpenGLWidget(QWidget *parent):
-    QOpenGLWidget(parent),
-    _width(255),
-    _height(255) {
+OpenGLWidget::OpenGLWidget(QWidget* parent)
+    : QOpenGLWidget(parent)
+    , _width(255)
+    , _height(255) {
 
-    for(int x = 0; x < _width;++x){
-        for(int y = 0; y < _height;++y){
+    for (int x = 0; x < _width; ++x) {
+        for (int y = 0; y < _height; ++y) {
             _imgdata.push_back(x);
             _imgdata.push_back(x);
             _imgdata.push_back(x);
@@ -21,19 +21,17 @@ OpenGLWidget::OpenGLWidget(QWidget *parent):
 }
 
 
-OpenGLWidget::~OpenGLWidget() {
-
-}
+OpenGLWidget::~OpenGLWidget() {}
 
 void OpenGLWidget::initializeGL() {
     makeCurrent();
     initializeOpenGLFunctions();
     std::string versionString = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-    LINFO("OpenGL Version : "<< versionString);
+    LINFO("OpenGL Version : " << versionString);
 }
 
 void OpenGLWidget::paintGL() {
-glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
 
     /*
 glMatrixMode(GL_PROJECTION);

@@ -16,7 +16,7 @@ public:
 
     int getSid() const;
     int getRid() const;
-    
+
 protected:
     int m_sid;
     int m_rid;

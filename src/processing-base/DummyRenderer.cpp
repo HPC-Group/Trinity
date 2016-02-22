@@ -4,10 +4,8 @@
 using namespace trinity::processing;
 using namespace trinity::common;
 
-DummyRenderer::DummyRenderer(std::shared_ptr<VisStream> stream,
-                             std::unique_ptr<IIO> ioSession) :
-IRenderer(stream, std::move(ioSession)) {
-}
+DummyRenderer::DummyRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession)
+    : IRenderer(stream, std::move(ioSession)) {}
 
 void DummyRenderer::setIsoValue(const float isoValue) {
     LINFO("(p) iso value set to " + std::to_string(isoValue));

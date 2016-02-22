@@ -27,8 +27,7 @@ private:
 class InitProcessingSessionCmd : public ICommand {
 public:
     InitProcessingSessionCmd(ISerialObject&);
-    InitProcessingSessionCmd(int sid, int rid, const std::string& protocol,
-                             const VclType& renderType, int fileId,
+    InitProcessingSessionCmd(int sid, int rid, const std::string& protocol, const VclType& renderType, int fileId,
                              const std::string& stringifiedIoEndpoint, const StreamingParams& p);
 
     VclType getType() const override;

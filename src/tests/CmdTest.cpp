@@ -1,23 +1,20 @@
 #include "gtest/gtest.h"
 
-#include "commands/Vcl.h"
-#include "commands/StringifiedObject.h"
 #include "commands/ErrorCommands.h"
-#include "commands/ProcessingCommands.h"
 #include "commands/IOCommands.h"
 #include "commands/ISerialObjectFactory.h"
+#include "commands/ProcessingCommands.h"
+#include "commands/StringifiedObject.h"
+#include "commands/Vcl.h"
 
 using namespace trinity::commands;
 
 
 class CmdTest : public ::testing::Test {
 protected:
-    
-    CmdTest() {
-    }
-    
-    virtual ~CmdTest() {
-    }
+    CmdTest() {}
+
+    virtual ~CmdTest() {}
 };
 
 
@@ -33,12 +30,12 @@ TEST_F(CmdTest, StreamParamsTest) {
 }
 
 TEST_F(CmdTest, ErrorCmdTest) {
-    
+
     ErrorCmd cmd(1, 2, 3);
     auto obj1 = ISerialObjectFactory::create();
     cmd.serialize(*obj1);
     ErrorCmd parsedCmd(*obj1);
-    
+
     ASSERT_EQ(cmd.getErrorCode(), parsedCmd.getErrorCode());
     ASSERT_EQ(cmd.getSid(), parsedCmd.getSid());
     ASSERT_EQ(cmd.getType(), parsedCmd.getType());
@@ -46,11 +43,9 @@ TEST_F(CmdTest, ErrorCmdTest) {
 }
 
 
-
-
 TEST_F(CmdTest, InitRendererCmdTest) {
     StreamingParams params(2048, 1000);
-    InitProcessingSessionCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, 0,"loopback",  params);
+    InitProcessingSessionCmd cmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, 0, "loopback", params);
     std::stringstream s, ss;
     auto obj1 = ISerialObjectFactory::create();
     cmd.serialize(*obj1);
@@ -80,7 +75,7 @@ TEST_F(CmdTest, InitIOCmdTest) {
     auto obj3 = ISerialObjectFactory::create();
     newCmd.serialize(*obj3);
     obj3->writeTo(ss);
-    
+
     ASSERT_EQ(ss.str(), s.str());
     ASSERT_EQ(cmd.getProtocol(), newCmd.getProtocol());
     ASSERT_EQ(cmd.getFileId(), newCmd.getFileId());
@@ -88,19 +83,19 @@ TEST_F(CmdTest, InitIOCmdTest) {
 
 
 TEST_F(CmdTest, InitProcessingReplyTest) {
-    ReplyInitProcessingSessionCmd cmd(1,2);
+    ReplyInitProcessingSessionCmd cmd(1, 2);
     cmd.setControlPort(8080);
     cmd.setVisPort(8090);
     std::stringstream s, ss;
     auto obj1 = ISerialObjectFactory::create();
     cmd.serialize(*obj1);
     obj1->writeTo(s);
-    
-    
+
+
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
     ReplyInitProcessingSessionCmd newCmd(*obj2);
-    
+
     ASSERT_EQ(newCmd.getType(), cmd.getType());
     ASSERT_EQ(8080, newCmd.getControlPort());
     ASSERT_EQ(8090, newCmd.getVisPort());
@@ -110,17 +105,17 @@ TEST_F(CmdTest, InitProcessingReplyTest) {
 
 
 TEST_F(CmdTest, InitIOReplyTest) {
-    ReplyInitIOSessionCmd cmd(1,2);
+    ReplyInitIOSessionCmd cmd(1, 2);
     cmd.setControlPort(8080);
     std::stringstream s, ss;
     auto obj1 = ISerialObjectFactory::create();
     cmd.serialize(*obj1);
     obj1->writeTo(s);
-    
+
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
     ReplyInitIOSessionCmd newCmd(*obj2);
-    
+
     ASSERT_EQ(newCmd.getType(), cmd.getType());
     ASSERT_EQ(8080, newCmd.getControlPort());
     ASSERT_EQ(cmd.getSid(), newCmd.getSid());
@@ -128,9 +123,8 @@ TEST_F(CmdTest, InitIOReplyTest) {
 }
 
 
-
 TEST_F(CmdTest, GetLodCountTest) {
-    GetLODLevelCountCmd cmd(1,2);
+    GetLODLevelCountCmd cmd(1, 2);
     std::stringstream s, ss;
     auto obj1 = ISerialObjectFactory::create();
     cmd.serialize(*obj1);
@@ -144,7 +138,7 @@ TEST_F(CmdTest, GetLodCountTest) {
 }
 
 TEST_F(CmdTest, GetLodCountReplyTest) {
-    ReplyGetLODLevelCountCmd cmd(1,2);
+    ReplyGetLODLevelCountCmd cmd(1, 2);
     cmd.setLODLevelCount(43);
     std::stringstream s, ss;
     auto obj1 = ISerialObjectFactory::create();
@@ -161,7 +155,7 @@ TEST_F(CmdTest, GetLodCountReplyTest) {
 
 
 TEST_F(CmdTest, WrongDeserializeTest) {
-    GetLODLevelCountCmd cmd(1,2);
+    GetLODLevelCountCmd cmd(1, 2);
     std::stringstream s, ss;
     auto obj1 = ISerialObjectFactory::create();
     cmd.serialize(*obj1);
@@ -169,6 +163,6 @@ TEST_F(CmdTest, WrongDeserializeTest) {
     auto obj2 = ISerialObjectFactory::create();
     obj2->readFrom(s);
     StreamingParams params(2048, 1000);
-    InitProcessingSessionCmd otherCmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, 0,"loopback",  params);
+    InitProcessingSessionCmd otherCmd(1, 2, "tcp.Prefixed", VclType::DummyRenderer, 0, "loopback", params);
     ASSERT_THROW(otherCmd.deserialize(*obj2), mocca::Error);
 }

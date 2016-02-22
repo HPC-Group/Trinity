@@ -2,12 +2,14 @@
 
 using namespace trinity::commands;
 
-ErrorCmd::ErrorCmd(ISerialObject& obj) : ICommand(0,0) {
+ErrorCmd::ErrorCmd(ISerialObject& obj)
+    : ICommand(0, 0) {
     deserialize(obj);
 }
 
-ErrorCmd::ErrorCmd(int sid, int rid, int errorCode) :
-ICommand(sid, rid), m_errorCode(errorCode) {}
+ErrorCmd::ErrorCmd(int sid, int rid, int errorCode)
+    : ICommand(sid, rid)
+    , m_errorCode(errorCode) {}
 
 VclType ErrorCmd::getType() const {
     return VclType::TrinityError;
@@ -16,7 +18,6 @@ VclType ErrorCmd::getType() const {
 void ErrorCmd::serialize(ISerialObject& serial) const {
     ICommand::serialize(serial);
     serial.append("code", m_errorCode);
-    
 }
 
 void ErrorCmd::deserialize(ISerialObject& serial) {

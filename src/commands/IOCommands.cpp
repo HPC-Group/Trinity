@@ -57,8 +57,7 @@ void InitIOSessionCmd::deserialize(ISerialObject& serial) {
 
 std::string InitIOSessionCmd::toString() const {
     std::stringstream stream;
-    stream << ICommand::toString() << "protocol: " << m_protocol << std::endl
-           << "fileid: " << m_fileId << std::endl;
+    stream << ICommand::toString() << "protocol: " << m_protocol << std::endl << "fileid: " << m_fileId << std::endl;
     return stream.str();
 }
 

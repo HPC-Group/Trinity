@@ -3,19 +3,18 @@
 
 #include "gtest/gtest.h"
 
-#include "mocca/net/ConnectionFactorySelector.h"
-#include "mocca/net/ConnectionAggregator.h"
 #include "mocca/base/ContainerTools.h"
+#include "mocca/net/ConnectionAggregator.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 
-#include "common/Node.h"
 #include "common/IONodeProxy.h"
+#include "common/Node.h"
 
-#include "processing-base/ProcessingCommandFactory.h"
-#include "processing-base/VisStreamSender.h"
 #include "frontend-base/ProcessingNodeProxy.h"
 #include "io-base/IOCommandFactory.h"
-
+#include "processing-base/ProcessingCommandFactory.h"
+#include "processing-base/VisStreamSender.h"
 
 
 using namespace mocca::net;
@@ -27,27 +26,19 @@ using namespace trinity::commands;
 
 class ProcessingTest : public ::testing::Test {
 protected:
-    
-    ProcessingTest() {
-        ConnectionFactorySelector::addDefaultFactories();
+    ProcessingTest() { ConnectionFactorySelector::addDefaultFactories(); }
 
-    }
-
-    virtual ~ProcessingTest() {
-        ConnectionFactorySelector::removeAll();
-    }
+    virtual ~ProcessingTest() { ConnectionFactorySelector::removeAll(); }
 };
 
 
-
 TEST_F(ProcessingTest, VisStreamPutGetTest) {
-    
-    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
-    
+
+    Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
+
     trinity::commands::StreamingParams p;
-    std::shared_ptr<trinity::common::VisStream> sendstream =
-    std::make_shared<trinity::common::VisStream>(p);
-    
+    std::shared_ptr<trinity::common::VisStream> sendstream = std::make_shared<trinity::common::VisStream>(p);
+
     trinity::common::Frame f1(new mocca::ByteArray());
     *f1 << "123";
     trinity::common::Frame f2(new mocca::ByteArray());
@@ -60,20 +51,17 @@ TEST_F(ProcessingTest, VisStreamPutGetTest) {
     ASSERT_FALSE(ff2 == nullptr);
     ASSERT_EQ("123", ff1->read(ff1->size()));
     ASSERT_EQ("456", ff2->read(ff2->size()));
-
 }
 
 TEST_F(ProcessingTest, VisStreamTest) {
-    
+
     ASSERT_LE(3, CAPACITY);
-    
-    Endpoint endpoint (ConnectionFactorySelector::loopback(), "localhost", "5678");
-    
+
+    Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
+
     trinity::commands::StreamingParams p;
-    std::shared_ptr<trinity::common::VisStream> sendstream =
-    std::make_shared<trinity::common::VisStream>(p);
-    std::shared_ptr<trinity::common::VisStream> receivestream =
-    std::make_shared<trinity::common::VisStream>(p);
+    std::shared_ptr<trinity::common::VisStream> sendstream = std::make_shared<trinity::common::VisStream>(p);
+    std::shared_ptr<trinity::common::VisStream> receivestream = std::make_shared<trinity::common::VisStream>(p);
     trinity::frontend::VisStreamReceiver rec(endpoint, receivestream);
     trinity::processing::VisStreamSender sender(endpoint, sendstream);
     rec.startStreaming();

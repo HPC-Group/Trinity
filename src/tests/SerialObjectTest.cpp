@@ -1,13 +1,12 @@
 #include "gtest/gtest.h"
 
 #include "commands/ISerializable.h"
-#include "commands/StringifiedObject.h"
 #include "commands/JsonObject.h"
+#include "commands/StringifiedObject.h"
 
 using namespace trinity::commands;
 
-template <typename T>
-class SerialObjectTest : public ::testing::Test {
+template <typename T> class SerialObjectTest : public ::testing::Test {
 protected:
     SerialObjectTest() {}
 
@@ -84,7 +83,7 @@ TYPED_TEST(SerialObjectTest, MismatchingSubObjects) {
     TypeParam target;
     MySerializable1 subObject1;
     target.append("sub", subObject1);
-    
+
     MySerializable2 subObject2;
     ASSERT_THROW(target.getSerializable("sub", subObject2), mocca::Error);
 }
@@ -92,7 +91,7 @@ TYPED_TEST(SerialObjectTest, MismatchingSubObjects) {
 TYPED_TEST(SerialObjectTest, ReadWrite) {
     TypeParam obj1;
     obj1.setType(VclType::DummyIO);
-    typename SerialObjectTest<TypeParam>::MySerializable subObject{ 2.718f, "World" };
+    typename SerialObjectTest<TypeParam>::MySerializable subObject{2.718f, "World"};
     obj1.append("float", 3.14f);
     obj1.append("subObject", subObject);
     obj1.append("string", "Hello");
@@ -103,7 +102,7 @@ TYPED_TEST(SerialObjectTest, ReadWrite) {
     std::stringstream stream2(stream1.str());
     TypeParam obj2;
     obj2.readFrom(stream2);
-    
+
     ASSERT_EQ(3.14f, obj2.getFloat("float"));
     typename SerialObjectTest<TypeParam>::MySerializable resultSubObject;
     obj2.getSerializable("subObject", resultSubObject);

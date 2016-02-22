@@ -3,12 +3,12 @@
 using namespace trinity::common;
 using namespace trinity::commands;
 
-VisStream::VisStream(StreamingParams params) : m_tail(0), m_head(0), m_streamingParams(params) {
-}
+VisStream::VisStream(StreamingParams params)
+    : m_tail(0)
+    , m_head(0)
+    , m_streamingParams(params) {}
 
-VisStream::~VisStream() {
-    
-}
+VisStream::~VisStream() {}
 
 
 const StreamingParams& VisStream::getStreamingParams() const {
@@ -19,7 +19,7 @@ const StreamingParams& VisStream::getStreamingParams() const {
 bool VisStream::put(Frame frame) {
     const auto currentTail = m_tail.load(std::memory_order_relaxed);
     const auto nextTail = increment(currentTail);
-    
+
     // still consistent?
     if (nextTail != m_head.load(std::memory_order_acquire)) {
         m_data[currentTail] = std::move(frame);
@@ -35,12 +35,11 @@ Frame VisStream::get() {
     if (currentHead == m_tail.load(std::memory_order_acquire)) {
         return nullptr;
     }
-    
+
     Frame result = std::move(m_data[currentHead]);
     m_head.store(increment(currentHead), std::memory_order_release);
     return result;
 }
-
 
 
 size_t VisStream::increment(size_t idx) const {

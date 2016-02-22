@@ -28,7 +28,7 @@ VclType end(VclType r) {
     return ++l;
 }
 
-std::ostream& trinity::commands::operator<<(std::ostream& os, VclType obj) {
+std::ostream& operator<<(std::ostream& os, VclType obj) {
     return os << Vcl::instance().toString(obj);
 }
 }
@@ -39,9 +39,7 @@ void Vcl::assertCompleteLanguage() const {
         try {
             m_cmdMap.getBySecond(token);
         } catch (const mocca::Error&) {
-            throw mocca::Error("(common) no string entry for enum number " +
-                                   std::to_string((int)token),
-                               __FILE__, __LINE__);
+            throw mocca::Error("(common) no string entry for enum number " + std::to_string((int)token), __FILE__, __LINE__);
         }
     }
 }
