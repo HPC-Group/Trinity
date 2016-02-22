@@ -8,12 +8,10 @@ ErrorCmd::ErrorCmd(ISerialObject& obj) : ICommand(0,0) {
 
 ErrorCmd::ErrorCmd(int sid, int rid, int errorCode) :
 ICommand(sid, rid), m_errorCode(errorCode) {}
-ErrorCmd::~ErrorCmd() {}
 
 VclType ErrorCmd::getType() const {
     return VclType::TrinityError;
 }
-
 
 void ErrorCmd::serialize(ISerialObject& serial) const {
     ICommand::serialize(serial);
@@ -21,12 +19,16 @@ void ErrorCmd::serialize(ISerialObject& serial) const {
     
 }
 
-
 void ErrorCmd::deserialize(ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_errorCode = serial.getInt("code");
 }
 
+std::string ErrorCmd::toString() const {
+    std::stringstream stream;
+    stream << ICommand::toString() << "code: " << m_errorCode << std::endl;
+    return stream.str();
+}
 
 const std::string ErrorCmd::printError() {
     return Vcl::instance().toString(m_errorCode);

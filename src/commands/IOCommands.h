@@ -1,112 +1,104 @@
 #pragma once
 #include "ICommand.h"
 
-
 namespace trinity {
 namespace commands {
 
 class ListFilesCmd : public ICommand {
-    
 public:
     ListFilesCmd(ISerialObject&);
     ListFilesCmd(int sid, int rid);
-    virtual ~ListFilesCmd();
-    virtual VclType getType() const;
-    virtual void serialize(ISerialObject& serial) const;
-    virtual void deserialize(ISerialObject& serial);
+
+    VclType getType() const override;
+    void serialize(ISerialObject& serial) const override;
+    void deserialize(ISerialObject& serial) override;
+    std::string toString() const override;
 };
-    
+
 class InitIOSessionCmd : public ICommand {
-    
+
 public:
     InitIOSessionCmd(ISerialObject&);
     InitIOSessionCmd(int sid, int rid, const std::string& protocol, int fileId);
-    virtual ~InitIOSessionCmd();
-    virtual VclType getType() const;
-    virtual void serialize(ISerialObject& serial) const;
-    virtual void deserialize(ISerialObject& serial);
+
+    VclType getType() const override;
+    void serialize(ISerialObject& serial) const override;
+    void deserialize(ISerialObject& serial) override;
+    std::string toString() const override;
+
     const std::string& getProtocol() const;
     int getFileId() const;
-    
+
 private:
     std::string m_protocol;
     int m_fileId;
 };
-    
+
 class ReplyInitIOSessionCmd : public ICommand {
-    
+
 public:
     ReplyInitIOSessionCmd(ISerialObject&);
     ReplyInitIOSessionCmd(int sid, int rid);
-    virtual ~ReplyInitIOSessionCmd();
-    virtual VclType getType() const;
-    virtual void serialize(ISerialObject& serial) const;
-    virtual void deserialize(ISerialObject& serial);
+
+    VclType getType() const override;
+    void serialize(ISerialObject& serial) const override;
+    void deserialize(ISerialObject& serial) override;
+    std::string toString() const override;
+
     void setControlPort(const int port);
     int getControlPort() const;
-    int getFileId() const;
     void setNewSid(int sid);
-    
+
 private:
     int m_controlPort;
 };
-    
-    
+
 class GetLODLevelCountCmd : public ICommand {
-    
 public:
     GetLODLevelCountCmd(ISerialObject&);
     GetLODLevelCountCmd(int sid, int rid);
-    virtual ~GetLODLevelCountCmd();
-    
-    virtual VclType getType() const;
-    
-    virtual void serialize(ISerialObject& serial) const;
-    virtual void deserialize(ISerialObject& serial);
-    
+
+    VclType getType() const override;
+    void serialize(ISerialObject& serial) const override;
+    void deserialize(ISerialObject& serial) override;
+    std::string toString() const override;
 };
 
-
-
 class ReplyGetLODLevelCountCmd : public ICommand {
-    
+
 public:
     ReplyGetLODLevelCountCmd(ISerialObject&);
     ReplyGetLODLevelCountCmd(int sid, int rid);
-    virtual ~ReplyGetLODLevelCountCmd();
-    
-    virtual VclType getType() const;
+
+    VclType getType() const override;
+    void serialize(ISerialObject& serial) const override;
+    void deserialize(ISerialObject& serial) override;
+    std::string toString() const override;
+
     int getLODLevelCount() const;
     void setLODLevelCount(int lod);
-    
-    virtual void serialize(ISerialObject& serial) const;
-    virtual void deserialize(ISerialObject& serial);
+
 private:
     int m_lodCount;
 };
-    
-    
-class IOData : public ISerializable {
-    
-public:
 
+class IOData : public ISerializable {
+public:
     IOData(const std::string& name, int fileId, const VclType& dataType);
-    
-    virtual VclType getType() const;
-    virtual void serialize(ISerialObject& serial) const;
-    virtual void deserialize(ISerialObject& serial);
-    
+
+    VclType getType() const override;
+    void serialize(ISerialObject& serial) const override;
+    void deserialize(ISerialObject& serial) override;
+    std::string toString() const override;
+
     std::string getName() const;
     int getFileId() const;
     VclType getDataType() const;
-    
+
 private:
     std::string m_name;
     int m_fileId;
     VclType m_dataType;
 };
-   
-    
-
 }
 }

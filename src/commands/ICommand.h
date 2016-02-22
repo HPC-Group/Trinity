@@ -7,24 +7,15 @@ namespace trinity {
 namespace commands {
 
 class ICommand : public ISerializable {
-    
 public:
-    ICommand(int sid, int rid) : m_sid(sid), m_rid(rid) {}
+    ICommand(int sid, int rid);
 
-    virtual VclType getType() const = 0;
-    
-    virtual void serialize(ISerialObject& serial) const {
-        serial.setType(getType());
-        serial.append("sid", m_sid);
-        serial.append("rid", m_rid);
-    }
-    virtual void deserialize(ISerialObject& serial) {
-        m_sid = serial.getInt("sid");
-        m_rid = serial.getInt("rid");
-    }
-    
-    int getSid() const { return m_sid; }
-    int getRid() const { return m_rid; }
+    void serialize(ISerialObject& serial) const override;
+    void deserialize(ISerialObject& serial) override;
+    std::string toString() const override;
+
+    int getSid() const;
+    int getRid() const;
     
 protected:
     int m_sid;

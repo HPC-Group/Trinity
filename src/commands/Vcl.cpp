@@ -16,26 +16,35 @@ VclType& operator++(VclType& x) {
     return x = (VclType)(std::underlying_type<VclType>::type(x) + 1);
 }
 
+VclType operator*(VclType c) {
+    return c;
+}
 
-VclType operator*(VclType c) {return c;}
+VclType begin(VclType r) {
+    return VclType::First;
+}
+VclType end(VclType r) {
+    VclType l = VclType::Last;
+    return ++l;
+}
 
-VclType begin(VclType r) {return VclType::First;}
-VclType end(VclType r)   {VclType l=VclType::Last; return ++l; }
+std::ostream& trinity::commands::operator<<(std::ostream& os, VclType obj) {
+    return os << Vcl::instance().toString(obj);
+}
 }
 }
 
 void Vcl::assertCompleteLanguage() const {
-    for(const auto& token : VclType()) {
+    for (const auto& token : VclType()) {
         try {
             m_cmdMap.getBySecond(token);
         } catch (const mocca::Error&) {
-            throw mocca::Error("(common) no string entry for enum number "
-                               + std::to_string((int)token), __FILE__, __LINE__);
+            throw mocca::Error("(common) no string entry for enum number " +
+                                   std::to_string((int)token),
+                               __FILE__, __LINE__);
         }
-        
     }
 }
-
 
 std::string Vcl::toString(const VclType& t) const {
     return m_cmdMap.getBySecond(t);
@@ -51,6 +60,8 @@ std::string Vcl::toString(const int errorCode) const {
     return it->second;
 }
 
-
-IDGenerator::IDGenerator() : m_id(1) {}
-int IDGenerator::nextID() { return m_id++; }
+IDGenerator::IDGenerator()
+    : m_id(1) {}
+int IDGenerator::nextID() {
+    return m_id++;
+}
