@@ -22,12 +22,6 @@ void ListFilesCmd::deserialize(ISerialObject& serial) {
     ICommand::deserialize(serial);
 }
 
-std::string ListFilesCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString();
-    return stream.str();
-}
-
 InitIOSessionCmd::InitIOSessionCmd(ISerialObject& obj)
     : ICommand(0, 0) {
     deserialize(obj);
@@ -53,12 +47,6 @@ void InitIOSessionCmd::deserialize(ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_protocol = serial.getString("protocol");
     m_fileId = serial.getInt("fileid");
-}
-
-std::string InitIOSessionCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString() << "protocol: " << m_protocol << std::endl << "fileid: " << m_fileId << std::endl;
-    return stream.str();
 }
 
 const std::string& InitIOSessionCmd::getProtocol() const {
@@ -89,12 +77,6 @@ void ReplyInitIOSessionCmd::serialize(ISerialObject& serial) const {
 void ReplyInitIOSessionCmd::deserialize(ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_controlPort = serial.getInt("controlport");
-}
-
-std::string ReplyInitIOSessionCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString() << "controlport: " << m_controlPort << std::endl;
-    return stream.str();
 }
 
 void ReplyInitIOSessionCmd::setNewSid(int sid) {
@@ -129,12 +111,6 @@ void GetLODLevelCountCmd::deserialize(ISerialObject& serial) {
     ICommand::deserialize(serial);
 }
 
-std::string GetLODLevelCountCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString();
-    return stream.str();
-}
-
 ReplyGetLODLevelCountCmd::ReplyGetLODLevelCountCmd(ISerialObject& obj)
     : ICommand(0, 0) {
     deserialize(obj);
@@ -155,12 +131,6 @@ void ReplyGetLODLevelCountCmd::serialize(ISerialObject& serial) const {
 void ReplyGetLODLevelCountCmd::deserialize(ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_lodCount = serial.getInt("lodcount");
-}
-
-std::string ReplyGetLODLevelCountCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString() << "lodcount: " << m_lodCount << std::endl;
-    return stream.str();
 }
 
 int ReplyGetLODLevelCountCmd::getLODLevelCount() const {
@@ -191,14 +161,6 @@ void IOData::deserialize(ISerialObject& serial) {
     serial.append("fileid", m_fileId); // ???
     m_fileId = serial.getInt("fileid");
     m_dataType = Vcl::instance().toType(serial.getString("datatype"));
-}
-
-std::string trinity::commands::IOData::toString() const {
-    std::stringstream stream;
-    stream << ISerializable::toString() << "name: " << m_name << std::endl
-           << "fileid: " << m_fileId << std::endl
-           << "datatype: " << m_dataType << std::endl;
-    return stream.str();
 }
 
 std::string IOData::getName() const {

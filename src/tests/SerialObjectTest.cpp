@@ -29,7 +29,6 @@ protected:
             myFloat = serial.getFloat("subFloat");
             myString = serial.getString("subString");
         }
-        std::string toString() const override { return std::string(); }
 
         float myFloat;
         std::string myString;
@@ -70,14 +69,12 @@ TYPED_TEST(SerialObjectTest, MismatchingSubObjects) {
         VclType getType() const override { return VclType::DummyIO; }
         void serialize(ISerialObject& serial) const override {}
         void deserialize(ISerialObject& serial) override {}
-        std::string toString() const override { return std::string(); }
     };
 
     struct MySerializable2 : public ISerializable {
         VclType getType() const override { return VclType::DummyRenderer; }
         void serialize(ISerialObject& serial) const override {}
         void deserialize(ISerialObject& serial) override {}
-        std::string toString() const override { return std::string(); }
     };
 
     TypeParam target;

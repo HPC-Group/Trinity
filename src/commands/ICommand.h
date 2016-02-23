@@ -12,7 +12,6 @@ public:
 
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     int getSid() const;
     int getRid() const;

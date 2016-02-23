@@ -14,7 +14,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     const std::string printError();
     int getErrorCode() const;

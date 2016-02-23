@@ -25,12 +25,6 @@ void ErrorCmd::deserialize(ISerialObject& serial) {
     m_errorCode = serial.getInt("code");
 }
 
-std::string ErrorCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString() << "code: " << m_errorCode << std::endl;
-    return stream.str();
-}
-
 const std::string ErrorCmd::printError() {
     return Vcl::instance().toString(m_errorCode);
 }

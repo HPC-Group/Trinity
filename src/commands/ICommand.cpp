@@ -17,12 +17,6 @@ void ICommand::deserialize(ISerialObject& serial) {
     m_rid = serial.getInt("rid");
 }
 
-std::string ICommand::toString() const {
-    std::stringstream stream;
-    stream << ISerializable::toString() << "sid: " << m_sid << std::endl << "rid: " << m_rid << std::endl;
-    return stream.str();
-}
-
 int ICommand::getSid() const {
     return m_sid;
 }

@@ -12,7 +12,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 };
 
 class InitIOSessionCmd : public ICommand {
@@ -24,7 +23,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     const std::string& getProtocol() const;
     int getFileId() const;
@@ -43,7 +41,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     void setControlPort(const int port);
     int getControlPort() const;
@@ -61,7 +58,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 };
 
 class ReplyGetLODLevelCountCmd : public ICommand {
@@ -73,7 +69,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     int getLODLevelCount() const;
     void setLODLevelCount(int lod);
@@ -89,7 +84,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     std::string getName() const;
     int getFileId() const;

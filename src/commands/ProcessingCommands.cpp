@@ -20,12 +20,6 @@ void StreamingParams::deserialize(ISerialObject& serial) {
     m_resY = serial.getInt("yres");
 }
 
-std::string StreamingParams::toString() const {
-    std::stringstream stream;
-    stream << ISerializable::toString() << "resX: " << m_resX << std::endl << "resY: " << m_resX << std::endl;
-    return stream.str();
-}
-
 int StreamingParams::getResX() const {
     return m_resX;
 }
@@ -75,16 +69,6 @@ void InitProcessingSessionCmd::deserialize(ISerialObject& serial) {
     m_fileId = serial.getInt("fileid");
     m_stringifiedEndpoint = serial.getString("endpoint");
     serial.getSerializable("streamingparams", m_streamingParams);
-}
-
-std::string InitProcessingSessionCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString() << "protocol: " << m_sid << std::endl
-           << "rendertype: " << m_rid << std::endl
-           << "fileid: " << m_rid << std::endl
-           << "endpoint: " << m_rid << std::endl
-           << "streamingparams: " << m_rid << std::endl;
-    return stream.str();
 }
 
 const std::string& InitProcessingSessionCmd::getProtocol() const {
@@ -139,14 +123,6 @@ void ReplyInitProcessingSessionCmd::deserialize(ISerialObject& serial) {
     m_visPort = serial.getInt("visport");
 }
 
-std::string ReplyInitProcessingSessionCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString() << "protocol: " << m_sid << std::endl
-           << "controlport: " << m_controlPort << std::endl
-           << "visport: " << m_visPort << std::endl;
-    return stream.str();
-}
-
 void ReplyInitProcessingSessionCmd::setControlPort(int port) {
     m_controlPort = port;
 }
@@ -176,12 +152,6 @@ void SetIsoValueCmd::serialize(ISerialObject& serial) const {
 void SetIsoValueCmd::deserialize(ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_isoValue = serial.getFloat("isovalue");
-}
-
-std::string SetIsoValueCmd::toString() const {
-    std::stringstream stream;
-    stream << ICommand::toString() << "protocol: " << m_sid << std::endl << "isovalue: " << m_isoValue << std::endl;
-    return stream.str();
 }
 
 float SetIsoValueCmd::getIsoValue() const {

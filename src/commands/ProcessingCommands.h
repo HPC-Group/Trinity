@@ -15,7 +15,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     int getResX() const;
     int getResY() const;
@@ -33,7 +32,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     const std::string& getProtocol() const;
     const std::string& getStringifiedEndpoint() const;
@@ -57,7 +55,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     int getControlPort() const;
     int getVisPort() const;
@@ -78,7 +75,6 @@ public:
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(ISerialObject& serial) override;
-    std::string toString() const override;
 
     float getIsoValue() const;
 
