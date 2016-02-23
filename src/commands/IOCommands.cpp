@@ -18,7 +18,7 @@ void ListFilesCmd::serialize(ISerialObject& serial) const {
     ICommand::serialize(serial);
 }
 
-void ListFilesCmd::deserialize(ISerialObject& serial) {
+void ListFilesCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
 }
 
@@ -43,7 +43,7 @@ void InitIOSessionCmd::serialize(ISerialObject& serial) const {
     serial.append("fileid", m_fileId);
 }
 
-void InitIOSessionCmd::deserialize(ISerialObject& serial) {
+void InitIOSessionCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_protocol = serial.getString("protocol");
     m_fileId = serial.getInt("fileid");
@@ -74,7 +74,7 @@ void ReplyInitIOSessionCmd::serialize(ISerialObject& serial) const {
     serial.append("controlport", m_controlPort);
 }
 
-void ReplyInitIOSessionCmd::deserialize(ISerialObject& serial) {
+void ReplyInitIOSessionCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_controlPort = serial.getInt("controlport");
 }
@@ -107,7 +107,7 @@ void GetLODLevelCountCmd::serialize(ISerialObject& serial) const {
     ICommand::serialize(serial);
 }
 
-void GetLODLevelCountCmd::deserialize(ISerialObject& serial) {
+void GetLODLevelCountCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
 }
 
@@ -128,7 +128,7 @@ void ReplyGetLODLevelCountCmd::serialize(ISerialObject& serial) const {
     serial.append("lodcount", m_lodCount);
 }
 
-void ReplyGetLODLevelCountCmd::deserialize(ISerialObject& serial) {
+void ReplyGetLODLevelCountCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_lodCount = serial.getInt("lodcount");
 }
@@ -155,10 +155,8 @@ void IOData::serialize(ISerialObject& serial) const {
     serial.append("datatype", Vcl::instance().toString(m_dataType));
 }
 
-void IOData::deserialize(ISerialObject& serial) {
-    serial.append("name", m_name); // ???
+void IOData::deserialize(const ISerialObject& serial) {
     m_name = serial.getString("name");
-    serial.append("fileid", m_fileId); // ???
     m_fileId = serial.getInt("fileid");
     m_dataType = Vcl::instance().toType(serial.getString("datatype"));
 }

@@ -15,7 +15,7 @@ void StreamingParams::serialize(ISerialObject& serial) const {
     serial.append("yres", m_resY);
 }
 
-void StreamingParams::deserialize(ISerialObject& serial) {
+void StreamingParams::deserialize(const ISerialObject& serial) {
     m_resX = serial.getInt("xres");
     m_resY = serial.getInt("yres");
 }
@@ -62,7 +62,7 @@ void InitProcessingSessionCmd::serialize(ISerialObject& serial) const {
     serial.append("streamingparams", m_streamingParams);
 }
 
-void InitProcessingSessionCmd::deserialize(ISerialObject& serial) {
+void InitProcessingSessionCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_protocol = serial.getString("protocol");
     m_renderType = Vcl::instance().toType(serial.getString("rendertype"));
@@ -117,7 +117,7 @@ void ReplyInitProcessingSessionCmd::serialize(ISerialObject& serial) const {
     serial.append("visport", m_visPort);
 }
 
-void ReplyInitProcessingSessionCmd::deserialize(ISerialObject& serial) {
+void ReplyInitProcessingSessionCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_controlPort = serial.getInt("controlport");
     m_visPort = serial.getInt("visport");
@@ -149,7 +149,7 @@ void SetIsoValueCmd::serialize(ISerialObject& serial) const {
     serial.append("isovalue", m_isoValue);
 }
 
-void SetIsoValueCmd::deserialize(ISerialObject& serial) {
+void SetIsoValueCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_isoValue = serial.getFloat("isovalue");
 }

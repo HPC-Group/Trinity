@@ -25,7 +25,7 @@ protected:
             serial.append("subFloat", myFloat);
             serial.append("subString", myString);
         }
-        void deserialize(ISerialObject& serial) override {
+        void deserialize(const ISerialObject& serial) override {
             myFloat = serial.getFloat("subFloat");
             myString = serial.getString("subString");
         }
@@ -68,13 +68,13 @@ TYPED_TEST(SerialObjectTest, MismatchingSubObjects) {
     struct MySerializable1 : public ISerializable {
         VclType getType() const override { return VclType::DummyIO; }
         void serialize(ISerialObject& serial) const override {}
-        void deserialize(ISerialObject& serial) override {}
+        void deserialize(const ISerialObject& serial) override {}
     };
 
     struct MySerializable2 : public ISerializable {
         VclType getType() const override { return VclType::DummyRenderer; }
         void serialize(ISerialObject& serial) const override {}
-        void deserialize(ISerialObject& serial) override {}
+        void deserialize(const ISerialObject& serial) override {}
     };
 
     TypeParam target;

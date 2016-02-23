@@ -23,19 +23,19 @@ void JsonObject::append(const std::string& key, const ISerializable& obj) {
     m_root[key] = subObject.m_root;
 }
 
-float JsonObject::getFloat(const std::string& key) {
+float JsonObject::getFloat(const std::string& key) const {
     return m_root[key].asFloat();
 }
 
-int JsonObject::getInt(const std::string& key) {
+int JsonObject::getInt(const std::string& key) const {
     return m_root[key].asInt();
 }
 
-std::string JsonObject::getString(const std::string& key) {
+std::string JsonObject::getString(const std::string& key) const {
     return m_root[key].asString();
 }
 
-void JsonObject::getSerializable(const std::string& key, ISerializable& obj) {
+void JsonObject::getSerializable(const std::string& key, ISerializable& obj) const {
     JsonObject subObject;
     subObject.m_root = m_root[key];
     std::string subclassType = subObject.getString(key);

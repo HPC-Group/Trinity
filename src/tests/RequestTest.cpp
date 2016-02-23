@@ -25,7 +25,7 @@ protected:
                 serial.append("int", intParam);
                 serial.append("str", strParam);
             }
-            void deserialize(ISerialObject& serial) {
+            void deserialize(const ISerialObject& serial) {
                 intParam = serial.getInt("int");
                 strParam = serial.getString("str");
             }
@@ -35,7 +35,7 @@ protected:
         };
     };
 
-    using MyInterfaceRequest = Request<MyInterface>;
+    using MyInterfaceRequest = RequestTemplate<MyInterface>;
 };
 
 TEST_F(RequestTest, GetType) {

@@ -13,7 +13,7 @@ public:
 
     VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
-    void deserialize(ISerialObject& serial) override;
+    void deserialize(const ISerialObject& serial) override;
 
     const std::string printError();
     int getErrorCode() const;

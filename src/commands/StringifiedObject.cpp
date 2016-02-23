@@ -34,25 +34,25 @@ void StringifiedObject::append(const std::string& key, const std::string& value)
     m_stream << value << " ";
 }
 
-float StringifiedObject::getFloat(const std::string& key) {
+float StringifiedObject::getFloat(const std::string& key) const {
     float x;
     m_stream >> x;
     return x;
 }
 
-int StringifiedObject::getInt(const std::string& key) {
+int StringifiedObject::getInt(const std::string& key) const {
     int x;
     m_stream >> x;
     return x;
 }
 
-std::string StringifiedObject::getString(const std::string& key) {
+std::string StringifiedObject::getString(const std::string& key) const {
     std::string x;
     m_stream >> x;
     return x;
 }
 
-void StringifiedObject::getSerializable(const std::string& key, ISerializable& obj) {
+void StringifiedObject::getSerializable(const std::string& key, ISerializable& obj) const {
     std::string subclassType = getString(key);
     std::string expectedSubclassType = Vcl::instance().toString(obj.getType());
     if (subclassType != expectedSubclassType) {

@@ -11,7 +11,7 @@ public:
     ICommand(int sid, int rid);
 
     void serialize(ISerialObject& serial) const override;
-    void deserialize(ISerialObject& serial) override;
+    void deserialize(const ISerialObject& serial) override;
 
     int getSid() const;
     int getRid() const;

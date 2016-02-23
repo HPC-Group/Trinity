@@ -20,7 +20,7 @@ void ErrorCmd::serialize(ISerialObject& serial) const {
     serial.append("code", m_errorCode);
 }
 
-void ErrorCmd::deserialize(ISerialObject& serial) {
+void ErrorCmd::deserialize(const ISerialObject& serial) {
     ICommand::deserialize(serial);
     m_errorCode = serial.getInt("code");
 }

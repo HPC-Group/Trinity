@@ -12,7 +12,7 @@ void ICommand::serialize(ISerialObject& serial) const {
     serial.append("rid", m_rid);
 }
 
-void ICommand::deserialize(ISerialObject& serial) {
+void ICommand::deserialize(const ISerialObject& serial) {
     m_sid = serial.getInt("sid");
     m_rid = serial.getInt("rid");
 }
