@@ -5,6 +5,8 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 
+#include <opengl-base/OpenGlHeadlessContext.h>
+
 using namespace mocca::net;
 
 void init() {

@@ -49,9 +49,15 @@ void Window::initRenderer() {
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
 
     // the file id will be available after implementing the listdata command
-    int fileId = 12;
-    _renderer = _processingNode->initRenderer(trinity::commands::VclType::DummyRenderer, fileId, endpointIO, params);
+    int fileId = 0;
+    _renderer = _processingNode->initRenderer(trinity::commands::VclType::GridLeaper,
+                                                 fileId,
+                                                 endpointIO,
+                                                 params);
     _renderer->connect();
+
+    // sending commands
+    _renderer->setIsoValue(22);
 }
 
 void Window::on_IOconnectIP_clicked() {
@@ -64,18 +70,27 @@ void Window::on_IOconnectIP_clicked() {
     }
 }
 
-void Window::on_PRconnectIP_clicked() {
+void Window::on_PRconnectIP_clicked()
+{
     Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "5678");
 
-    _processingNode = std::unique_ptr<trinity::frontend::ProcessingNodeProxy>(new trinity::frontend::ProcessingNodeProxy(endpoint));
-    if (!connectLoop(*_processingNode)) {
+    _processingNode = std::unique_ptr<trinity::frontend::ProcessingNodeProxy>
+    (new trinity::frontend::ProcessingNodeProxy(endpoint));
+    if(!connectLoop(*_processingNode))
+    {
         LINFO("could not connect, handle the errors later etc.");
         return;
     }
 
     LINFO("connected to processing node");
+
+    initRenderer();
+
 }
 
-void Window::update() {}
+void Window::update(){
 
-void Window::repaint() {}
+}
+
+void Window::repaint(){
+}

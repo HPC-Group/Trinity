@@ -3,6 +3,8 @@ FILE(GLOB PROCESSINGBASE_HEADER ${CMAKE_CURRENT_LIST_DIR}/*.h
 FILE(GLOB PROCESSINGBASE_SOURCE ${CMAKE_CURRENT_LIST_DIR}/*.cpp
 								${CMAKE_CURRENT_LIST_DIR}/gridleaper/*.cpp)
 
+find_package(OpenGL REQUIRED)
+
 CreateSourceGroups("${PROCESSINGBASE_HEADER}" ${CMAKE_CURRENT_LIST_DIR})
 CreateSourceGroups("${PROCESSINGBASE_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
 
@@ -18,7 +20,10 @@ add_executable(processingbase
 				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>
-				$<TARGET_OBJECTS:jsoncpp>)
+				$<TARGET_OBJECTS:jsoncpp>
+				$<TARGET_OBJECTS:opengl-base>)
+
+TARGET_LINK_LIBRARIES(processingbase ${OPENGL_LIBRARIES})
 
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(processingbase Shlwapi.lib)

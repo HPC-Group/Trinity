@@ -24,8 +24,10 @@ add_executable(tests ${TRINITY_TEST_HEADER} ${TRINITY_TEST_SOURCE}
                      $<TARGET_OBJECTS:iobaselib>
                      $<TARGET_OBJECTS:mocca>
 					 $<TARGET_OBJECTS:jsoncpp>
+		     $<TARGET_OBJECTS:opengl-base>
 					 ${CMAKE_CURRENT_LIST_DIR}/main.cpp)					 
 target_link_libraries(tests gmock)
+TARGET_LINK_LIBRARIES(tests ${OPENGL_LIBRARIES})
 
 if (${TRINITY_TEST_LOGGING})
 	set_target_properties(tests PROPERTIES COMPILE_DEFINITIONS "TRINITY_TEST_LOGGING")

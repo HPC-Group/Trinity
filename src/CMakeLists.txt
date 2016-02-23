@@ -5,6 +5,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS on)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base/GL)
 include_directories(${PROJECT_SOURCE_DIR}/src/silverbullet/include)
 
 # level 0 modules
@@ -15,6 +17,7 @@ add_subdirectory(silverbullet)
 add_subdirectory(io-base)
 add_subdirectory(frontend-base)
 add_subdirectory(thirdparty)
+add_subdirectory(opengl-base)
 
 add_subdirectory(processing-base)
 

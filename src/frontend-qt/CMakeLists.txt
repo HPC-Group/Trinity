@@ -26,10 +26,12 @@ add_executable(qtfrontend
 			$<TARGET_OBJECTS:commands>
 			$<TARGET_OBJECTS:silverbullet>
 			$<TARGET_OBJECTS:frontendbaselib>
-		        $<TARGET_OBJECTS:jsoncpp>)
+		        $<TARGET_OBJECTS:jsoncpp>
+			$<TARGET_OBJECTS:opengl-base>)
 
 TARGET_LINK_LIBRARIES(qtfrontend Qt5::Widgets)
 TARGET_LINK_LIBRARIES(qtfrontend Qt5::OpenGL)
+TARGET_LINK_LIBRARIES(qtfrontend ${OPENGL_LIBRARIES})
 
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(qtfrontend Shlwapi.lib)
