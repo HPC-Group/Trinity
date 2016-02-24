@@ -31,7 +31,7 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
                                                                  params.getProtocol(), std::move(ioSessionProxy)));
         session->start();
         InitProcessingSessionCmd::ReplyParams params(session->getControlPort(), session->getVisPort());
-        auto reply = mocca::make_unique<InitProcessingSessionReply>(params, m_request.getRid(), session->getSid());
+        std::unique_ptr<Reply> reply = mocca::make_unique<InitProcessingSessionReply>(params, m_request.getRid(), session->getSid());
         SessionManagerSingleton::instance()->addSession(std::move(session));
         return reply;
     } catch (const mocca::Error&) {

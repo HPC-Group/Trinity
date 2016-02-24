@@ -18,7 +18,7 @@ std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     session->start();
     
     InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());
-    auto reply = mocca::make_unique<InitIOSessionReply>(replyParams, m_request.getRid(), session->getSid());
+    std::unique_ptr<Reply> reply = mocca::make_unique<InitIOSessionReply>(replyParams, m_request.getRid(), session->getSid());
     common::SessionManagerSingleton::instance()->addSession(std::move(session));
     return reply;
 }

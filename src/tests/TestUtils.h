@@ -7,7 +7,7 @@ namespace trinity {
 namespace testing {
 
 template <typename T> T writeAndRead(const T& obj) {
-    auto serial = ISerialObjectFactory::create();
+    auto serial = commands::ISerialObjectFactory::create();
     obj.serialize(*serial);
     T result;
     result.deserialize(*serial);
