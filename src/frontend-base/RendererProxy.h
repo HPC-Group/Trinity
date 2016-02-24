@@ -15,7 +15,7 @@ class RendererProxy : public common::IRenderer, public common::IProxy {
 public:
     /// local proxy to a remote render session
     RendererProxy(std::shared_ptr<common::VisStream> stream, mocca::net::Endpoint controlEndpoint, mocca::net::Endpoint visEndpoint,
-                  const unsigned int& sessionId);
+                  unsigned int sessionId);
 
 
     virtual ~RendererProxy();

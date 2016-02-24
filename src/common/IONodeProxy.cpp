@@ -9,7 +9,6 @@
 using namespace trinity::common;
 using namespace trinity::commands;
 
-
 std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(int fileId) {
     InitIOSessionCmd::RequestParams params(m_inputChannel.getEndpoint().protocol, fileId);
     InitIOSessionRequest request(params, m_ridGen.nextID(), 0);
