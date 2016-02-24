@@ -1,25 +1,35 @@
 #pragma once
-#include "ICommand.h"
 
+#include "commands/ISerializable.h"
+#include "commands/Reply.h"
 
 namespace trinity {
 namespace commands {
 
-class ErrorCmd : public ICommand {
+struct ErrorCmd {
+    static VclType Type;
 
-public:
-    ErrorCmd(ISerialObject&);
-    ErrorCmd(int sid, int rid, int errorCode);
+    class ReplyParams : public ISerializable {
+    public:
+        ReplyParams() = default;
+        ReplyParams(int errorCode);
 
-    VclType getType() const override;
-    void serialize(ISerialObject& serial) const override;
-    void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialObject& serial) const override;
+        void deserialize(const ISerialObject& serial) override;
 
-    const std::string printError();
-    int getErrorCode() const;
+        std::string printError() const;
+        int getErrorCode() const;
 
-private:
-    int m_errorCode;
+        bool equals(const ReplyParams& other) const;
+
+    private:
+        int m_errorCode;
+    };
 };
+
+bool operator==(const ErrorCmd::ReplyParams& lhs, const ErrorCmd::ReplyParams& rhs);
+
+using ErrorReply = ReplyTemplate<ErrorCmd>;
+
 }
 }

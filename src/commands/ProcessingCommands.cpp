@@ -1,6 +1,8 @@
-#include "ProcessingCommands.h"
+#include "commands/ProcessingCommands.h"
 
 using namespace trinity::commands;
+
+////////////// StreamingParams //////////////
 
 StreamingParams::StreamingParams(int resX, int resY)
     : m_resX(resX)
@@ -27,34 +29,23 @@ int StreamingParams::getResY() const {
     return m_resY;
 }
 
-VclType StreamingParams::getType() const {
-    return VclType::StreamingParams;
+bool StreamingParams::equals(const StreamingParams& other) const {
+    return m_resX == other.m_resX && m_resY == other.m_resY;
 }
 
-InitProcessingSessionCmd::InitProcessingSessionCmd(int sid, int rid, const std::string& protocol, const VclType& renderType, int fileId,
-                                                   const std::string& endpoint, const StreamingParams& p)
-    : ICommand(sid, rid)
-    , m_protocol(protocol)
+////////////// InitProcessingSessionCmd //////////////
+
+VclType InitProcessingSessionCmd::Type = VclType::InitRenderer;
+
+InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protocol, const VclType& renderType, int fileId,
+                                                       const std::string& endpoint, const StreamingParams& p)
+    : m_protocol(protocol)
     , m_renderType(renderType)
     , m_fileId(fileId)
     , m_stringifiedEndpoint(endpoint)
     , m_streamingParams(p) {}
 
-InitProcessingSessionCmd::InitProcessingSessionCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
-}
-
-VclType InitProcessingSessionCmd::getType() const {
-    return VclType::InitRenderer;
-}
-
-VclType InitProcessingSessionCmd::getRenderType() const {
-    return m_renderType;
-}
-
-void InitProcessingSessionCmd::serialize(ISerialObject& serial) const {
-    ICommand::serialize(serial);
+void InitProcessingSessionCmd::RequestParams::serialize(ISerialObject& serial) const {
     serial.append("protocol", m_protocol);
     serial.append("rendertype", Vcl::instance().toString(m_renderType));
     serial.append("fileid", m_fileId);
@@ -62,8 +53,7 @@ void InitProcessingSessionCmd::serialize(ISerialObject& serial) const {
     serial.append("streamingparams", m_streamingParams);
 }
 
-void InitProcessingSessionCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
+void InitProcessingSessionCmd::RequestParams::deserialize(const ISerialObject& serial) {
     m_protocol = serial.getString("protocol");
     m_renderType = Vcl::instance().toType(serial.getString("rendertype"));
     m_fileId = serial.getInt("fileid");
@@ -71,89 +61,96 @@ void InitProcessingSessionCmd::deserialize(const ISerialObject& serial) {
     serial.getSerializable("streamingparams", m_streamingParams);
 }
 
-const std::string& InitProcessingSessionCmd::getProtocol() const {
+VclType InitProcessingSessionCmd::RequestParams::getRenderType() const {
+    return m_renderType;
+}
+
+std::string InitProcessingSessionCmd::RequestParams::getProtocol() const {
     return m_protocol;
 }
 
-int InitProcessingSessionCmd::getFileId() const {
+int InitProcessingSessionCmd::RequestParams::getFileId() const {
     return m_fileId;
 }
 
-const StreamingParams& InitProcessingSessionCmd::getParams() const {
+StreamingParams InitProcessingSessionCmd::RequestParams::getStreamingParams() const {
     return m_streamingParams;
 }
 
-const std::string& InitProcessingSessionCmd::getStringifiedEndpoint() const {
+std::string InitProcessingSessionCmd::RequestParams::getStringifiedEndpoint() const {
     return m_stringifiedEndpoint;
 }
 
-/////// Reply
-ReplyInitProcessingSessionCmd::ReplyInitProcessingSessionCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
+bool InitProcessingSessionCmd::RequestParams::equals(const RequestParams& other) const {
+    return m_protocol == other.m_protocol && m_renderType == other.m_renderType && m_fileId == other.m_fileId &&
+           m_stringifiedEndpoint == other.m_stringifiedEndpoint && m_streamingParams == other.m_streamingParams;
 }
-ReplyInitProcessingSessionCmd::ReplyInitProcessingSessionCmd(int sid, int rid)
-    : ICommand(sid, rid) {}
 
-int ReplyInitProcessingSessionCmd::getControlPort() const {
+InitProcessingSessionCmd::ReplyParams::ReplyParams(int controlPort, int visPort)
+    : m_controlPort(controlPort)
+    , m_visPort(visPort) {}
+
+int InitProcessingSessionCmd::ReplyParams::getControlPort() const {
     return m_controlPort;
 }
 
-int ReplyInitProcessingSessionCmd::getVisPort() const {
+int InitProcessingSessionCmd::ReplyParams::getVisPort() const {
     return m_visPort;
 }
 
-void ReplyInitProcessingSessionCmd::setNewSid(int sid) {
-    m_sid = sid;
-}
-
-VclType ReplyInitProcessingSessionCmd::getType() const {
-    return VclType::TrinityReturn;
-}
-
-void ReplyInitProcessingSessionCmd::serialize(ISerialObject& serial) const {
-    ICommand::serialize(serial);
+void InitProcessingSessionCmd::ReplyParams::serialize(ISerialObject& serial) const {
     serial.append("controlport", m_controlPort);
     serial.append("visport", m_visPort);
 }
 
-void ReplyInitProcessingSessionCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
+void InitProcessingSessionCmd::ReplyParams::deserialize(const ISerialObject& serial) {
     m_controlPort = serial.getInt("controlport");
     m_visPort = serial.getInt("visport");
 }
 
-void ReplyInitProcessingSessionCmd::setControlPort(int port) {
-    m_controlPort = port;
+bool InitProcessingSessionCmd::ReplyParams::equals(const ReplyParams& other) const {
+    return m_controlPort == other.m_controlPort && m_visPort == other.m_visPort;
 }
 
-void ReplyInitProcessingSessionCmd::setVisPort(int port) {
-    m_visPort = port;
-}
+////////////// SetIsoValueCmd //////////////
 
-SetIsoValueCmd::SetIsoValueCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
-}
+VclType SetIsoValueCmd::Type = VclType::SetIsoValue;
 
-SetIsoValueCmd::SetIsoValueCmd(int sid, int rid, float value)
-    : ICommand(sid, rid)
-    , m_isoValue(value) {}
+SetIsoValueCmd::RequestParams::RequestParams(float value)
+    : m_isoValue(value) {}
 
-VclType SetIsoValueCmd::getType() const {
-    return VclType::SetIsoValue;
-}
-
-void SetIsoValueCmd::serialize(ISerialObject& serial) const {
-    ICommand::serialize(serial);
+void SetIsoValueCmd::RequestParams::serialize(ISerialObject& serial) const {
     serial.append("isovalue", m_isoValue);
 }
 
-void SetIsoValueCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
+void SetIsoValueCmd::RequestParams::deserialize(const ISerialObject& serial) {
     m_isoValue = serial.getFloat("isovalue");
 }
 
-float SetIsoValueCmd::getIsoValue() const {
+float SetIsoValueCmd::RequestParams::getIsoValue() const {
     return m_isoValue;
+}
+
+bool SetIsoValueCmd::RequestParams::equals(const RequestParams& other) const {
+    return m_isoValue == other.m_isoValue;
+}
+
+
+namespace trinity {
+namespace commands {
+bool operator==(const StreamingParams& lhs, const StreamingParams& rhs) {
+    return lhs.equals(rhs);
+}
+
+bool operator==(const InitProcessingSessionCmd::RequestParams& lhs, const InitProcessingSessionCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const InitProcessingSessionCmd::ReplyParams& lhs, const InitProcessingSessionCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+
+bool operator==(const SetIsoValueCmd::RequestParams& lhs, const SetIsoValueCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+}
 }

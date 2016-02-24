@@ -1,34 +1,36 @@
-#include "ErrorCommands.h"
+#include "commands/ErrorCommands.h"
 
 using namespace trinity::commands;
 
-ErrorCmd::ErrorCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
-}
+VclType ErrorCmd::Type = VclType::TrinityError;
 
-ErrorCmd::ErrorCmd(int sid, int rid, int errorCode)
-    : ICommand(sid, rid)
-    , m_errorCode(errorCode) {}
+ErrorCmd::ReplyParams::ReplyParams(int errorCode)
+    : m_errorCode(errorCode) {}
 
-VclType ErrorCmd::getType() const {
-    return VclType::TrinityError;
-}
-
-void ErrorCmd::serialize(ISerialObject& serial) const {
-    ICommand::serialize(serial);
+void ErrorCmd::ReplyParams::serialize(ISerialObject& serial) const {
     serial.append("code", m_errorCode);
 }
 
-void ErrorCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
+void ErrorCmd::ReplyParams::deserialize(const ISerialObject& serial) {
     m_errorCode = serial.getInt("code");
 }
 
-const std::string ErrorCmd::printError() {
+std::string ErrorCmd::ReplyParams::printError() const {
     return Vcl::instance().toString(m_errorCode);
 }
 
-int ErrorCmd::getErrorCode() const {
+int ErrorCmd::ReplyParams::getErrorCode() const {
     return m_errorCode;
+}
+
+bool ErrorCmd::ReplyParams::equals(const ReplyParams& other) const {
+    return m_errorCode == other.m_errorCode;
+}
+
+namespace trinity {
+namespace commands {
+bool operator==(const ErrorCmd::ReplyParams& lhs, const ErrorCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+}
 }

@@ -1,14 +1,11 @@
 #pragma once
 
-#include "mocca/net/Endpoint.h"
-#include "mocca/net/IMessageConnection.h"
-
-
 #include "commands/ProcessingCommands.h"
 #include "common/IProxy.h"
+#include "frontend-base/RendererProxy.h"
 
-#include "RendererProxy.h"
-
+#include "mocca/net/Endpoint.h"
+#include "mocca/net/IMessageConnection.h"
 
 namespace trinity {
 namespace frontend {
@@ -19,14 +16,9 @@ public:
     ProcessingNodeProxy(const mocca::net::Endpoint& ep)
         : common::IProxy(ep) {}
 
-    std::unique_ptr<RendererProxy> initRenderer(const commands::VclType&, int fileId,
-                                                const mocca::net::Endpoint&, // io endpoint
-                                                const commands::StreamingParams&);
-
-
-private:
-    std::unique_ptr<RendererProxy> handleInitRendererReply(const commands::ReplyInitProcessingSessionCmd&,
-                                                           const commands::StreamingParams& params);
+    std::unique_ptr<RendererProxy> initRenderer(const commands::VclType& type, int fileId,
+                                                const mocca::net::Endpoint& endpoint, // io endpoint
+                                                const commands::StreamingParams& streamingParams);
 };
 }
 }

@@ -80,7 +80,6 @@ TEST_F(NodeTest, ConnectToIOTest) {
 }
 
 TEST_F(NodeTest, InitDummyRendererTest) {
-
     std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
     auto processingNode = createNode(std::move(factory), "5678");
     processingNode->start();
@@ -124,7 +123,6 @@ TEST_F(NodeTest, CallRemoteRendererWithoutConnectingTest) {
 }
 
 TEST_F(NodeTest, InitWrongRendererTest) {
-
     std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
     auto processingNode = createNode(std::move(factory), "5678");
     processingNode->start();
@@ -145,8 +143,7 @@ TEST_F(NodeTest, InitWrongRendererTest) {
     ioNode->join();
 }
 
-TEST_F(NodeTest, SetIsovalueOnGridLeaperTest) {
-
+TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
     std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
     auto processingNode = createNode(std::move(factory), "5678");
     processingNode->start();
@@ -170,7 +167,6 @@ TEST_F(NodeTest, SetIsovalueOnGridLeaperTest) {
 }
 
 TEST_F(NodeTest, CallLodFromDummyRendererTest) {
-
     std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
     auto processingNode = createNode(std::move(factory), "5678");
     processingNode->start();

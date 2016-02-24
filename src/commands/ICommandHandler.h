@@ -1,18 +1,15 @@
 #pragma once
 
-#include "ICommand.h"
-#include "Vcl.h"
+#include "commands/Reply.h"
 
 namespace trinity {
 namespace commands {
 
 // command-pattern like execution of trinity commands
 class ICommandHandler {
-
 public:
-    ~ICommandHandler() {}
-    virtual void execute() = 0;
-    virtual std::unique_ptr<ICommand> getReturnValue() { return nullptr; }
+    virtual ~ICommandHandler() {}
+    virtual std::unique_ptr<Reply> execute() = 0;
 };
 }
 }

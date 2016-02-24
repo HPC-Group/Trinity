@@ -1,17 +1,14 @@
 #pragma once
 
-#include <istream>
-#include <map>
-
 #include "commands/ICommandFactory.h"
+#include "commands/ICommandHandler.h"
 
 namespace trinity {
 namespace io {
 
 class IOCommandFactory : public commands::ICommandFactory {
-
 public:
-    virtual std::unique_ptr<commands::ICommandHandler> createHandler(std::istream&);
+    std::unique_ptr<commands::ICommandHandler> createHandler(const commands::Request& request) override;
 };
 }
 }

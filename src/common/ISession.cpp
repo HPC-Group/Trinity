@@ -7,8 +7,6 @@
 #include "ISession.h"
 #include "commands/ISerialObjectFactory.h"
 
-//#include "IserialObjectFactory.h"
-
 using namespace trinity::common;
 using namespace trinity::commands;
 int ISession::m_basePort = 5990;
@@ -22,7 +20,6 @@ ISession::ISession(const std::string& protocol, std::unique_ptr<ICommandFactory>
     while (!m_acceptor) {
         try {
             m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
-
         } catch (const mocca::net::NetworkError&) {
             LINFO("(session) cannot bind on port " << m_basePort << ", rebinding...");
             m_controlEndpoint.port = std::to_string(m_basePort++);
@@ -36,14 +33,12 @@ ISession::~ISession() {
 }
 
 void ISession::run() {
-
     LINFO("(session) session control at \"" + m_controlEndpoint.toString() + "\"");
 
     try {
         while (!m_controlConnection && !isInterrupted()) {
             m_controlConnection = m_acceptor->accept(); // auto-timeout
         }
-
     } catch (const mocca::net::NetworkError& err) {
         LERROR("(session) cannot bind the render session: " << err.what());
         return;
@@ -60,12 +55,14 @@ void ISession::run() {
                 std::stringstream requestStream, replyStream;
                 requestStream << cmd;
 
-                auto handler = m_factory->createHandler(requestStream);
-                handler->execute();
-                auto reply = handler->getReturnValue();
+                auto serialRequest = ISerialObjectFactory::create();
+                serialRequest->readFrom(requestStream);
+                auto request = Request::createFromSerialObject(*serialRequest);
+
+                auto handler = m_factory->createHandler(*request);
+                auto reply = handler->execute();
                 if (reply != nullptr) { // not tested yet
-                    auto serialReply = ISerialObjectFactory::create();
-                    reply->serialize(*serialReply);
+                    auto serialReply = Reply::createSerialObject(*reply);
                     serialReply->writeTo(replyStream);
                     LINFO("(session) reply: " << replyStream.str());
                     m_controlConnection->send(std::move(mocca::ByteArray() << replyStream.str()));

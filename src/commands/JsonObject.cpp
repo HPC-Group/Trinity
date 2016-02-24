@@ -18,7 +18,6 @@ void JsonObject::append(const std::string& key, const std::string& value) {
 
 void JsonObject::append(const std::string& key, const ISerializable& obj) {
     JsonObject subObject;
-    subObject.append(key, Vcl::instance().toString(obj.getType()));
     obj.serialize(subObject);
     m_root[key] = subObject.m_root;
 }
@@ -38,12 +37,6 @@ std::string JsonObject::getString(const std::string& key) const {
 void JsonObject::getSerializable(const std::string& key, ISerializable& obj) const {
     JsonObject subObject;
     subObject.m_root = m_root[key];
-    std::string subclassType = subObject.getString(key);
-    std::string expectedSubclassType = Vcl::instance().toString(obj.getType());
-    if (subclassType != expectedSubclassType) {
-        throw mocca::Error("subclass type is incorrect (is " + subclassType + ", should be " + expectedSubclassType + ")", __FILE__,
-                           __LINE__);
-    }
     obj.deserialize(subObject);
 }
 
@@ -54,5 +47,7 @@ void JsonObject::writeTo(std::ostream& stream) {
 
 void JsonObject::readFrom(std::istream& stream) {
     JsonCpp::Reader reader;
-    reader.parse(stream, m_root);
+    if (!reader.parse(stream, m_root)) {
+        throw mocca::Error("Error reading serialized object: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
+    }
 }

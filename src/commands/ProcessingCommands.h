@@ -1,6 +1,8 @@
 #pragma once
 
-#include "ICommand.h"
+#include "commands/ISerializable.h"
+#include "commands/Request.h"
+#include "commands/Reply.h"
 
 #include "mocca/net/Endpoint.h"
 
@@ -12,74 +14,97 @@ public:
     StreamingParams();
     StreamingParams(int resX, int resY);
 
-    VclType getType() const override;
     void serialize(ISerialObject& serial) const override;
     void deserialize(const ISerialObject& serial) override;
 
     int getResX() const;
     int getResY() const;
 
+    bool equals(const StreamingParams& other) const;
+
 private:
     int m_resX, m_resY;
 };
 
-class InitProcessingSessionCmd : public ICommand {
-public:
-    InitProcessingSessionCmd(ISerialObject&);
-    InitProcessingSessionCmd(int sid, int rid, const std::string& protocol, const VclType& renderType, int fileId,
-                             const std::string& stringifiedIoEndpoint, const StreamingParams& p);
+bool operator==(const StreamingParams& lhs, const StreamingParams& rhs);
 
-    VclType getType() const override;
-    void serialize(ISerialObject& serial) const override;
-    void deserialize(const ISerialObject& serial) override;
+struct InitProcessingSessionCmd {
+    static VclType Type;
 
-    const std::string& getProtocol() const;
-    const std::string& getStringifiedEndpoint() const;
-    int getFileId() const;
-    VclType getRenderType() const;
-    const StreamingParams& getParams() const;
+    class RequestParams : public ISerializable {
+    public:
+        RequestParams() = default;
+        RequestParams(const std::string& protocol, const VclType& renderType, int fileId, const std::string& stringifiedIoEndpoint,
+                      const StreamingParams& p);
 
-private:
-    std::string m_protocol;
-    VclType m_renderType;
-    int m_fileId;
-    std::string m_stringifiedEndpoint;
-    StreamingParams m_streamingParams;
+        void serialize(ISerialObject& serial) const override;
+        void deserialize(const ISerialObject& serial) override;
+
+        std::string getProtocol() const;
+        std::string getStringifiedEndpoint() const;
+        int getFileId() const;
+        VclType getRenderType() const;
+        StreamingParams getStreamingParams() const;
+
+        bool equals(const RequestParams& other) const;
+
+    private:
+        std::string m_protocol;
+        VclType m_renderType;
+        int m_fileId;
+        std::string m_stringifiedEndpoint;
+        StreamingParams m_streamingParams;
+    };
+
+    class ReplyParams : public ISerializable {
+    public:
+        ReplyParams() = default;
+        ReplyParams(int controlPort, int visPort);
+
+        void serialize(ISerialObject& serial) const override;
+        void deserialize(const ISerialObject& serial) override;
+
+        int getControlPort() const;
+        int getVisPort() const;
+
+        bool equals(const ReplyParams& other) const;
+
+    private:
+        int m_controlPort;
+        int m_visPort;
+    };
 };
 
-class ReplyInitProcessingSessionCmd : public ICommand {
-public:
-    ReplyInitProcessingSessionCmd(ISerialObject&);
-    ReplyInitProcessingSessionCmd(int sid, int rid);
+bool operator==(const InitProcessingSessionCmd::RequestParams& lhs, const InitProcessingSessionCmd::RequestParams& rhs);
+bool operator==(const InitProcessingSessionCmd::ReplyParams& lhs, const InitProcessingSessionCmd::ReplyParams& rhs);
 
-    VclType getType() const override;
-    void serialize(ISerialObject& serial) const override;
-    void deserialize(const ISerialObject& serial) override;
 
-    int getControlPort() const;
-    int getVisPort() const;
-    void setControlPort(int port);
-    void setVisPort(int port);
-    void setNewSid(int sid);
+struct SetIsoValueCmd {
+    static VclType Type;
 
-private:
-    int m_controlPort;
-    int m_visPort;
+    class RequestParams : public ISerializable {
+    public:
+        RequestParams() = default;
+        RequestParams(float value);
+
+        void serialize(ISerialObject& serial) const override;
+        void deserialize(const ISerialObject& serial) override;
+
+        float getIsoValue() const;
+
+        bool equals(const RequestParams& other) const;
+
+    private:
+        float m_isoValue;
+    };
 };
 
-class SetIsoValueCmd : public ICommand {
-public:
-    SetIsoValueCmd(ISerialObject&);
-    SetIsoValueCmd(int sid, int rid, float value);
+bool operator==(const SetIsoValueCmd::RequestParams& lhs, const SetIsoValueCmd::RequestParams& rhs);
 
-    VclType getType() const override;
-    void serialize(ISerialObject& serial) const override;
-    void deserialize(const ISerialObject& serial) override;
 
-    float getIsoValue() const;
+using InitProcessingSessionRequest = RequestTemplate<InitProcessingSessionCmd>;
+using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;
 
-private:
-    float m_isoValue;
-};
+using SetIsoValueRequest = RequestTemplate<SetIsoValueCmd>;
 }
 }

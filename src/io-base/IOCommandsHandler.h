@@ -1,4 +1,5 @@
 #pragma once
+
 #include "commands/ICommandHandler.h"
 #include "commands/IOCommands.h"
 
@@ -7,32 +8,24 @@ namespace io {
 
 // command-pattern like execution of trinity commands
 class InitIOSessionHdl : public commands::ICommandHandler {
-
 public:
-    virtual void execute();
-    virtual std::unique_ptr<commands::ICommand> getReturnValue();
-    InitIOSessionHdl(commands::InitIOSessionCmd cmd);
-    ~InitIOSessionHdl() = default;
+    InitIOSessionHdl(const commands::InitIOSessionRequest& request);
+
+    std::unique_ptr<commands::Reply> execute() override;
 
 private:
-    commands::ReplyInitIOSessionCmd m_reply;
-    std::string m_protocol;
-    int m_fileId;
+    commands::InitIOSessionRequest m_request;
 };
 
 
 class GetLODLevelCountHdl : public commands::ICommandHandler {
-
 public:
-    virtual void execute();
-    GetLODLevelCountHdl(commands::GetLODLevelCountCmd cmd);
-    ~GetLODLevelCountHdl() = default;
+    GetLODLevelCountHdl(const commands::GetLODLevelCountRequest& request);
 
-    virtual std::unique_ptr<commands::ICommand> getReturnValue();
+    std::unique_ptr<commands::Reply> execute() override;
 
 private:
-    commands::ReplyGetLODLevelCountCmd m_reply;
-    int m_sid;
+    commands::GetLODLevelCountRequest m_request;
 };
 }
 }

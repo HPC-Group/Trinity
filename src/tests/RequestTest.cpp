@@ -2,6 +2,7 @@
 
 #include "commands/ISerialObjectFactory.h"
 #include "commands/Request.h"
+#include "commands/ProcessingCommands.h"
 
 using namespace trinity::commands;
 
@@ -10,48 +11,21 @@ class RequestTest : public ::testing::Test {
 protected:
     RequestTest() {}
     virtual ~RequestTest() {}
-
-    struct MyInterface {
-        static VclType getType() { return VclType::InitIOSession; }
-
-        struct RequestParams : public ISerializable {
-            RequestParams() = default;
-            RequestParams(int i, const std::string s)
-                : intParam(i)
-                , strParam(s) {}
-
-            VclType getType() const override { return VclType::DummyIO; }
-            void serialize(ISerialObject& serial) const {
-                serial.append("int", intParam);
-                serial.append("str", strParam);
-            }
-            void deserialize(const ISerialObject& serial) {
-                intParam = serial.getInt("int");
-                strParam = serial.getString("str");
-            }
-
-            int intParam;
-            std::string strParam;
-        };
-    };
-
-    using MyInterfaceRequest = RequestTemplate<MyInterface>;
 };
 
 TEST_F(RequestTest, GetType) {
-    MyInterface::RequestParams requestParams(42, "Hello");
-    MyInterfaceRequest request(requestParams);
-    ASSERT_EQ(VclType::InitIOSession, request.getType());
+    SetIsoValueCmd::RequestParams requestParams(3.14f);
+    SetIsoValueRequest request(requestParams, 0, 0);
+    ASSERT_EQ(VclType::SetIsoValue, request.getType());
 }
 
 TEST_F(RequestTest, Serialization) {
-    MyInterface::RequestParams requestParams(42, "Hello");
-    MyInterfaceRequest request(requestParams);
-    auto serialized = ISerialObjectFactory::create();
-    request.serialize(*serialized);
+    SetIsoValueCmd::RequestParams requestParams(3.14f);
+    SetIsoValueRequest request(requestParams, 0, 0);
+    auto serialized = Request::createSerialObject(request);
 
-    MyInterfaceRequest result;
-    result.deserialize(*serialized);
-    ASSERT_EQ(42, result.getParams().intParam);
-    ASSERT_EQ("Hello", result.getParams().strParam);
+    auto result = Request::createFromSerialObject(*serialized);
+    auto castedResult = dynamic_cast<SetIsoValueRequest*>(result.get());
+    ASSERT_TRUE(castedResult != nullptr);
+    ASSERT_EQ(3.14f, castedResult->getParams().getIsoValue());
 }

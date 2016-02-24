@@ -1,23 +1,21 @@
-#include "CommandInputChannel.h"
+#include "commands/CommandInputChannel.h"
 
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 
-#include "ISerialObjectFactory.h"
+#include "commands/ISerialObjectFactory.h"
+#include "commands/Request.h"
 #include "common/NetConfig.h"
 
 using namespace trinity::commands;
 
-CommandInputChannel::~CommandInputChannel() {}
 
 CommandInputChannel::CommandInputChannel(const mocca::net::Endpoint& endpoint)
     : m_endpoint(endpoint) {}
 
-
 bool CommandInputChannel::connect() {
-
     try {
         m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
 
@@ -30,15 +28,12 @@ bool CommandInputChannel::connect() {
     return true;
 }
 
-
-void CommandInputChannel::sendCommand(const ICommand& cmd) {
-
+void CommandInputChannel::sendRequest(const Request& request) {
     if (!m_mainChannel)
         throw mocca::Error("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
 
-    auto serialRequest = ISerialObjectFactory::create();
+    auto serialRequest = Request::createSerialObject(request);
     std::stringstream requestStream;
-    cmd.serialize(*serialRequest);
     serialRequest->writeTo(requestStream);
 
     // command is sent to processing node
@@ -46,12 +41,11 @@ void CommandInputChannel::sendCommand(const ICommand& cmd) {
     m_mainChannel->send(std::move(mocca::ByteArray() << requestStream.str()));
 }
 
-const mocca::net::Endpoint& CommandInputChannel::getEndpoint() const {
+mocca::net::Endpoint CommandInputChannel::getEndpoint() const {
     return m_endpoint;
 }
 
-std::unique_ptr<ISerialObject> CommandInputChannel::getReply(const std::chrono::milliseconds& ms) {
-
+std::unique_ptr<Reply> CommandInputChannel::getReply(const std::chrono::milliseconds& ms) {
     auto byteArray = m_mainChannel->receive(ms);
 
     if (byteArray.isEmpty()) {
@@ -67,5 +61,5 @@ std::unique_ptr<ISerialObject> CommandInputChannel::getReply(const std::chrono::
 
     auto serialReply = ISerialObjectFactory::create();
     serialReply->readFrom(replyStream);
-    return std::move(serialReply);
+    return Reply::createFromSerialObject(*serialReply);
 }

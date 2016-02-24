@@ -1,45 +1,37 @@
-#include "IOCommandsHandler.h"
-#include "IOCommandFactory.h"
-#include "IOSession.h"
+#include "io-base/IOCommandsHandler.h"
+
+#include "io-base/IOCommandFactory.h"
+#include "io-base/IOSession.h"
+
+#include "mocca/base/Memory.h"
+
 using namespace trinity::io;
 using namespace trinity::commands;
 
-InitIOSessionHdl::InitIOSessionHdl(InitIOSessionCmd cmd)
-    : m_reply(cmd.getSid(), cmd.getRid())
-    , m_protocol(cmd.getProtocol())
-    , m_fileId(cmd.getFileId()) {}
+InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request)
+    : m_request(request) {}
 
-void InitIOSessionHdl::execute() {
+std::unique_ptr<Reply> InitIOSessionHdl::execute() {
+    auto requestParams = m_request.getParams();
 
-    std::unique_ptr<commands::ICommandFactory> factory(new IOCommandFactory);
-    std::unique_ptr<IOSession> session(new IOSession(m_protocol, std::move(factory), m_fileId));
+    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), mocca::make_unique<IOCommandFactory>(), requestParams.getFileId());
     session->start();
-    m_reply.setNewSid(session->getSid());
-    m_reply.setControlPort(session->getControlPort());
-
+    
+    InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());
+    auto reply = mocca::make_unique<InitIOSessionReply>(replyParams, m_request.getRid(), session->getSid());
     common::SessionManagerSingleton::instance()->addSession(std::move(session));
-}
-
-std::unique_ptr<ICommand> InitIOSessionHdl::getReturnValue() {
-    std::unique_ptr<ReplyInitIOSessionCmd> cmd(new ReplyInitIOSessionCmd(m_reply));
-    return std::move(cmd);
+    return reply;
 }
 
 
-GetLODLevelCountHdl::GetLODLevelCountHdl(GetLODLevelCountCmd cmd)
-    : m_reply(cmd.getSid(), cmd.getRid())
-    , m_sid(cmd.getSid()) {}
+GetLODLevelCountHdl::GetLODLevelCountHdl(const GetLODLevelCountRequest& request)
+    : m_request(request) {}
 
-void GetLODLevelCountHdl::execute() {
-
-    auto& session = common::SessionManagerSingleton::instance()->getSession(m_sid);
+std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
+    auto& session = common::SessionManagerSingleton::instance()->getSession(m_request.getSid());
     IOSession* ioSession = dynamic_cast<IOSession*>(&session); // dmc: see comments in ISession.h
     auto& io = ioSession->getIO();
-    m_reply.setLODLevelCount(io.getLODLevelCount());
-}
 
-
-std::unique_ptr<ICommand> GetLODLevelCountHdl::getReturnValue() {
-    std::unique_ptr<ReplyGetLODLevelCountCmd> cmd(new ReplyGetLODLevelCountCmd(m_reply));
-    return std::move(cmd);
+    GetLODLevelCountCmd::ReplyParams replyParams(io.getLODLevelCount());
+    return mocca::make_unique<GetLODLevelCountReply>(replyParams, m_request.getRid(), m_request.getSid());
 }

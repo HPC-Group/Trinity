@@ -1,10 +1,11 @@
 #pragma once
 
+#include "commands/Reply.h"
+#include "commands/Request.h"
+#include "common/NetConfig.h"
+
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/IMessageConnection.h"
-
-#include "commands/ICommand.h"
-#include "common/NetConfig.h"
 
 namespace trinity {
 namespace commands {
@@ -12,12 +13,12 @@ namespace commands {
 class CommandInputChannel {
 
 public:
-    CommandInputChannel(const mocca::net::Endpoint&);
-    ~CommandInputChannel();
+    CommandInputChannel(const mocca::net::Endpoint& endpoint);
+
     bool connect();
-    void sendCommand(const ICommand& cmd);
-    std::unique_ptr<ISerialObject> getReply(const std::chrono::milliseconds& = common::TIMEOUT_REPLY);
-    const mocca::net::Endpoint& getEndpoint() const;
+    void sendRequest(const Request& request);
+    std::unique_ptr<Reply> getReply(const std::chrono::milliseconds& = common::TIMEOUT_REPLY);
+    mocca::net::Endpoint getEndpoint() const;
 
 private:
     mocca::net::Endpoint m_endpoint;

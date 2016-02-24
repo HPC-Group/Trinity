@@ -1,11 +1,7 @@
 #pragma once
 
-#include <istream>
-#include <map>
-
-#include "ICommand.h"
-#include "ICommandHandler.h"
-#include "Vcl.h"
+#include "commands/ICommandHandler.h"
+#include "commands/Request.h"
 
 namespace trinity {
 namespace commands {
@@ -13,7 +9,7 @@ namespace commands {
 class ICommandFactory {
 
 public:
-    virtual std::unique_ptr<ICommandHandler> createHandler(std::istream&) = 0;
+    virtual std::unique_ptr<commands::ICommandHandler> createHandler(const commands::Request& request) = 0;
 };
 }
 }

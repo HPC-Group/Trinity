@@ -20,7 +20,6 @@ protected:
             : myFloat(f)
             , myString(s) {}
 
-        VclType getType() const override { return VclType::DummyIO; }
         void serialize(ISerialObject& serial) const override {
             serial.append("subFloat", myFloat);
             serial.append("subString", myString);
@@ -64,27 +63,6 @@ TYPED_TEST(SerialObjectTest, SubObjects) {
     ASSERT_EQ("Hello", target.getString("string"));
 }
 
-TYPED_TEST(SerialObjectTest, MismatchingSubObjects) {
-    struct MySerializable1 : public ISerializable {
-        VclType getType() const override { return VclType::DummyIO; }
-        void serialize(ISerialObject& serial) const override {}
-        void deserialize(const ISerialObject& serial) override {}
-    };
-
-    struct MySerializable2 : public ISerializable {
-        VclType getType() const override { return VclType::DummyRenderer; }
-        void serialize(ISerialObject& serial) const override {}
-        void deserialize(const ISerialObject& serial) override {}
-    };
-
-    TypeParam target;
-    MySerializable1 subObject1;
-    target.append("sub", subObject1);
-
-    MySerializable2 subObject2;
-    ASSERT_THROW(target.getSerializable("sub", subObject2), mocca::Error);
-}
-
 TYPED_TEST(SerialObjectTest, ReadWrite) {
     TypeParam obj1;
     obj1.setType(VclType::DummyIO);
@@ -106,4 +84,11 @@ TYPED_TEST(SerialObjectTest, ReadWrite) {
     ASSERT_EQ(2.718f, resultSubObject.myFloat);
     ASSERT_EQ("World", resultSubObject.myString);
     ASSERT_EQ("Hello", obj2.getString("string"));
+}
+
+TYPED_TEST(SerialObjectTest, SerializationError) {
+    std::stringstream s;
+    s << "this is not a serialized object";
+    JsonObject serial; // fixme: doesn't work with StringifiedObject
+    ASSERT_THROW(serial.readFrom(s), mocca::Error);
 }

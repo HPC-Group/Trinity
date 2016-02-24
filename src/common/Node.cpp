@@ -49,12 +49,14 @@ void Node::run() {
             std::stringstream requestStream, replyStream;
             requestStream << cmd;
 
-            auto handler = m_factory->createHandler(requestStream);
-            handler->execute();
-            auto reply = handler->getReturnValue();
+            auto serialRequest = ISerialObjectFactory::create();
+            serialRequest->readFrom(requestStream);
+            auto request = Request::createFromSerialObject(*serialRequest);
+
+            auto handler = m_factory->createHandler(*request);
+            auto reply = handler->execute();
             if (reply != nullptr) {
-                auto serialReply = commands::ISerialObjectFactory::create();
-                reply->serialize(*serialReply);
+                auto serialReply = Reply::createSerialObject(*reply);
                 serialReply->writeTo(replyStream);
                 LINFO("(io) reply: " << replyStream.str());
                 m_aggregator->send(MessageEnvelope(std::move(mocca::ByteArray() << replyStream.str()), env.connectionID));

@@ -1,153 +1,99 @@
-#include "IOCommands.h"
+#include "commands/IOCommands.h"
 
 using namespace trinity::commands;
 
-ListFilesCmd::ListFilesCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
-}
+////////////// ListFilesCmd //////////////
 
-ListFilesCmd::ListFilesCmd(int sid, int rid)
-    : ICommand(sid, rid) {}
+VclType ListFilesCmd::Type = VclType::ListFiles;
 
-VclType ListFilesCmd::getType() const {
-    return VclType::ListFiles;
-}
+void ListFilesCmd::RequestParams::serialize(ISerialObject& serial) const {}
 
-void ListFilesCmd::serialize(ISerialObject& serial) const {
-    ICommand::serialize(serial);
-}
+void ListFilesCmd::RequestParams::deserialize(const ISerialObject& serial) {}
 
-void ListFilesCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
-}
 
-InitIOSessionCmd::InitIOSessionCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
-}
+////////////// InitIOSessionCmd //////////////
 
-InitIOSessionCmd::InitIOSessionCmd(int sid, int rid, const std::string& protocol, int fileId)
-    : ICommand(sid, rid)
-    , m_protocol(protocol)
+VclType InitIOSessionCmd::Type = VclType::InitIOSession;
+
+InitIOSessionCmd::RequestParams::RequestParams(const std::string& protocol, int fileId)
+    : m_protocol(protocol)
     , m_fileId(fileId) {}
 
-VclType InitIOSessionCmd::getType() const {
-    return VclType::InitIOSession;
-}
-
-void InitIOSessionCmd::serialize(ISerialObject& serial) const {
-
-    ICommand::serialize(serial);
+void InitIOSessionCmd::RequestParams::serialize(ISerialObject& serial) const {
     serial.append("protocol", m_protocol);
     serial.append("fileid", m_fileId);
 }
 
-void InitIOSessionCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
+void InitIOSessionCmd::RequestParams::deserialize(const ISerialObject& serial) {
     m_protocol = serial.getString("protocol");
     m_fileId = serial.getInt("fileid");
 }
 
-const std::string& InitIOSessionCmd::getProtocol() const {
+std::string InitIOSessionCmd::RequestParams::getProtocol() const {
     return m_protocol;
 }
 
-int InitIOSessionCmd::getFileId() const {
+int InitIOSessionCmd::RequestParams::getFileId() const {
     return m_fileId;
 }
 
-ReplyInitIOSessionCmd::ReplyInitIOSessionCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
+bool InitIOSessionCmd::RequestParams::equals(const InitIOSessionCmd::RequestParams& other) const {
+    return m_protocol == other.m_protocol && m_fileId == other.m_fileId;
 }
 
-ReplyInitIOSessionCmd::ReplyInitIOSessionCmd(int sid, int rid)
-    : ICommand(sid, rid) {}
+InitIOSessionCmd::ReplyParams::ReplyParams(int controlPort)
+    : m_controlPort(controlPort) {}
 
-VclType ReplyInitIOSessionCmd::getType() const {
-    return VclType::TrinityReturn;
-}
-
-void ReplyInitIOSessionCmd::serialize(ISerialObject& serial) const {
-    ICommand::serialize(serial);
+void InitIOSessionCmd::ReplyParams::serialize(ISerialObject& serial) const {
     serial.append("controlport", m_controlPort);
 }
 
-void ReplyInitIOSessionCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
+void InitIOSessionCmd::ReplyParams::deserialize(const ISerialObject& serial) {
     m_controlPort = serial.getInt("controlport");
 }
 
-void ReplyInitIOSessionCmd::setNewSid(int sid) {
-    m_sid = sid;
-}
-
-void ReplyInitIOSessionCmd::setControlPort(const int port) {
-    m_controlPort = port;
-}
-
-int ReplyInitIOSessionCmd::getControlPort() const {
+int InitIOSessionCmd::ReplyParams::getControlPort() const {
     return m_controlPort;
 }
 
-GetLODLevelCountCmd::GetLODLevelCountCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
+bool InitIOSessionCmd::ReplyParams::equals(const InitIOSessionCmd::ReplyParams& other) const {
+    return m_controlPort == other.m_controlPort;
 }
 
-GetLODLevelCountCmd::GetLODLevelCountCmd(int sid, int rid)
-    : ICommand(sid, rid) {}
 
-VclType GetLODLevelCountCmd::getType() const {
-    return VclType::GetLODLevelCount;
-}
+////////////// GetLODLevelCountCmd //////////////
 
-void GetLODLevelCountCmd::serialize(ISerialObject& serial) const {
-    ICommand::serialize(serial);
-}
+VclType GetLODLevelCountCmd::Type = VclType::GetLODLevelCount;
 
-void GetLODLevelCountCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
-}
+void GetLODLevelCountCmd::RequestParams::serialize(ISerialObject& serial) const {}
 
-ReplyGetLODLevelCountCmd::ReplyGetLODLevelCountCmd(ISerialObject& obj)
-    : ICommand(0, 0) {
-    deserialize(obj);
-}
+void GetLODLevelCountCmd::RequestParams::deserialize(const ISerialObject& serial) {}
 
-ReplyGetLODLevelCountCmd::ReplyGetLODLevelCountCmd(int sid, int rid)
-    : ICommand(sid, rid) {}
+GetLODLevelCountCmd::ReplyParams::ReplyParams(int lodCount)
+    : m_lodCount(lodCount) {}
 
-VclType ReplyGetLODLevelCountCmd::getType() const {
-    return VclType::TrinityReturn;
-}
-
-void ReplyGetLODLevelCountCmd::serialize(ISerialObject& serial) const {
-    ICommand::serialize(serial);
+void GetLODLevelCountCmd::ReplyParams::serialize(ISerialObject& serial) const {
     serial.append("lodcount", m_lodCount);
 }
 
-void ReplyGetLODLevelCountCmd::deserialize(const ISerialObject& serial) {
-    ICommand::deserialize(serial);
+void GetLODLevelCountCmd::ReplyParams::deserialize(const ISerialObject& serial) {
     m_lodCount = serial.getInt("lodcount");
 }
 
-int ReplyGetLODLevelCountCmd::getLODLevelCount() const {
+int GetLODLevelCountCmd::ReplyParams::getLODLevelCount() const {
     return m_lodCount;
 }
-void ReplyGetLODLevelCountCmd::setLODLevelCount(int lod) {
-    m_lodCount = lod;
+
+bool GetLODLevelCountCmd::ReplyParams::equals(const GetLODLevelCountCmd::ReplyParams& other) const {
+    return m_lodCount == other.m_lodCount;
 }
+
+////////////// IOData //////////////
 
 IOData::IOData(const std::string& name, int fileId, const VclType& dataType)
     : m_name(name)
     , m_fileId(fileId)
     , m_dataType(dataType) {}
-
-VclType IOData::getType() const {
-    return VclType::IOData;
-}
 
 void IOData::serialize(ISerialObject& serial) const {
     serial.append("name", m_name);
@@ -164,9 +110,33 @@ void IOData::deserialize(const ISerialObject& serial) {
 std::string IOData::getName() const {
     return m_name;
 }
+
 int IOData::getFileId() const {
     return m_fileId;
 }
+
 VclType IOData::getDataType() const {
     return m_dataType;
+}
+
+bool IOData::equals(const IOData& other) const {
+    return m_name == other.m_name && m_fileId == other.m_fileId && m_dataType == other.m_dataType;
+}
+
+
+namespace trinity {
+namespace commands {
+bool operator==(const InitIOSessionCmd::RequestParams& lhs, const InitIOSessionCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const InitIOSessionCmd::ReplyParams& lhs, const InitIOSessionCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetLODLevelCountCmd::ReplyParams& lhs, const GetLODLevelCountCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const IOData& lhs, const IOData& rhs) {
+    return lhs.equals(rhs);
+}
+}
 }

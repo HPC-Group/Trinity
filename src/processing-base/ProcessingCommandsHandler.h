@@ -9,27 +9,21 @@ namespace processing {
 
 // command-pattern like execution of trinity commands
 class InitProcessingSessionHdl : public commands::ICommandHandler {
-
 public:
-    virtual void execute();
-    virtual std::unique_ptr<commands::ICommand> getReturnValue();
-    InitProcessingSessionHdl(commands::InitProcessingSessionCmd cmd);
-    ~InitProcessingSessionHdl();
+    InitProcessingSessionHdl(const commands::InitProcessingSessionRequest& request);
+
+    std::unique_ptr<commands::Reply> execute() override;
 
 private:
-    commands::InitProcessingSessionCmd m_cmd;
-    commands::ReplyInitProcessingSessionCmd m_reply;
-    std::unique_ptr<commands::ErrorCmd> m_errorReply;
+    commands::InitProcessingSessionRequest m_request;
     common::IONodeProxy m_ioProxy;
 };
 
 class SetIsoValueHdl : public commands::ICommandHandler {
-
 public:
-    virtual void execute();
-    SetIsoValueHdl(commands::SetIsoValueCmd cmd);
-    ~SetIsoValueHdl();
+    SetIsoValueHdl(const commands::SetIsoValueRequest& request);
 
+    std::unique_ptr<commands::Reply> execute() override;
 
 private:
     float m_isoValue;

@@ -1,35 +1,26 @@
-#include "IOCommandFactory.h"
-#include "IOCommandsHandler.h"
+#include "io-base/IOCommandFactory.h"
 
-#include "IOCommandsHandler.h"
 #include "commands/IOCommands.h"
 #include "commands/ISerialObjectFactory.h"
+#include "io-base/IOCommandsHandler.h"
 
 #include "mocca/base/Error.h"
+#include "mocca/base/Memory.h"
 
 using namespace trinity::commands;
 using namespace trinity::io;
 
-std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(std::istream& stream) {
-
-    auto serialRequest = ISerialObjectFactory::create();
-    serialRequest->readFrom(stream);
-
-    VclType type = serialRequest->getType();
+std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(const Request& request) {
+    VclType type = request.getType();
 
     switch (type) {
-
     case VclType::InitIOSession: {
-
-        InitIOSessionCmd cmd(*serialRequest);
-        return std::unique_ptr<InitIOSessionHdl>(new InitIOSessionHdl(cmd));
+        return mocca::make_unique<InitIOSessionHdl>(static_cast<const InitIOSessionRequest&>(request));
         break;
     }
 
     case VclType::GetLODLevelCount: {
-
-        GetLODLevelCountCmd cmd(*serialRequest);
-        return std::unique_ptr<GetLODLevelCountHdl>(new GetLODLevelCountHdl(cmd));
+        return mocca::make_unique<GetLODLevelCountHdl>(static_cast<const GetLODLevelCountRequest&>(request));
         break;
     }
 
@@ -41,7 +32,6 @@ std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(std::istream& s
         throw mocca::Error("command not implemented: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
         break;
     }
-
 
     default:
         throw mocca::Error("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
