@@ -10,6 +10,9 @@ set(CMAKE_INSTALL_PREFIX ${TRINITY_ROOT_DIR}/build/install)
 
 
 find_package(OpenGL REQUIRED)
+IF (UNIX AND NOT APPLE)
+	find_package(EGL REQUIRED)
+ENDIF ()
 
 
 add_definitions(-DTRINITY_VERSION="0.1")

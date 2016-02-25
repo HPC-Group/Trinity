@@ -28,6 +28,9 @@ add_executable(tests ${TRINITY_TEST_HEADER} ${TRINITY_TEST_SOURCE}
 					 ${CMAKE_CURRENT_LIST_DIR}/main.cpp)					 
 target_link_libraries(tests gmock)
 TARGET_LINK_LIBRARIES(tests ${OPENGL_LIBRARIES})
+IF (UNIX AND NOT APPLE)
+	TARGET_LINK_LIBRARIES(tests EGL)
+ENDIF()
 
 if (${TRINITY_TEST_LOGGING})
 	set_target_properties(tests PROPERTIES COMPILE_DEFINITIONS "TRINITY_TEST_LOGGING")

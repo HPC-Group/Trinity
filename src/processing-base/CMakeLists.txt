@@ -24,6 +24,9 @@ add_executable(processingbase
 				$<TARGET_OBJECTS:opengl-base>)
 
 TARGET_LINK_LIBRARIES(processingbase ${OPENGL_LIBRARIES})
+IF (UNIX AND NOT APPLE)
+	TARGET_LINK_LIBRARIES(processingbase EGL)
+ENDIF()
 
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(processingbase Shlwapi.lib)
