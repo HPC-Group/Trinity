@@ -1,7 +1,6 @@
 #include "processing-base/ProcessingCommandFactory.h"
 
 #include "processing-base/ProcessingCommandsHandler.h"
-#include "commands/ISerialObjectFactory.h"
 #include "commands/ProcessingCommands.h"
 
 #include "mocca/base/Error.h"

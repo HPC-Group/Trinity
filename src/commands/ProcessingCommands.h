@@ -14,8 +14,8 @@ public:
     StreamingParams();
     StreamingParams(int resX, int resY);
 
-    void serialize(ISerialObject& serial) const override;
-    void deserialize(const ISerialObject& serial) override;
+    void serialize(ISerialWriter& writer) const override;
+    void deserialize(const ISerialReader& reader) override;
 
     int getResX() const;
     int getResY() const;
@@ -37,8 +37,8 @@ struct InitProcessingSessionCmd {
         RequestParams(const std::string& protocol, const VclType& renderType, int fileId, const std::string& stringifiedIoEndpoint,
                       const StreamingParams& p);
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
 
         std::string getProtocol() const;
         std::string getStringifiedEndpoint() const;
@@ -61,8 +61,8 @@ struct InitProcessingSessionCmd {
         ReplyParams() = default;
         ReplyParams(int controlPort, int visPort);
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
 
         int getControlPort() const;
         int getVisPort() const;
@@ -87,8 +87,8 @@ struct SetIsoValueCmd {
         RequestParams() = default;
         RequestParams(float value);
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
 
         float getIsoValue() const;
 

@@ -1,14 +1,13 @@
+#include "processing-base/RenderSession.h"
+
+#include "processing-base/DummyRenderer.h"
+#include "gridleaper/GridLeaper.h"
+
 #include "mocca/base/Error.h"
 #include "mocca/base/StringTools.h"
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
-
-#include "commands/ISerialObjectFactory.h"
-
-#include "DummyRenderer.h"
-#include "RenderSession.h"
-#include "gridleaper/GridLeaper.h"
 
 using namespace trinity::processing;
 using namespace trinity::commands;

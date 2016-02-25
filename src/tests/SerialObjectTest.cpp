@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "commands/ISerializable.h"
-#include "commands/JsonObject.h"
-#include "commands/StringifiedObject.h"
+#include "commands/SerializerFactory.h"
+#include "commands/JsonReader.h"
 
 using namespace trinity::commands;
 
@@ -20,13 +20,13 @@ protected:
             : myFloat(f)
             , myString(s) {}
 
-        void serialize(ISerialObject& serial) const override {
-            serial.append("subFloat", myFloat);
-            serial.append("subString", myString);
+        void serialize(ISerialWriter& writer) const override {
+            writer.append("subFloat", myFloat);
+            writer.append("subString", myString);
         }
-        void deserialize(const ISerialObject& serial) override {
-            myFloat = serial.getFloat("subFloat");
-            myString = serial.getString("subString");
+        void deserialize(const ISerialReader& reader) override {
+            myFloat = reader.getFloat("subFloat");
+            myString = reader.getString("subString");
         }
 
         float myFloat;
@@ -34,61 +34,43 @@ protected:
     };
 };
 
-typedef ::testing::Types<StringifiedObject, JsonObject> MyTypes;
+typedef ::testing::Types<JsonSerializerFactory, SimpleStringSerializerFactory> MyTypes;
 TYPED_TEST_CASE(SerialObjectTest, MyTypes);
 
 TYPED_TEST(SerialObjectTest, BasicTypes) {
-    TypeParam target;
-    target.append("float", 3.14f);
-    target.append("int", 42);
-    target.append("string", "Hello");
+    TypeParam factory;
+    auto writer = factory.createWriter();
+    writer->append("float", 3.14f);
+    writer->append("int", 42);
+    writer->append("string", "Hello");
 
-    ASSERT_EQ(3.14f, target.getFloat("float"));
-    ASSERT_EQ(42, target.getInt("int"));
-    ASSERT_EQ("Hello", target.getString("string"));
+    auto serialized = writer->write();
+    auto reader = factory.createReader(serialized);
+    ASSERT_EQ(3.14f, reader->getFloat("float"));
+    ASSERT_EQ(42, reader->getInt("int"));
+    ASSERT_EQ("Hello", reader->getString("string"));
 }
 
 TYPED_TEST(SerialObjectTest, SubObjects) {
-    TypeParam target;
+    TypeParam factory;
+    auto writer = factory.createWriter();
     typename SerialObjectTest<TypeParam>::MySerializable subObject{2.718f, "World"};
-    target.append("float", 3.14f);
-    target.append("subObject", subObject);
-    target.append("string", "Hello");
+    writer->append("float", 3.14f);
+    writer->append("subObject", subObject);
+    writer->append("string", "Hello");
 
-    ASSERT_EQ(3.14f, target.getFloat("float"));
+    auto serialized = writer->write();
+    auto reader = factory.createReader(serialized);
+    ASSERT_EQ(3.14f, reader->getFloat("float"));
     typename SerialObjectTest<TypeParam>::MySerializable resultSubObject;
-    target.getSerializable("subObject", resultSubObject);
+    reader->getSerializable("subObject", resultSubObject);
     ASSERT_EQ(2.718f, resultSubObject.myFloat);
     ASSERT_EQ("World", resultSubObject.myString);
-    ASSERT_EQ("Hello", target.getString("string"));
-}
-
-TYPED_TEST(SerialObjectTest, ReadWrite) {
-    TypeParam obj1;
-    obj1.setType(VclType::DummyIO);
-    typename SerialObjectTest<TypeParam>::MySerializable subObject{2.718f, "World"};
-    obj1.append("float", 3.14f);
-    obj1.append("subObject", subObject);
-    obj1.append("string", "Hello");
-
-    std::stringstream stream1;
-    obj1.writeTo(stream1);
-
-    std::stringstream stream2(stream1.str());
-    TypeParam obj2;
-    obj2.readFrom(stream2);
-
-    ASSERT_EQ(3.14f, obj2.getFloat("float"));
-    typename SerialObjectTest<TypeParam>::MySerializable resultSubObject;
-    obj2.getSerializable("subObject", resultSubObject);
-    ASSERT_EQ(2.718f, resultSubObject.myFloat);
-    ASSERT_EQ("World", resultSubObject.myString);
-    ASSERT_EQ("Hello", obj2.getString("string"));
+    ASSERT_EQ("Hello", reader->getString("string"));
 }
 
 TYPED_TEST(SerialObjectTest, SerializationError) {
-    std::stringstream s;
-    s << "this is not a serialized object";
-    JsonObject serial; // fixme: doesn't work with StringifiedObject
-    ASSERT_THROW(serial.readFrom(s), mocca::Error);
+    std::string str = "this is not a serialized object";
+    // fixme: doesn't work with SimpleStringReader
+    ASSERT_THROW(JsonReader{ str }, mocca::Error);
 }

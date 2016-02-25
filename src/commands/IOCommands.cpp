@@ -6,9 +6,9 @@ using namespace trinity::commands;
 
 VclType ListFilesCmd::Type = VclType::ListFiles;
 
-void ListFilesCmd::RequestParams::serialize(ISerialObject& serial) const {}
+void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
-void ListFilesCmd::RequestParams::deserialize(const ISerialObject& serial) {}
+void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {}
 
 
 ////////////// InitIOSessionCmd //////////////
@@ -19,14 +19,14 @@ InitIOSessionCmd::RequestParams::RequestParams(const std::string& protocol, int 
     : m_protocol(protocol)
     , m_fileId(fileId) {}
 
-void InitIOSessionCmd::RequestParams::serialize(ISerialObject& serial) const {
-    serial.append("protocol", m_protocol);
-    serial.append("fileid", m_fileId);
+void InitIOSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.append("protocol", m_protocol);
+    writer.append("fileid", m_fileId);
 }
 
-void InitIOSessionCmd::RequestParams::deserialize(const ISerialObject& serial) {
-    m_protocol = serial.getString("protocol");
-    m_fileId = serial.getInt("fileid");
+void InitIOSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_protocol = reader.getString("protocol");
+    m_fileId = reader.getInt("fileid");
 }
 
 std::string InitIOSessionCmd::RequestParams::getProtocol() const {
@@ -44,12 +44,12 @@ bool InitIOSessionCmd::RequestParams::equals(const InitIOSessionCmd::RequestPara
 InitIOSessionCmd::ReplyParams::ReplyParams(int controlPort)
     : m_controlPort(controlPort) {}
 
-void InitIOSessionCmd::ReplyParams::serialize(ISerialObject& serial) const {
-    serial.append("controlport", m_controlPort);
+void InitIOSessionCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.append("controlport", m_controlPort);
 }
 
-void InitIOSessionCmd::ReplyParams::deserialize(const ISerialObject& serial) {
-    m_controlPort = serial.getInt("controlport");
+void InitIOSessionCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_controlPort = reader.getInt("controlport");
 }
 
 int InitIOSessionCmd::ReplyParams::getControlPort() const {
@@ -65,19 +65,19 @@ bool InitIOSessionCmd::ReplyParams::equals(const InitIOSessionCmd::ReplyParams& 
 
 VclType GetLODLevelCountCmd::Type = VclType::GetLODLevelCount;
 
-void GetLODLevelCountCmd::RequestParams::serialize(ISerialObject& serial) const {}
+void GetLODLevelCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
-void GetLODLevelCountCmd::RequestParams::deserialize(const ISerialObject& serial) {}
+void GetLODLevelCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
 
 GetLODLevelCountCmd::ReplyParams::ReplyParams(int lodCount)
     : m_lodCount(lodCount) {}
 
-void GetLODLevelCountCmd::ReplyParams::serialize(ISerialObject& serial) const {
-    serial.append("lodcount", m_lodCount);
+void GetLODLevelCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.append("lodcount", m_lodCount);
 }
 
-void GetLODLevelCountCmd::ReplyParams::deserialize(const ISerialObject& serial) {
-    m_lodCount = serial.getInt("lodcount");
+void GetLODLevelCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_lodCount = reader.getInt("lodcount");
 }
 
 int GetLODLevelCountCmd::ReplyParams::getLODLevelCount() const {
@@ -95,16 +95,16 @@ IOData::IOData(const std::string& name, int fileId, const VclType& dataType)
     , m_fileId(fileId)
     , m_dataType(dataType) {}
 
-void IOData::serialize(ISerialObject& serial) const {
-    serial.append("name", m_name);
-    serial.append("fileid", m_fileId);
-    serial.append("datatype", Vcl::instance().toString(m_dataType));
+void IOData::serialize(ISerialWriter& writer) const {
+    writer.append("name", m_name);
+    writer.append("fileid", m_fileId);
+    writer.append("datatype", Vcl::instance().toString(m_dataType));
 }
 
-void IOData::deserialize(const ISerialObject& serial) {
-    m_name = serial.getString("name");
-    m_fileId = serial.getInt("fileid");
-    m_dataType = Vcl::instance().toType(serial.getString("datatype"));
+void IOData::deserialize(const ISerialReader& reader) {
+    m_name = reader.getString("name");
+    m_fileId = reader.getInt("fileid");
+    m_dataType = Vcl::instance().toType(reader.getString("datatype"));
 }
 
 std::string IOData::getName() const {

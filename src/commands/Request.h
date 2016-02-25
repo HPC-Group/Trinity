@@ -2,10 +2,12 @@
 
 #include "commands/ISerializable.h"
 #include "commands/Vcl.h"
+#include "commands/Reply.h"
+#include "commands/ISerialReader.h"
+#include "commands/ISerialWriter.h"
 
 #include "mocca/base/Error.h"
-
-#include "commands/Reply.h"
+#include "mocca/base/ByteArray.h"
 
 #include <memory>
 
@@ -24,22 +26,22 @@ public:
     int getRid() const { return m_rid; }
     int getSid() const { return m_sid; }
 
-    static std::unique_ptr<Request> createFromSerialObject(const ISerialObject& serial);
-    static std::unique_ptr<ISerialObject> createSerialObject(const Request& request);
+    static std::unique_ptr<Request> createFromByteArray(mocca::ByteArray& byteArray);
+    static mocca::ByteArray createByteArray(const Request& request);
 
 private:
-    virtual void serializeParams(ISerialObject& serial) const = 0;
-    void serialize(ISerialObject& serial) const override {
-        serial.append("rid", m_rid);
-        serial.append("sid", m_sid);
-        serializeParams(serial);
+    virtual void serializeParams(ISerialWriter& writer) const = 0;
+    void serialize(ISerialWriter& writer) const override {
+        writer.append("rid", m_rid);
+        writer.append("sid", m_sid);
+        serializeParams(writer);
     }
 
-    virtual void deserializeParams(const ISerialObject& serial) = 0;
-    void deserialize(const ISerialObject& serial) override {
-        m_rid = serial.getInt("rid");
-        m_sid = serial.getInt("sid");
-        deserializeParams(serial);
+    virtual void deserializeParams(const ISerialReader& reader) = 0;
+    void deserialize(const ISerialReader& reader) override {
+        m_rid = reader.getInt("rid");
+        m_sid = reader.getInt("sid");
+        deserializeParams(reader);
     }
 
 private:
@@ -64,12 +66,12 @@ public:
     RequestParams getParams() const { return m_params; }
 
 private:
-    void serializeParams(ISerialObject& serial) const override {
-        serial.append("params", m_params);
+    void serializeParams(ISerialWriter& writer) const override {
+        writer.append("params", m_params);
     }
 
-    void deserializeParams(const ISerialObject& serial) override {
-        serial.getSerializable("params", m_params);
+    void deserializeParams(const ISerialReader& reader) override {
+        reader.getSerializable("params", m_params);
     }
 
 private:

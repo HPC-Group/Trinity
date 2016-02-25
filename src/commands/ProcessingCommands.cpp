@@ -12,14 +12,14 @@ StreamingParams::StreamingParams()
     : m_resX(1024)
     , m_resY(768) {}
 
-void StreamingParams::serialize(ISerialObject& serial) const {
-    serial.append("xres", m_resX);
-    serial.append("yres", m_resY);
+void StreamingParams::serialize(ISerialWriter& writer) const {
+    writer.append("xres", m_resX);
+    writer.append("yres", m_resY);
 }
 
-void StreamingParams::deserialize(const ISerialObject& serial) {
-    m_resX = serial.getInt("xres");
-    m_resY = serial.getInt("yres");
+void StreamingParams::deserialize(const ISerialReader& reader) {
+    m_resX = reader.getInt("xres");
+    m_resY = reader.getInt("yres");
 }
 
 int StreamingParams::getResX() const {
@@ -45,20 +45,20 @@ InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protoc
     , m_stringifiedEndpoint(endpoint)
     , m_streamingParams(p) {}
 
-void InitProcessingSessionCmd::RequestParams::serialize(ISerialObject& serial) const {
-    serial.append("protocol", m_protocol);
-    serial.append("rendertype", Vcl::instance().toString(m_renderType));
-    serial.append("fileid", m_fileId);
-    serial.append("endpoint", m_stringifiedEndpoint);
-    serial.append("streamingparams", m_streamingParams);
+void InitProcessingSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.append("protocol", m_protocol);
+    writer.append("rendertype", Vcl::instance().toString(m_renderType));
+    writer.append("fileid", m_fileId);
+    writer.append("endpoint", m_stringifiedEndpoint);
+    writer.append("streamingparams", m_streamingParams);
 }
 
-void InitProcessingSessionCmd::RequestParams::deserialize(const ISerialObject& serial) {
-    m_protocol = serial.getString("protocol");
-    m_renderType = Vcl::instance().toType(serial.getString("rendertype"));
-    m_fileId = serial.getInt("fileid");
-    m_stringifiedEndpoint = serial.getString("endpoint");
-    serial.getSerializable("streamingparams", m_streamingParams);
+void InitProcessingSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_protocol = reader.getString("protocol");
+    m_renderType = Vcl::instance().toType(reader.getString("rendertype"));
+    m_fileId = reader.getInt("fileid");
+    m_stringifiedEndpoint = reader.getString("endpoint");
+    reader.getSerializable("streamingparams", m_streamingParams);
 }
 
 VclType InitProcessingSessionCmd::RequestParams::getRenderType() const {
@@ -98,14 +98,14 @@ int InitProcessingSessionCmd::ReplyParams::getVisPort() const {
     return m_visPort;
 }
 
-void InitProcessingSessionCmd::ReplyParams::serialize(ISerialObject& serial) const {
-    serial.append("controlport", m_controlPort);
-    serial.append("visport", m_visPort);
+void InitProcessingSessionCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.append("controlport", m_controlPort);
+    writer.append("visport", m_visPort);
 }
 
-void InitProcessingSessionCmd::ReplyParams::deserialize(const ISerialObject& serial) {
-    m_controlPort = serial.getInt("controlport");
-    m_visPort = serial.getInt("visport");
+void InitProcessingSessionCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_controlPort = reader.getInt("controlport");
+    m_visPort = reader.getInt("visport");
 }
 
 bool InitProcessingSessionCmd::ReplyParams::equals(const ReplyParams& other) const {
@@ -119,12 +119,12 @@ VclType SetIsoValueCmd::Type = VclType::SetIsoValue;
 SetIsoValueCmd::RequestParams::RequestParams(float value)
     : m_isoValue(value) {}
 
-void SetIsoValueCmd::RequestParams::serialize(ISerialObject& serial) const {
-    serial.append("isovalue", m_isoValue);
+void SetIsoValueCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.append("isovalue", m_isoValue);
 }
 
-void SetIsoValueCmd::RequestParams::deserialize(const ISerialObject& serial) {
-    m_isoValue = serial.getFloat("isovalue");
+void SetIsoValueCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_isoValue = reader.getFloat("isovalue");
 }
 
 float SetIsoValueCmd::RequestParams::getIsoValue() const {

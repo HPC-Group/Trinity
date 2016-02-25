@@ -1,7 +1,6 @@
 #include "io-base/IOCommandFactory.h"
 
 #include "commands/IOCommands.h"
-#include "commands/ISerialObjectFactory.h"
 #include "io-base/IOCommandsHandler.h"
 
 #include "mocca/base/Error.h"

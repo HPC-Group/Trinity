@@ -1,11 +1,10 @@
+#include "common/ISession.h"
+
 #include "mocca/base/Error.h"
 #include "mocca/base/StringTools.h"
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
-
-#include "ISession.h"
-#include "commands/ISerialObjectFactory.h"
 
 using namespace trinity::common;
 using namespace trinity::commands;
@@ -52,20 +51,14 @@ void ISession::run() {
                 std::string cmd = bytepacket.read(bytepacket.size());
                 LINFO("(session) command arrived at renderer: " << cmd); // print cmd
 
-                std::stringstream requestStream, replyStream;
-                requestStream << cmd;
-
-                auto serialRequest = ISerialObjectFactory::create();
-                serialRequest->readFrom(requestStream);
-                auto request = Request::createFromSerialObject(*serialRequest);
+                auto request = Request::createFromByteArray(bytepacket);
 
                 auto handler = m_factory->createHandler(*request);
                 auto reply = handler->execute();
                 if (reply != nullptr) { // not tested yet
-                    auto serialReply = Reply::createSerialObject(*reply);
-                    serialReply->writeTo(replyStream);
-                    LINFO("(session) reply: " << replyStream.str());
-                    m_controlConnection->send(std::move(mocca::ByteArray() << replyStream.str()));
+                    auto serialReply = Reply::createByteArray(*reply);
+                    //LINFO("(session) reply: " << replyStream.str()); // fixme dmc
+                    m_controlConnection->send(std::move(serialReply));
                 }
             }
         } catch (const mocca::net::NetworkError& err) {

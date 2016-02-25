@@ -14,8 +14,8 @@ struct ListFilesCmd {
     public:
         RequestParams() = default;
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
     };
 };
 
@@ -27,8 +27,8 @@ struct InitIOSessionCmd {
         RequestParams() = default;
         RequestParams(const std::string& protocol, int fileId);
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
 
         std::string getProtocol() const;
         int getFileId() const;
@@ -45,8 +45,8 @@ struct InitIOSessionCmd {
         ReplyParams() = default;
         ReplyParams(int controlPort);
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
 
         int getControlPort() const;
 
@@ -67,8 +67,8 @@ struct GetLODLevelCountCmd {
     public:
         RequestParams() = default;
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
     };
 
     class ReplyParams : public ISerializable {
@@ -76,8 +76,8 @@ struct GetLODLevelCountCmd {
         ReplyParams() = default;
         ReplyParams(int lodCount);
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
 
         int getLODLevelCount() const;
 
@@ -95,8 +95,8 @@ public:
     IOData() = default;
     IOData(const std::string& name, int fileId, const VclType& dataType);
 
-    void serialize(ISerialObject& serial) const override;
-    void deserialize(const ISerialObject& serial) override;
+    void serialize(ISerialWriter& writer) const override;
+    void deserialize(const ISerialReader& reader) override;
 
     std::string getName() const;
     int getFileId() const;

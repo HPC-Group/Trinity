@@ -2,9 +2,7 @@
 
 #include "commands/ErrorCommands.h"
 #include "commands/IOCommands.h"
-#include "commands/ISerialObjectFactory.h"
 #include "commands/ProcessingCommands.h"
-#include "commands/StringifiedObject.h"
 #include "commands/Vcl.h"
 
 #include "tests/TestUtils.h"

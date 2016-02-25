@@ -1,17 +1,14 @@
 #include "gtest/gtest.h"
 
+#include "commands/ProcessingCommands.h"
+#include "common/ISession.h"
+#include "common/Node.h"
+#include "io-base/IOCommandFactory.h"
+#include "processing-base/ProcessingCommandFactory.h"
+
 #include "mocca/base/ContainerTools.h"
 #include "mocca/net/ConnectionAggregator.h"
 #include "mocca/net/ConnectionFactorySelector.h"
-
-#include "commands/ISerialObjectFactory.h"
-#include "commands/ProcessingCommands.h"
-
-#include "common/ISession.h"
-#include "common/Node.h"
-
-#include "io-base/IOCommandFactory.h"
-#include "processing-base/ProcessingCommandFactory.h"
 
 using namespace trinity::common;
 using namespace trinity::commands;

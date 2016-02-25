@@ -1,6 +1,5 @@
 #include "io-base/IOSession.h"
 
-#include "commands/ISerialObjectFactory.h"
 #include "commands/Vcl.h"
 #include "fractal/FractalIO.h"
 #include "io-base/DummyIO.h"

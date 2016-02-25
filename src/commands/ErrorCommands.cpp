@@ -7,12 +7,12 @@ VclType ErrorCmd::Type = VclType::TrinityError;
 ErrorCmd::ReplyParams::ReplyParams(int errorCode)
     : m_errorCode(errorCode) {}
 
-void ErrorCmd::ReplyParams::serialize(ISerialObject& serial) const {
-    serial.append("code", m_errorCode);
+void ErrorCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.append("code", m_errorCode);
 }
 
-void ErrorCmd::ReplyParams::deserialize(const ISerialObject& serial) {
-    m_errorCode = serial.getInt("code");
+void ErrorCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_errorCode = reader.getInt("code");
 }
 
 std::string ErrorCmd::ReplyParams::printError() const {

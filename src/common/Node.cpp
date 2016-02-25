@@ -1,16 +1,15 @@
-#include <iostream>
-#include <memory>
-#include <string>
+#include "common/Node.h"
+
+#include "commands/ICommandFactory.h"
+#include "commands/Vcl.h"
+#include "common/NetConfig.h"
 
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 
-#include "NetConfig.h"
-#include "commands/ICommandFactory.h"
-#include "commands/ISerialObjectFactory.h"
-#include "commands/Vcl.h"
-
-#include "Node.h"
+#include <iostream>
+#include <memory>
+#include <string>
 
 using namespace trinity::common;
 using namespace trinity::commands;
@@ -46,20 +45,14 @@ void Node::run() {
             std::string cmd = env.message.read(env.message.size());
             LINFO("(io) command: " << cmd); // print cmd
 
-            std::stringstream requestStream, replyStream;
-            requestStream << cmd;
-
-            auto serialRequest = ISerialObjectFactory::create();
-            serialRequest->readFrom(requestStream);
-            auto request = Request::createFromSerialObject(*serialRequest);
+            auto request = Request::createFromByteArray(env.message);
 
             auto handler = m_factory->createHandler(*request);
             auto reply = handler->execute();
             if (reply != nullptr) {
-                auto serialReply = Reply::createSerialObject(*reply);
-                serialReply->writeTo(replyStream);
-                LINFO("(io) reply: " << replyStream.str());
-                m_aggregator->send(MessageEnvelope(std::move(mocca::ByteArray() << replyStream.str()), env.connectionID));
+                auto serialReply = Reply::createByteArray(*reply);
+                //LINFO("(io) reply: " << replyStream.str()); fixme dmc
+                m_aggregator->send(MessageEnvelope(std::move(serialReply), env.connectionID));
             }
         }
     }

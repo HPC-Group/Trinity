@@ -2,48 +2,49 @@
 
 #include "commands/ErrorCommands.h"
 #include "commands/IOCommands.h"
-#include "commands/ISerialObjectFactory.h"
 #include "commands/ProcessingCommands.h"
+#include "commands/SerializerFactory.h"
 
 #include "mocca/base/Memory.h"
 
 using namespace trinity::commands;
 
-std::unique_ptr<Request> Request::createFromSerialObject(const ISerialObject& serial) {
-    VclType type = Vcl::instance().toType(serial.getString("type"));
+std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArray) {
+    auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
+    VclType type = Vcl::instance().toType(reader->getString("type"));
 
     // processing commands
     if (type == InitProcessingSessionRequest::Ifc::Type) {
         std::unique_ptr<Request> request = mocca::make_unique<InitProcessingSessionRequest>();
-        serial.getSerializable("req", *request);
+        reader->getSerializable("req", *request);
         return request;
     } else if (type == SetIsoValueRequest::Ifc::Type) {
         std::unique_ptr<Request> request = mocca::make_unique<SetIsoValueRequest>();
-        serial.getSerializable("req", *request);
+        reader->getSerializable("req", *request);
         return request;
     }
 
     // IO commands
     else if (type == ListFilesRequest::Ifc::Type) {
         std::unique_ptr<Request> request = mocca::make_unique<ListFilesRequest>();
-        serial.getSerializable("req", *request);
+        reader->getSerializable("req", *request);
         return request;
     } else if (type == InitIOSessionRequest::Ifc::Type) {
         std::unique_ptr<Request> request = mocca::make_unique<InitIOSessionRequest>();
-        serial.getSerializable("req", *request);
+        reader->getSerializable("req", *request);
         return request;
     } else if (type == GetLODLevelCountRequest::Ifc::Type) {
         std::unique_ptr<Request> request = mocca::make_unique<GetLODLevelCountRequest>();
-        serial.getSerializable("req", *request);
+        reader->getSerializable("req", *request);
         return request;
     }
 
     throw mocca::Error("Invalid request type", __FILE__, __LINE__);
 }
 
-std::unique_ptr<ISerialObject> Request::createSerialObject(const Request& request) {
-    auto serial = ISerialObjectFactory::create();
-    serial->append("type", Vcl::instance().toString(request.getType()));
-    serial->append("req", request);
-    return serial;
+mocca::ByteArray Request::createByteArray(const Request& request) {
+    auto writer = ISerializerFactory::defaultFactory().createWriter();
+    writer->append("type", Vcl::instance().toString(request.getType()));
+    writer->append("req", request);
+    return writer->write();
 }

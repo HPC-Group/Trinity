@@ -1,11 +1,7 @@
 #pragma once
 
-#include "ISerialObject.h"
-
-#include <istream>
-#include <ostream>
-#include <sstream>
-#include <string>
+#include "commands/ISerialReader.h"
+#include "commands/ISerialWriter.h"
 
 namespace trinity {
 namespace commands {
@@ -14,8 +10,8 @@ class ISerializable {
 public:
     virtual ~ISerializable() {}
 
-    virtual void serialize(ISerialObject& serial) const = 0;
-    virtual void deserialize(const ISerialObject& serial) = 0;
+    virtual void serialize(ISerialWriter& writer) const = 0;
+    virtual void deserialize(const ISerialReader& reader) = 0;
 };
 }
 }

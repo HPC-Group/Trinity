@@ -14,8 +14,8 @@ struct ErrorCmd {
         ReplyParams() = default;
         ReplyParams(int errorCode);
 
-        void serialize(ISerialObject& serial) const override;
-        void deserialize(const ISerialObject& serial) override;
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
 
         std::string printError() const;
         int getErrorCode() const;

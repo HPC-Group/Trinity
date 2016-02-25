@@ -1,16 +1,18 @@
 #pragma once
 
-#include "commands/ISerialObjectFactory.h"
 #include "commands/ISerializable.h"
+#include "commands/SerializerFactory.h"
 
 namespace trinity {
 namespace testing {
 
 template <typename T> T writeAndRead(const T& obj) {
-    auto serial = commands::ISerialObjectFactory::create();
-    obj.serialize(*serial);
+    auto writer = ISerializerFactory::defaultFactory().createWriter();
+    obj.serialize(*writer);
     T result;
-    result.deserialize(*serial);
+    auto serialized = writer->write();
+    auto reader = ISerializerFactory::defaultFactory().createReader(serialized);
+    result.deserialize(*reader);
     return result;
 }
 }
