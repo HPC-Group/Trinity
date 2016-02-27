@@ -55,7 +55,7 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
 
 TYPED_TEST(SerialObjectTest, SubObjects) {
     TypeParam factory;
-    using MyObj = SerialObjectTest<TypeParam>::MySerializable;
+    using MyObj = typename SerialObjectTest<TypeParam>::MySerializable;
     auto writer = factory.createWriter();
     MyObj subObject{2.718f, "World"};
     writer->append("float", 3.14f);
@@ -110,7 +110,7 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
 TYPED_TEST(SerialObjectTest, VectorSubObject) {
     TypeParam factory;
     auto writer = factory.createWriter();
-    using MyObj = SerialObjectTest<TypeParam>::MySerializable;
+    using MyObj = typename SerialObjectTest<TypeParam>::MySerializable;
     std::vector<std::unique_ptr<ISerializable>> vec;
     vec.push_back(mocca::make_unique<MyObj>(2.718f, "Hello"));
     vec.push_back(mocca::make_unique<MyObj>(3.14f, "World"));
