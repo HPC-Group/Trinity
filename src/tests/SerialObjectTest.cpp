@@ -1,8 +1,10 @@
 #include "gtest/gtest.h"
 
 #include "commands/ISerializable.h"
-#include "commands/SerializerFactory.h"
 #include "commands/JsonReader.h"
+#include "commands/SerializerFactory.h"
+
+#include "mocca/base/Memory.h"
 
 using namespace trinity::commands;
 
@@ -12,7 +14,7 @@ protected:
 
     virtual ~SerialObjectTest() {}
 
-    struct MySerializable : public ISerializable {
+    struct MySerializable : public SerializableTemplate<MySerializable> {
         MySerializable()
             : myFloat(.0f)
             , myString() {}
@@ -53,8 +55,9 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
 
 TYPED_TEST(SerialObjectTest, SubObjects) {
     TypeParam factory;
+    using MyObj = SerialObjectTest<TypeParam>::MySerializable;
     auto writer = factory.createWriter();
-    typename SerialObjectTest<TypeParam>::MySerializable subObject{2.718f, "World"};
+    MyObj subObject{2.718f, "World"};
     writer->append("float", 3.14f);
     writer->append("subObject", subObject);
     writer->append("string", "Hello");
@@ -62,8 +65,8 @@ TYPED_TEST(SerialObjectTest, SubObjects) {
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ(3.14f, reader->getFloat("float"));
-    typename SerialObjectTest<TypeParam>::MySerializable resultSubObject;
-    reader->getSerializable("subObject", resultSubObject);
+    MyObj resultSubObject;
+    resultSubObject = reader->getSerializable<MyObj>("subObject");
     ASSERT_EQ(2.718f, resultSubObject.myFloat);
     ASSERT_EQ("World", resultSubObject.myString);
     ASSERT_EQ("Hello", reader->getString("string"));
@@ -72,5 +75,53 @@ TYPED_TEST(SerialObjectTest, SubObjects) {
 TYPED_TEST(SerialObjectTest, SerializationError) {
     std::string str = "this is not a serialized object";
     // fixme: doesn't work with SimpleStringReader
-    ASSERT_THROW(JsonReader{ str }, mocca::Error);
+    ASSERT_THROW(JsonReader{str}, mocca::Error);
+}
+
+TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
+    TypeParam factory;
+    auto writer = factory.createWriter();
+    writer->append("float", std::vector<float>{0.1f, 0.2f, 0.3f});
+    writer->append("int", std::vector<int>{1, 2, 3, 4});
+    writer->append("string", std::vector<std::string>{"Hello", "World"});
+
+    auto serialized = writer->write();
+    auto reader = factory.createReader(serialized);
+    
+    auto floatRes = reader->getFloatVec("float");
+    ASSERT_EQ(3, floatRes.size());
+    ASSERT_EQ(0.1f, floatRes[0]);
+    ASSERT_EQ(0.2f, floatRes[1]);
+    ASSERT_EQ(0.3f, floatRes[2]);
+
+    auto intRes = reader->getIntVec("int");
+    ASSERT_EQ(4, intRes.size());
+    ASSERT_EQ(1, intRes[0]);
+    ASSERT_EQ(2, intRes[1]);
+    ASSERT_EQ(3, intRes[2]);
+    ASSERT_EQ(4, intRes[3]);
+
+    auto stringRes = reader->getStringVec("string");
+    ASSERT_EQ(2, stringRes.size());
+    ASSERT_EQ("Hello", stringRes[0]);
+    ASSERT_EQ("World", stringRes[1]);
+}
+
+TYPED_TEST(SerialObjectTest, VectorSubObject) {
+    TypeParam factory;
+    auto writer = factory.createWriter();
+    using MyObj = SerialObjectTest<TypeParam>::MySerializable;
+    std::vector<std::unique_ptr<ISerializable>> vec;
+    vec.push_back(mocca::make_unique<MyObj>(2.718f, "Hello"));
+    vec.push_back(mocca::make_unique<MyObj>(3.14f, "World"));
+    writer->append("subObjects", vec);
+
+    auto serialized = writer->write();
+    auto reader = factory.createReader(serialized);
+    auto res = reader->getSerializableVec<MyObj>("subObjects");
+    ASSERT_EQ(2, res.size());
+    ASSERT_EQ(2.718f, res[0]->myFloat);
+    ASSERT_EQ("Hello", res[0]->myString);
+    ASSERT_EQ(3.14f, res[1]->myFloat);
+    ASSERT_EQ("World", res[1]->myString);
 }

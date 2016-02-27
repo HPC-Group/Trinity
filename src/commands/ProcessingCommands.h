@@ -9,7 +9,7 @@
 namespace trinity {
 namespace commands {
 
-class StreamingParams : public ISerializable {
+class StreamingParams : public SerializableTemplate<StreamingParams> {
 public:
     StreamingParams();
     StreamingParams(int resX, int resY);
@@ -31,7 +31,7 @@ bool operator==(const StreamingParams& lhs, const StreamingParams& rhs);
 struct InitProcessingSessionCmd {
     static VclType Type;
 
-    class RequestParams : public ISerializable {
+    class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
         RequestParams(const std::string& protocol, const VclType& renderType, int fileId, const std::string& stringifiedIoEndpoint,
@@ -56,7 +56,7 @@ struct InitProcessingSessionCmd {
         StreamingParams m_streamingParams;
     };
 
-    class ReplyParams : public ISerializable {
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
         ReplyParams(int controlPort, int visPort);
@@ -82,7 +82,7 @@ bool operator==(const InitProcessingSessionCmd::ReplyParams& lhs, const InitProc
 struct SetIsoValueCmd {
     static VclType Type;
 
-    class RequestParams : public ISerializable {
+    class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
         RequestParams(float value);

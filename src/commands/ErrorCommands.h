@@ -9,7 +9,7 @@ namespace commands {
 struct ErrorCmd {
     static VclType Type;
 
-    class ReplyParams : public ISerializable {
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
         ReplyParams(int errorCode);

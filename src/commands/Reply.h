@@ -64,13 +64,15 @@ public:
     VclType getType() const override { return Interface::Type; }
     ReplyParams getParams() const { return m_params; }
 
+    std::unique_ptr<ISerializable> clone() const { return mocca::make_unique<ReplyTemplate<Interface>>(*this); }
+
 private:
     void serializeParams(ISerialWriter& writer) const override {
         writer.append("params", m_params);
     }
 
     void deserializeParams(const ISerialReader& reader) override {
-        reader.getSerializable("params", m_params);
+        m_params = reader.getSerializable<ReplyParams>("params");
     }
 
 private:

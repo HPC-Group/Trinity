@@ -15,28 +15,18 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 
     // processing commands
     if (type == InitProcessingSessionRequest::Ifc::Type) {
-        std::unique_ptr<Request> request = mocca::make_unique<InitProcessingSessionRequest>();
-        reader->getSerializable("req", *request);
-        return request;
+        return reader->getSerializablePtr<InitProcessingSessionRequest>("req");
     } else if (type == SetIsoValueRequest::Ifc::Type) {
-        std::unique_ptr<Request> request = mocca::make_unique<SetIsoValueRequest>();
-        reader->getSerializable("req", *request);
-        return request;
+        return reader->getSerializablePtr<SetIsoValueRequest>("req");
     }
 
     // IO commands
     else if (type == ListFilesRequest::Ifc::Type) {
-        std::unique_ptr<Request> request = mocca::make_unique<ListFilesRequest>();
-        reader->getSerializable("req", *request);
-        return request;
+        return reader->getSerializablePtr<ListFilesRequest>("req");
     } else if (type == InitIOSessionRequest::Ifc::Type) {
-        std::unique_ptr<Request> request = mocca::make_unique<InitIOSessionRequest>();
-        reader->getSerializable("req", *request);
-        return request;
+        return reader->getSerializablePtr<InitIOSessionRequest>("req");
     } else if (type == GetLODLevelCountRequest::Ifc::Type) {
-        std::unique_ptr<Request> request = mocca::make_unique<GetLODLevelCountRequest>();
-        reader->getSerializable("req", *request);
-        return request;
+        return reader->getSerializablePtr<GetLODLevelCountRequest>("req");
     }
 
     throw mocca::Error("Invalid request type", __FILE__, __LINE__);

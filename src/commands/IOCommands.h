@@ -10,7 +10,7 @@ namespace commands {
 struct ListFilesCmd {
     static VclType Type;
 
-    class RequestParams : public ISerializable {
+    class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
 
@@ -22,7 +22,7 @@ struct ListFilesCmd {
 struct InitIOSessionCmd {
     static VclType Type;
 
-    class RequestParams : public ISerializable {
+    class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
         RequestParams(const std::string& protocol, int fileId);
@@ -40,7 +40,7 @@ struct InitIOSessionCmd {
         int m_fileId;
     };
 
-    class ReplyParams : public ISerializable {
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
         ReplyParams(int controlPort);
@@ -63,7 +63,7 @@ bool operator==(const InitIOSessionCmd::ReplyParams& lhs, const InitIOSessionCmd
 struct GetLODLevelCountCmd {
     static VclType Type;
 
-    class RequestParams : public ISerializable {
+    class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
 
@@ -71,7 +71,7 @@ struct GetLODLevelCountCmd {
         void deserialize(const ISerialReader& reader) override;
     };
 
-    class ReplyParams : public ISerializable {
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
         ReplyParams(int lodCount);
@@ -90,7 +90,7 @@ struct GetLODLevelCountCmd {
 
 bool operator==(const GetLODLevelCountCmd::ReplyParams& lhs, const GetLODLevelCountCmd::ReplyParams& rhs);
 
-class IOData : public ISerializable {
+class IOData : public SerializableTemplate<IOData> {
 public:
     IOData() = default;
     IOData(const std::string& name, int fileId, const VclType& dataType);

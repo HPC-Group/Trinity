@@ -58,7 +58,7 @@ void InitProcessingSessionCmd::RequestParams::deserialize(const ISerialReader& r
     m_renderType = Vcl::instance().toType(reader.getString("rendertype"));
     m_fileId = reader.getInt("fileid");
     m_stringifiedEndpoint = reader.getString("endpoint");
-    reader.getSerializable("streamingparams", m_streamingParams);
+    m_streamingParams = reader.getSerializable<StreamingParams>("streamingparams");
 }
 
 VclType InitProcessingSessionCmd::RequestParams::getRenderType() const {

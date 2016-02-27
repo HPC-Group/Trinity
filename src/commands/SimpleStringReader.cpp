@@ -25,6 +25,49 @@ std::string SimpleStringReader::getString(const std::string& key) const {
     return x;
 }
 
-void SimpleStringReader::getSerializable(const std::string& key, ISerializable& obj) const {
+void SimpleStringReader::getSerializableImpl(const std::string& key, ISerializable& obj) const {
     obj.deserialize(*this);
+}
+
+std::vector<float> SimpleStringReader::getFloatVec(const std::string& key) const {
+    int32_t size;
+    m_stream >> size;
+    std::vector<float> result(size);
+    for (int32_t i = 0; i < size; ++i) {
+        m_stream >> result[i];
+    }
+    return result;
+}
+
+std::vector<int> SimpleStringReader::getIntVec(const std::string& key) const {
+    int32_t size;
+    m_stream >> size;
+    std::vector<int> result(size);
+    for (int32_t i = 0; i < size; ++i) {
+        m_stream >> result[i];
+    }
+    return result;
+}
+
+std::vector<std::string> SimpleStringReader::getStringVec(const std::string& key) const {
+    int32_t size;
+    m_stream >> size;
+    std::vector<std::string> result(size);
+    for (int32_t i = 0; i < size; ++i) {
+        m_stream >> result[i];
+    }
+    return result;
+}
+
+std::vector<std::unique_ptr<ISerializable>> SimpleStringReader::getSerializableVecImpl(const std::string& key,
+                                                                                       const ISerializable& prototype) const {
+    int32_t size;
+    m_stream >> size;
+    std::vector<std::unique_ptr<ISerializable>> result;
+    for (int32_t i = 0; i < size; ++i) {
+        auto obj = prototype.clone();
+        obj->deserialize(*this);
+        result.push_back(std::move(obj));
+    }
+    return result;
 }

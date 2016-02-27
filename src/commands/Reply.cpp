@@ -15,27 +15,19 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 
     // processing commands
     if (type == InitProcessingSessionReply::Ifc::Type) {
-        std::unique_ptr<Reply> reply = mocca::make_unique<InitProcessingSessionReply>();
-        reader->getSerializable("rep", *reply);
-        return reply;
+        return reader->getSerializablePtr<InitProcessingSessionReply>("rep");
     }
 
     // IO commands
     else if (type == InitIOSessionReply::Ifc::Type) {
-        std::unique_ptr<Reply> reply = mocca::make_unique<InitIOSessionReply>();
-        reader->getSerializable("rep", *reply);
-        return reply;
+        return reader->getSerializablePtr<InitIOSessionReply>("rep");
     } else if (type == GetLODLevelCountReply::Ifc::Type) {
-        std::unique_ptr<Reply> reply = mocca::make_unique<GetLODLevelCountReply>();
-        reader->getSerializable("rep", *reply);
-        return reply;
+        return reader->getSerializablePtr<GetLODLevelCountReply>("rep");
     }
 
     // error commands
     else if (type == ErrorReply::Ifc::Type) {
-        std::unique_ptr<Reply> reply = mocca::make_unique<ErrorReply>();
-        reader->getSerializable("rep", *reply);
-        return reply;
+        return reader->getSerializablePtr<ErrorReply>("rep");
     }
 
     throw mocca::Error("Invalid reply type", __FILE__, __LINE__);
