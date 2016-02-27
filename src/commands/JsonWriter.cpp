@@ -23,25 +23,25 @@ void JsonWriter::append(const std::string& key, const ISerializable& obj) {
 }
 
 void JsonWriter::append(const std::string& key, const std::vector<float>& vec) {
-    for (size_t i = 0; i < vec.size(); ++i) {
-        m_root[key][i] = JsonCpp::Value(vec[i]);
+    for (uint32_t i = 0; i < vec.size(); ++i) {
+        m_root[key][i] = vec[i];
     }
 }
 
 void JsonWriter::append(const std::string& key, const std::vector<int>& vec) {
-    for (size_t i = 0; i < vec.size(); ++i) {
-        m_root[key][i] = JsonCpp::Value(vec[i]);
+    for (uint32_t i = 0; i < vec.size(); ++i) {
+        m_root[key][i] = vec[i];
     }
 }
 
 void JsonWriter::append(const std::string& key, const std::vector<std::string>& vec) {
-    for (size_t i = 0; i < vec.size(); ++i) {
-        m_root[key][i] = JsonCpp::Value(vec[i]);
+    for (uint32_t i = 0; i < vec.size(); ++i) {
+        m_root[key][i] = vec[i];
     }
 }
 
 void JsonWriter::append(const std::string& key, const std::vector<std::unique_ptr<ISerializable>>& vec) {
-    for (size_t i = 0; i < vec.size(); ++i) {
+    for (uint32_t i = 0; i < vec.size(); ++i) {
         JsonWriter subObject;
         vec[i]->serialize(subObject);
         m_root[key][i] = subObject.m_root;
