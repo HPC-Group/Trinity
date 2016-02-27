@@ -11,8 +11,8 @@ GridLeaper::GridLeaper(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> i
     OpenGlHeadlessContext context;
 
     if (!context.isValid()) {
-        LERROR("can't create context");
-      std::cout << "can't create context" << std::endl;
+        LERROR("(p) can't create opengl context");
+      //std::cout << "can't create context" << std::endl;
     }
 
     LINFO("(p) grid leaper created. OpenGL Version " << context.getVersion());

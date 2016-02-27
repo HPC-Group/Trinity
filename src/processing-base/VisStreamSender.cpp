@@ -47,6 +47,12 @@ void VisStreamSender::run() {
 
         Frame f = m_visStream->get();
 
+        /**
+        * THIS IS THE POINT TO INSERT JPEG COMPRESSION
+            Frame newFrame = convert(f);
+            ...
+            m_connection->send(std::move(*newFrame));
+        */
 
         if (f && !f->isEmpty()) {
             try {

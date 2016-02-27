@@ -48,6 +48,12 @@ void VisStreamReceiver::run() {
 
         if (!bytepacket.isEmpty()) {
 
+            /**
+            * THIS IS THE POINT TO DECOMPRESS THE JPED-COMPRESSED IMAGE
+            JPegFrame f(bytepacket);
+            m_visStream->put(f.decompress)... sth. like this
+            */
+
             m_visStream->put(std::unique_ptr<mocca::ByteArray>(new mocca::ByteArray(bytepacket.clone())));
         }
     }

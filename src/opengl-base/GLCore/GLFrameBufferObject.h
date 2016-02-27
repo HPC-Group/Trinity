@@ -30,7 +30,7 @@
   \file    GLFBOTex.h
   \author  Jens Krueger
            SCI Institute
-           University of Utah
+           of University Utah
            Jens Schneider
            tum.3D, Muenchen
   \date    August 2008
