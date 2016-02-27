@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include "mocca/base/Memory.h"
+
 namespace trinity {
 namespace commands {
 
