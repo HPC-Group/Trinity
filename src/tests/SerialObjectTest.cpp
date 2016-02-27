@@ -66,7 +66,7 @@ TYPED_TEST(SerialObjectTest, SubObjects) {
     auto reader = factory.createReader(serialized);
     ASSERT_EQ(3.14f, reader->getFloat("float"));
     MyObj resultSubObject;
-    resultSubObject = reader->getSerializable<MyObj>("subObject");
+    resultSubObject = reader->template getSerializable<MyObj>("subObject");
     ASSERT_EQ(2.718f, resultSubObject.myFloat);
     ASSERT_EQ("World", resultSubObject.myString);
     ASSERT_EQ("Hello", reader->getString("string"));
@@ -118,7 +118,7 @@ TYPED_TEST(SerialObjectTest, VectorSubObject) {
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
-    auto res = reader->getSerializableVec<MyObj>("subObjects");
+    auto res = reader->template getSerializableVec<MyObj>("subObjects");
     ASSERT_EQ(2, res.size());
     ASSERT_EQ(2.718f, res[0]->myFloat);
     ASSERT_EQ("Hello", res[0]->myString);
