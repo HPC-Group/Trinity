@@ -24,9 +24,12 @@ int RendererProxy::getRemoteSessionId() const {
     return m_remoteSessionId;
 }
 
+#include <iostream>
+
 void RendererProxy::setIsoValue(const float value) {
     SetIsoValueCmd::RequestParams requestParams(value);
     SetIsoValueRequest request(requestParams, m_ridGen.nextID(), m_remoteSessionId);
 
+    std::cout << m_inputChannel.getEndpoint().toString() << std::endl;
     m_inputChannel.sendRequest(request);
 }

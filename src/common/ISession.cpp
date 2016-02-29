@@ -13,8 +13,7 @@ int ISession::m_nextSid = 1;
 
 ISession::ISession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory)
     : m_sid(m_nextSid++)
-    , m_controlPort(m_basePort++)
-    , m_controlEndpoint(protocol, "localhost", std::to_string(m_controlPort))
+    , m_controlEndpoint(protocol, "localhost", std::to_string(m_basePort++))
     , m_factory(std::move(factory)) {
     while (!m_acceptor) {
         try {

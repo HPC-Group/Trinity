@@ -4,6 +4,7 @@
 #include "processing-base/RenderSession.h"
 
 #include "mocca/base/Memory.h"
+#include "mocca/log/LogManager.h"
 
 using namespace trinity::processing;
 using namespace trinity::common;
@@ -30,6 +31,8 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
         std::unique_ptr<RenderSession> session(new RenderSession(std::move(factory), params.getRenderType(), params.getStreamingParams(),
                                                                  params.getProtocol(), std::move(ioSessionProxy)));
         session->start();
+        
+        LINFO("(p) handling init req, session port " + std::to_string(session->getControlPort()));
         InitProcessingSessionCmd::ReplyParams params(session->getControlPort(), session->getVisPort());
         std::unique_ptr<Reply> reply = mocca::make_unique<InitProcessingSessionReply>(params, m_request.getRid(), session->getSid());
         SessionManagerSingleton::instance()->addSession(std::move(session));

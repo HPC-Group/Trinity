@@ -24,13 +24,12 @@ public:
     virtual ~ISession();
 
     virtual int getSid() const { return m_sid; }
-    virtual int getControlPort() const { return m_controlPort; }
+    virtual int getControlPort() const { return std::stoi(m_controlEndpoint.port); }
 
 protected:
     int m_sid;
     static int m_nextSid;
     static int m_basePort;
-    int m_controlPort;
 
     // connections
     std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;

@@ -144,6 +144,8 @@ TEST_F(NodeTest, InitWrongRendererTest) {
 }
 
 TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
+    
+    
     std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
     auto processingNode = createNode(std::move(factory), "5678");
     processingNode->start();

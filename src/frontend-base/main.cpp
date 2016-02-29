@@ -69,6 +69,7 @@ int main(int argc, char** argv) {
     // the file id will be available after implementing the listdata command
     int fileId = 0;
     trinity::commands::StreamingParams params(1024, 768);
+
     auto renderer = processingNode->initRenderer(trinity::commands::VclType::DummyRenderer, fileId, endpointIO, params);
     renderer->connect();
 

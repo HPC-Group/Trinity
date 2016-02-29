@@ -3,7 +3,6 @@
 #include "common/ProxyUtils.h"
 #include "commands/ProcessingCommands.h"
 
-#include "mocca/log/LogManager.h"
 #include "mocca/base/Memory.h"
 
 using namespace trinity::frontend;
@@ -19,6 +18,7 @@ std::unique_ptr<RendererProxy> ProcessingNodeProxy::initRenderer(const VclType& 
 
     auto reply = sendRequestChecked(m_inputChannel, request);
     auto replyParams = reply->getParams();
+    
 
     mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint().protocol, "localhost", std::to_string(replyParams.getControlPort()));
     mocca::net::Endpoint visEndpoint(m_inputChannel.getEndpoint().protocol, "localhost", std::to_string(replyParams.getVisPort()));
