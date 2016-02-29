@@ -80,14 +80,17 @@ int main(int argc, char** argv) {
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
     // receiving images
-    auto visStream = renderer->getVisStream();
-    auto frame = visStream->get();
-    if (!frame)
-        LINFO("no frame arrived yet");
-    else
-        LINFO("frame arrived!");
+
 
     while (!exitFlag) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
+        auto visStream = renderer->getVisStream();
+        auto frame = visStream->get();
+        if (!frame)
+            LINFO("no frame arrived yet");
+        else {
+            LINFO("frame arrived!");
+            LINFO("content: " + frame->read(frame->size()));
+        }
     };
 }

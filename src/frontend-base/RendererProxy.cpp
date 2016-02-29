@@ -14,7 +14,9 @@ RendererProxy::RendererProxy(std::shared_ptr<VisStream> s, mocca::net::Endpoint 
     : IRenderer(s)
     , IProxy(controlEndpoint)
     , m_visReceiver(std::move(visEndpoint), s)
-    , m_remoteSessionId(sid) {}
+    , m_remoteSessionId(sid) {
+        m_visReceiver.startStreaming();
+    }
 
 RendererProxy::~RendererProxy() {
     m_visReceiver.endStreaming();

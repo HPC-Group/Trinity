@@ -21,6 +21,8 @@ public:
 
     void startStreaming();
     void endStreaming();
+    
+    std::shared_ptr<common::VisStream> getStream() const { return m_visStream; }
 
 private:
     std::shared_ptr<common::VisStream> m_visStream;

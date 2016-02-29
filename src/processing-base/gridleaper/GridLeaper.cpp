@@ -27,4 +27,9 @@ void GridLeaper::setIsoValue(const float isoValue) {
     trinity::common::Frame f1(new mocca::ByteArray());
     *f1 << "123";
     getVisStream()->put(std::move(f1));
+    trinity::common::Frame f2(new mocca::ByteArray());
+    *f2 << "456";
+    getVisStream()->put(std::move(f2));
+    
+    LINFO("(p) putting frame in stream");
 }

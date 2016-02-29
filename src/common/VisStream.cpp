@@ -1,4 +1,5 @@
 #include "VisStream.h"
+#include <iostream>
 
 using namespace trinity::common;
 using namespace trinity::commands;

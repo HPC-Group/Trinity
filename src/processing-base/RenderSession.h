@@ -37,7 +37,7 @@ private:
     std::unique_ptr<common::IRenderer> m_renderer;
     VisStreamSender m_visSender;
 
-    std::unique_ptr<common::IRenderer> createRenderer(const commands::VclType&, const commands::StreamingParams&,
+    std::unique_ptr<common::IRenderer> createRenderer(const commands::VclType&,
                                                       std::unique_ptr<common::IOSessionProxy>);
 };
 }
