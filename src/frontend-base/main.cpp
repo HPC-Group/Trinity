@@ -70,17 +70,22 @@ int main(int argc, char** argv) {
     int fileId = 0;
     trinity::commands::StreamingParams params(1024, 768);
 
-    auto renderer = processingNode->initRenderer(trinity::commands::VclType::DummyRenderer, fileId, endpointIO, params);
+    auto renderer = processingNode->initRenderer(trinity::commands::VclType::GridLeaper, fileId, endpointIO, params);
     renderer->connect();
 
     // sending commands
     renderer->setIsoValue(22);
+
+    //wait for 2 seconds
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     // receiving images
     auto visStream = renderer->getVisStream();
     auto frame = visStream->get();
     if (!frame)
         LINFO("no frame arrived yet");
+    else
+        LINFO("frame arrived!");
 
     while (!exitFlag) {
         std::this_thread::sleep_for(std::chrono::seconds(1));

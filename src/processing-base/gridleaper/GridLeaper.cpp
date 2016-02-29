@@ -23,4 +23,8 @@ void GridLeaper::setIsoValue(const float isoValue) {
     m_isoValue = isoValue;
     // that is how you call io functios
     //LINFO("(p) lod count: " + std::to_string(m_io->getLODLevelCount()));
+
+    trinity::common::Frame f1(new mocca::ByteArray());
+    *f1 << "123";
+    getVisStream()->put(std::move(f1));
 }
