@@ -185,6 +185,7 @@ TEST_F(NodeTest, CallLodFromDummyRendererTest) {
     StreamingParams params(2048, 1000);
     auto renderer = proxy.initRenderer(VclType::DummyRenderer, 24, ioEndpoint, params);
     renderer->connect();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     renderer->setIsoValue(123);
 
     processingNode->join();
