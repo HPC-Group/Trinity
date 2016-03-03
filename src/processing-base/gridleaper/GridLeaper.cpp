@@ -25,7 +25,9 @@ void GridLeaper::setIsoValue(const float isoValue)
 {
     LINFO("(p) iso value of gridleaper set to " + std::to_string(isoValue));
     m_isoValue = isoValue;
-    paint();
+    if(_context != nullptr){
+        paint();
+    }
 }
 
 void GridLeaper::initContext(){
