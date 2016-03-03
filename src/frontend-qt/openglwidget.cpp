@@ -18,8 +18,16 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
             _imgdata.push_back(255);
         }
     }
+    _data = (unsigned char*)&_imgdata[0];
 }
+void OpenGLWidget::setData(int width,int height, unsigned char* data){
+    _width = width;
+    _height = height;
 
+    _imgdata.resize(_width*_height*4);
+    std::memcpy(&_imgdata[0],data,_width*_height*4);
+    _data = (unsigned char*)&_imgdata[0];
+}
 
 OpenGLWidget::~OpenGLWidget() {}
 
@@ -33,19 +41,17 @@ void OpenGLWidget::initializeGL() {
 void OpenGLWidget::paintGL() {
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
-    /*
-glMatrixMode(GL_PROJECTION);
-glLoadIdentity();
-glOrtho(0, this->width(), 0, this->height(), 0, 1);
-glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, this->width(), 0, this->height(), 0, 1);
+    glMatrixMode(GL_MODELVIEW);
 
-glShadeModel(GL_FLAT);
-glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glShadeModel(GL_FLAT);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-glViewport(0, 0, this->width(), this->height());
-glPixelZoom(this->width() / (double) _width, this->height() / (double) _height);
+    glViewport(0, 0, this->width(), this->height());
+    glPixelZoom(this->width() / (double) _width, this->height() / (double) _height);
 
-glRasterPos2i(0,0);
-glDrawPixels(_width,_height,GL_RGBA,GL_UNSIGNED_BYTE,&_imgdata[0]);
-    */
+    glRasterPos2i(0,0);
+    glDrawPixels(_width,_height,GL_RGBA,GL_UNSIGNED_BYTE,_data);
 }

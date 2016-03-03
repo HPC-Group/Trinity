@@ -14,7 +14,7 @@ public:
     DummyRenderer(std::shared_ptr<common::VisStream> stream, std::unique_ptr<common::IIO> ioSession);
 
     virtual void setIsoValue(const float);
-
+    virtual void initContext(){};
 
     // unit test purposes
     float getIsoValue() const { return m_isoValue; };

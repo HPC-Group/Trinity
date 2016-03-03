@@ -136,6 +136,26 @@ bool SetIsoValueCmd::RequestParams::equals(const RequestParams& other) const {
 }
 
 
+////////////// SetIsoValueCmd //////////////
+
+VclType InitContextCmd::Type = VclType::InitContext;
+
+InitContextCmd::RequestParams::RequestParams(int32_t value)
+    : m_dummy(value) {}
+
+void InitContextCmd::RequestParams::serialize(ISerialWriter& writer) const {
+     writer.append("dummy", m_dummy);
+}
+
+void InitContextCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_dummy = reader.getInt("dummy");
+}
+
+bool InitContextCmd::RequestParams::equals(const RequestParams& other) const {
+    return m_dummy == other.m_dummy;
+}
+
+
 namespace trinity {
 namespace commands {
 bool operator==(const StreamingParams& lhs, const StreamingParams& rhs) {
@@ -150,6 +170,10 @@ bool operator==(const InitProcessingSessionCmd::ReplyParams& lhs, const InitProc
 }
 
 bool operator==(const SetIsoValueCmd::RequestParams& lhs, const SetIsoValueCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+
+bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
 }
 }

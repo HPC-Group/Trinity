@@ -22,6 +22,7 @@ add_executable(processingbase
 				$<TARGET_OBJECTS:silverbullet>
 				$<TARGET_OBJECTS:jsoncpp>
 				$<TARGET_OBJECTS:opengl-base>)
+file(GLOB SHADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.glsl)
 
 TARGET_LINK_LIBRARIES(processingbase ${OPENGL_LIBRARIES})
 IF (UNIX AND NOT APPLE)

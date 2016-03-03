@@ -14,14 +14,18 @@ using namespace mocca::net;
 static int reconnectInSec = 5;
 
 Window::Window(QWidget* parent)
-    : QMainWindow(parent)
-    , ui(new Ui::Window) {
+    : QMainWindow(parent),
+      _initDone(false),
+      _renderWidth(512),
+      _renderHeight(512),
+      ui(new Ui::Window)
+{
     ui->setupUi(this);
     LINFO("Window created");
 
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1);
+    timer->start(10);
 }
 
 Window::~Window() {
@@ -44,7 +48,7 @@ bool Window::connectLoop(trinity::common::IProxy& proxy) {
 }
 
 void Window::initRenderer() {
-    trinity::commands::StreamingParams params(1024, 768);
+    trinity::commands::StreamingParams params(_renderWidth, _renderHeight);
 
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
 
@@ -57,7 +61,9 @@ void Window::initRenderer() {
     _renderer->connect();
 
     // sending commands
-    _renderer->setIsoValue(22);
+    _renderer->initContext();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    _initDone = true;
 }
 
 void Window::on_IOconnectIP_clicked() {
@@ -87,9 +93,18 @@ void Window::on_PRconnectIP_clicked()
     initRenderer();
 
 }
-
+static float rot = 0.0f;
 void Window::update(){
+    if(_initDone){
+        _renderer->setIsoValue(rot);
+        rot += 0.01f;
 
+        auto frame = _renderer->getVisStream()->get();
+        if(frame){
+            ui->openGLWidget->setData(_renderWidth,_renderHeight,frame->data());
+            ui->openGLWidget->repaint();
+        }
+    }
 }
 
 void Window::repaint(){

@@ -36,11 +36,14 @@ private slots:
 
 private:
     Ui::Window* ui;
+    uint32_t _renderWidth;
+    uint32_t _renderHeight;
 
     std::unique_ptr<trinity::frontend::ProcessingNodeProxy> _processingNode;
     std::unique_ptr<trinity::common::IONodeProxy> _ioNode;
 
-    std::unique_ptr<trinity::frontend::RendererProxy> _renderer;
+    std::unique_ptr<trinity::frontend::RendererProxy>   _renderer;
+    bool                                                _initDone;
 };
 
 #endif // WINDOW_H

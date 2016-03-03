@@ -28,6 +28,7 @@ public:
 
     // base rendering api begin
     virtual void setIsoValue(const float) = 0;
+    virtual void initContext() = 0;
 
 protected:
     std::shared_ptr<VisStream> m_visStream;

@@ -14,8 +14,11 @@ public:
     void initializeGL();
     void paintGL();
 
+    void setData(int width,int height, unsigned char* data);
+
 private:
     std::vector<uint8_t> _imgdata;
+    unsigned char*  _data;
     uint32_t _width;
     uint32_t _height;
 };

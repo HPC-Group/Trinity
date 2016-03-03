@@ -6,6 +6,8 @@
 #include "mocca/base/Error.h"
 #include "mocca/base/Memory.h"
 
+#include <iostream>
+
 using namespace trinity::commands;
 using namespace trinity::processing;
 
@@ -20,6 +22,11 @@ std::unique_ptr<ICommandHandler> ProcessingCommandFactory::createHandler(const R
 
     case VclType::SetIsoValue: {
         return mocca::make_unique<SetIsoValueHdl>(static_cast<const SetIsoValueRequest&>(request));
+        break;
+    }
+
+    case VclType::InitContext: {
+        return mocca::make_unique<InitContextHdl>(static_cast<const InitContextRequest&>(request));
         break;
     }
 

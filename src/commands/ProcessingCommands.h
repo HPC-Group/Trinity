@@ -102,9 +102,32 @@ struct SetIsoValueCmd {
 bool operator==(const SetIsoValueCmd::RequestParams& lhs, const SetIsoValueCmd::RequestParams& rhs);
 
 
+
+struct InitContextCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(int32_t value);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        bool equals(const RequestParams& other) const;
+
+    private:
+        int32_t m_dummy;
+    };
+};
+
+bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::RequestParams& rhs);
+
 using InitProcessingSessionRequest = RequestTemplate<InitProcessingSessionCmd>;
 using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;
 
 using SetIsoValueRequest = RequestTemplate<SetIsoValueCmd>;
+using InitContextRequest = RequestTemplate<InitContextCmd>;
+
 }
 }

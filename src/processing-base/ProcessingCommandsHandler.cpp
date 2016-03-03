@@ -55,3 +55,16 @@ std::unique_ptr<Reply> SetIsoValueHdl::execute() {
     renderer.setIsoValue(m_isoValue);
     return nullptr;
 }
+
+
+InitContextHdl::InitContextHdl(const InitContextRequest& request)
+    : m_sid(request.getSid()) {
+}
+
+std::unique_ptr<Reply> InitContextHdl::execute() {
+    auto& session = SessionManagerSingleton::instance()->getSession(m_sid);
+    RenderSession* renderSession = dynamic_cast<RenderSession*>(&session); // dmc: see comments in ISession.h
+    auto& renderer = renderSession->getRenderer();
+    renderer.initContext();
+    return nullptr;
+}

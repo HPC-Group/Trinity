@@ -180,6 +180,20 @@ float OpenGlHeadlessContext::getVersion() const {
   }
 }
 
+void OpenGlHeadlessContext::makeCurrent(){
+#ifdef DETECTED_OS_APPLE
+    CGLError errorCode = CGLSetCurrentContext( context );
+    if (errorCode != kCGLNoError) {bIsValid = false; return;}
+#endif
+
+#ifdef DETECTED_OS_WINDOWS
+    if(!wglMakeCurrent(deviceContext, context)) { bIsValid = false; return; }
+#endif
+
+#ifdef DETECTED_OS_LINUX
+    //if (eglMakeCurrent(eglDpy, EGL_NO_SURFACE, EGL_NO_SURFACE, eglCtx) != EGL_TRUE) { bIsValid = false; return; }
+#endif
+}
 
 
 

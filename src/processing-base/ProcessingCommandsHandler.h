@@ -29,5 +29,15 @@ private:
     float m_isoValue;
     int m_sid;
 };
+
+class InitContextHdl : public commands::ICommandHandler {
+public:
+    InitContextHdl(const commands::InitContextRequest& request);
+
+    std::unique_ptr<commands::Reply> execute() override;
+
+private:
+    int m_sid;
+};
 }
 }

@@ -12,6 +12,7 @@ public :
   ~OpenGlHeadlessContext();
 
   bool isValid() const {return bIsValid;}
+  void makeCurrent();
 
   float getVersion() const;
   std::string getVersionInfo() const {return strVersion;}

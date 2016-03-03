@@ -18,6 +18,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<InitProcessingSessionRequest>("req");
     } else if (type == SetIsoValueRequest::Ifc::Type) {
         return reader->getSerializablePtr<SetIsoValueRequest>("req");
+    } else if (type == InitContextRequest::Ifc::Type) {
+        return reader->getSerializablePtr<InitContextRequest>("req");
     }
 
     // IO commands

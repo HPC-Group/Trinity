@@ -21,6 +21,7 @@ public:
     virtual ~RendererProxy();
 
     virtual void setIsoValue(const float);
+    virtual void initContext();
     int getRemoteSessionId() const;
 
 
