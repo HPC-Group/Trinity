@@ -2,6 +2,7 @@
 
 #include "processing-base/ProcessingCommandFactory.h"
 #include "processing-base/RenderSession.h"
+#include "common/ProxyUtils.h"
 
 #include "mocca/base/Memory.h"
 #include "mocca/log/LogManager.h"
@@ -15,11 +16,6 @@ InitProcessingSessionHdl::InitProcessingSessionHdl(const InitProcessingSessionRe
     , m_ioProxy(mocca::net::Endpoint(request.getParams().getStringifiedEndpoint())) {}
 
 std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
-    // for now, the io has to be available at this point
-    if (!m_ioProxy.connect()) {
-        throw mocca::Error("cannot connect to IO Node", __FILE__, __LINE__);
-    }
-
     auto params = m_request.getParams();
 
     // create an IO node proxy and pass it to the renderer

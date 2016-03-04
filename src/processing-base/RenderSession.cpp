@@ -19,7 +19,6 @@ RenderSession::RenderSession(std::unique_ptr<ICommandFactory> factory, const Vcl
     : common::ISession(protocol, std::move(factory))
     , m_visPort(m_basePort++)
     , m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort)), std::make_shared<common::VisStream>(params)) {
-    ioSession->connect();
     m_renderer = createRenderer(rendererType, std::move(ioSession));
     m_visSender.startStreaming();
     LINFO("(p) render session started streaming");

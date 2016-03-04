@@ -13,11 +13,11 @@
 #include "commands/Vcl.h"
 
 #include "ProcessingNodeProxy.h"
+#include "common/ProxyUtils.h"
 #include "common/IONodeProxy.h"
 
 using namespace mocca::net;
 
-static int reconnectInSec = 5;
 std::atomic<bool> exitFlag{false};
 
 std::unique_ptr<trinity::frontend::ProcessingNodeProxy> processingNode;
@@ -38,18 +38,6 @@ void init() {
     ConnectionFactorySelector::addDefaultFactories();
 }
 
-void connectLoop(trinity::common::IProxy& proxy) {
-    bool connected = false;
-
-    while (!connected && !exitFlag) {
-        connected = proxy.connect();
-        if (!connected) {
-            LINFO("reconnecting to io in " << std::to_string(reconnectInSec) << " seconds");
-            std::this_thread::sleep_for(std::chrono::seconds(reconnectInSec));
-        }
-    }
-}
-
 int main(int argc, char** argv) {
 
     init();
@@ -61,17 +49,12 @@ int main(int argc, char** argv) {
 
 
     ioNode = std::unique_ptr<trinity::common::IONodeProxy>(new trinity::common::IONodeProxy(endpointIO));
-    connectLoop(*ioNode);
-
     processingNode = std::unique_ptr<trinity::frontend::ProcessingNodeProxy>(new trinity::frontend::ProcessingNodeProxy(endpoint));
-    connectLoop(*processingNode);
 
     // the file id will be available after implementing the listdata command
     int fileId = 0;
     trinity::commands::StreamingParams params(1024, 768);
-
     auto renderer = processingNode->initRenderer(trinity::commands::VclType::GridLeaper, fileId, endpointIO, params);
-    renderer->connect();
 
     // sending commands
     renderer->setIsoValue(22);

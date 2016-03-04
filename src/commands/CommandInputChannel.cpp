@@ -14,10 +14,9 @@ using namespace trinity::commands;
 CommandInputChannel::CommandInputChannel(const mocca::net::Endpoint& endpoint)
     : m_endpoint(endpoint) {}
 
-bool CommandInputChannel::connect() {
+bool CommandInputChannel::connect() const {
     try {
         m_mainChannel = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
-
     } catch (const mocca::net::ConnectFailedError&) {
         LWARNING("(chn) no connection to a node  at \"" << m_endpoint << "\": ");
         return false;
@@ -27,7 +26,7 @@ bool CommandInputChannel::connect() {
     return true;
 }
 
-void CommandInputChannel::sendRequest(const Request& request) {
+void CommandInputChannel::sendRequest(const Request& request) const {
     if (!m_mainChannel)
         throw mocca::Error("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
 
@@ -44,7 +43,7 @@ mocca::net::Endpoint CommandInputChannel::getEndpoint() const {
     return m_endpoint;
 }
 
-std::unique_ptr<Reply> CommandInputChannel::getReply(const std::chrono::milliseconds& ms) {
+std::unique_ptr<Reply> CommandInputChannel::getReply(const std::chrono::milliseconds& ms) const {
     auto serialReply = m_mainChannel->receive(ms);
 
     if (serialReply.isEmpty()) {

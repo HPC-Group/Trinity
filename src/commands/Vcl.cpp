@@ -2,6 +2,8 @@
 
 #include "mocca/log/LogManager.h"
 
+#include <limits>
+
 using namespace trinity::commands;
 
 namespace trinity {
@@ -58,8 +60,7 @@ std::string Vcl::toString(const int errorCode) const {
     return it->second;
 }
 
-IDGenerator::IDGenerator()
-    : m_id(1) {}
-int IDGenerator::nextID() {
-    return m_id++;
+uint32_t IDGenerator::nextID() {
+    static uint32_t id = 0;
+    return (id + 1) % std::numeric_limits<uint32_t>::max();
 }

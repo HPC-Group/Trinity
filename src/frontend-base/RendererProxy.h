@@ -1,16 +1,15 @@
 #pragma once
 #include <memory>
 
-#include "common/IProxy.h"
 #include "common/IRenderer.h"
-
-#include "VisStreamReceiver.h"
+#include "commands/CommandInputChannel.h"
+#include "frontend-base/VisStreamReceiver.h"
 
 namespace trinity {
 namespace frontend {
 
 
-class RendererProxy : public common::IRenderer, public common::IProxy {
+class RendererProxy : public common::IRenderer {
 
 public:
     /// local proxy to a remote render session
@@ -26,6 +25,7 @@ public:
 
 
 private:
+    commands::CommandInputChannel m_inputChannel;
     VisStreamReceiver m_visReceiver;
     int m_remoteSessionId;
 };

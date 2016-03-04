@@ -1,8 +1,14 @@
 #pragma once
 
 #include "commands/CommandInputChannel.h"
+#include "commands/CommandInputChannel.h"
 #include "commands/ErrorCommands.h"
 #include "commands/Vcl.h"
+
+#include "mocca/log/LogManager.h"
+
+#include <chrono>
+#include <thread>
 
 namespace trinity {
 namespace common {
@@ -21,5 +27,7 @@ std::unique_ptr<typename RequestType::ReplyType> sendRequestChecked(commands::Co
     }
     return std::unique_ptr<ReplyType>(static_cast<ReplyType*>(reply.release()));
 }
+
+bool connectInputChannel(const commands::CommandInputChannel& inputChannel);
 }
 }

@@ -10,8 +10,8 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
     , _width(255)
     , _height(255) {
 
-    for (int x = 0; x < _width; ++x) {
-        for (int y = 0; y < _height; ++y) {
+    for (unsigned int x = 0; x < _width; ++x) {
+        for (unsigned int y = 0; y < _height; ++y) {
             _imgdata.push_back(x);
             _imgdata.push_back(x);
             _imgdata.push_back(x);
@@ -20,12 +20,13 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
     }
     _data = (unsigned char*)&_imgdata[0];
 }
-void OpenGLWidget::setData(int width,int height, unsigned char* data){
+
+void OpenGLWidget::setData(int width, int height, unsigned char* data) {
     _width = width;
     _height = height;
 
-    _imgdata.resize(_width*_height*4);
-    std::memcpy(&_imgdata[0],data,_width*_height*4);
+    _imgdata.resize(_width * _height * 4);
+    std::memcpy(&_imgdata[0], data, _width * _height * 4);
     _data = (unsigned char*)&_imgdata[0];
 }
 
@@ -50,8 +51,8 @@ void OpenGLWidget::paintGL() {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glViewport(0, 0, this->width(), this->height());
-    glPixelZoom(this->width() / (double) _width, this->height() / (double) _height);
+    glPixelZoom(this->width() / (double)_width, this->height() / (double)_height);
 
-    glRasterPos2i(0,0);
-    glDrawPixels(_width,_height,GL_RGBA,GL_UNSIGNED_BYTE,_data);
+    glRasterPos2i(0, 0);
+    glDrawPixels(_width, _height, GL_RGBA, GL_UNSIGNED_BYTE, _data);
 }

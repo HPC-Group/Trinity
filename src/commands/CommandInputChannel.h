@@ -15,14 +15,14 @@ class CommandInputChannel {
 public:
     CommandInputChannel(const mocca::net::Endpoint& endpoint);
 
-    bool connect();
-    void sendRequest(const Request& request);
-    std::unique_ptr<Reply> getReply(const std::chrono::milliseconds& = common::TIMEOUT_REPLY);
+    bool connect() const;
+    void sendRequest(const Request& request) const;
+    std::unique_ptr<Reply> getReply(const std::chrono::milliseconds& = common::TIMEOUT_REPLY) const;
     mocca::net::Endpoint getEndpoint() const;
 
 private:
     mocca::net::Endpoint m_endpoint;
-    std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
+    mutable std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
 };
 }
 }

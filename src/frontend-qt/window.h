@@ -24,7 +24,6 @@ public:
     void repaint();
 
 private:
-    bool connectLoop(trinity::common::IProxy& proxy);
     void initRenderer();
 
 private slots:

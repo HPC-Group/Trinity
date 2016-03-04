@@ -61,7 +61,6 @@ TEST_F(NodeTest, ConnectToProcessingTest) {
 
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
     ProcessingNodeProxy proxy(endpoint);
-    ASSERT_TRUE(proxy.connect());
 
     processingNode->join();
 }
@@ -74,7 +73,6 @@ TEST_F(NodeTest, ConnectToIOTest) {
 
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "6678");
     IONodeProxy proxy(endpoint);
-    ASSERT_TRUE(proxy.connect());
 
     ioNode->join();
 }
@@ -91,33 +89,9 @@ TEST_F(NodeTest, InitDummyRendererTest) {
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
     Endpoint ioEndpoint(ConnectionFactorySelector::loopback(), "localhost", "6678");
     ProcessingNodeProxy proxy(endpoint);
-    proxy.connect();
 
     StreamingParams params(2048, 1000);
     auto renderer = proxy.initRenderer(VclType::DummyRenderer, 0, ioEndpoint, params);
-    ASSERT_TRUE(renderer->connect());
-    processingNode->join();
-    ioNode->join();
-}
-
-TEST_F(NodeTest, CallRemoteRendererWithoutConnectingTest) {
-
-    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
-    auto processingNode = createNode(std::move(factory), "5678");
-    processingNode->start();
-
-    std::unique_ptr<trinity::commands::ICommandFactory> ioFactory(new IOCommandFactory);
-    auto ioNode = createNode(std::move(ioFactory), "6678");
-    ioNode->start();
-
-    Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
-    Endpoint ioEndpoint(ConnectionFactorySelector::loopback(), "localhost", "6678");
-    ProcessingNodeProxy proxy(endpoint);
-    proxy.connect();
-
-    StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::DummyRenderer, 0, ioEndpoint, params);
-    ASSERT_THROW(renderer->setIsoValue(22), mocca::Error);
     processingNode->join();
     ioNode->join();
 }
@@ -134,7 +108,6 @@ TEST_F(NodeTest, InitWrongRendererTest) {
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
     Endpoint ioEndpoint(ConnectionFactorySelector::loopback(), "localhost", "6678");
     ProcessingNodeProxy proxy(endpoint);
-    proxy.connect();
 
     StreamingParams params(2048, 1000);
     ASSERT_THROW(proxy.initRenderer(VclType::FractalIO, 0, ioEndpoint, params), mocca::Error);
@@ -157,11 +130,9 @@ TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
     Endpoint ioEndpoint(ConnectionFactorySelector::loopback(), "localhost", "6678");
     ProcessingNodeProxy proxy(endpoint);
-    proxy.connect();
 
     StreamingParams params(2048, 1000);
     auto renderer = proxy.initRenderer(VclType::GridLeaper, 0, ioEndpoint, params);
-    renderer->connect();
     renderer->setIsoValue(123);
 
     processingNode->join();
@@ -180,11 +151,9 @@ TEST_F(NodeTest, CallLodFromDummyRendererTest) {
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
     Endpoint ioEndpoint(ConnectionFactorySelector::loopback(), "localhost", "6678");
     ProcessingNodeProxy proxy(endpoint);
-    proxy.connect();
 
     StreamingParams params(2048, 1000);
     auto renderer = proxy.initRenderer(VclType::DummyRenderer, 24, ioEndpoint, params);
-    renderer->connect();
     std::this_thread::sleep_for(std::chrono::seconds(1));
     renderer->setIsoValue(123);
 

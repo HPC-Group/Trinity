@@ -92,12 +92,8 @@ private:
 
 // the trinity protocol uses request- and session id's (rid and sid)
 class IDGenerator {
-private:
-    int m_id;
-
 public:
-    IDGenerator();
-    int nextID();
+    static uint32_t nextID();
 };
 }
 } // end trinity

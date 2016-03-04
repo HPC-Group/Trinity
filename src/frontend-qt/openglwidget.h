@@ -5,6 +5,7 @@
 #include <QOpenGLWidget>
 
 #include <vector>
+#include <cstdint>
 
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 public:
