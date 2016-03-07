@@ -85,6 +85,7 @@ using namespace Core::IO;
                                    std::string filename)
   {
     // if we're on Mac, first try to see if the file is in our bundle.
+      /* commented out due to incomatibility
 #ifdef DETECTED_OS_APPLE
     if (FileTools::FileExists(FileTools::GetFromResourceOnMac(filename))) {
       filename = FileTools::GetFromResourceOnMac(filename);
@@ -92,6 +93,8 @@ using namespace Core::IO;
       return filename;
     }
 #endif
+       */
+      
 
     typedef std::vector<std::string> sv;
     // okay, now prepend each directory into our flename and see if we find a
