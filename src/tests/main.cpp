@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 #ifdef TRINITY_TEST_LOGGING
     LogManager::initialize(LogManager::LogLevel::Debug, true);
 #else
-    LogManager::initialize(LogManager::LogLevel::None, true);
+    LogManager::initialize(LogManager::LogLevel::NoLog, true);
 #endif
     auto log = new mocca::ConsoleLog();
     LogMgr.addLog(log);
