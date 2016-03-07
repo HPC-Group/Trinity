@@ -42,16 +42,14 @@ void Node::run() {
 
         if (!msgEnvelope.isNull()) {          // req arrived
             auto env = msgEnvelope.release(); // release value from nullable
-            std::string cmd = env.message.read(env.message.size());
-            LINFO("(io) command: " << cmd); // print cmd
-
             auto request = Request::createFromByteArray(env.message);
+            LINFO("request: " << *request);
 
             auto handler = m_factory->createHandler(*request);
             auto reply = handler->execute();
             if (reply != nullptr) {
                 auto serialReply = Reply::createByteArray(*reply);
-                //LINFO("(io) reply: " << replyStream.str()); fixme dmc
+                LINFO("reply: " << *reply);
                 m_aggregator->send(MessageEnvelope(std::move(serialReply), env.connectionID));
             }
         }

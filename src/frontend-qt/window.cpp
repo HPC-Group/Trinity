@@ -69,9 +69,10 @@ void Window::update() {
         _renderer->setIsoValue(rot);
         rot += 0.01f;
 
-        auto frame = _renderer->getVisStream()->get();
-        if (frame) {
-            ui->openGLWidget->setData(_renderWidth, _renderHeight, frame->data());
+        auto frameNullable = _renderer->getVisStream()->get();
+        if (!frameNullable.isNull()) {
+            auto frame = frameNullable.release();
+            ui->openGLWidget->setData(_renderWidth, _renderHeight, frame.data());
             ui->openGLWidget->repaint();
         }
     }

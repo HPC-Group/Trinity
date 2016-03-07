@@ -45,7 +45,7 @@ void VisStreamSender::run() {
     LINFO("(p) vis sender was bound");
     while (!isInterrupted()) {
 
-        Frame f = m_visStream->get();
+        auto frameNullable = m_visStream->get();
 
         /**
         * THIS IS THE POINT TO INSERT JPEG COMPRESSION
@@ -54,9 +54,9 @@ void VisStreamSender::run() {
             m_connection->send(std::move(*newFrame));
         */
 
-        if (f && !f->isEmpty()) {
+        if (!frameNullable.isNull()) {
             try {
-                m_connection->send(std::move(*f));
+                m_connection->send(std::move(frameNullable.release()));
             } catch (const mocca::net::NetworkError& err) {
                 LERROR("(p) cannot send vis: " << err.what());
             }

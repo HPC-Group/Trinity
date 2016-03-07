@@ -47,16 +47,14 @@ void ISession::run() {
         try {
             auto bytepacket = m_controlConnection->receive();
             if (!bytepacket.isEmpty()) {
-                std::string cmd = bytepacket.read(bytepacket.size());
-                LINFO("(session) command arrived at renderer: " << cmd); // print cmd
-
                 auto request = Request::createFromByteArray(bytepacket);
-
+                //LINFO("request: " << *request);
+                
                 auto handler = m_factory->createHandler(*request);
                 auto reply = handler->execute();
                 if (reply != nullptr) { // not tested yet
+                    //LINFO("reply: " << *reply);
                     auto serialReply = Reply::createByteArray(*reply);
-                    //LINFO("(session) reply: " << replyStream.str()); // fixme dmc
                     m_controlConnection->send(std::move(serialReply));
                 }
             }

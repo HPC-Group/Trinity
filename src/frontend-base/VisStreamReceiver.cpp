@@ -54,7 +54,7 @@ void VisStreamReceiver::run() {
             m_visStream->put(f.decompress)... sth. like this
             */
 
-            m_visStream->put(std::unique_ptr<mocca::ByteArray>(new mocca::ByteArray(bytepacket.clone())));
+            m_visStream->put(std::move(bytepacket));
         }
     }
 

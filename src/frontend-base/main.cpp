@@ -68,12 +68,12 @@ int main(int argc, char** argv) {
     while (!exitFlag) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         auto visStream = renderer->getVisStream();
-        auto frame = visStream->get();
-        if (!frame)
+        auto frameNullable = visStream->get();
+        if (frameNullable.isNull())
             LINFO("no frame arrived yet");
         else {
             LINFO("frame arrived!");
-            LINFO("content: " + frame->read(frame->size()));
+            auto frame = frameNullable.release();            LINFO("content: " + frame.read(frame.size()));
         }
     };
 }

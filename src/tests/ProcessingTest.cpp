@@ -39,24 +39,24 @@ TEST_F(ProcessingTest, VisStreamPutGetTest) {
     trinity::commands::StreamingParams p;
     std::shared_ptr<trinity::common::VisStream> sendstream = std::make_shared<trinity::common::VisStream>(p);
 
-    trinity::common::Frame f1(new mocca::ByteArray());
-    *f1 << "123";
-    trinity::common::Frame f2(new mocca::ByteArray());
-    *f2 << "456";
-    ASSERT_TRUE(sendstream->put(std::move(f1)));
-    auto ff1 = sendstream->get();
-    ASSERT_FALSE(ff1 == nullptr);
-    ASSERT_TRUE(sendstream->put(std::move(f2)));
-    auto ff2 = sendstream->get();
-    ASSERT_FALSE(ff2 == nullptr);
-    ASSERT_EQ("123", ff1->read(ff1->size()));
-    ASSERT_EQ("456", ff2->read(ff2->size()));
+    trinity::common::Frame f1;
+    f1 << "123";
+    sendstream->put(std::move(f1));
+    auto ff1Nullable = sendstream->get();
+    ASSERT_FALSE(ff1Nullable.isNull());
+    auto ff1 = ff1Nullable.release();
+    ASSERT_EQ("123", ff1.read(ff1.size()));
+
+    trinity::common::Frame f2;
+    f2 << "456";
+    sendstream->put(std::move(f2));
+    auto ff2Nullable = sendstream->get();
+    ASSERT_FALSE(ff2Nullable.isNull());
+    auto ff2 = ff2Nullable.release();
+    ASSERT_EQ("456", ff2.read(ff2.size()));
 }
 
 TEST_F(ProcessingTest, VisStreamTest) {
-
-    ASSERT_LE(3, CAPACITY);
-
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
 
     trinity::commands::StreamingParams p;
@@ -66,17 +66,19 @@ TEST_F(ProcessingTest, VisStreamTest) {
     trinity::processing::VisStreamSender sender(endpoint, sendstream);
     rec.startStreaming();
     sender.startStreaming();
-    trinity::common::Frame f1(new mocca::ByteArray());
-    *f1 << "123";
-    trinity::common::Frame f2(new mocca::ByteArray());
-    *f2 << "456";
+    trinity::common::Frame f1;
+    f1 << "123";
+    trinity::common::Frame f2;
+    f2 << "456";
     sendstream->put(std::move(f1));
     sendstream->put(std::move(f2));
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    auto ff1 = receivestream->get();
-    auto ff2 = receivestream->get();
-    ASSERT_FALSE(ff1 == nullptr);
-    ASSERT_FALSE(ff2 == nullptr);
-    ASSERT_EQ("123", ff1->read(ff1->size()));
-    ASSERT_EQ("456", ff2->read(ff2->size()));
+    auto ff1Nullable = receivestream->get();
+    auto ff2Nullable = receivestream->get();
+    ASSERT_FALSE(ff1Nullable.isNull());
+    ASSERT_FALSE(ff2Nullable.isNull());
+    auto ff1 = ff1Nullable.release();
+    auto ff2 = ff2Nullable.release();
+    ASSERT_EQ("123", ff1.read(ff1.size()));
+    ASSERT_EQ("456", ff2.read(ff2.size()));
 }
