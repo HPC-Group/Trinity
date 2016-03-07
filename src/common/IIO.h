@@ -8,7 +8,7 @@ namespace common {
 class IIO {
 
 public:
-    virtual int getLODLevelCount() = 0;
+    virtual int getLODLevelCount() const = 0;
 };
 }
 }

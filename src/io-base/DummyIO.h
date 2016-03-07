@@ -12,7 +12,7 @@ class DummyIO : public common::IIO {
 
 public:
     // testing purpose
-    virtual int getLODLevelCount() { return 42; }
+    int getLODLevelCount() const override { return 42; }
 };
 }
 }

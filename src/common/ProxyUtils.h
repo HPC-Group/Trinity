@@ -14,7 +14,7 @@ namespace trinity {
 namespace common {
 
 template <typename RequestType>
-std::unique_ptr<typename RequestType::ReplyType> sendRequestChecked(commands::CommandInputChannel& channel, const RequestType& request) {
+std::unique_ptr<typename RequestType::ReplyType> sendRequestChecked(const commands::CommandInputChannel& channel, const RequestType& request) {
     using ReplyType = typename RequestType::ReplyType;
     channel.sendRequest(request);
     auto reply = channel.getReply();

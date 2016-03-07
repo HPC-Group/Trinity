@@ -2,7 +2,6 @@
 #include <memory>
 #include <string>
 
-#include "mocca/base/Singleton.h"
 #include "mocca/base/Thread.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/IMessageConnection.h"
@@ -43,22 +42,5 @@ protected:
 
     // todo: one day, we might want to release ids
 };
-
-// dmc: as far as I can see, sessions in the session manager are not used in a polymorphic way,
-// i.e., they are dynamic_casted to the right type. why not have two session managers (for
-// io-sessions and renderer-sessions) and avoid code duplication by templateizing the manager?
-class SessionManager {
-
-public:
-    void addSession(std::unique_ptr<ISession> session);
-    void endSession(int sid);
-    ISession& getSession(int sid);
-    void endAllSessions();
-
-private:
-    std::vector<std::unique_ptr<ISession>> m_sessions;
-};
-
-typedef mocca::Singleton<SessionManager> SessionManagerSingleton;
 }
 }

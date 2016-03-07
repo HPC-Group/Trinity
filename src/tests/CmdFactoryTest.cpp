@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "commands/ProcessingCommands.h"
-#include "common/ISession.h"
+#include "processing-base/RenderSession.h"
+#include "io-base/IOSession.h"
 #include "common/Node.h"
 #include "io-base/IOCommandFactory.h"
 #include "processing-base/ProcessingCommandFactory.h"
@@ -19,7 +20,8 @@ protected:
     CmdFactoryTest() { mocca::net::ConnectionFactorySelector::addDefaultFactories(); }
 
     virtual ~CmdFactoryTest() {
-        SessionManagerSingleton::instance()->endAllSessions();
+        trinity::io::IOSessionManager::instance()->endAllSessions();
+        trinity::processing::RenderSessionManager::instance()->endAllSessions();
         mocca::net::ConnectionFactorySelector::removeAll();
     }
 };

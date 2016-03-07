@@ -16,7 +16,7 @@ class IOSessionProxy : public common::IIO {
 
 public:
     IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint);
-    virtual int getLODLevelCount();
+    int getLODLevelCount() const override;
 
 private:
     commands::CommandInputChannel m_inputChannel;

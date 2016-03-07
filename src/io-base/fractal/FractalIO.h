@@ -15,7 +15,7 @@ class FractalIO : public common::IIO {
 public:
     FractalIO() { LINFO("(io) fractal io created"); }
     // testing purpose
-    virtual int getLODLevelCount() { return 44; }
+    int getLODLevelCount() const override { return 44; }
 
 
     /*

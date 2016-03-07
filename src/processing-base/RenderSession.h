@@ -2,11 +2,13 @@
 #include <memory>
 #include <string>
 
+#include "mocca/base/Singleton.h"
 #include "mocca/base/Thread.h"
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/IMessageConnection.h"
 #include "mocca/net/IMessageConnectionAcceptor.h"
 
+#include "common/SessionManager.h"
 #include "common/IOSessionProxy.h"
 #include "common/IRenderer.h"
 #include "common/ISession.h"
@@ -40,5 +42,8 @@ private:
     std::unique_ptr<common::IRenderer> createRenderer(const commands::VclType&,
                                                       std::unique_ptr<common::IOSessionProxy>);
 };
+
+using RenderSessionManager = mocca::Singleton<common::SessionManager<RenderSession>>;
+
 }
 }

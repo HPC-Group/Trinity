@@ -31,7 +31,7 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
         LINFO("(p) handling init req, session port " + std::to_string(session->getControlPort()));
         InitProcessingSessionCmd::ReplyParams params(session->getControlPort(), session->getVisPort());
         std::unique_ptr<Reply> reply = mocca::make_unique<InitProcessingSessionReply>(params, m_request.getRid(), session->getSid());
-        SessionManagerSingleton::instance()->addSession(std::move(session));
+        RenderSessionManager::instance()->addSession(std::move(session));
         return reply;
     } catch (const mocca::Error&) {
         ErrorCmd::ReplyParams replyParams(2);
@@ -45,9 +45,8 @@ SetIsoValueHdl::SetIsoValueHdl(const SetIsoValueRequest& request)
     , m_sid(request.getSid()) {}
 
 std::unique_ptr<Reply> SetIsoValueHdl::execute() {
-    auto& session = SessionManagerSingleton::instance()->getSession(m_sid);
-    RenderSession* renderSession = dynamic_cast<RenderSession*>(&session); // dmc: see comments in ISession.h
-    auto& renderer = renderSession->getRenderer();
+    auto& session = RenderSessionManager::instance()->getSession(m_sid);
+    auto& renderer = session.getRenderer();
     renderer.setIsoValue(m_isoValue);
     return nullptr;
 }
@@ -58,9 +57,8 @@ InitContextHdl::InitContextHdl(const InitContextRequest& request)
 }
 
 std::unique_ptr<Reply> InitContextHdl::execute() {
-    auto& session = SessionManagerSingleton::instance()->getSession(m_sid);
-    RenderSession* renderSession = dynamic_cast<RenderSession*>(&session); // dmc: see comments in ISession.h
-    auto& renderer = renderSession->getRenderer();
+    auto& session = RenderSessionManager::instance()->getSession(m_sid);
+    auto& renderer = session.getRenderer();
     renderer.initContext();
     return nullptr;
 }

@@ -20,7 +20,7 @@ IOSessionProxy::IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& 
     }
 }
 
-int IOSessionProxy::getLODLevelCount() {
+int IOSessionProxy::getLODLevelCount() const {
     GetLODLevelCountCmd::RequestParams params;
     GetLODLevelCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
 

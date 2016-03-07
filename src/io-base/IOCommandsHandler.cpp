@@ -19,7 +19,7 @@ std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     
     InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());
     std::unique_ptr<Reply> reply = mocca::make_unique<InitIOSessionReply>(replyParams, m_request.getRid(), session->getSid());
-    common::SessionManagerSingleton::instance()->addSession(std::move(session));
+    IOSessionManager::instance()->addSession(std::move(session));
     return reply;
 }
 
@@ -28,9 +28,8 @@ GetLODLevelCountHdl::GetLODLevelCountHdl(const GetLODLevelCountRequest& request)
     : m_request(request) {}
 
 std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
-    auto& session = common::SessionManagerSingleton::instance()->getSession(m_request.getSid());
-    IOSession* ioSession = dynamic_cast<IOSession*>(&session); // dmc: see comments in ISession.h
-    auto& io = ioSession->getIO();
+    const auto& session = IOSessionManager::instance()->getSession(m_request.getSid());
+    const auto& io = session.getIO();
 
     GetLODLevelCountCmd::ReplyParams replyParams(io.getLODLevelCount());
     return mocca::make_unique<GetLODLevelCountReply>(replyParams, m_request.getRid(), m_request.getSid());
