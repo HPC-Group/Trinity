@@ -2,6 +2,7 @@
 
 #include "processing-base/ProcessingCommandsHandler.h"
 #include "commands/ProcessingCommands.h"
+#include "common/TrinityError.h"
 
 #include "mocca/base/Error.h"
 #include "mocca/base/Memory.h"
@@ -9,6 +10,7 @@
 #include <iostream>
 
 using namespace trinity::commands;
+using namespace trinity::common;
 using namespace trinity::processing;
 
 std::unique_ptr<ICommandHandler> ProcessingCommandFactory::createHandler(const Request& request) {
@@ -31,6 +33,6 @@ std::unique_ptr<ICommandHandler> ProcessingCommandFactory::createHandler(const R
     }
 
     default:
-        throw mocca::Error("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
+        throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }
 }

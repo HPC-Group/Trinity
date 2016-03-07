@@ -27,8 +27,6 @@ void VisStreamSender::endStreaming() {
 }
 
 void VisStreamSender::run() {
-
-
     LINFO("(p) vis sender binding to  \"" + m_endpoint.toString() + "\"");
 
     try {

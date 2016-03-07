@@ -1,5 +1,6 @@
 #include "io-base/IOSession.h"
 
+#include "common/TrinityError.h"
 #include "commands/Vcl.h"
 #include "fractal/FractalIO.h"
 #include "io-base/DummyIO.h"
@@ -12,6 +13,7 @@
 
 
 using namespace trinity::io;
+using namespace trinity::common;
 using namespace trinity::commands;
 
 
@@ -31,7 +33,7 @@ std::unique_ptr<trinity::common::IIO> IOSession::createIO(int fileId) {
         break;
 
     default:
-        throw mocca::Error("can't create renderer: no such type", __FILE__, __LINE__);
+        throw TrinityError("can't create renderer: no such type", __FILE__, __LINE__);
         break;
     }
 }

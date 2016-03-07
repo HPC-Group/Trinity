@@ -1,13 +1,16 @@
 #include "commands/JsonReader.h"
 
+#include "common/TrinityError.h"
 #include "commands/ISerializable.h"
 
 using namespace trinity::commands;
+using namespace trinity::common;
+
 
 JsonReader::JsonReader(const std::string& str) {
     JsonCpp::Reader reader;
     if (!reader.parse(str, m_root)) {
-        throw mocca::Error("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
+        throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
     }
 }
 

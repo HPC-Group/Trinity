@@ -2,6 +2,7 @@
 
 #include "commands/Request.h"
 #include "common/NetConfig.h"
+#include "common/TrinityError.h"
 
 #include "mocca/base/ByteArray.h"
 #include "mocca/log/LogManager.h"
@@ -9,6 +10,7 @@
 #include "mocca/net/NetworkError.h"
 
 using namespace trinity::commands;
+using namespace trinity::common;
 
 
 CommandInputChannel::CommandInputChannel(const mocca::net::Endpoint& endpoint)
@@ -28,7 +30,7 @@ bool CommandInputChannel::connect() const {
 
 void CommandInputChannel::sendRequest(const Request& request) const {
     if (!m_mainChannel)
-        throw mocca::Error("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
+        throw TrinityError("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
 
     auto serialRequest = Request::createByteArray(request);
     m_mainChannel->send(std::move(serialRequest));
@@ -42,7 +44,7 @@ std::unique_ptr<Reply> CommandInputChannel::getReply(const std::chrono::millisec
     auto serialReply = m_mainChannel->receive(ms);
 
     if (serialReply.isEmpty()) {
-        throw mocca::Error("(chn) no reply arrived", __FILE__, __LINE__);
+        throw TrinityError("(chn) no reply arrived", __FILE__, __LINE__);
     }
 
     auto reply = Reply::createFromByteArray(serialReply);

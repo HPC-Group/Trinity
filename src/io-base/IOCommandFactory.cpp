@@ -1,5 +1,6 @@
 #include "io-base/IOCommandFactory.h"
 
+#include "common/TrinityError.h"
 #include "commands/IOCommands.h"
 #include "io-base/IOCommandsHandler.h"
 
@@ -7,6 +8,7 @@
 #include "mocca/base/Memory.h"
 
 using namespace trinity::commands;
+using namespace trinity::common;
 using namespace trinity::io;
 
 std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(const Request& request) {
@@ -28,11 +30,11 @@ std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(const Request& 
         SetIsoValueCmd cmd(*serialRequest);
         return  std::unique_ptr<SetIsoValueHdl> (new SetIsoValueHdl(cmd));
          */
-        throw mocca::Error("command not implemented: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
+        throw TrinityError("command not implemented: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
         break;
     }
 
     default:
-        throw mocca::Error("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
+        throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }
 }

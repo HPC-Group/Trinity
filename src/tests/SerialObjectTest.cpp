@@ -3,10 +3,13 @@
 #include "commands/ISerializable.h"
 #include "commands/JsonReader.h"
 #include "commands/SerializerFactory.h"
+#include "common/TrinityError.h"
 
 #include "mocca/base/Memory.h"
 
 using namespace trinity::commands;
+using namespace trinity::common;
+
 
 template <typename T> class SerialObjectTest : public ::testing::Test {
 protected:
@@ -75,7 +78,7 @@ TYPED_TEST(SerialObjectTest, SubObjects) {
 TYPED_TEST(SerialObjectTest, SerializationError) {
     std::string str = "this is not a serialized object";
     // fixme: doesn't work with SimpleStringReader
-    ASSERT_THROW(JsonReader{str}, mocca::Error);
+    ASSERT_THROW(JsonReader{str}, TrinityError);
 }
 
 TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
@@ -87,7 +90,7 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
-    
+
     auto floatRes = reader->getFloatVec("float");
     ASSERT_EQ(3, floatRes.size());
     ASSERT_EQ(0.1f, floatRes[0]);

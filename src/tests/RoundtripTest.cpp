@@ -1,16 +1,16 @@
 #include "gtest/gtest.h"
 
+#include "common/TrinityError.h"
+#include "common/IONodeProxy.h"
+#include "common/Node.h"
+#include "frontend-base/ProcessingNodeProxy.h"
+#include "io-base/IOCommandFactory.h"
+#include "processing-base/ProcessingCommandFactory.h"
+
 #include "mocca/base/ContainerTools.h"
 #include "mocca/net/ConnectionAggregator.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
-
-#include "common/IONodeProxy.h"
-#include "common/Node.h"
-
-#include "frontend-base/ProcessingNodeProxy.h"
-#include "io-base/IOCommandFactory.h"
-#include "processing-base/ProcessingCommandFactory.h"
 
 using namespace mocca::net;
 using namespace trinity::processing;
@@ -110,15 +110,15 @@ TEST_F(NodeTest, InitWrongRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    ASSERT_THROW(proxy.initRenderer(VclType::FractalIO, 0, ioEndpoint, params), mocca::Error);
+    ASSERT_THROW(proxy.initRenderer(VclType::FractalIO, 0, ioEndpoint, params), TrinityError);
 
     processingNode->join();
     ioNode->join();
 }
 
 TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
-    
-    
+
+
     std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
     auto processingNode = createNode(std::move(factory), "5678");
     processingNode->start();

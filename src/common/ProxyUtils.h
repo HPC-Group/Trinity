@@ -4,6 +4,7 @@
 #include "commands/CommandInputChannel.h"
 #include "commands/ErrorCommands.h"
 #include "commands/Vcl.h"
+#include "common/TrinityError.h"
 
 #include "mocca/log/LogManager.h"
 
@@ -20,10 +21,10 @@ std::unique_ptr<typename RequestType::ReplyType> sendRequestChecked(const comman
     auto reply = channel.getReply();
     if (reply->getType() == commands::VclType::TrinityError) {
         const auto& error = static_cast<const commands::ErrorReply&>(*reply);
-        throw mocca::Error("Error received: " + error.getParams().printError(), __FILE__, __LINE__);
+        throw trinity::common::TrinityError("Error received: " + error.getParams().printError(), __FILE__, __LINE__);
     }
     if (reply->getType() != request.getType()) {
-        throw mocca::Error("Reply type does not match request type", __FILE__, __LINE__);
+        throw trinity::common::TrinityError("Reply type does not match request type", __FILE__, __LINE__);
     }
     return std::unique_ptr<ReplyType>(static_cast<ReplyType*>(reply.release()));
 }

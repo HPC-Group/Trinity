@@ -36,7 +36,7 @@ TEST_F(CmdFactoryTest, WrongRequest) {
     InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, "tcp.Prefixed:loopback:5678", streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
     trinity::io::IOCommandFactory factory;
-    ASSERT_THROW(factory.createHandler(request), mocca::Error);
+    ASSERT_THROW(factory.createHandler(request), TrinityError);
 }
 
 TEST_F(CmdFactoryTest, RendererExecTest) {

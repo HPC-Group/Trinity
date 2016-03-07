@@ -1,5 +1,6 @@
 #include "commands/Request.h"
 
+#include "common/TrinityError.h"
 #include "commands/ErrorCommands.h"
 #include "commands/IOCommands.h"
 #include "commands/ProcessingCommands.h"
@@ -7,6 +8,7 @@
 
 #include "mocca/base/Memory.h"
 
+using namespace trinity::common;
 using namespace trinity::commands;
 
 std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArray) {
@@ -31,7 +33,7 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetLODLevelCountRequest>("req");
     }
 
-    throw mocca::Error("Invalid request type", __FILE__, __LINE__);
+    throw TrinityError("Invalid request type", __FILE__, __LINE__);
 }
 
 mocca::ByteArray Request::createByteArray(const Request& request) {

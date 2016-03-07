@@ -1,5 +1,6 @@
 #include "commands/Reply.h"
 
+#include "common/TrinityError.h"
 #include "commands/ErrorCommands.h"
 #include "commands/IOCommands.h"
 #include "commands/ProcessingCommands.h"
@@ -8,6 +9,8 @@
 #include "mocca/base/Memory.h"
 
 using namespace trinity::commands;
+using namespace trinity::common;
+
 
 std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
@@ -30,7 +33,7 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<ErrorReply>("rep");
     }
 
-    throw mocca::Error("Invalid reply type", __FILE__, __LINE__);
+    throw TrinityError("Invalid reply type", __FILE__, __LINE__);
 }
 
 mocca::ByteArray Reply::createByteArray(const Reply& reply) {

@@ -45,7 +45,7 @@ std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& renderer
         break;
 
     default:
-        throw mocca::Error("can't create renderer: no such type", __FILE__, __LINE__);
+        throw TrinityError("can't create renderer: no such type", __FILE__, __LINE__);
         break;
     }
 }

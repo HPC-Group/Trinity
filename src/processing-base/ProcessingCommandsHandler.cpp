@@ -33,7 +33,7 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
         std::unique_ptr<Reply> reply = mocca::make_unique<InitProcessingSessionReply>(params, m_request.getRid(), session->getSid());
         RenderSessionManager::instance()->addSession(std::move(session));
         return reply;
-    } catch (const mocca::Error&) {
+    } catch (const std::runtime_error&) {
         ErrorCmd::ReplyParams replyParams(2);
         return mocca::make_unique<ErrorReply>(replyParams, m_request.getRid(), m_request.getSid());
     }

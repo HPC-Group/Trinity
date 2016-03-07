@@ -1,10 +1,14 @@
-#include "Vcl.h"
+#include "commands/Vcl.h"
+
+#include "common/TrinityError.h"
 
 #include "mocca/log/LogManager.h"
 
 #include <limits>
 
 using namespace trinity::commands;
+using namespace trinity::common;
+
 
 namespace trinity {
 namespace commands {
@@ -41,7 +45,7 @@ void Vcl::assertCompleteLanguage() const {
         try {
             m_cmdMap.getBySecond(token);
         } catch (const mocca::Error&) {
-            throw mocca::Error("(common) no string entry for enum number " + std::to_string((int)token), __FILE__, __LINE__);
+            throw TrinityError("(common) no string entry for enum number " + std::to_string((int)token), __FILE__, __LINE__);
         }
     }
 }
