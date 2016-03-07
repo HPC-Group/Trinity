@@ -6,6 +6,14 @@ using namespace trinity::commands;
 
 VclType ListFilesCmd::Type = VclType::ListFiles;
 
+bool ListFilesCmd::RequestParams::equals(const ListFilesCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string ListFilesCmd::RequestParams::toString() const {
+    return std::string();
+}
+
 void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
 void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {}
@@ -41,6 +49,12 @@ bool InitIOSessionCmd::RequestParams::equals(const InitIOSessionCmd::RequestPara
     return m_protocol == other.m_protocol && m_fileId == other.m_fileId;
 }
 
+std::string InitIOSessionCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "protocol: " << m_protocol << "; fileId: " << m_fileId;
+    return stream.str();
+}
+
 InitIOSessionCmd::ReplyParams::ReplyParams(int controlPort)
     : m_controlPort(controlPort) {}
 
@@ -60,6 +74,11 @@ bool InitIOSessionCmd::ReplyParams::equals(const InitIOSessionCmd::ReplyParams& 
     return m_controlPort == other.m_controlPort;
 }
 
+std::string InitIOSessionCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "controlPort: " << m_controlPort;
+    return stream.str();
+}
 
 ////////////// GetLODLevelCountCmd //////////////
 
@@ -68,6 +87,14 @@ VclType GetLODLevelCountCmd::Type = VclType::GetLODLevelCount;
 void GetLODLevelCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
 void GetLODLevelCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetLODLevelCountCmd::RequestParams::equals(const GetLODLevelCountCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetLODLevelCountCmd::RequestParams::toString() const {
+    return std::string();
+}
 
 GetLODLevelCountCmd::ReplyParams::ReplyParams(int lodCount)
     : m_lodCount(lodCount) {}
@@ -86,6 +113,12 @@ int GetLODLevelCountCmd::ReplyParams::getLODLevelCount() const {
 
 bool GetLODLevelCountCmd::ReplyParams::equals(const GetLODLevelCountCmd::ReplyParams& other) const {
     return m_lodCount == other.m_lodCount;
+}
+
+std::string GetLODLevelCountCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "lodCount: " << m_lodCount;
+    return stream.str();
 }
 
 ////////////// IOData //////////////
@@ -123,20 +156,52 @@ bool IOData::equals(const IOData& other) const {
     return m_name == other.m_name && m_fileId == other.m_fileId && m_dataType == other.m_dataType;
 }
 
+std::string IOData::toString() const {
+    std::stringstream stream;
+    stream << "name: " << m_name << "; fileId: " << m_fileId << "; dataType: " << m_dataType;
+    return stream.str();
+}
 
 namespace trinity {
 namespace commands {
+bool operator==(const ListFilesCmd::RequestParams& lhs, const ListFilesCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const ListFilesCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
 bool operator==(const InitIOSessionCmd::RequestParams& lhs, const InitIOSessionCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
 }
 bool operator==(const InitIOSessionCmd::ReplyParams& lhs, const InitIOSessionCmd::ReplyParams& rhs) {
     return lhs.equals(rhs);
 }
+std::ostream& operator<<(std::ostream& os, const InitIOSessionCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const InitIOSessionCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetLODLevelCountCmd::RequestParams& lhs, const GetLODLevelCountCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
 bool operator==(const GetLODLevelCountCmd::ReplyParams& lhs, const GetLODLevelCountCmd::ReplyParams& rhs) {
     return lhs.equals(rhs);
 }
+std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
 bool operator==(const IOData& lhs, const IOData& rhs) {
     return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const IOData& obj) {
+    return os << obj.toString();
 }
 }
 }

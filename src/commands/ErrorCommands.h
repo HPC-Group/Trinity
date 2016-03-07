@@ -20,6 +20,7 @@ struct ErrorCmd {
         std::string printError() const;
         int getErrorCode() const;
 
+        std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
     private:
@@ -28,6 +29,7 @@ struct ErrorCmd {
 };
 
 bool operator==(const ErrorCmd::ReplyParams& lhs, const ErrorCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ErrorCmd::ReplyParams& obj);
 
 using ErrorReply = ReplyTemplate<ErrorCmd>;
 

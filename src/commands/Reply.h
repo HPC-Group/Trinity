@@ -9,6 +9,7 @@
 #include "mocca/base/ByteArray.h"
 
 #include <memory>
+#include <sstream>
 
 namespace trinity {
 namespace commands {
@@ -21,6 +22,7 @@ public:
         , m_sid(sid) {}
 
     virtual VclType getType() const = 0;
+    virtual std::string toString() const = 0;
 
     int getRid() const { return m_rid; }
     int getSid() const { return m_sid; }
@@ -48,6 +50,9 @@ private:
     int m_sid;
 };
 
+std::ostream& operator<<(std::ostream& os, const Reply& obj);
+
+
 template <typename Interface> class ReplyTemplate : public Reply {
     static_assert(std::is_base_of<ISerializable, typename Interface::ReplyParams>::value,
                   "Type Interface::ReplyParams must be ISerializable");
@@ -65,6 +70,13 @@ public:
     ReplyParams getParams() const { return m_params; }
 
     std::unique_ptr<ISerializable> clone() const { return mocca::make_unique<ReplyTemplate<Interface>>(*this); }
+
+    std::string toString() const override {
+        std::stringstream stream;
+        stream << "type: " << Vcl::instance().toString(getType()) << "; rid: " << getRid() << "; sid: " << getSid() << "; params: { "
+            << m_params << " }";
+        return stream.str();
+    }
 
 private:
     void serializeParams(ISerialWriter& writer) const override {

@@ -29,6 +29,12 @@ int StreamingParams::getResY() const {
     return m_resY;
 }
 
+std::string StreamingParams::toString() const {
+    std::stringstream stream;
+    stream << "xres: " << m_resX << "; yres: " << m_resY;
+    return stream.str();
+}
+
 bool StreamingParams::equals(const StreamingParams& other) const {
     return m_resX == other.m_resX && m_resY == other.m_resY;
 }
@@ -86,6 +92,13 @@ bool InitProcessingSessionCmd::RequestParams::equals(const RequestParams& other)
            m_stringifiedEndpoint == other.m_stringifiedEndpoint && m_streamingParams == other.m_streamingParams;
 }
 
+std::string InitProcessingSessionCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "protocol: " << m_protocol << "; renderType: " << Vcl::instance().toString(m_renderType) << "; fileId: " << m_fileId
+        << "; stringifiedEndpoint: " << m_stringifiedEndpoint << "; streamingParams: { " << m_streamingParams << " }";
+    return stream.str();
+}
+
 InitProcessingSessionCmd::ReplyParams::ReplyParams(int controlPort, int visPort)
     : m_controlPort(controlPort)
     , m_visPort(visPort) {}
@@ -112,6 +125,13 @@ bool InitProcessingSessionCmd::ReplyParams::equals(const ReplyParams& other) con
     return m_controlPort == other.m_controlPort && m_visPort == other.m_visPort;
 }
 
+std::string InitProcessingSessionCmd::ReplyParams::toString() const
+{
+    std::stringstream stream;
+    stream << "controlPort: " << m_controlPort << "; visPort: " << m_visPort;
+    return stream.str();
+}
+
 ////////////// SetIsoValueCmd //////////////
 
 VclType SetIsoValueCmd::Type = VclType::SetIsoValue;
@@ -135,6 +155,11 @@ bool SetIsoValueCmd::RequestParams::equals(const RequestParams& other) const {
     return m_isoValue == other.m_isoValue;
 }
 
+std::string SetIsoValueCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "isoValue: " << m_isoValue;
+    return stream.str();
+}
 
 ////////////// SetIsoValueCmd //////////////
 
@@ -144,7 +169,7 @@ InitContextCmd::RequestParams::RequestParams(int32_t value)
     : m_dummy(value) {}
 
 void InitContextCmd::RequestParams::serialize(ISerialWriter& writer) const {
-     writer.append("dummy", m_dummy);
+    writer.append("dummy", m_dummy);
 }
 
 void InitContextCmd::RequestParams::deserialize(const ISerialReader& reader) {
@@ -155,11 +180,19 @@ bool InitContextCmd::RequestParams::equals(const RequestParams& other) const {
     return m_dummy == other.m_dummy;
 }
 
+std::string InitContextCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "dummy: " << m_dummy;
+    return stream.str();
+}
 
 namespace trinity {
 namespace commands {
 bool operator==(const StreamingParams& lhs, const StreamingParams& rhs) {
     return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const StreamingParams& obj) {
+    return os << obj.toString();
 }
 
 bool operator==(const InitProcessingSessionCmd::RequestParams& lhs, const InitProcessingSessionCmd::RequestParams& rhs) {
@@ -168,13 +201,25 @@ bool operator==(const InitProcessingSessionCmd::RequestParams& lhs, const InitPr
 bool operator==(const InitProcessingSessionCmd::ReplyParams& lhs, const InitProcessingSessionCmd::ReplyParams& rhs) {
     return lhs.equals(rhs);
 }
+std::ostream& operator<<(std::ostream& os, const InitProcessingSessionCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const InitProcessingSessionCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
 
 bool operator==(const SetIsoValueCmd::RequestParams& lhs, const SetIsoValueCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
 }
+std::ostream& operator<<(std::ostream& os, const SetIsoValueCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
 
 bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& obj) {
+    return os << obj.toString();
 }
 }
 }

@@ -20,6 +20,7 @@ public:
     int getResX() const;
     int getResY() const;
 
+    std::string toString() const;
     bool equals(const StreamingParams& other) const;
 
 private:
@@ -27,6 +28,7 @@ private:
 };
 
 bool operator==(const StreamingParams& lhs, const StreamingParams& rhs);
+std::ostream& operator<<(std::ostream& os, const StreamingParams& obj);
 
 struct InitProcessingSessionCmd {
     static VclType Type;
@@ -46,6 +48,7 @@ struct InitProcessingSessionCmd {
         VclType getRenderType() const;
         StreamingParams getStreamingParams() const;
 
+        std::string toString() const;
         bool equals(const RequestParams& other) const;
 
     private:
@@ -67,6 +70,7 @@ struct InitProcessingSessionCmd {
         int getControlPort() const;
         int getVisPort() const;
 
+        std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
     private:
@@ -77,7 +81,8 @@ struct InitProcessingSessionCmd {
 
 bool operator==(const InitProcessingSessionCmd::RequestParams& lhs, const InitProcessingSessionCmd::RequestParams& rhs);
 bool operator==(const InitProcessingSessionCmd::ReplyParams& lhs, const InitProcessingSessionCmd::ReplyParams& rhs);
-
+std::ostream& operator<<(std::ostream& os, const InitProcessingSessionCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const InitProcessingSessionCmd::ReplyParams& obj);
 
 struct SetIsoValueCmd {
     static VclType Type;
@@ -92,6 +97,7 @@ struct SetIsoValueCmd {
 
         float getIsoValue() const;
 
+        std::string toString() const;
         bool equals(const RequestParams& other) const;
 
     private:
@@ -100,7 +106,7 @@ struct SetIsoValueCmd {
 };
 
 bool operator==(const SetIsoValueCmd::RequestParams& lhs, const SetIsoValueCmd::RequestParams& rhs);
-
+std::ostream& operator<<(std::ostream& os, const SetIsoValueCmd::RequestParams& obj);
 
 
 struct InitContextCmd {
@@ -114,6 +120,7 @@ struct InitContextCmd {
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
+        std::string toString() const;
         bool equals(const RequestParams& other) const;
 
     private:
@@ -122,6 +129,8 @@ struct InitContextCmd {
 };
 
 bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& obj);
+
 
 using InitProcessingSessionRequest = RequestTemplate<InitProcessingSessionCmd>;
 using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;

@@ -14,10 +14,16 @@ struct ListFilesCmd {
     public:
         RequestParams() = default;
 
+        bool equals(const ListFilesCmd::RequestParams& other) const;
+        std::string toString() const;
+
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
     };
 };
+
+bool operator==(const ListFilesCmd::RequestParams& lhs, const ListFilesCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ListFilesCmd::RequestParams& obj);
 
 struct InitIOSessionCmd {
     static VclType Type;
@@ -33,6 +39,7 @@ struct InitIOSessionCmd {
         std::string getProtocol() const;
         int getFileId() const;
 
+        std::string toString() const;
         bool equals(const InitIOSessionCmd::RequestParams& other) const;
 
     private:
@@ -50,6 +57,7 @@ struct InitIOSessionCmd {
 
         int getControlPort() const;
 
+        std::string toString() const;
         bool equals(const InitIOSessionCmd::ReplyParams& other) const;
 
     private:
@@ -59,6 +67,8 @@ struct InitIOSessionCmd {
 
 bool operator==(const InitIOSessionCmd::RequestParams& lhs, const InitIOSessionCmd::RequestParams& rhs);
 bool operator==(const InitIOSessionCmd::ReplyParams& lhs, const InitIOSessionCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const InitIOSessionCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const InitIOSessionCmd::ReplyParams& obj);
 
 struct GetLODLevelCountCmd {
     static VclType Type;
@@ -66,6 +76,9 @@ struct GetLODLevelCountCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
+
+        std::string toString() const;
+        bool equals(const GetLODLevelCountCmd::RequestParams& other) const;
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -81,6 +94,7 @@ struct GetLODLevelCountCmd {
 
         int getLODLevelCount() const;
 
+        std::string toString() const;
         bool equals(const GetLODLevelCountCmd::ReplyParams& other) const;
 
     private:
@@ -88,7 +102,10 @@ struct GetLODLevelCountCmd {
     };
 };
 
+bool operator==(const GetLODLevelCountCmd::RequestParams& lhs, const GetLODLevelCountCmd::RequestParams& rhs);
 bool operator==(const GetLODLevelCountCmd::ReplyParams& lhs, const GetLODLevelCountCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj);
 
 class IOData : public SerializableTemplate<IOData> {
 public:
@@ -102,6 +119,7 @@ public:
     int getFileId() const;
     VclType getDataType() const;
 
+    std::string toString() const;
     bool equals(const IOData& other) const;
 
 private:
@@ -111,7 +129,7 @@ private:
 };
 
 bool operator==(const IOData& lhs, const IOData& rhs);
-
+std::ostream& operator<<(std::ostream& os, const IOData& obj);
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;
 

@@ -40,3 +40,11 @@ mocca::ByteArray Request::createByteArray(const Request& request) {
     writer->append("req", request);
     return writer->write();
 }
+
+namespace trinity {
+namespace commands {
+std::ostream& operator<<(std::ostream& os, const Request& obj) {
+    return os << obj.toString();
+}
+}
+}

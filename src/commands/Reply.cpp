@@ -39,3 +39,11 @@ mocca::ByteArray Reply::createByteArray(const Reply& reply) {
     writer->append("rep", reply);
     return writer->write();
 }
+
+namespace trinity {
+namespace commands {
+std::ostream& operator<<(std::ostream& os, const Reply& obj) {
+    return os << obj.toString();
+}
+}
+}

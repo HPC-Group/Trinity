@@ -27,10 +27,19 @@ bool ErrorCmd::ReplyParams::equals(const ReplyParams& other) const {
     return m_errorCode == other.m_errorCode;
 }
 
+std::string ErrorCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "errorCode: " << m_errorCode;
+    return stream.str();
+}
+
 namespace trinity {
 namespace commands {
 bool operator==(const ErrorCmd::ReplyParams& lhs, const ErrorCmd::ReplyParams& rhs) {
     return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const ErrorCmd::ReplyParams& obj) {
+    return os << obj.toString();
 }
 }
 }

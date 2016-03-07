@@ -4,7 +4,7 @@
 #include "common/NetConfig.h"
 
 #include "mocca/base/ByteArray.h"
-#include "mocca/log/ConsoleLog.h"
+#include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 
@@ -31,11 +31,6 @@ void CommandInputChannel::sendRequest(const Request& request) const {
         throw mocca::Error("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
 
     auto serialRequest = Request::createByteArray(request);
-
-    // fixme dmc: use streaming operators instead
-    //std::string str = serialRequest.read(serialRequest.size());
-    //LINFO("(chn) sending command: " << str);
-
     m_mainChannel->send(std::move(serialRequest));
 }
 
@@ -50,9 +45,6 @@ std::unique_ptr<Reply> CommandInputChannel::getReply(const std::chrono::millisec
         throw mocca::Error("(chn) no reply arrived", __FILE__, __LINE__);
     }
 
-    // fixme dmc: use streaming operators instead
-    //std::string str = serialReply.read(serialReply.size());
-    //LINFO("(chn) reply: " << str);
-
-    return Reply::createFromByteArray(serialReply);
+    auto reply = Reply::createFromByteArray(serialReply);
+    return reply;
 }
