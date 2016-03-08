@@ -9,23 +9,19 @@
 
 // subject of refactoring
 namespace trinity {
-namespace frontend {
-
 class VisStreamReceiver : public mocca::Runnable {
-
 public:
-    VisStreamReceiver(const mocca::net::Endpoint, std::shared_ptr<common::VisStream>);
+    VisStreamReceiver(const mocca::net::Endpoint, std::shared_ptr<VisStream>);
     ~VisStreamReceiver();
 
     void startStreaming();
     void endStreaming();
 
 private:
-    std::shared_ptr<common::VisStream> m_visStream;
+    std::shared_ptr<VisStream> m_visStream;
     void run() override;
 
     mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_connection;
 };
-}
 }

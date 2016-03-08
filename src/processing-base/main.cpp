@@ -14,7 +14,7 @@
 #include "processing-base/ProcessingNode.h"
 
 
-using namespace trinity::processing;
+using namespace trinity;
 using namespace mocca::net;
 
 static int feTCPPort = 5678;

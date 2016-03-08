@@ -11,22 +11,20 @@
 #include "commands/Vcl.h"
 
 namespace trinity {
-namespace common {
 
 using Frame = mocca::ByteArray;
 
 class VisStream {
 public:
-    VisStream(commands::StreamingParams params);
+    VisStream(StreamingParams params);
 
-    const commands::StreamingParams& getStreamingParams() const;
+    const StreamingParams& getStreamingParams() const;
 
     void put(Frame frame); // false if stream full
     mocca::Nullable<Frame> get();
 
 private:
-    commands::StreamingParams m_streamingParams;
+    StreamingParams m_streamingParams;
     mocca::MessageQueue<Frame> m_queue;
 };
-}
 }

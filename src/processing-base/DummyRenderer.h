@@ -5,13 +5,9 @@
 
 
 namespace trinity {
-namespace processing {
-
-
-class DummyRenderer : public common::IRenderer {
-
+class DummyRenderer : public IRenderer {
 public:
-    DummyRenderer(std::shared_ptr<common::VisStream> stream, std::unique_ptr<common::IIO> ioSession);
+    DummyRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
 
     virtual void setIsoValue(const float);
     virtual void initContext(){};
@@ -23,5 +19,4 @@ public:
 private:
     float m_isoValue;
 };
-}
 }

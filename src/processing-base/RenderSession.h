@@ -18,32 +18,23 @@
 
 
 namespace trinity {
-namespace processing {
-
-
-class RenderSession : public common::ISession {
-
+class RenderSession : public ISession {
 public:
-    RenderSession(std::unique_ptr<commands::ICommandFactory> factory, const commands::VclType& rendererType,
-                  const commands::StreamingParams& params, const std::string& protocol, std::unique_ptr<common::IOSessionProxy> ioSession);
-
+    RenderSession(std::unique_ptr<ICommandFactory> factory, const VclType& rendererType,
+                  const StreamingParams& params, const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession);
 
     ~RenderSession();
     int getVisPort() const;
-    common::IRenderer& getRenderer();
-
+    IRenderer& getRenderer();
 
 private:
     int m_visPort;
 
-    std::unique_ptr<common::IRenderer> m_renderer;
+    std::unique_ptr<IRenderer> m_renderer;
     VisStreamSender m_visSender;
 
-    std::unique_ptr<common::IRenderer> createRenderer(const commands::VclType&,
-                                                      std::unique_ptr<common::IOSessionProxy>);
+    std::unique_ptr<IRenderer> createRenderer(const VclType&, std::unique_ptr<IOSessionProxy>);
 };
 
-using RenderSessionManager = mocca::Singleton<common::SessionManager<RenderSession>>;
-
-}
+using RenderSessionManager = mocca::Singleton<SessionManager<RenderSession>>;
 }

@@ -8,8 +8,7 @@
 
 #include "mocca/base/Memory.h"
 
-using namespace trinity::commands;
-using namespace trinity::common;
+using namespace trinity;
 
 
 std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
@@ -46,9 +45,7 @@ mocca::ByteArray Reply::createByteArray(const Reply& reply) {
 }
 
 namespace trinity {
-namespace commands {
 std::ostream& operator<<(std::ostream& os, const Reply& obj) {
     return os << obj.toString();
-}
 }
 }

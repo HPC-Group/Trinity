@@ -6,7 +6,6 @@
 #include "mocca/base/Memory.h"
 
 namespace trinity {
-namespace commands {
 
 class ISerializable {
 public:
@@ -25,5 +24,4 @@ public:
         return mocca::make_unique<Derived>(static_cast<const Derived&>(*this));
     }
 };
-}
 }

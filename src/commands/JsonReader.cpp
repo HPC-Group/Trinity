@@ -3,8 +3,7 @@
 #include "common/TrinityError.h"
 #include "commands/ISerializable.h"
 
-using namespace trinity::commands;
-using namespace trinity::common;
+using namespace trinity;
 
 
 JsonReader::JsonReader(const std::string& str) {

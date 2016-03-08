@@ -4,39 +4,36 @@
 #include "commands/IOCommands.h"
 
 namespace trinity {
-namespace io {
-
 // command-pattern like execution of trinity commands
-class InitIOSessionHdl : public commands::ICommandHandler {
+class InitIOSessionHdl : public ICommandHandler {
 public:
-    InitIOSessionHdl(const commands::InitIOSessionRequest& request);
+    InitIOSessionHdl(const InitIOSessionRequest& request);
 
-    std::unique_ptr<commands::Reply> execute() override;
+    std::unique_ptr<Reply> execute() override;
 
 private:
-    commands::InitIOSessionRequest m_request;
+    InitIOSessionRequest m_request;
 };
 
 
-class GetLODLevelCountHdl : public commands::ICommandHandler {
+class GetLODLevelCountHdl : public ICommandHandler {
 public:
-    GetLODLevelCountHdl(const commands::GetLODLevelCountRequest& request);
+    GetLODLevelCountHdl(const GetLODLevelCountRequest& request);
 
-    std::unique_ptr<commands::Reply> execute() override;
+    std::unique_ptr<Reply> execute() override;
 
 private:
-    commands::GetLODLevelCountRequest m_request;
+    GetLODLevelCountRequest m_request;
 };
 
 
-class ListFilesHdl : public commands::ICommandHandler {
+class ListFilesHdl : public ICommandHandler {
 public:
-    ListFilesHdl(const commands::ListFilesRequest& request);
+    ListFilesHdl(const ListFilesRequest& request);
 
-    std::unique_ptr<commands::Reply> execute() override;
+    std::unique_ptr<Reply> execute() override;
 
 private:
-    commands::ListFilesRequest m_request;
+    ListFilesRequest m_request;
 };
-}
 }

@@ -5,7 +5,6 @@
 #include "thirdparty/jsoncpp/json.h"
 
 namespace trinity {
-namespace commands {
 
 class JsonWriter : public ISerialWriter {
 public:
@@ -24,5 +23,4 @@ public:
 private:
     JsonCpp::Value m_root;
 };
-}
 }

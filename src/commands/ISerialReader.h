@@ -7,7 +7,6 @@
 #include "mocca/base/Memory.h"
 
 namespace trinity {
-namespace commands {
 
 class ISerializable;
 class ISerialReader {
@@ -46,5 +45,4 @@ private:
     virtual void getSerializableImpl(const std::string& key, ISerializable& prototype) const = 0;
     virtual std::vector<std::unique_ptr<ISerializable>> getSerializableVecImpl(const std::string& key, const ISerializable& prototype) const = 0;
 };
-}
 }

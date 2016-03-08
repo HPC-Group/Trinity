@@ -12,23 +12,21 @@
 #include <thread>
 
 namespace trinity {
-namespace common {
 
 template <typename RequestType>
-std::unique_ptr<typename RequestType::ReplyType> sendRequestChecked(const commands::CommandInputChannel& channel, const RequestType& request) {
+std::unique_ptr<typename RequestType::ReplyType> sendRequestChecked(const CommandInputChannel& channel, const RequestType& request) {
     using ReplyType = typename RequestType::ReplyType;
     channel.sendRequest(request);
     auto reply = channel.getReply();
-    if (reply->getType() == commands::VclType::TrinityError) {
-        const auto& error = static_cast<const commands::ErrorReply&>(*reply);
-        throw trinity::common::TrinityError("Error received: " + error.getParams().printError(), __FILE__, __LINE__);
+    if (reply->getType() == VclType::TrinityError) {
+        const auto& error = static_cast<const ErrorReply&>(*reply);
+        throw TrinityError("Error received: " + error.getParams().printError(), __FILE__, __LINE__);
     }
     if (reply->getType() != request.getType()) {
-        throw trinity::common::TrinityError("Reply type does not match request type", __FILE__, __LINE__);
+        throw TrinityError("Reply type does not match request type", __FILE__, __LINE__);
     }
     return std::unique_ptr<ReplyType>(static_cast<ReplyType*>(reply.release()));
 }
 
-bool connectInputChannel(const commands::CommandInputChannel& inputChannel);
-}
+bool connectInputChannel(const CommandInputChannel& inputChannel);
 }

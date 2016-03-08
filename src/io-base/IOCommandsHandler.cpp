@@ -6,9 +6,7 @@
 
 #include "mocca/base/Memory.h"
 
-using namespace trinity::io;
-using namespace trinity::commands;
-using namespace trinity::common;
+using namespace trinity;
 
 InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request)
     : m_request(request) {}

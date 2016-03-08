@@ -38,11 +38,11 @@ private:
     uint32_t _renderWidth;
     uint32_t _renderHeight;
 
-    std::unique_ptr<trinity::frontend::ProcessingNodeProxy> _processingNode;
-    std::unique_ptr<trinity::common::IONodeProxy> _ioNode;
+    std::unique_ptr<trinity::ProcessingNodeProxy> _processingNode;
+    std::unique_ptr<trinity::IONodeProxy> _ioNode;
 
-    std::unique_ptr<trinity::frontend::RendererProxy>   _renderer;
-    bool                                                _initDone;
+    std::unique_ptr<trinity::RendererProxy> _renderer;
+    bool _initDone;
 };
 
 #endif // WINDOW_H

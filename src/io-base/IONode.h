@@ -4,7 +4,5 @@
 #include "io-base/IOCommandFactory.h"
 
 namespace trinity {
-namespace io {
-using IONode = trinity::common::Node<IOCommandFactory>;
-}
+using IONode = trinity::Node<IOCommandFactory>;
 }

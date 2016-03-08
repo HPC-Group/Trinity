@@ -16,23 +16,18 @@
 #include <string>
 
 namespace trinity {
-namespace io {
-
-class IOSession : public common::ISession {
-
+class IOSession : public ISession {
 public:
-    IOSession(const std::string& protocol, std::unique_ptr<commands::ICommandFactory> factory, int fileId);
+    IOSession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory, int fileId);
 
-    const common::IIO& getIO() const { return *m_io; }
+    const IIO& getIO() const { return *m_io; }
 
 private:
-    std::unique_ptr<common::IIO> createIO(int fileId);
-    
+    std::unique_ptr<IIO> createIO(int fileId);
+
 private:
-    std::unique_ptr<common::IIO> m_io;
+    std::unique_ptr<IIO> m_io;
 };
 
-using IOSessionManager = mocca::Singleton<common::SessionManager<IOSession>>;
-
-}
+using IOSessionManager = mocca::Singleton<SessionManager<IOSession>>;
 }

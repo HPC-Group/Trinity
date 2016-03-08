@@ -4,8 +4,7 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 
-using namespace trinity::frontend;
-using namespace trinity::common;
+using namespace trinity;
 
 VisStreamReceiver::VisStreamReceiver(const mocca::net::Endpoint endpoint, std::shared_ptr<VisStream> s)
     : m_visStream(s)

@@ -7,7 +7,7 @@ using namespace Core::Math;
 namespace Trinity {
 namespace IO {
 
-FractalIO::FractalIO(uint64_t sx, uint64_t sy, uint64_t sz,
+FractalFractalIO(uint64_t sx, uint64_t sy, uint64_t sz,
                      uint64_t bx, uint64_t by, uint64_t bz) :
 m_totalSize(sx, sy, sz),
 m_brickSize(bx, by, bz),
@@ -17,11 +17,11 @@ m_mbGenerator(sx,sy,sz)
 }
 
 
-Vec3ui64 FractalIO::getMaxBrickSize() const {
+Vec3ui64 FractalgetMaxBrickSize() const {
     return m_brickSize;
 }
 
-Vec3ui64 FractalIO::getMaxUsedBrickSizes() const {
+Vec3ui64 FractalgetMaxUsedBrickSizes() const {
     if (!m_bFlat) {
         return m_brickSize;
     } else {
@@ -29,7 +29,7 @@ Vec3ui64 FractalIO::getMaxUsedBrickSizes() const {
     }
 }
 
-MinMaxBlock FractalIO::maxMinForKey(const BrickKey&) const {
+MinMaxBlock FractalmaxMinForKey(const BrickKey&) const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -39,7 +39,7 @@ MinMaxBlock FractalIO::maxMinForKey(const BrickKey&) const {
     }
 }
 
-unsigned FractalIO::getLODLevelCount() const {
+unsigned FractalgetLODLevelCount() const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -48,11 +48,11 @@ unsigned FractalIO::getLODLevelCount() const {
     }
 }
 
-uint64_t FractalIO::getNumberOfTimesteps() const {
+uint64_t FractalgetNumberOfTimesteps() const {
     return 1;
 }
 
-Vec3ui64 FractalIO::getDomainSize(const uint64_t lod, const uint64_t ts) const {
+Vec3ui64 FractalgetDomainSize(const uint64_t lod, const uint64_t ts) const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -61,11 +61,11 @@ Vec3ui64 FractalIO::getDomainSize(const uint64_t lod, const uint64_t ts) const {
     }
 }
 
-Mat4d FractalIO::getTransformation() const {
+Mat4d FractalgetTransformation() const {
     return Mat4d(); // identity matix
 }
 
-Vec3ui FractalIO::getBrickOverlapSize() const {
+Vec3ui FractalgetBrickOverlapSize() const {
     if (!m_bFlat) {
         return Vec3ui(2,2,2);
     } else {
@@ -73,7 +73,7 @@ Vec3ui FractalIO::getBrickOverlapSize() const {
     }
 }
 
-uint64_t FractalIO::getLargestSingleBrickLOD(uint64_t ts) const {
+uint64_t FractalgetLargestSingleBrickLOD(uint64_t ts) const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -82,7 +82,7 @@ uint64_t FractalIO::getLargestSingleBrickLOD(uint64_t ts) const {
     }
 }
 
-Vec3ui FractalIO::getBrickVoxelCounts(const BrickKey& key) const {
+Vec3ui FractalgetBrickVoxelCounts(const BrickKey& key) const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -93,7 +93,7 @@ Vec3ui FractalIO::getBrickVoxelCounts(const BrickKey& key) const {
     }
 }
 
-Vec3f FractalIO::getBrickExtents(const BrickKey & key) const {
+Vec3f FractalgetBrickExtents(const BrickKey & key) const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -104,7 +104,7 @@ Vec3f FractalIO::getBrickExtents(const BrickKey & key) const {
     }
 }
 
-Vec3ui FractalIO::getBrickLayout(uint64_t LoD, uint64_t timestep) const {
+Vec3ui FractalgetBrickLayout(uint64_t LoD, uint64_t timestep) const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -113,31 +113,31 @@ Vec3ui FractalIO::getBrickLayout(uint64_t LoD, uint64_t timestep) const {
     }
 }
 
-ValueType FractalIO::getType() const {
+ValueType FractalgetType() const {
     return T_UINT8;
 }
 
-uint64_t FractalIO::getModalityCount() const {
+uint64_t FractalgetModalityCount() const {
     return 1;
 }
 
-uint64_t FractalIO::getComponentCount(uint64_t modality) const {
+uint64_t FractalgetComponentCount(uint64_t modality) const {
     return 1;
 }
 
-Semantic FractalIO::getSemantict(uint64_t modality) const {
+Semantic FractalgetSemantict(uint64_t modality) const {
     return Scalar;
 }
 
-Vec2f FractalIO::getRange() const {
+Vec2f FractalgetRange() const {
     return Vec2f(0,255);
 }
 
-std::string FractalIO::getUserDefinedSemantic(uint64_t modality) const {
+std::string FractalgetUserDefinedSemantic(uint64_t modality) const {
   return "Fractal dataset";
 }
 
-uint64_t FractalIO::getTotalBrickCount() const {
+uint64_t FractalgetTotalBrickCount() const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);
@@ -146,7 +146,7 @@ uint64_t FractalIO::getTotalBrickCount() const {
     }
 }
 
-bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const {
+bool FractalgetBrick(const BrickKey& key, std::vector<uint8_t>& data) const {
     bool created = false;
 
     if (data.size() < getMaxBrickSize().volume()) {

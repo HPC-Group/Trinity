@@ -11,18 +11,14 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 
-
-using namespace trinity::io;
-using namespace trinity::common;
-using namespace trinity::commands;
-
+using namespace trinity;
 
 IOSession::IOSession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory, int fileId)
-    : common::ISession(protocol, std::move(factory)) {
+    : ISession(protocol, std::move(factory)) {
     m_io = createIO(fileId);
 }
 
-std::unique_ptr<trinity::common::IIO> IOSession::createIO(int fileId) {
+std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId) {
     switch (fileId) {
     case 0:  // Dummy File
         return std::unique_ptr<DummyIO>(new DummyIO());

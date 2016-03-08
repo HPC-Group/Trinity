@@ -16,7 +16,6 @@
 
 
 namespace trinity {
-namespace common {
 
 template <typename FactoryType>
 class Node : public mocca::Runnable {
@@ -44,17 +43,17 @@ private:
         while (!isInterrupted()) {
 
             // receive request
-            auto msgEnvelope = m_aggregator->receive(trinity::common::TIMEOUT_REPLY);
+            auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_REPLY);
 
             if (!msgEnvelope.isNull()) {          // req arrived
                 auto env = msgEnvelope.release(); // release value from nullable
-                auto request = commands::Request::createFromByteArray(env.message);
+                auto request = Request::createFromByteArray(env.message);
                 LINFO("request: " << *request);
 
                 auto handler = m_factory.createHandler(*request);
                 auto reply = handler->execute();
                 if (reply != nullptr) {
-                    auto serialReply = commands::Reply::createByteArray(*reply);
+                    auto serialReply = Reply::createByteArray(*reply);
                     LINFO("reply: " << *reply);
                     m_aggregator->send(mocca::net::MessageEnvelope(std::move(serialReply), env.connectionID));
                 }
@@ -67,5 +66,4 @@ private:
     std::unique_ptr<mocca::net::ConnectionAggregator> m_aggregator;
     std::vector<std::unique_ptr<ISession>> m_sessions;
 };
-}
 }

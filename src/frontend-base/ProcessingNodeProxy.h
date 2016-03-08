@@ -10,19 +10,16 @@
 #include "mocca/log/LogManager.h"
 
 namespace trinity {
-namespace frontend {
-
 class ProcessingNodeProxy  {
 
 public:
     ProcessingNodeProxy(const mocca::net::Endpoint& ep);
 
-    std::unique_ptr<RendererProxy> initRenderer(const commands::VclType& type, int fileId,
+    std::unique_ptr<RendererProxy> initRenderer(const VclType& type, int fileId,
                                                 const mocca::net::Endpoint& endpoint, // io endpoint
-                                                const commands::StreamingParams& streamingParams);
+                                                const StreamingParams& streamingParams);
 
 private:
-    commands::CommandInputChannel m_inputChannel;
+    CommandInputChannel m_inputChannel;
 };
-}
 }

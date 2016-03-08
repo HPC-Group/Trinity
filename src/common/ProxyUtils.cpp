@@ -1,8 +1,7 @@
 #include "common/ProxyUtils.h"
 
 namespace trinity {
-namespace common {
-bool connectInputChannel(const commands::CommandInputChannel& inputChannel) {
+bool connectInputChannel(const CommandInputChannel& inputChannel) {
     const int maxAttempts = 3;
     const int reconnectInSec = 5;
     bool connected = false;
@@ -18,6 +17,5 @@ bool connectInputChannel(const commands::CommandInputChannel& inputChannel) {
         ++attempt;
     }
     return false;
-}
 }
 }

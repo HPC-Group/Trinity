@@ -18,11 +18,7 @@
 
 
 using namespace mocca::net;
-using namespace trinity::processing;
-using namespace trinity::io;
-using namespace trinity::frontend;
-using namespace trinity::common;
-using namespace trinity::commands;
+using namespace trinity;
 
 class ProcessingTest : public ::testing::Test {
 protected:
@@ -36,10 +32,10 @@ TEST_F(ProcessingTest, VisStreamPutGetTest) {
 
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
 
-    trinity::commands::StreamingParams p;
-    std::shared_ptr<trinity::common::VisStream> sendstream = std::make_shared<trinity::common::VisStream>(p);
+    trinity::StreamingParams p;
+    std::shared_ptr<trinity::VisStream> sendstream = std::make_shared<trinity::VisStream>(p);
 
-    trinity::common::Frame f1;
+    trinity::Frame f1;
     f1 << "123";
     sendstream->put(std::move(f1));
     auto ff1Nullable = sendstream->get();
@@ -47,7 +43,7 @@ TEST_F(ProcessingTest, VisStreamPutGetTest) {
     auto ff1 = ff1Nullable.release();
     ASSERT_EQ("123", ff1.read(ff1.size()));
 
-    trinity::common::Frame f2;
+    trinity::Frame f2;
     f2 << "456";
     sendstream->put(std::move(f2));
     auto ff2Nullable = sendstream->get();
@@ -59,16 +55,16 @@ TEST_F(ProcessingTest, VisStreamPutGetTest) {
 TEST_F(ProcessingTest, VisStreamTest) {
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
 
-    trinity::commands::StreamingParams p;
-    std::shared_ptr<trinity::common::VisStream> sendstream = std::make_shared<trinity::common::VisStream>(p);
-    std::shared_ptr<trinity::common::VisStream> receivestream = std::make_shared<trinity::common::VisStream>(p);
-    trinity::frontend::VisStreamReceiver rec(endpoint, receivestream);
-    trinity::processing::VisStreamSender sender(endpoint, sendstream);
+    trinity::StreamingParams p;
+    std::shared_ptr<trinity::VisStream> sendstream = std::make_shared<trinity::VisStream>(p);
+    std::shared_ptr<trinity::VisStream> receivestream = std::make_shared<trinity::VisStream>(p);
+    trinity::VisStreamReceiver rec(endpoint, receivestream);
+    trinity::VisStreamSender sender(endpoint, sendstream);
     rec.startStreaming();
     sender.startStreaming();
-    trinity::common::Frame f1;
+    trinity::Frame f1;
     f1 << "123";
-    trinity::common::Frame f2;
+    trinity::Frame f2;
     f2 << "456";
     sendstream->put(std::move(f1));
     sendstream->put(std::move(f2));

@@ -6,14 +6,12 @@
 
 #include <limits>
 
-using namespace trinity::commands;
-using namespace trinity::common;
+using namespace trinity;
 
 
 namespace trinity {
-namespace commands {
 
-const Vcl& trinity::commands::Vcl::instance() {
+const Vcl& trinity::Vcl::instance() {
     static Vcl inst;
     return inst;
 }
@@ -36,7 +34,6 @@ VclType end(VclType r) {
 
 std::ostream& operator<<(std::ostream& os, VclType obj) {
     return os << Vcl::instance().toString(obj);
-}
 }
 }
 

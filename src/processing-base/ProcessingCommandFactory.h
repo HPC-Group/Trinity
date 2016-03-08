@@ -7,11 +7,8 @@
 #include <memory>
 
 namespace trinity {
-namespace processing {
-
-class ProcessingCommandFactory : public commands::ICommandFactory {
+class ProcessingCommandFactory : public ICommandFactory {
 public:
-    std::unique_ptr<commands::ICommandHandler> createHandler(const commands::Request& request) override;
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
 };
-}
 }

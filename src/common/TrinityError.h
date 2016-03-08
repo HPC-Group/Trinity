@@ -14,7 +14,6 @@
 #define CODE_LOCATION_IN_ERROR
 
 namespace trinity {
-namespace common {
 
 class TrinityError : public std::runtime_error {
 public:
@@ -47,5 +46,4 @@ private:
     std::string file_;
     int line_;
 };
-}
 }

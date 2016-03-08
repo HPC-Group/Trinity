@@ -2,7 +2,7 @@
 
 #include "commands/ISerializable.h"
 
-using namespace trinity::commands;
+using namespace trinity;
 
 SimpleStringReader::SimpleStringReader(const std::string& str)
     : m_stream(str) {}

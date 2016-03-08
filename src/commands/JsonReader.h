@@ -5,7 +5,6 @@
 #include "thirdparty/jsoncpp/json.h"
 
 namespace trinity {
-namespace commands {
 
 class JsonReader : public ISerialReader {
 public:
@@ -28,5 +27,4 @@ private:
 private:
     JsonCpp::Value m_root;
 };
-}
 }

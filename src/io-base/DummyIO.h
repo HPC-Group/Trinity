@@ -6,13 +6,9 @@
 
 
 namespace trinity {
-namespace io {
-
-class DummyIO : public common::IIO {
-
+class DummyIO : public IIO {
 public:
     // testing purpose
     int getLODLevelCount() const override { return 42; }
 };
-}
 }

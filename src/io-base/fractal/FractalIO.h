@@ -9,9 +9,8 @@
  */
 
 namespace trinity {
-namespace io {
 
-class FractalIO : public common::IIO {
+class FractalIO : public IIO {
 public:
     FractalIO() { LINFO("(io) fractal io created"); }
     // testing purpose
@@ -57,5 +56,4 @@ private:
     Mandelbulb<uint8_t> m_mbGenerator;
      */
 };
-}
 }

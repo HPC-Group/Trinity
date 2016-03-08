@@ -9,28 +9,24 @@
 
 // subject of refactoring
 namespace trinity {
-namespace processing {
-
 // todo sender and receiver do share much code for now
 // however, this will change when videocodec will be added
 class VisStreamSender : public mocca::Runnable {
-
 public:
-    VisStreamSender(const mocca::net::Endpoint, std::shared_ptr<common::VisStream>);
+    VisStreamSender(const mocca::net::Endpoint, std::shared_ptr<VisStream>);
     ~VisStreamSender();
 
     void startStreaming();
     void endStreaming();
     
-    std::shared_ptr<common::VisStream> getStream() const { return m_visStream; }
+    std::shared_ptr<VisStream> getStream() const { return m_visStream; }
 
 private:
-    std::shared_ptr<common::VisStream> m_visStream;
+    std::shared_ptr<VisStream> m_visStream;
     void run() override;
 
     mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;
     std::unique_ptr<mocca::net::IMessageConnection> m_connection;
 };
-}
 }

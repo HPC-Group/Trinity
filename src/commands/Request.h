@@ -13,7 +13,6 @@
 #include <sstream>
 
 namespace trinity {
-namespace commands {
 
 class Request : public ISerializable {
 public:
@@ -90,5 +89,4 @@ private:
 private:
     RequestParams m_params;
 };
-}
 }

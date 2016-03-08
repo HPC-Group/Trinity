@@ -10,9 +10,7 @@
 
 #include "tests/TestUtils.h"
 
-using namespace trinity::common;
-using namespace trinity::commands;
-using namespace trinity::io;
+using namespace trinity;
 
 
 class IOCommandsTest : public ::testing::Test {

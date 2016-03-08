@@ -7,8 +7,7 @@
 
 #include "mocca/base/Memory.h"
 
-using namespace trinity::common;
-using namespace trinity::commands;
+using namespace trinity;
 
 IONodeProxy::IONodeProxy(const mocca::net::Endpoint& ep)
     : m_inputChannel(ep) {

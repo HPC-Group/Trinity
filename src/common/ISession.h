@@ -11,14 +11,13 @@
 
 
 namespace trinity {
-namespace common {
 
 // dmc: are subclasses of ISession really used in a runtime polymorphic way, or do they actually just inherit the implementation?
 
 class ISession : public mocca::Runnable {
 
 public:
-    ISession(const std::string& protocol, std::unique_ptr<commands::ICommandFactory> factory);
+    ISession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory);
 
     virtual ~ISession();
 
@@ -35,12 +34,11 @@ protected:
     mocca::net::Endpoint m_controlEndpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_controlConnection;
 
-    std::unique_ptr<commands::ICommandFactory> m_factory;
+    std::unique_ptr<ICommandFactory> m_factory;
 
     void run() override;
 
 
     // todo: one day, we might want to release ids
 };
-}
 }

@@ -7,9 +7,9 @@
 
 #include "mocca/base/Memory.h"
 
-using namespace trinity::commands;
+using namespace trinity;
 
-const ISerializerFactory& trinity::commands::ISerializerFactory::defaultFactory() {
+const ISerializerFactory& ISerializerFactory::defaultFactory() {
     static JsonSerializerFactory factory;
     return factory;
 }

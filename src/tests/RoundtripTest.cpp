@@ -12,11 +12,7 @@
 #include "mocca/net/Endpoint.h"
 
 using namespace mocca::net;
-using namespace trinity::processing;
-using namespace trinity::io;
-using namespace trinity::frontend;
-using namespace trinity::common;
-using namespace trinity::commands;
+using namespace trinity;
 
 class NodeTest : public ::testing::Test {
 protected:

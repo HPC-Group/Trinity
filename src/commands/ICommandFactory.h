@@ -4,12 +4,8 @@
 #include "commands/Request.h"
 
 namespace trinity {
-namespace commands {
-
 class ICommandFactory {
-
 public:
-    virtual std::unique_ptr<commands::ICommandHandler> createHandler(const commands::Request& request) = 0;
+    virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) = 0;
 };
-}
 }

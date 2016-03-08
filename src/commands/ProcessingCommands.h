@@ -7,7 +7,6 @@
 #include "mocca/net/Endpoint.h"
 
 namespace trinity {
-namespace commands {
 
 class StreamingParams : public SerializableTemplate<StreamingParams> {
 public:
@@ -137,5 +136,4 @@ using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;
 
 using SetIsoValueRequest = RequestTemplate<SetIsoValueCmd>;
 using InitContextRequest = RequestTemplate<InitContextCmd>;
-}
 }

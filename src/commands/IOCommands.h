@@ -7,7 +7,6 @@
 #include "mocca/base/BidirectionalMap.h"
 
 namespace trinity {
-namespace commands {
 
 class IOData : public SerializableTemplate<IOData> {
 public:
@@ -169,5 +168,4 @@ using InitIOSessionReply = ReplyTemplate<InitIOSessionCmd>;
 
 using GetLODLevelCountRequest = RequestTemplate<GetLODLevelCountCmd>;
 using GetLODLevelCountReply = ReplyTemplate<GetLODLevelCountCmd>;
-}
 }

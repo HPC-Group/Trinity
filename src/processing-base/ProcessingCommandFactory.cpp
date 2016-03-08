@@ -9,29 +9,21 @@
 
 #include <iostream>
 
-using namespace trinity::commands;
-using namespace trinity::common;
-using namespace trinity::processing;
+using namespace trinity;
 
 std::unique_ptr<ICommandHandler> ProcessingCommandFactory::createHandler(const Request& request) {
     VclType type = request.getType();
 
     switch (type) {
-    case VclType::InitRenderer: {
+    case VclType::InitRenderer:
         return mocca::make_unique<InitProcessingSessionHdl>(static_cast<const InitProcessingSessionRequest&>(request));
         break;
-    }
-
-    case VclType::SetIsoValue: {
+    case VclType::SetIsoValue:
         return mocca::make_unique<SetIsoValueHdl>(static_cast<const SetIsoValueRequest&>(request));
         break;
-    }
-
-    case VclType::InitContext: {
+    case VclType::InitContext:
         return mocca::make_unique<InitContextHdl>(static_cast<const InitContextRequest&>(request));
         break;
-    }
-
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }

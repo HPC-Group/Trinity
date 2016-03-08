@@ -7,7 +7,6 @@
 
 
 namespace trinity {
-namespace common {
 
 class IRenderer {
 
@@ -34,5 +33,4 @@ protected:
     std::shared_ptr<VisStream> m_visStream;
     std::unique_ptr<IIO> m_io;
 };
-}
 }

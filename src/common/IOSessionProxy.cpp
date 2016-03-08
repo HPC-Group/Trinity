@@ -9,8 +9,7 @@
 #include "mocca/log/LogManager.h"
 
 
-using namespace trinity::common;
-using namespace trinity::commands;
+using namespace trinity;
 
 IOSessionProxy::IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint)
     : m_inputChannel(ioEndpoint)

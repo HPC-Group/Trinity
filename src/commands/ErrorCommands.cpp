@@ -1,6 +1,6 @@
 #include "commands/ErrorCommands.h"
 
-using namespace trinity::commands;
+using namespace trinity;
 
 VclType ErrorCmd::Type = VclType::TrinityError;
 
@@ -34,12 +34,10 @@ std::string ErrorCmd::ReplyParams::toString() const {
 }
 
 namespace trinity {
-namespace commands {
 bool operator==(const ErrorCmd::ReplyParams& lhs, const ErrorCmd::ReplyParams& rhs) {
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const ErrorCmd::ReplyParams& obj) {
     return os << obj.toString();
-}
 }
 }

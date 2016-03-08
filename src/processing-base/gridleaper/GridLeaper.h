@@ -13,13 +13,11 @@
 #include "opengl-base/GLTargetBinder.h"
 
 namespace trinity {
-namespace processing {
 
-
-class GridLeaper : public common::IRenderer {
+class GridLeaper : public IRenderer {
 
 public:
-    GridLeaper(std::shared_ptr<common::VisStream> stream, std::unique_ptr<common::IIO> ioSession);
+    GridLeaper(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
 
     virtual void setIsoValue(const float);
     virtual void initContext();
@@ -41,5 +39,4 @@ private:
     std::unique_ptr<OpenGL::GLCore::GLVolumeBox>    _sampleBox;
     std::unique_ptr<OpenGL::GLTargetBinder>         _targetBinder;
 };
-}
 }

@@ -13,7 +13,7 @@
 
 #include "io-base/IONode.h"
 
-using namespace trinity::io;
+using namespace trinity;
 using namespace mocca::net;
 
 static int feTCPPort = 6678;

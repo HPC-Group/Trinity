@@ -6,8 +6,8 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 
-using namespace trinity::common;
-using namespace trinity::commands;
+using namespace trinity;
+
 int ISession::m_basePort = 5990;
 int ISession::m_nextSid = 1;
 
@@ -24,7 +24,6 @@ ISession::ISession(const std::string& protocol, std::unique_ptr<ICommandFactory>
         }
     }
 }
-
 
 ISession::~ISession() {
     join();

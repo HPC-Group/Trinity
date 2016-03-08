@@ -3,7 +3,7 @@
 #include "mocca/base/ContainerTools.h"
 #include "mocca/base/StringTools.h"
 
-using namespace trinity::commands;
+using namespace trinity;
 
 
 ////////////// IOData //////////////
@@ -217,8 +217,6 @@ std::string GetLODLevelCountCmd::ReplyParams::toString() const {
 
 
 namespace trinity {
-namespace commands {
-
 bool operator==(const IOData& lhs, const IOData& rhs) {
     return lhs.equals(rhs);
 }
@@ -263,6 +261,5 @@ std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestPar
 }
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj) {
     return os << obj.toString();
-}
 }
 }

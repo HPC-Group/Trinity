@@ -5,39 +5,36 @@
 #include "common/IONodeProxy.h"
 
 namespace trinity {
-namespace processing {
-
 // command-pattern like execution of trinity commands
-class InitProcessingSessionHdl : public commands::ICommandHandler {
+class InitProcessingSessionHdl : public ICommandHandler {
 public:
-    InitProcessingSessionHdl(const commands::InitProcessingSessionRequest& request);
+    InitProcessingSessionHdl(const InitProcessingSessionRequest& request);
 
-    std::unique_ptr<commands::Reply> execute() override;
+    std::unique_ptr<Reply> execute() override;
 
 private:
-    commands::InitProcessingSessionRequest m_request;
-    common::IONodeProxy m_ioProxy;
+    InitProcessingSessionRequest m_request;
+    IONodeProxy m_ioProxy;
 };
 
-class SetIsoValueHdl : public commands::ICommandHandler {
+class SetIsoValueHdl : public ICommandHandler {
 public:
-    SetIsoValueHdl(const commands::SetIsoValueRequest& request);
+    SetIsoValueHdl(const SetIsoValueRequest& request);
 
-    std::unique_ptr<commands::Reply> execute() override;
+    std::unique_ptr<Reply> execute() override;
 
 private:
     float m_isoValue;
     int m_sid;
 };
 
-class InitContextHdl : public commands::ICommandHandler {
+class InitContextHdl : public ICommandHandler {
 public:
-    InitContextHdl(const commands::InitContextRequest& request);
+    InitContextHdl(const InitContextRequest& request);
 
-    std::unique_ptr<commands::Reply> execute() override;
+    std::unique_ptr<Reply> execute() override;
 
 private:
     int m_sid;
 };
-}
 }

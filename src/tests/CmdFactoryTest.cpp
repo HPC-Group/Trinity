@@ -10,9 +10,7 @@
 #include "mocca/net/ConnectionAggregator.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 
-using namespace trinity::common;
-using namespace trinity::commands;
-using namespace trinity::io;
+using namespace trinity;
 using namespace mocca::net;
 
 class CmdFactoryTest : public ::testing::Test {
@@ -20,8 +18,8 @@ protected:
     CmdFactoryTest() { mocca::net::ConnectionFactorySelector::addDefaultFactories(); }
 
     virtual ~CmdFactoryTest() {
-        trinity::io::IOSessionManager::instance()->endAllSessions();
-        trinity::processing::RenderSessionManager::instance()->endAllSessions();
+        trinity::IOSessionManager::instance()->endAllSessions();
+        trinity::RenderSessionManager::instance()->endAllSessions();
         mocca::net::ConnectionFactorySelector::removeAll();
     }
 };
@@ -35,7 +33,7 @@ TEST_F(CmdFactoryTest, WrongRequest) {
     StreamingParams streamingParams(2048, 1000);
     InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, "tcp.Prefixed:loopback:5678", streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
-    trinity::io::IOCommandFactory factory;
+    trinity::IOCommandFactory factory;
     ASSERT_THROW(factory.createHandler(request), TrinityError);
 }
 
@@ -54,7 +52,7 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, endpoint.toString(), streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
 
-    trinity::processing::ProcessingCommandFactory f;
+    trinity::ProcessingCommandFactory f;
     auto handler = f.createHandler(request);
 
     auto result = handler->execute();

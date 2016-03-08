@@ -9,9 +9,7 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 
-using namespace trinity::commands;
-using namespace trinity::common;
-
+using namespace trinity;
 
 CommandInputChannel::CommandInputChannel(const mocca::net::Endpoint& endpoint)
     : m_endpoint(endpoint) {}

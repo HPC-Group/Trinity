@@ -7,9 +7,7 @@
 #include "mocca/base/Memory.h"
 #include "mocca/log/LogManager.h"
 
-using namespace trinity::processing;
-using namespace trinity::common;
-using namespace trinity::commands;
+using namespace trinity;
 
 InitProcessingSessionHdl::InitProcessingSessionHdl(const InitProcessingSessionRequest& request)
     : m_request(request)

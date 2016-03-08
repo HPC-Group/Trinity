@@ -4,7 +4,5 @@
 #include "processing-base/ProcessingCommandFactory.h"
 
 namespace trinity {
-namespace processing {
-using ProcessingNode = trinity::common::Node<ProcessingCommandFactory>;
-}
+using ProcessingNode = trinity::Node<ProcessingCommandFactory>;
 }

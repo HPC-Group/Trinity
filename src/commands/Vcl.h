@@ -10,7 +10,6 @@
 
 
 namespace trinity {
-namespace commands {
 
 // visualization command language types
 // everything that is part of trinity protocol has to be specified here
@@ -96,4 +95,3 @@ public:
     static uint32_t nextID();
 };
 }
-} // end trinity

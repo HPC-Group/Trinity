@@ -4,11 +4,8 @@
 #include "commands/ICommandHandler.h"
 
 namespace trinity {
-namespace io {
-
-class IOCommandFactory : public commands::ICommandFactory {
+class IOCommandFactory : public ICommandFactory {
 public:
-    std::unique_ptr<commands::ICommandHandler> createHandler(const commands::Request& request) override;
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
 };
-}
 }

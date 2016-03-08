@@ -6,10 +6,7 @@
 
 #include <thread>
 
-using namespace trinity::frontend;
-using namespace trinity::common;
-using namespace trinity::commands;
-
+using namespace trinity;
 
 RendererProxy::RendererProxy(std::shared_ptr<VisStream> s, mocca::net::Endpoint controlEndpoint, mocca::net::Endpoint visEndpoint,
                              unsigned int sid)

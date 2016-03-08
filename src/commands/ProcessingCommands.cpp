@@ -1,6 +1,6 @@
 #include "commands/ProcessingCommands.h"
 
-using namespace trinity::commands;
+using namespace trinity;
 
 ////////////// StreamingParams //////////////
 
@@ -187,7 +187,6 @@ std::string InitContextCmd::RequestParams::toString() const {
 }
 
 namespace trinity {
-namespace commands {
 bool operator==(const StreamingParams& lhs, const StreamingParams& rhs) {
     return lhs.equals(rhs);
 }
@@ -220,6 +219,5 @@ bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::
 }
 std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& obj) {
     return os << obj.toString();
-}
 }
 }

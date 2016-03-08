@@ -6,7 +6,6 @@
 #include <memory>
 
 namespace trinity {
-namespace commands {
 
 // abstract factory pattern
 class ISerializerFactory {
@@ -28,5 +27,4 @@ public:
     std::unique_ptr<ISerialWriter> createWriter() const override;
     std::unique_ptr<ISerialReader> createReader(mocca::ByteArray& data) const override;
 };
-}
 }

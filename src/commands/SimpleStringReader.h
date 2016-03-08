@@ -5,7 +5,6 @@
 #include <sstream>
 
 namespace trinity {
-namespace commands {
 
 class SimpleStringReader : public ISerialReader {
 public:
@@ -26,5 +25,4 @@ private:
 private:
     mutable std::stringstream m_stream;
 };
-}
 }

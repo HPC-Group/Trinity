@@ -34,13 +34,13 @@ Window::~Window() {
 
 
 void Window::initRenderer() {
-    trinity::commands::StreamingParams params(_renderWidth, _renderHeight);
+    trinity::StreamingParams params(_renderWidth, _renderHeight);
 
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
 
     // the file id will be available after implementing the listdata command
     int fileId = 0;
-    _renderer = _processingNode->initRenderer(trinity::commands::VclType::GridLeaper, fileId, endpointIO, params);
+    _renderer = _processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
 
     // sending commands
     _renderer->initContext();
@@ -51,13 +51,13 @@ void Window::initRenderer() {
 void Window::on_IOconnectIP_clicked() {
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
 
-    _ioNode = std::unique_ptr<trinity::common::IONodeProxy>(new trinity::common::IONodeProxy(endpointIO));
+    _ioNode = std::unique_ptr<trinity::IONodeProxy>(new trinity::IONodeProxy(endpointIO));
 }
 
 void Window::on_PRconnectIP_clicked() {
     Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "5678");
 
-    _processingNode = std::unique_ptr<trinity::frontend::ProcessingNodeProxy>(new trinity::frontend::ProcessingNodeProxy(endpoint));
+    _processingNode = std::unique_ptr<trinity::ProcessingNodeProxy>(new trinity::ProcessingNodeProxy(endpoint));
     LINFO("connected to processing node");
 
     initRenderer();

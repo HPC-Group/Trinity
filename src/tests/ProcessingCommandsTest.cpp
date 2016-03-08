@@ -7,7 +7,7 @@
 
 #include "tests/TestUtils.h"
 
-using namespace trinity::commands;
+using namespace trinity;
 
 
 class ProcessingCommandsTest : public ::testing::Test {

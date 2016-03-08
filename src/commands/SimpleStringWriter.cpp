@@ -2,7 +2,7 @@
 
 #include "commands/ISerializable.h"
 
-using namespace trinity::commands;
+using namespace trinity;
 
 void SimpleStringWriter::append(const std::string& key, float value) {
     m_stream << value << " ";

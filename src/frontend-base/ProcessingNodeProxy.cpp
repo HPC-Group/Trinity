@@ -6,9 +6,7 @@
 
 #include "mocca/base/Memory.h"
 
-using namespace trinity::frontend;
-using namespace trinity::common;
-using namespace trinity::commands;
+using namespace trinity;
 
 ProcessingNodeProxy::ProcessingNodeProxy(const mocca::net::Endpoint& ep)
     : m_inputChannel(ep) {

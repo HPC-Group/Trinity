@@ -7,7 +7,6 @@
 #include <memory>
 
 namespace trinity {
-namespace common {
 
 template <typename SessionType> class SessionManager {
 public:
@@ -38,5 +37,4 @@ public:
 private:
     std::vector<std::unique_ptr<SessionType>> m_sessions;
 };
-}
 }

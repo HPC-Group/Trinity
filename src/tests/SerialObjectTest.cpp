@@ -7,8 +7,7 @@
 
 #include "mocca/base/Memory.h"
 
-using namespace trinity::commands;
-using namespace trinity::common;
+using namespace trinity;
 
 
 template <typename T> class SerialObjectTest : public ::testing::Test {

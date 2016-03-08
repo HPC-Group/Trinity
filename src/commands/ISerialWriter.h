@@ -7,7 +7,6 @@
 #include <memory>
 
 namespace trinity {
-namespace commands {
 
 class ISerializable;
 class ISerialWriter {
@@ -26,5 +25,4 @@ public:
 
     virtual mocca::ByteArray write() const = 0;
 };
-}
 }

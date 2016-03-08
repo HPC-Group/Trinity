@@ -7,8 +7,7 @@
 #include <vector>
 #include "silverbullet/math/Vectors.h"
 
-using namespace trinity::processing;
-using namespace trinity::common;
+using namespace trinity;
 using namespace OpenGL::GLCore;
 using namespace OpenGL;
 using namespace std;
@@ -118,6 +117,6 @@ void GridLeaper::paint() {
 
     _sampleFrameBuffer->ReadBackPixels(0, 0, _width, _height, &buffer[0]);
 
-    auto f1 = trinity::common::Frame::createFromRaw(&buffer[0], buffer.size()*sizeof(Core::Math::Vec4ui8));
+    auto f1 = trinity::Frame::createFromRaw(&buffer[0], buffer.size()*sizeof(Core::Math::Vec4ui8));
     getVisStream()->put(std::move(f1));
 }

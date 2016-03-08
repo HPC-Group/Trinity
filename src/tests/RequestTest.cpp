@@ -3,7 +3,7 @@
 #include "commands/Request.h"
 #include "commands/ProcessingCommands.h"
 
-using namespace trinity::commands;
+using namespace trinity;
 
 class RequestTest : public ::testing::Test {
 protected:

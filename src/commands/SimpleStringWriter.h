@@ -5,7 +5,6 @@
 #include "mocca/base/ByteArray.h"
 
 namespace trinity {
-namespace commands {
 
 class SimpleStringWriter : public ISerialWriter {
 public:
@@ -24,5 +23,4 @@ public:
 private:
     mutable std::stringstream m_stream;
 };
-}
 }

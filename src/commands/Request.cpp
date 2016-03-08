@@ -8,8 +8,7 @@
 
 #include "mocca/base/Memory.h"
 
-using namespace trinity::common;
-using namespace trinity::commands;
+using namespace trinity;
 
 std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArray) {
     auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
@@ -44,9 +43,7 @@ mocca::ByteArray Request::createByteArray(const Request& request) {
 }
 
 namespace trinity {
-namespace commands {
 std::ostream& operator<<(std::ostream& os, const Request& obj) {
     return os << obj.toString();
-}
 }
 }

@@ -12,7 +12,6 @@
 #include <sstream>
 
 namespace trinity {
-namespace commands {
 
 class Reply : public ISerializable {
 public:
@@ -90,5 +89,4 @@ private:
 private:
     ReplyParams m_params;
 };
-}
 }

@@ -4,8 +4,6 @@
 #include "commands/Reply.h"
 
 namespace trinity {
-namespace commands {
-
 struct ErrorCmd {
     static VclType Type;
 
@@ -32,6 +30,4 @@ bool operator==(const ErrorCmd::ReplyParams& lhs, const ErrorCmd::ReplyParams& r
 std::ostream& operator<<(std::ostream& os, const ErrorCmd::ReplyParams& obj);
 
 using ErrorReply = ReplyTemplate<ErrorCmd>;
-
-}
 }

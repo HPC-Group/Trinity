@@ -7,9 +7,7 @@
 #include "mocca/base/Error.h"
 #include "mocca/base/Memory.h"
 
-using namespace trinity::commands;
-using namespace trinity::common;
-using namespace trinity::io;
+using namespace trinity;
 
 std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(const Request& request) {
     VclType type = request.getType();

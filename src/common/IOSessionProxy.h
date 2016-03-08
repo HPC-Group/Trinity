@@ -10,17 +10,15 @@
 
 
 namespace trinity {
-namespace common {
 
-class IOSessionProxy : public common::IIO {
+class IOSessionProxy : public IIO {
 
 public:
     IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint);
     int getLODLevelCount() const override;
 
 private:
-    commands::CommandInputChannel m_inputChannel;
+    CommandInputChannel m_inputChannel;
     const int m_remoteSid;
 };
-}
 }
