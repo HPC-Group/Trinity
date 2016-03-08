@@ -28,3 +28,10 @@ std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(int fileId) {
 
     return mocca::make_unique<IOSessionProxy>(reply->getSid(), controlEndpoint);
 }
+
+std::vector<IOData> IONodeProxy::listFiles(int32_t dirID) {
+    ListFilesCmd::RequestParams params(dirID);
+    ListFilesRequest request(params, IDGenerator::nextID(), 0);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getIOData();
+}

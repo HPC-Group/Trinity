@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/IOSessionProxy.h"
+#include "commands/IOCommands.h"
 
 #include "mocca/net/Endpoint.h"
 #include "mocca/net/IMessageConnection.h"
@@ -12,8 +13,7 @@ public:
     IONodeProxy(const mocca::net::Endpoint& ep);
 
     std::unique_ptr<IOSessionProxy> initIO(int fileId);
-
-    // list data goes here
+    std::vector<IOData> listFiles(int32_t dirID);
 
 private:
     CommandInputChannel m_inputChannel;
