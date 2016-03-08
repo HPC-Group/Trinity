@@ -11,8 +11,7 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 
-#include "IOCommandFactory.h"
-#include "common/Node.h"
+#include "io-base/IONode.h"
 
 using namespace trinity::io;
 using namespace mocca::net;
@@ -52,9 +51,7 @@ int main(int argc, char** argv) {
 
     std::unique_ptr<ConnectionAggregator> aggregator(
         new ConnectionAggregator(std::move(acceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
-
-    std::unique_ptr<trinity::commands::ICommandFactory> factory(new IOCommandFactory);
-    trinity::common::Node node(std::move(aggregator), std::move(factory));
+    IONode node(std::move(aggregator));
 
     node.start();
     while (!exitFlag) {

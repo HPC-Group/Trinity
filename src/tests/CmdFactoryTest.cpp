@@ -3,8 +3,7 @@
 #include "commands/ProcessingCommands.h"
 #include "processing-base/RenderSession.h"
 #include "io-base/IOSession.h"
-#include "common/Node.h"
-#include "io-base/IOCommandFactory.h"
+#include "io-base/IONode.h"
 #include "processing-base/ProcessingCommandFactory.h"
 
 #include "mocca/base/ContainerTools.h"
@@ -13,6 +12,7 @@
 
 using namespace trinity::common;
 using namespace trinity::commands;
+using namespace trinity::io;
 using namespace mocca::net;
 
 class CmdFactoryTest : public ::testing::Test {
@@ -47,8 +47,7 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     std::unique_ptr<ConnectionAggregator> aggregator(
         new ConnectionAggregator(std::move(acceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
 
-    std::unique_ptr<trinity::commands::ICommandFactory> factory(new trinity::io::IOCommandFactory);
-    trinity::common::Node node(std::move(aggregator), std::move(factory));
+    IONode node(std::move(aggregator));
     node.start();
 
     StreamingParams streamingParams(2048, 1000);

@@ -26,8 +26,10 @@ public:
     const common::IIO& getIO() const { return *m_io; }
 
 private:
-    std::unique_ptr<common::IIO> m_io;
     std::unique_ptr<common::IIO> createIO(int fileId);
+    
+private:
+    std::unique_ptr<common::IIO> m_io;
 };
 
 using IOSessionManager = mocca::Singleton<common::SessionManager<IOSession>>;

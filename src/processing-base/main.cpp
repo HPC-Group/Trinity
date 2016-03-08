@@ -11,8 +11,8 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 
-#include "ProcessingCommandFactory.h"
-#include "common/Node.h"
+#include "processing-base/ProcessingNode.h"
+
 
 using namespace trinity::processing;
 using namespace mocca::net;
@@ -53,8 +53,7 @@ int main(int argc, char** argv) {
     std::unique_ptr<ConnectionAggregator> aggregator(
         new ConnectionAggregator(std::move(acceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
 
-    std::unique_ptr<trinity::commands::ICommandFactory> factory(new ProcessingCommandFactory);
-    trinity::common::Node node(std::move(aggregator), std::move(factory));
+    ProcessingNode node(std::move(aggregator));
 
     node.start();
     while (!exitFlag) {
