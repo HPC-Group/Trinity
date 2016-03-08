@@ -28,12 +28,12 @@ public:
         return prototype;
     }
     
-    template <typename T> std::vector<std::unique_ptr<T>> getSerializableVec(const std::string& key) const {
+    template <typename T> std::vector<T> getSerializableVec(const std::string& key) const {
         T prototype;
         auto tmp = getSerializableVecImpl(key, prototype);
-        std::vector<std::unique_ptr<T>> result;
+        std::vector<T> result;
         for (auto& elem : tmp) {
-            result.push_back(std::unique_ptr<T>(static_cast<T*>(elem.release())));
+            result.push_back(*static_cast<T*>(elem.get()));
         }
         return result;
     }

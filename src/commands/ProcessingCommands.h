@@ -12,7 +12,7 @@ namespace commands {
 class StreamingParams : public SerializableTemplate<StreamingParams> {
 public:
     StreamingParams();
-    StreamingParams(int resX, int resY);
+    explicit StreamingParams(int resX, int resY);
 
     void serialize(ISerialWriter& writer) const override;
     void deserialize(const ISerialReader& reader) override;
@@ -36,8 +36,8 @@ struct InitProcessingSessionCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(const std::string& protocol, const VclType& renderType, int fileId, const std::string& stringifiedIoEndpoint,
-                      const StreamingParams& p);
+        explicit RequestParams(const std::string& protocol, const VclType& renderType, int fileId, const std::string& stringifiedIoEndpoint,
+                               const StreamingParams& p);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -62,7 +62,7 @@ struct InitProcessingSessionCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(int controlPort, int visPort);
+        explicit ReplyParams(int controlPort, int visPort);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -90,7 +90,7 @@ struct SetIsoValueCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(float value);
+        explicit RequestParams(float value);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -115,7 +115,7 @@ struct InitContextCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(int32_t value);
+        explicit RequestParams(int32_t value);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -137,6 +137,5 @@ using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;
 
 using SetIsoValueRequest = RequestTemplate<SetIsoValueCmd>;
 using InitContextRequest = RequestTemplate<InitContextCmd>;
-
 }
 }

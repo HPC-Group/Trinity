@@ -7,6 +7,30 @@
 namespace trinity {
 namespace commands {
 
+class IOData : public SerializableTemplate<IOData> {
+public:
+    IOData() = default;
+    IOData(const std::string& name, int fileId, VclType dataType);
+
+    void serialize(ISerialWriter& writer) const override;
+    void deserialize(const ISerialReader& reader) override;
+
+    std::string getName() const;
+    int getFileId() const;
+    VclType getDataType() const;
+
+    std::string toString() const;
+    bool equals(const IOData& other) const;
+
+private:
+    std::string m_name;
+    int m_fileId;
+    VclType m_dataType;
+};
+
+bool operator==(const IOData& lhs, const IOData& rhs);
+std::ostream& operator<<(std::ostream& os, const IOData& obj);
+
 struct ListFilesCmd {
     static VclType Type;
 
@@ -20,10 +44,29 @@ struct ListFilesCmd {
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
     };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        explicit ReplyParams(const std::vector<IOData>& ioData);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::vector<IOData> getIOData() const;
+
+        std::string toString() const;
+        bool equals(const ListFilesCmd::ReplyParams& other) const;
+
+    private:
+        std::vector<IOData> m_ioData;
+    };
 };
 
 bool operator==(const ListFilesCmd::RequestParams& lhs, const ListFilesCmd::RequestParams& rhs);
 std::ostream& operator<<(std::ostream& os, const ListFilesCmd::RequestParams& obj);
+bool operator==(const ListFilesCmd::ReplyParams& lhs, const ListFilesCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ListFilesCmd::ReplyParams& obj);
 
 struct InitIOSessionCmd {
     static VclType Type;
@@ -31,7 +74,7 @@ struct InitIOSessionCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(const std::string& protocol, int fileId);
+        explicit RequestParams(const std::string& protocol, int fileId);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -50,7 +93,7 @@ struct InitIOSessionCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(int controlPort);
+        explicit ReplyParams(int controlPort);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -87,7 +130,7 @@ struct GetLODLevelCountCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(int lodCount);
+        explicit ReplyParams(int lodCount);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -107,30 +150,6 @@ bool operator==(const GetLODLevelCountCmd::ReplyParams& lhs, const GetLODLevelCo
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestParams& obj);
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj);
 
-class IOData : public SerializableTemplate<IOData> {
-public:
-    IOData() = default;
-    IOData(const std::string& name, int fileId, const VclType& dataType);
-
-    void serialize(ISerialWriter& writer) const override;
-    void deserialize(const ISerialReader& reader) override;
-
-    std::string getName() const;
-    int getFileId() const;
-    VclType getDataType() const;
-
-    std::string toString() const;
-    bool equals(const IOData& other) const;
-
-private:
-    std::string m_name;
-    int m_fileId;
-    VclType m_dataType;
-};
-
-bool operator==(const IOData& lhs, const IOData& rhs);
-std::ostream& operator<<(std::ostream& os, const IOData& obj);
-
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;
 
 using InitIOSessionRequest = RequestTemplate<InitIOSessionCmd>;
@@ -138,6 +157,5 @@ using InitIOSessionReply = ReplyTemplate<InitIOSessionCmd>;
 
 using GetLODLevelCountRequest = RequestTemplate<GetLODLevelCountCmd>;
 using GetLODLevelCountReply = ReplyTemplate<GetLODLevelCountCmd>;
-
 }
 }

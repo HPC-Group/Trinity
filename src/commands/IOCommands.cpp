@@ -1,6 +1,51 @@
 #include "commands/IOCommands.h"
 
+#include "mocca/base/ContainerTools.h"
+#include "mocca/base/StringTools.h"
+
 using namespace trinity::commands;
+
+
+////////////// IOData //////////////
+
+IOData::IOData(const std::string& name, int fileId, VclType dataType)
+    : m_name(name)
+    , m_fileId(fileId)
+    , m_dataType(dataType) {}
+
+void IOData::serialize(ISerialWriter& writer) const {
+    writer.append("name", m_name);
+    writer.append("fileid", m_fileId);
+    writer.append("datatype", Vcl::instance().toString(m_dataType));
+}
+
+void IOData::deserialize(const ISerialReader& reader) {
+    m_name = reader.getString("name");
+    m_fileId = reader.getInt("fileid");
+    m_dataType = Vcl::instance().toType(reader.getString("datatype"));
+}
+
+std::string IOData::getName() const {
+    return m_name;
+}
+
+int IOData::getFileId() const {
+    return m_fileId;
+}
+
+VclType IOData::getDataType() const {
+    return m_dataType;
+}
+
+bool IOData::equals(const IOData& other) const {
+    return m_name == other.m_name && m_fileId == other.m_fileId && m_dataType == other.m_dataType;
+}
+
+std::string IOData::toString() const {
+    std::stringstream stream;
+    stream << "name: " << m_name << "; fileId: " << m_fileId << "; dataType: " << m_dataType;
+    return stream.str();
+}
 
 ////////////// ListFilesCmd //////////////
 
@@ -17,6 +62,33 @@ std::string ListFilesCmd::RequestParams::toString() const {
 void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
 void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+
+ListFilesCmd::ReplyParams::ReplyParams(const std::vector<IOData>& ioData)
+    : m_ioData(ioData) {}
+
+bool ListFilesCmd::ReplyParams::equals(const ListFilesCmd::ReplyParams& other) const {
+    return m_ioData == other.m_ioData;
+}
+
+std::string ListFilesCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "iodata: ";
+    ::operator<<(stream, m_ioData); // ugly, but necessary because of namespaces
+    return stream.str();
+}
+
+void ListFilesCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.append("iodata", mocca::transformToBasePtrVec<ISerializable>(begin(m_ioData), end(m_ioData)));
+}
+
+void ListFilesCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_ioData = reader.getSerializableVec<IOData>("iodata");
+}
+
+std::vector<IOData> ListFilesCmd::ReplyParams::getIOData() const {
+    return m_ioData;
+}
 
 
 ////////////// InitIOSessionCmd //////////////
@@ -121,53 +193,27 @@ std::string GetLODLevelCountCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
-////////////// IOData //////////////
-
-IOData::IOData(const std::string& name, int fileId, const VclType& dataType)
-    : m_name(name)
-    , m_fileId(fileId)
-    , m_dataType(dataType) {}
-
-void IOData::serialize(ISerialWriter& writer) const {
-    writer.append("name", m_name);
-    writer.append("fileid", m_fileId);
-    writer.append("datatype", Vcl::instance().toString(m_dataType));
-}
-
-void IOData::deserialize(const ISerialReader& reader) {
-    m_name = reader.getString("name");
-    m_fileId = reader.getInt("fileid");
-    m_dataType = Vcl::instance().toType(reader.getString("datatype"));
-}
-
-std::string IOData::getName() const {
-    return m_name;
-}
-
-int IOData::getFileId() const {
-    return m_fileId;
-}
-
-VclType IOData::getDataType() const {
-    return m_dataType;
-}
-
-bool IOData::equals(const IOData& other) const {
-    return m_name == other.m_name && m_fileId == other.m_fileId && m_dataType == other.m_dataType;
-}
-
-std::string IOData::toString() const {
-    std::stringstream stream;
-    stream << "name: " << m_name << "; fileId: " << m_fileId << "; dataType: " << m_dataType;
-    return stream.str();
-}
 
 namespace trinity {
 namespace commands {
+
+bool operator==(const IOData& lhs, const IOData& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const IOData& obj) {
+    return os << obj.toString();
+}
+
 bool operator==(const ListFilesCmd::RequestParams& lhs, const ListFilesCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const ListFilesCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const ListFilesCmd::ReplyParams& lhs, const ListFilesCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const ListFilesCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 
@@ -194,13 +240,6 @@ std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestPar
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj) {
-    return os << obj.toString();
-}
-
-bool operator==(const IOData& lhs, const IOData& rhs) {
-    return lhs.equals(rhs);
-}
-std::ostream& operator<<(std::ostream& os, const IOData& obj) {
     return os << obj.toString();
 }
 }

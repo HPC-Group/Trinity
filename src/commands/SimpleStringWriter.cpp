@@ -41,7 +41,7 @@ void SimpleStringWriter::append(const std::string& key, const std::vector<std::s
     }
 }
 
-void SimpleStringWriter::append(const std::string& key, const std::vector<std::unique_ptr<ISerializable>>& vec) {
+void SimpleStringWriter::append(const std::string& key, const std::vector<ISerializable*>& vec) {
     m_stream << vec.size() << " ";
     for (size_t i = 0; i < vec.size(); ++i) {
         vec[i]->serialize(*this);

@@ -45,3 +45,20 @@ TEST_F(IOCommandsTest, IOData) {
         ASSERT_EQ(target, result);
     }
 }
+
+TEST_F(IOCommandsTest, ListFilesCmd) {
+    {
+        ListFilesCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        IOData data1("name1", 1, VclType::FractalIO);
+        IOData data2("name2", 2, VclType::DummyIO);
+        std::vector<IOData> dataVec{ data1, data2 };
+        ListFilesCmd::ReplyParams target(dataVec);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+        std::cout << target;
+    }
+}

@@ -114,17 +114,17 @@ TYPED_TEST(SerialObjectTest, VectorSubObject) {
     TypeParam factory;
     auto writer = factory.createWriter();
     using MyObj = typename SerialObjectTest<TypeParam>::MySerializable;
-    std::vector<std::unique_ptr<ISerializable>> vec;
-    vec.push_back(mocca::make_unique<MyObj>(2.718f, "Hello"));
-    vec.push_back(mocca::make_unique<MyObj>(3.14f, "World"));
+    auto subObject1 = mocca::make_unique<MyObj>(2.718f, "Hello");
+    auto subObject2 = mocca::make_unique<MyObj>(3.14f, "World");
+    std::vector<ISerializable*> vec{ subObject1.get(), subObject2.get() };
     writer->append("subObjects", vec);
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
     auto res = reader->template getSerializableVec<MyObj>("subObjects");
     ASSERT_EQ(2, res.size());
-    ASSERT_EQ(2.718f, res[0]->myFloat);
-    ASSERT_EQ("Hello", res[0]->myString);
-    ASSERT_EQ(3.14f, res[1]->myFloat);
-    ASSERT_EQ("World", res[1]->myString);
+    ASSERT_EQ(2.718f, res[0].myFloat);
+    ASSERT_EQ("Hello", res[0].myString);
+    ASSERT_EQ(3.14f, res[1].myFloat);
+    ASSERT_EQ("World", res[1].myString);
 }

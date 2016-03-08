@@ -40,7 +40,7 @@ void JsonWriter::append(const std::string& key, const std::vector<std::string>& 
     }
 }
 
-void JsonWriter::append(const std::string& key, const std::vector<std::unique_ptr<ISerializable>>& vec) {
+void JsonWriter::append(const std::string& key, const std::vector<ISerializable*>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
         JsonWriter subObject;
         vec[i]->serialize(subObject);
