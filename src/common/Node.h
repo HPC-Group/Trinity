@@ -6,6 +6,7 @@
 #include "mocca/base/Thread.h"
 #include "mocca/net/ConnectionAggregator.h"
 #include "mocca/net/Endpoint.h"
+#include "mocca/log/LogManager.h"
 
 #include "common/NetConfig.h"
 #include "common/ISession.h"
