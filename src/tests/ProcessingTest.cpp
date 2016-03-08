@@ -81,4 +81,6 @@ TEST_F(ProcessingTest, VisStreamTest) {
     auto ff2 = ff2Nullable.release();
     ASSERT_EQ("123", ff1.read(ff1.size()));
     ASSERT_EQ("456", ff2.read(ff2.size()));
+    rec.join();
+    sender.join();
 }
