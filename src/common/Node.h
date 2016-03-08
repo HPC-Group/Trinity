@@ -55,7 +55,7 @@ private:
                 if (reply != nullptr) {
                     auto serialReply = commands::Reply::createByteArray(*reply);
                     LINFO("reply: " << *reply);
-                    m_aggregator->send(MessageEnvelope(std::move(serialReply), env.connectionID));
+                    m_aggregator->send(mocca::net::MessageEnvelope(std::move(serialReply), env.connectionID));
                 }
             }
         }
