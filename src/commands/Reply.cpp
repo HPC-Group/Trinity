@@ -22,7 +22,9 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     }
 
     // IO commands
-    else if (type == InitIOSessionReply::Ifc::Type) {
+    if (type == ListFilesRequest::Ifc::Type) {
+        return reader->getSerializablePtr<ListFilesReply>("rep");
+    } else if (type == InitIOSessionReply::Ifc::Type) {
         return reader->getSerializablePtr<InitIOSessionReply>("rep");
     } else if (type == GetLODLevelCountReply::Ifc::Type) {
         return reader->getSerializablePtr<GetLODLevelCountReply>("rep");

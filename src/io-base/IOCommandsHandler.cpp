@@ -34,3 +34,18 @@ std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
     GetLODLevelCountCmd::ReplyParams replyParams(io.getLODLevelCount());
     return mocca::make_unique<GetLODLevelCountReply>(replyParams, m_request.getRid(), m_request.getSid());
 }
+
+
+ListFilesHdl::ListFilesHdl(const ListFilesRequest& request)
+    : m_request(request) {}
+
+std::unique_ptr<Reply> ListFilesHdl::execute() {
+    IOData dummy1("dummy1", 42, VclType::FractalIO);
+    IOData dummy2("dummy2", 23, VclType::FractalIO);
+    std::vector<IOData> ioDataVec{ dummy1, dummy2 };
+    ListFilesCmd::ReplyParams replyParams(ioDataVec);
+    
+    int rid = 1; // dummy value, fix
+    int sid = 2; // dummy value, fix
+    return mocca::make_unique<ListFilesReply>(replyParams, rid, sid);
+}

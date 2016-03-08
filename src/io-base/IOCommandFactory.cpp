@@ -15,25 +15,15 @@ std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(const Request& 
     VclType type = request.getType();
 
     switch (type) {
-    case VclType::InitIOSession: {
+    case VclType::InitIOSession:
         return mocca::make_unique<InitIOSessionHdl>(static_cast<const InitIOSessionRequest&>(request));
         break;
-    }
-
-    case VclType::GetLODLevelCount: {
+    case VclType::GetLODLevelCount:
         return mocca::make_unique<GetLODLevelCountHdl>(static_cast<const GetLODLevelCountRequest&>(request));
         break;
-    }
-
-    case VclType::ListFiles: {
-        /*
-        SetIsoValueCmd cmd(*serialRequest);
-        return  std::unique_ptr<SetIsoValueHdl> (new SetIsoValueHdl(cmd));
-         */
-        throw TrinityError("command not implemented: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
+    case VclType::ListFiles:
+        return mocca::make_unique<ListFilesHdl>(static_cast<const ListFilesRequest&>(request));
         break;
-    }
-
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }

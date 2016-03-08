@@ -151,6 +151,7 @@ std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestPar
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj);
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;
+using ListFilesReply = ReplyTemplate<ListFilesCmd>;
 
 using InitIOSessionRequest = RequestTemplate<InitIOSessionCmd>;
 using InitIOSessionReply = ReplyTemplate<InitIOSessionCmd>;

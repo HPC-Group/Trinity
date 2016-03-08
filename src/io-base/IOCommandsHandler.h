@@ -27,5 +27,16 @@ public:
 private:
     commands::GetLODLevelCountRequest m_request;
 };
+
+
+class ListFilesHdl : public commands::ICommandHandler {
+public:
+    ListFilesHdl(const commands::ListFilesRequest& request);
+
+    std::unique_ptr<commands::Reply> execute() override;
+
+private:
+    commands::ListFilesRequest m_request;
+};
 }
 }
