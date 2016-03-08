@@ -4,20 +4,25 @@
 #include "commands/Request.h"
 #include "commands/Reply.h"
 
+#include "mocca/base/BidirectionalMap.h"
+
 namespace trinity {
 namespace commands {
 
 class IOData : public SerializableTemplate<IOData> {
 public:
+    enum class DataType { Dataset = 0, Directory = 1 };
+    static const mocca::BidirectionalMap<DataType, std::string>& dataTypeMapper();
+    
     IOData() = default;
-    IOData(const std::string& name, int fileId, VclType dataType);
+    IOData(const std::string& name, int fileId, DataType dataType);
 
     void serialize(ISerialWriter& writer) const override;
     void deserialize(const ISerialReader& reader) override;
 
     std::string getName() const;
     int getFileId() const;
-    VclType getDataType() const;
+    DataType getDataType() const;
 
     std::string toString() const;
     bool equals(const IOData& other) const;
@@ -25,7 +30,7 @@ public:
 private:
     std::string m_name;
     int m_fileId;
-    VclType m_dataType;
+    DataType m_dataType;
 };
 
 bool operator==(const IOData& lhs, const IOData& rhs);
@@ -37,12 +42,18 @@ struct ListFilesCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
+        explicit RequestParams(int32_t dirID);
 
         bool equals(const ListFilesCmd::RequestParams& other) const;
         std::string toString() const;
 
+        int32_t getDirID() const;
+
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
+    
+    private:
+        int32_t m_dirID;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {

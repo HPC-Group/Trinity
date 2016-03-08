@@ -15,5 +15,13 @@ template <typename T> T writeAndRead(const T& obj) {
     result.deserialize(*reader);
     return result;
 }
+
+template <typename HandlerType, typename RequestType> typename RequestType::ReplyType handleRequest(const RequestType& request) {
+    HandlerType handler(request);
+    auto reply = handler.execute();
+    return static_cast<const typename RequestType::ReplyType&>(*reply);
+
+}
+
 }
 }

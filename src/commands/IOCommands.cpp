@@ -8,7 +8,16 @@ using namespace trinity::commands;
 
 ////////////// IOData //////////////
 
-IOData::IOData(const std::string& name, int fileId, VclType dataType)
+const mocca::BidirectionalMap<IOData::DataType, std::string>& IOData::dataTypeMapper() {
+    static mocca::BidirectionalMap<DataType, std::string> mapper;
+    if (mapper.empty()) {
+        mapper.insert(DataType::Dataset, "dataset");
+        mapper.insert(DataType::Directory, "directory");
+    }
+    return mapper;
+}
+
+IOData::IOData(const std::string& name, int fileId, DataType dataType)
     : m_name(name)
     , m_fileId(fileId)
     , m_dataType(dataType) {}
@@ -16,13 +25,13 @@ IOData::IOData(const std::string& name, int fileId, VclType dataType)
 void IOData::serialize(ISerialWriter& writer) const {
     writer.append("name", m_name);
     writer.append("fileid", m_fileId);
-    writer.append("datatype", Vcl::instance().toString(m_dataType));
+    writer.append("datatype", dataTypeMapper().getByFirst(m_dataType));
 }
 
 void IOData::deserialize(const ISerialReader& reader) {
     m_name = reader.getString("name");
     m_fileId = reader.getInt("fileid");
-    m_dataType = Vcl::instance().toType(reader.getString("datatype"));
+    m_dataType = dataTypeMapper().getBySecond(reader.getString("datatype"));
 }
 
 std::string IOData::getName() const {
@@ -33,7 +42,7 @@ int IOData::getFileId() const {
     return m_fileId;
 }
 
-VclType IOData::getDataType() const {
+IOData::DataType IOData::getDataType() const {
     return m_dataType;
 }
 
@@ -43,7 +52,7 @@ bool IOData::equals(const IOData& other) const {
 
 std::string IOData::toString() const {
     std::stringstream stream;
-    stream << "name: " << m_name << "; fileId: " << m_fileId << "; dataType: " << m_dataType;
+    stream << "name: " << m_name << "; fileId: " << m_fileId << "; dataType: " << dataTypeMapper().getByFirst(m_dataType);
     return stream.str();
 }
 
@@ -51,17 +60,30 @@ std::string IOData::toString() const {
 
 VclType ListFilesCmd::Type = VclType::ListFiles;
 
+ListFilesCmd::RequestParams::RequestParams(int32_t dirID)
+    : m_dirID(dirID) {}
+
 bool ListFilesCmd::RequestParams::equals(const ListFilesCmd::RequestParams& other) const {
-    return true;
+    return m_dirID == other.m_dirID;
 }
 
 std::string ListFilesCmd::RequestParams::toString() const {
-    return std::string();
+    std::stringstream stream;
+    stream << "dirid: " << m_dirID;
+    return stream.str();
 }
 
-void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.append("dirid", m_dirID);
+}
 
-void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_dirID = reader.getInt("dirid");
+}
+
+int32_t ListFilesCmd::RequestParams::getDirID() const {
+    return m_dirID;
+}
 
 
 ListFilesCmd::ReplyParams::ReplyParams(const std::vector<IOData>& ioData)
