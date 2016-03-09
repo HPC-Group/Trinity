@@ -1,4 +1,4 @@
-#include "common/ISession.h"
+#include "common/AbstractSession.h"
 
 #include "mocca/base/Error.h"
 #include "mocca/base/StringTools.h"
@@ -8,10 +8,10 @@
 
 using namespace trinity;
 
-int ISession::m_basePort = 5990;
-int ISession::m_nextSid = 1;
+int AbstractSession::m_basePort = 5990;
+int AbstractSession::m_nextSid = 1;
 
-ISession::ISession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory)
+AbstractSession::AbstractSession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory)
     : m_sid(m_nextSid++)
     , m_controlEndpoint(protocol, "localhost", std::to_string(m_basePort++))
     , m_factory(std::move(factory)) {
@@ -25,11 +25,11 @@ ISession::ISession(const std::string& protocol, std::unique_ptr<ICommandFactory>
     }
 }
 
-ISession::~ISession() {
+AbstractSession::~AbstractSession() {
     join();
 }
 
-void ISession::run() {
+void AbstractSession::run() {
     LINFO("(session) session control at \"" + m_controlEndpoint.toString() + "\"");
 
     try {

@@ -8,20 +8,20 @@
 #include "mocca/net/IMessageConnection.h"
 #include "mocca/net/IMessageConnectionAcceptor.h"
 
-#include "common/SessionManager.h"
+#include "common/AbstractSession.h"
 #include "common/IOSessionProxy.h"
 #include "common/IRenderer.h"
-#include "common/ISession.h"
+#include "common/SessionManager.h"
 
 #include "VisStreamSender.h"
 #include "commands/ICommandFactory.h"
 
 
 namespace trinity {
-class RenderSession : public ISession {
+class RenderSession : public AbstractSession {
 public:
-    RenderSession(std::unique_ptr<ICommandFactory> factory, const VclType& rendererType,
-                  const StreamingParams& params, const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession);
+    RenderSession(std::unique_ptr<ICommandFactory> factory, const VclType& rendererType, const StreamingParams& params,
+                  const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession);
 
     ~RenderSession();
     int getVisPort() const;

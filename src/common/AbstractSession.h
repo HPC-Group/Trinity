@@ -12,14 +12,14 @@
 
 namespace trinity {
 
-// dmc: are subclasses of ISession really used in a runtime polymorphic way, or do they actually just inherit the implementation?
+// dmc: are subclasses of AbstractSession really used in a runtime polymorphic way, or do they actually just inherit the implementation?
 
-class ISession : public mocca::Runnable {
+class AbstractSession : public mocca::Runnable {
 
 public:
-    ISession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory);
+    AbstractSession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory);
 
-    virtual ~ISession();
+    virtual ~AbstractSession();
 
     virtual int getSid() const { return m_sid; }
     virtual int getControlPort() const { return std::stoi(m_controlEndpoint.port); }

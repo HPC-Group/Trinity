@@ -14,7 +14,7 @@
 using namespace trinity;
 
 IOSession::IOSession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory, int fileId)
-    : ISession(protocol, std::move(factory)) {
+    : AbstractSession(protocol, std::move(factory)) {
     m_io = createIO(fileId);
 }
 
