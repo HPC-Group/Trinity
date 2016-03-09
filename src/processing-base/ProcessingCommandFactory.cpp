@@ -11,7 +11,7 @@
 
 using namespace trinity;
 
-std::unique_ptr<ICommandHandler> ProcessingNodeCommandFactory::createHandler(const Request& request) {
+std::unique_ptr<ICommandHandler> ProcessingNodeCommandFactory::createHandler(const Request& request) const {
     VclType type = request.getType();
 
     switch (type) {

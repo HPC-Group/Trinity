@@ -7,7 +7,7 @@ namespace trinity {
 
 class IONodeCommandFactory {
 public:
-    std::unique_ptr<ICommandHandler> createHandler(const Request& request);
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const;
 };
 
 class IOCommandFactory : public ICommandFactory {

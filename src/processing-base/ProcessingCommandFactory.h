@@ -9,7 +9,7 @@
 namespace trinity {
 class ProcessingNodeCommandFactory {
 public:
-    std::unique_ptr<ICommandHandler> createHandler(const Request& request);
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const;
 };
 
 class ProcessingCommandFactory : public ICommandFactory {

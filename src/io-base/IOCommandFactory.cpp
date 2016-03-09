@@ -9,7 +9,7 @@
 
 using namespace trinity;
 
-std::unique_ptr<ICommandHandler> IONodeCommandFactory::createHandler(const Request& request) {
+std::unique_ptr<ICommandHandler> IONodeCommandFactory::createHandler(const Request& request) const {
     VclType type = request.getType();
 
     switch (type) {
