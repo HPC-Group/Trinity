@@ -27,7 +27,7 @@ TEST_F(IOCommandsTest, InitIOSessionCmd) {
         ASSERT_EQ(target, result);
     }
     {
-        InitIOSessionCmd::ReplyParams target(4711);
+        InitIOSessionCmd::ReplyParams target("4711");
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }

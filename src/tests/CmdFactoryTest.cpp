@@ -31,7 +31,7 @@ TEST_F(CmdFactoryTest, VCLCompleteTest) {
 
 TEST_F(CmdFactoryTest, WrongRequest) {
     StreamingParams streamingParams(2048, 1000);
-    InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, "tcp.Prefixed:loopback:5678", streamingParams);
+    InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, mocca::net::Endpoint("tcp.prefixed:loopback:5678"), streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
     trinity::IONodeCommandFactory factory;
     ASSERT_THROW(factory.createHandler(request), TrinityError);
@@ -49,7 +49,7 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     node.start();
 
     StreamingParams streamingParams(2048, 1000);
-    InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, endpoint.toString(), streamingParams);
+    InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, endpoint, streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
 
     trinity::ProcessingNodeCommandFactory f;
@@ -60,5 +60,5 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     auto castedResult = dynamic_cast<InitProcessingSessionReply*>(result.get());
     ASSERT_TRUE(castedResult != nullptr);
     auto replyParams = castedResult->getParams();
-    ASSERT_EQ(replyParams.getVisPort() - replyParams.getControlPort(), 1);
+    ASSERT_NE(std::stoi(replyParams.getVisPort()), std::stoi(replyParams.getControlPort()));
 }

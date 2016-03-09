@@ -7,9 +7,8 @@
 using namespace trinity;
 
 VisStreamSender::VisStreamSender(const mocca::net::Endpoint endpoint, std::shared_ptr<VisStream> s)
-    : m_visStream(s)
-    , m_endpoint(endpoint) {
-    m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_endpoint));
+    : m_visStream(s) {
+    m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(endpoint));
 }
 
 VisStreamSender::~VisStreamSender() {
@@ -24,8 +23,12 @@ void VisStreamSender::endStreaming() {
     interrupt();
 }
 
+std::string VisStreamSender::getPort() const {
+    return m_acceptor->localEndpoint()->port;
+}
+
 void VisStreamSender::run() {
-    LINFO("(p) vis sender binding to  \"" + m_endpoint.toString() + "\"");
+    LINFO("(p) vis sender binding to  \"" << m_acceptor->localEndpoint() << "\"");
 
     try {
 

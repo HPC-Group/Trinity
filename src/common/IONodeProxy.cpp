@@ -24,7 +24,7 @@ std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(int fileId) {
 
     // BIG TODO HERE!!!
     mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint());
-    controlEndpoint.port = std::to_string(reply->getParams().getControlPort());
+    controlEndpoint.port = reply->getParams().getControlPort();
 
     return mocca::make_unique<IOSessionProxy>(reply->getSid(), controlEndpoint);
 }

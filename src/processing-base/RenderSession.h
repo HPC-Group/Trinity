@@ -24,7 +24,7 @@ public:
                   const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession);
 
     ~RenderSession();
-    int getVisPort() const;
+    std::string getVisPort() const;
     IRenderer& getRenderer();
 
 private:
@@ -33,7 +33,7 @@ private:
 
 private:
     ProcessingSessionCommandFactory m_factory;
-    int m_visPort;
+    std::string m_visPort;
     std::unique_ptr<IRenderer> m_renderer;
     VisStreamSender m_visSender;
 };

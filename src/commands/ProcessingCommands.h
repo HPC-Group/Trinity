@@ -1,8 +1,8 @@
 #pragma once
 
 #include "commands/ISerializable.h"
-#include "commands/Request.h"
 #include "commands/Reply.h"
+#include "commands/Request.h"
 
 #include "mocca/net/Endpoint.h"
 
@@ -35,14 +35,14 @@ struct InitProcessingSessionCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        explicit RequestParams(const std::string& protocol, const VclType& renderType, int fileId, const std::string& stringifiedIoEndpoint,
+        explicit RequestParams(const std::string& protocol, const VclType& renderType, int fileId, const mocca::net::Endpoint& ioEndpoint,
                                const StreamingParams& p);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
         std::string getProtocol() const;
-        std::string getStringifiedEndpoint() const;
+        mocca::net::Endpoint getIoEndpoint() const;
         int getFileId() const;
         VclType getRenderType() const;
         StreamingParams getStreamingParams() const;
@@ -54,27 +54,27 @@ struct InitProcessingSessionCmd {
         std::string m_protocol;
         VclType m_renderType;
         int m_fileId;
-        std::string m_stringifiedEndpoint;
+        mocca::net::Endpoint m_ioEndpoint;
         StreamingParams m_streamingParams;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        explicit ReplyParams(int controlPort, int visPort);
+        explicit ReplyParams(const std::string& controlPort, const std::string& visPort);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
-        int getControlPort() const;
-        int getVisPort() const;
+        std::string getControlPort() const;
+        std::string getVisPort() const;
 
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
     private:
-        int m_controlPort;
-        int m_visPort;
+        std::string m_controlPort;
+        std::string m_visPort;
     };
 };
 

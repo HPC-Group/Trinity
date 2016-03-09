@@ -11,7 +11,7 @@ using namespace trinity;
 
 InitProcessingSessionHdl::InitProcessingSessionHdl(const InitProcessingSessionRequest& request)
     : m_request(request)
-    , m_ioProxy(mocca::net::Endpoint(request.getParams().getStringifiedEndpoint())) {}
+    , m_ioProxy(request.getParams().getIoEndpoint()) {}
 
 std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
     auto params = m_request.getParams();
@@ -24,7 +24,7 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
                                                                  params.getProtocol(), std::move(ioSessionProxy)));
         session->start();
         
-        LINFO("(p) handling init req, session port " + std::to_string(session->getControlPort()));
+        LINFO("(p) handling init req, session port " << session->getControlPort());
         InitProcessingSessionCmd::ReplyParams params(session->getControlPort(), session->getVisPort());
         std::unique_ptr<Reply> reply = mocca::make_unique<InitProcessingSessionReply>(params, m_request.getRid(), session->getSid());
         RenderSessionManager::instance()->addSession(std::move(session));

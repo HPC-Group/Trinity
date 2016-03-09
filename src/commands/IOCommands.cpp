@@ -149,7 +149,7 @@ std::string InitIOSessionCmd::RequestParams::toString() const {
     return stream.str();
 }
 
-InitIOSessionCmd::ReplyParams::ReplyParams(int controlPort)
+InitIOSessionCmd::ReplyParams::ReplyParams(const std::string& controlPort)
     : m_controlPort(controlPort) {}
 
 void InitIOSessionCmd::ReplyParams::serialize(ISerialWriter& writer) const {
@@ -157,10 +157,10 @@ void InitIOSessionCmd::ReplyParams::serialize(ISerialWriter& writer) const {
 }
 
 void InitIOSessionCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_controlPort = reader.getInt("controlport");
+    m_controlPort = reader.getString("controlport");
 }
 
-int InitIOSessionCmd::ReplyParams::getControlPort() const {
+std::string InitIOSessionCmd::ReplyParams::getControlPort() const {
     return m_controlPort;
 }
 

@@ -18,14 +18,14 @@ public:
 
     void startStreaming();
     void endStreaming();
-    
+
+    std::string getPort() const;
     std::shared_ptr<VisStream> getStream() const { return m_visStream; }
 
 private:
     std::shared_ptr<VisStream> m_visStream;
     void run() override;
 
-    mocca::net::Endpoint m_endpoint;
     std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;
     std::unique_ptr<mocca::net::IMessageConnection> m_connection;
 };

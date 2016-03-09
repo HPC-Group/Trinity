@@ -44,18 +44,18 @@ bool StreamingParams::equals(const StreamingParams& other) const {
 VclType InitProcessingSessionCmd::Type = VclType::InitRenderer;
 
 InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protocol, const VclType& renderType, int fileId,
-                                                       const std::string& endpoint, const StreamingParams& p)
+                                                       const mocca::net::Endpoint& ioEndpoint, const StreamingParams& p)
     : m_protocol(protocol)
     , m_renderType(renderType)
     , m_fileId(fileId)
-    , m_stringifiedEndpoint(endpoint)
+    , m_ioEndpoint(ioEndpoint)
     , m_streamingParams(p) {}
 
 void InitProcessingSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.append("protocol", m_protocol);
     writer.append("rendertype", Vcl::instance().toString(m_renderType));
     writer.append("fileid", m_fileId);
-    writer.append("endpoint", m_stringifiedEndpoint);
+    writer.append("ioendpoint", m_ioEndpoint.toString());
     writer.append("streamingparams", m_streamingParams);
 }
 
@@ -63,7 +63,7 @@ void InitProcessingSessionCmd::RequestParams::deserialize(const ISerialReader& r
     m_protocol = reader.getString("protocol");
     m_renderType = Vcl::instance().toType(reader.getString("rendertype"));
     m_fileId = reader.getInt("fileid");
-    m_stringifiedEndpoint = reader.getString("endpoint");
+    m_ioEndpoint = mocca::net::Endpoint(reader.getString("ioendpoint"));
     m_streamingParams = reader.getSerializable<StreamingParams>("streamingparams");
 }
 
@@ -83,31 +83,31 @@ StreamingParams InitProcessingSessionCmd::RequestParams::getStreamingParams() co
     return m_streamingParams;
 }
 
-std::string InitProcessingSessionCmd::RequestParams::getStringifiedEndpoint() const {
-    return m_stringifiedEndpoint;
+mocca::net::Endpoint InitProcessingSessionCmd::RequestParams::getIoEndpoint() const {
+    return m_ioEndpoint;
 }
 
 bool InitProcessingSessionCmd::RequestParams::equals(const RequestParams& other) const {
     return m_protocol == other.m_protocol && m_renderType == other.m_renderType && m_fileId == other.m_fileId &&
-           m_stringifiedEndpoint == other.m_stringifiedEndpoint && m_streamingParams == other.m_streamingParams;
+           m_ioEndpoint == other.m_ioEndpoint && m_streamingParams == other.m_streamingParams;
 }
 
 std::string InitProcessingSessionCmd::RequestParams::toString() const {
     std::stringstream stream;
-    stream << "protocol: " << m_protocol << "; renderType: " << Vcl::instance().toString(m_renderType) << "; fileId: " << m_fileId
-        << "; stringifiedEndpoint: " << m_stringifiedEndpoint << "; streamingParams: { " << m_streamingParams << " }";
+    stream << "protocol: " << m_protocol << "; rendertype: " << Vcl::instance().toString(m_renderType) << "; fileid: " << m_fileId
+           << "; ioendpoint: " << m_ioEndpoint << "; streamingparams: { " << m_streamingParams << " }";
     return stream.str();
 }
 
-InitProcessingSessionCmd::ReplyParams::ReplyParams(int controlPort, int visPort)
+InitProcessingSessionCmd::ReplyParams::ReplyParams(const std::string& controlPort, const std::string& visPort)
     : m_controlPort(controlPort)
     , m_visPort(visPort) {}
 
-int InitProcessingSessionCmd::ReplyParams::getControlPort() const {
+std::string InitProcessingSessionCmd::ReplyParams::getControlPort() const {
     return m_controlPort;
 }
 
-int InitProcessingSessionCmd::ReplyParams::getVisPort() const {
+std::string InitProcessingSessionCmd::ReplyParams::getVisPort() const {
     return m_visPort;
 }
 
@@ -117,16 +117,15 @@ void InitProcessingSessionCmd::ReplyParams::serialize(ISerialWriter& writer) con
 }
 
 void InitProcessingSessionCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_controlPort = reader.getInt("controlport");
-    m_visPort = reader.getInt("visport");
+    m_controlPort = reader.getString("controlport");
+    m_visPort = reader.getString("visport");
 }
 
 bool InitProcessingSessionCmd::ReplyParams::equals(const ReplyParams& other) const {
     return m_controlPort == other.m_controlPort && m_visPort == other.m_visPort;
 }
 
-std::string InitProcessingSessionCmd::ReplyParams::toString() const
-{
+std::string InitProcessingSessionCmd::ReplyParams::toString() const {
     std::stringstream stream;
     stream << "controlPort: " << m_controlPort << "; visPort: " << m_visPort;
     return stream.str();

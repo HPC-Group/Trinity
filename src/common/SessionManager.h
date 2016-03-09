@@ -15,7 +15,7 @@ public:
     void endSession(int sid) {
         for (auto& session : m_sessions) {
             if (session->getSid() == sid)
-                session->interrupt();
+                session->join();
         }
         LWARNING("cannot end session with id " + std::to_string(sid) + "(does not exist)");
     }
@@ -31,7 +31,8 @@ public:
     void endAllSessions() {
         LINFO("sessions to stop: " << m_sessions.size());
         for (auto& session : m_sessions)
-            session->interrupt();
+            session->join();
+        m_sessions.clear();
     }
 
 private:

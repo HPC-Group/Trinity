@@ -19,7 +19,7 @@ ProcessingNodeProxy::ProcessingNodeProxy(const mocca::net::Endpoint& ep)
 std::unique_ptr<RendererProxy> ProcessingNodeProxy::initRenderer(const VclType& type, int fileId, const mocca::net::Endpoint& endpoint,
                                                                  const StreamingParams& streamingParams) {
     // creating the cmd that will initialize a remote renderer of the given type
-    InitProcessingSessionCmd::RequestParams params(m_inputChannel.getEndpoint().protocol, type, fileId, endpoint.toString(),
+    InitProcessingSessionCmd::RequestParams params(m_inputChannel.getEndpoint().protocol, type, fileId, endpoint,
                                                    streamingParams);
     InitProcessingSessionRequest request(params, IDGenerator::nextID(), 0);
 
@@ -27,8 +27,8 @@ std::unique_ptr<RendererProxy> ProcessingNodeProxy::initRenderer(const VclType& 
     auto replyParams = reply->getParams();
 
 
-    mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint().protocol, "localhost", std::to_string(replyParams.getControlPort()));
-    mocca::net::Endpoint visEndpoint(m_inputChannel.getEndpoint().protocol, "localhost", std::to_string(replyParams.getVisPort()));
+    mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint().protocol, "localhost", replyParams.getControlPort());
+    mocca::net::Endpoint visEndpoint(m_inputChannel.getEndpoint().protocol, "localhost", replyParams.getVisPort());
 
     std::shared_ptr<VisStream> stream = std::make_shared<VisStream>(streamingParams);
     LINFO("(f) creating render proxy for " + controlEndpoint.toString());

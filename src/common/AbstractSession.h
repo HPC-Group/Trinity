@@ -22,11 +22,8 @@ public:
 
     virtual ~AbstractSession();
 
-    virtual int getSid() const { return m_sid; }
-    virtual int getControlPort() const { return std::stoi(m_controlEndpoint.port); }
-
-protected: // fixme dmc: protected access to base member -> baaaaad
-    static int m_basePort;
+    int getSid() const { return m_sid; }
+    std::string getControlPort() const { return m_acceptor->localEndpoint()->port; }
 
 private:
     void run() override;
@@ -34,11 +31,9 @@ private:
 
 private:
     int m_sid;
-    static int m_nextSid;
 
     // connections
     std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;
-    mocca::net::Endpoint m_controlEndpoint;
     std::unique_ptr<mocca::net::IMessageConnection> m_controlConnection;
 
     // todo: one day, we might want to release ids

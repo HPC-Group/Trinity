@@ -103,18 +103,18 @@ struct InitIOSessionCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        explicit ReplyParams(int controlPort);
+        explicit ReplyParams(const std::string& controlPort);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
-        int getControlPort() const;
+        std::string getControlPort() const;
 
         std::string toString() const;
         bool equals(const InitIOSessionCmd::ReplyParams& other) const;
 
     private:
-        int m_controlPort;
+        std::string m_controlPort;
     };
 };
 
