@@ -9,18 +9,27 @@
 
 using namespace trinity;
 
-std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(const Request& request) {
+std::unique_ptr<ICommandHandler> IONodeCommandFactory::createHandler(const Request& request) {
     VclType type = request.getType();
 
     switch (type) {
     case VclType::InitIOSession:
         return mocca::make_unique<InitIOSessionHdl>(static_cast<const InitIOSessionRequest&>(request));
         break;
-    case VclType::GetLODLevelCount:
-        return mocca::make_unique<GetLODLevelCountHdl>(static_cast<const GetLODLevelCountRequest&>(request));
-        break;
     case VclType::ListFiles:
         return mocca::make_unique<ListFilesHdl>(static_cast<const ListFilesRequest&>(request));
+        break;
+    default:
+        throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
+    }
+}
+
+std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(const Request& request) {
+    VclType type = request.getType();
+
+    switch (type) {
+    case VclType::GetLODLevelCount:
+        return mocca::make_unique<GetLODLevelCountHdl>(static_cast<const GetLODLevelCountRequest&>(request));
         break;
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

@@ -9,7 +9,6 @@
 #include "mocca/net/Endpoint.h"
 
 #include "common/IONodeProxy.h"
-#include "common/Node.h"
 
 #include "frontend-base/ProcessingNodeProxy.h"
 #include "io-base/IOCommandFactory.h"

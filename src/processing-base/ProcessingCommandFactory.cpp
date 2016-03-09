@@ -11,13 +11,22 @@
 
 using namespace trinity;
 
-std::unique_ptr<ICommandHandler> ProcessingCommandFactory::createHandler(const Request& request) {
+std::unique_ptr<ICommandHandler> ProcessingNodeCommandFactory::createHandler(const Request& request) {
     VclType type = request.getType();
 
     switch (type) {
     case VclType::InitRenderer:
         return mocca::make_unique<InitProcessingSessionHdl>(static_cast<const InitProcessingSessionRequest&>(request));
         break;
+    default:
+        throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
+    }
+}
+
+std::unique_ptr<ICommandHandler> ProcessingCommandFactory::createHandler(const Request& request) {
+    VclType type = request.getType();
+
+    switch (type) {
     case VclType::SetIsoValue:
         return mocca::make_unique<SetIsoValueHdl>(static_cast<const SetIsoValueRequest&>(request));
         break;

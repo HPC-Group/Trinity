@@ -52,7 +52,7 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, endpoint.toString(), streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
 
-    trinity::ProcessingCommandFactory f;
+    trinity::ProcessingNodeCommandFactory f;
     auto handler = f.createHandler(request);
 
     auto result = handler->execute();
