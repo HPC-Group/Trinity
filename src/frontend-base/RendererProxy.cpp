@@ -34,7 +34,6 @@ void RendererProxy::setIsoValue(const float value) {
     SetIsoValueCmd::RequestParams requestParams(value);
     SetIsoValueRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
 
-    std::cout << m_inputChannel.getEndpoint().toString() << std::endl;
     m_inputChannel.sendRequest(request);
 }
 
@@ -42,6 +41,5 @@ void RendererProxy::initContext() {
     InitContextCmd::RequestParams requestParams(1);
     InitContextRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
 
-    std::cout << m_inputChannel.getEndpoint().toString() << std::endl;
     m_inputChannel.sendRequest(request);
 }
