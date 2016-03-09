@@ -50,9 +50,8 @@
 using namespace OpenGL::GLCore;
 using namespace OpenGL;
 
-GLuint  GLFBOTex::m_hFBO = 0;
-int    GLFBOTex::m_iCount = 0;
-bool  GLFBOTex::m_bInitialized = true;
+//int    GLFBOTex::m_iCount = 0;
+//bool  GLFBOTex::m_bInitialized = true;
 
 /**
  * Constructor: on first instantiation, generate an FBO.
@@ -66,6 +65,7 @@ GLFBOTex::GLFBOTex( GLenum minfilter,
   m_iSizeX(width),
   m_iSizeY(height),
   m_hTexture(new GLuint[iNumBuffers]),
+  m_hFBO(0),
   m_LastTexUnit(NULL),
   m_LastDepthTextUnit(0),
   m_iNumBuffers(iNumBuffers),
@@ -76,9 +76,6 @@ GLFBOTex::GLFBOTex( GLenum minfilter,
 {
   if (width<1) width=1;
   if (height<1) height=1;
-  if (!m_bInitialized) {
-    m_bInitialized=true;
-  }
   assert(iNumBuffers>0);
   assert(iNumBuffers<5);
   m_LastTexUnit=new GLenum[iNumBuffers];
@@ -89,8 +86,7 @@ GLFBOTex::GLFBOTex( GLenum minfilter,
     m_hTexture[i]=0;
   }
   while(glGetError() != GL_NO_ERROR) { ; } // clear error state.
-  if (m_hFBO==0)
-    initFBO();
+   initFBO();
 
   {
     GLenum glerr = glGetError();
@@ -128,8 +124,6 @@ GLFBOTex::GLFBOTex( GLenum minfilter,
 #endif
   }
   else m_hDepthBuffer=0;
-
-  ++m_iCount;
 }
 
 
@@ -155,12 +149,8 @@ GLFBOTex::~GLFBOTex(void) {
   if (m_hDepthBuffer) GL_CHECK(glDeleteTextures(1,&m_hDepthBuffer));
 #endif
   m_hDepthBuffer=0;
-  --m_iCount;
-  if (m_iCount==0) {
-      std::cout << "delete FBO"<<std::endl;
-    GL_CHECK(glDeleteFramebuffers(1,&m_hFBO));
-    m_hFBO=0;
-  }
+  GL_CHECK(glDeleteFramebuffers(1,&m_hFBO));
+  m_hFBO=0;
 }
 
 

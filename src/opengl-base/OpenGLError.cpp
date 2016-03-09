@@ -10,5 +10,6 @@ void CheckOpenGLError(const char* stmt, const char* fname, int line) {
   {
     std::printf("OpenGL error %08x, at %s:%i - for %s\n", err, fname, line, stmt);
     err = glGetError();
+	while (true);
   }
 }

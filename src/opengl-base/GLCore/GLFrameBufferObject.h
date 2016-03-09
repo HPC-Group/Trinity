@@ -108,9 +108,7 @@ private:
   GLuint              m_iSizeY;
   GLuint*             m_hTexture;
   GLuint              m_hDepthBuffer;
-  static GLuint       m_hFBO;
-  static bool         m_bInitialized;
-  static int          m_iCount;
+  GLuint			  m_hFBO;
   GLenum*             m_LastTexUnit;
   GLenum              m_LastDepthTextUnit;
   int                 m_iNumBuffers;
