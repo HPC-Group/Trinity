@@ -1,7 +1,9 @@
 #pragma once
 
-#include "commands/ICommandFactory.h"
 #include "commands/ICommandHandler.h"
+#include "commands/Request.h"
+
+#include <memory>
 
 namespace trinity {
 
@@ -10,8 +12,8 @@ public:
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) const;
 };
 
-class IOCommandFactory : public ICommandFactory {
+class IOSessionCommandFactory {
 public:
-    std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const;
 };
 }

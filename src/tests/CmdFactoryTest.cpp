@@ -33,7 +33,7 @@ TEST_F(CmdFactoryTest, WrongRequest) {
     StreamingParams streamingParams(2048, 1000);
     InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, 0, "tcp.Prefixed:loopback:5678", streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
-    trinity::IOCommandFactory factory;
+    trinity::IONodeCommandFactory factory;
     ASSERT_THROW(factory.createHandler(request), TrinityError);
 }
 

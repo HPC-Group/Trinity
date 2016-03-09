@@ -11,9 +11,9 @@
 
 using namespace trinity;
 
-RenderSession::RenderSession(std::unique_ptr<ICommandFactory> factory, const VclType& rendererType, const StreamingParams& params,
+RenderSession::RenderSession(const VclType& rendererType, const StreamingParams& params,
                              const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession)
-    : AbstractSession(protocol, std::move(factory))
+    : AbstractSession(protocol)
     , m_visPort(m_basePort++)
     , m_visSender(mocca::net::Endpoint(protocol, "localhost", std::to_string(m_visPort)), std::make_shared<VisStream>(params)) {
     m_renderer = createRenderer(rendererType, std::move(ioSession));
@@ -46,4 +46,8 @@ int RenderSession::getVisPort() const {
 
 IRenderer& RenderSession::getRenderer() {
     return *m_renderer;
+}
+
+std::unique_ptr<ICommandHandler> RenderSession::createHandler(const Request& request) const {
+    return m_factory.createHandler(request);
 }

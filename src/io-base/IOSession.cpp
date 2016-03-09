@@ -13,8 +13,8 @@
 
 using namespace trinity;
 
-IOSession::IOSession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory, int fileId)
-    : AbstractSession(protocol, std::move(factory)) {
+IOSession::IOSession(const std::string& protocol, int fileId)
+    : AbstractSession(protocol) {
     m_io = createIO(fileId);
 }
 
@@ -32,4 +32,8 @@ std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId) {
         throw TrinityError("can't create renderer: no such type", __FILE__, __LINE__);
         break;
     }
+}
+
+std::unique_ptr<ICommandHandler> IOSession::createHandler(const Request& request) const {
+    return m_factory.createHandler(request);
 }

@@ -24,7 +24,7 @@ std::unique_ptr<ICommandHandler> IONodeCommandFactory::createHandler(const Reque
     }
 }
 
-std::unique_ptr<ICommandHandler> IOCommandFactory::createHandler(const Request& request) {
+std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Request& request) const {
     VclType type = request.getType();
 
     switch (type) {

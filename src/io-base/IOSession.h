@@ -18,14 +18,16 @@
 namespace trinity {
 class IOSession : public AbstractSession {
 public:
-    IOSession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory, int fileId);
+    IOSession(const std::string& protocol, int fileId);
 
     const IIO& getIO() const { return *m_io; }
 
 private:
     std::unique_ptr<IIO> createIO(int fileId);
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const override;
 
 private:
+    IOSessionCommandFactory m_factory;
     std::unique_ptr<IIO> m_io;
 };
 

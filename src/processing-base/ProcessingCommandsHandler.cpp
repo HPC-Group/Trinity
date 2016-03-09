@@ -19,10 +19,8 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
     // create an IO node proxy and pass it to the renderer
     auto ioSessionProxy = m_ioProxy.initIO(m_request.getParams().getFileId());
 
-    auto factory = mocca::make_unique<ProcessingCommandFactory>();
-
     try {
-        std::unique_ptr<RenderSession> session(new RenderSession(std::move(factory), params.getRenderType(), params.getStreamingParams(),
+        std::unique_ptr<RenderSession> session(new RenderSession(params.getRenderType(), params.getStreamingParams(),
                                                                  params.getProtocol(), std::move(ioSessionProxy)));
         session->start();
         

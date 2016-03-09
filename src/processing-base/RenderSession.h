@@ -13,14 +13,14 @@
 #include "common/IRenderer.h"
 #include "common/SessionManager.h"
 
-#include "VisStreamSender.h"
-#include "commands/ICommandFactory.h"
+#include "processing-base/VisStreamSender.h"
+#include "processing-base/ProcessingCommandFactory.h"
 
 
 namespace trinity {
 class RenderSession : public AbstractSession {
 public:
-    RenderSession(std::unique_ptr<ICommandFactory> factory, const VclType& rendererType, const StreamingParams& params,
+    RenderSession(const VclType& rendererType, const StreamingParams& params,
                   const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession);
 
     ~RenderSession();
@@ -28,12 +28,14 @@ public:
     IRenderer& getRenderer();
 
 private:
-    int m_visPort;
+    std::unique_ptr<IRenderer> createRenderer(const VclType&, std::unique_ptr<IOSessionProxy>);
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const override;
 
+private:
+    ProcessingSessionCommandFactory m_factory;
+    int m_visPort;
     std::unique_ptr<IRenderer> m_renderer;
     VisStreamSender m_visSender;
-
-    std::unique_ptr<IRenderer> createRenderer(const VclType&, std::unique_ptr<IOSessionProxy>);
 };
 
 using RenderSessionManager = mocca::Singleton<SessionManager<RenderSession>>;

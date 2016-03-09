@@ -1,6 +1,5 @@
 #pragma once
 
-#include "commands/ICommandFactory.h"
 #include "commands/ICommandHandler.h"
 #include "commands/Request.h"
 
@@ -12,8 +11,8 @@ public:
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) const;
 };
 
-class ProcessingCommandFactory : public ICommandFactory {
+class ProcessingSessionCommandFactory {
 public:
-    std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const;
 };
 }

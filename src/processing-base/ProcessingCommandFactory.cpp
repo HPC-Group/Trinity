@@ -23,7 +23,7 @@ std::unique_ptr<ICommandHandler> ProcessingNodeCommandFactory::createHandler(con
     }
 }
 
-std::unique_ptr<ICommandHandler> ProcessingCommandFactory::createHandler(const Request& request) {
+std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(const Request& request) const {
     VclType type = request.getType();
 
     switch (type) {

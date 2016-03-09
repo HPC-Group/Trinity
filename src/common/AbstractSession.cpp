@@ -11,10 +11,9 @@ using namespace trinity;
 int AbstractSession::m_basePort = 5990;
 int AbstractSession::m_nextSid = 1;
 
-AbstractSession::AbstractSession(const std::string& protocol, std::unique_ptr<ICommandFactory> factory)
+AbstractSession::AbstractSession(const std::string& protocol)
     : m_sid(m_nextSid++)
-    , m_controlEndpoint(protocol, "localhost", std::to_string(m_basePort++))
-    , m_factory(std::move(factory)) {
+    , m_controlEndpoint(protocol, "localhost", std::to_string(m_basePort++)) {
     while (!m_acceptor) {
         try {
             m_acceptor = std::move(mocca::net::ConnectionFactorySelector::bind(m_controlEndpoint));
@@ -49,7 +48,7 @@ void AbstractSession::run() {
                 auto request = Request::createFromByteArray(bytepacket);
                 //LINFO("request: " << *request);
                 
-                auto handler = m_factory->createHandler(*request);
+                auto handler = createHandler(*request);
                 auto reply = handler->execute();
                 if (reply != nullptr) { // not tested yet
                     //LINFO("reply: " << *reply);
