@@ -3,9 +3,13 @@
 
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
+#include <QOpenGLBuffer>
 
 #include <vector>
 #include <cstdint>
+
+QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram);
+QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
 
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 public:
@@ -18,10 +22,10 @@ public:
     void setData(int width,int height, unsigned char* data);
 
 private:
-    std::vector<uint8_t> _imgdata;
-    unsigned char*  _data;
-    uint32_t _width;
-    uint32_t _height;
+  QOpenGLTexture *texture;
+  QOpenGLShaderProgram *program;
+  QOpenGLBuffer vbo;
+
 };
 
 #endif // OPENGLWIDGET_H
