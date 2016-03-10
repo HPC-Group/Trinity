@@ -1,5 +1,6 @@
 #include "processing-base/RenderSession.h"
 
+#include "common/TrinityError.h"
 #include "processing-base/DummyRenderer.h"
 #include "gridleaper/GridLeaper.h"
 
@@ -47,6 +48,6 @@ IRenderer& RenderSession::getRenderer() {
     return *m_renderer;
 }
 
-std::unique_ptr<ICommandHandler> RenderSession::createHandler(const Request& request) const {
-    return m_factory.createHandler(request);
+std::unique_ptr<ICommandHandler> RenderSession::createHandler(const Request& request) {
+    return m_factory.createHandler(request, this);
 }

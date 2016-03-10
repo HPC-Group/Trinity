@@ -8,8 +8,8 @@
 
 using namespace trinity;
 
-InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request)
-    : m_request(request) {}
+InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request, IONode* node)
+    : m_request(request), m_node(node) {}
 
 std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     auto requestParams = m_request.getParams();
@@ -19,25 +19,23 @@ std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     
     InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());
     std::unique_ptr<Reply> reply = mocca::make_unique<InitIOSessionReply>(replyParams, m_request.getRid(), session->getSid());
-    IOSessionManager::instance()->addSession(std::move(session));
+    m_node->addSession(std::move(session));
     return reply;
 }
 
 
-GetLODLevelCountHdl::GetLODLevelCountHdl(const GetLODLevelCountRequest& request)
-    : m_request(request) {}
+GetLODLevelCountHdl::GetLODLevelCountHdl(const GetLODLevelCountRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
-    const auto& session = IOSessionManager::instance()->getSession(m_request.getSid());
-    const auto& io = session.getIO();
-
+    const auto& io = m_session->getIO();
     GetLODLevelCountCmd::ReplyParams replyParams(io.getLODLevelCount());
     return mocca::make_unique<GetLODLevelCountReply>(replyParams, m_request.getRid(), m_request.getSid());
 }
 
 
-ListFilesHdl::ListFilesHdl(const ListFilesRequest& request)
-    : m_request(request) {}
+ListFilesHdl::ListFilesHdl(const ListFilesRequest& request, IONode* node)
+    : m_request(request), m_node(node) {}
 
 std::unique_ptr<Reply> ListFilesHdl::execute() {
     std::vector<IOData> ioDataVec;

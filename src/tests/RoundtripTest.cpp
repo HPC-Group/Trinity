@@ -20,12 +20,7 @@ class NodeTest : public ::testing::Test {
 protected:
     NodeTest() { ConnectionFactorySelector::addDefaultFactories(); }
 
-    virtual ~NodeTest() {
-        ConnectionFactorySelector::removeAll();
-        // BIG fixme dmc: global variables cause interdependencies between tests; this will lead to terrible problems if it isn't fixed
-        RenderSessionManager::instance()->endAllSessions();
-        IOSessionManager::instance()->endAllSessions();
-    }
+    virtual ~NodeTest() { ConnectionFactorySelector::removeAll(); }
 };
 
 std::unique_ptr<ProcessingNode> createProcessingNode(const std::string& port) {

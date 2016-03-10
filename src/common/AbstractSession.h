@@ -13,13 +13,10 @@
 
 namespace trinity {
 
-// dmc: are subclasses of AbstractSession really used in a runtime polymorphic way, or do they actually just inherit the implementation?
-
 class AbstractSession : public mocca::Runnable {
 
 public:
     AbstractSession(const std::string& protocol);
-
     virtual ~AbstractSession();
 
     int getSid() const { return m_sid; }
@@ -27,12 +24,10 @@ public:
 
 private:
     void run() override;
-    virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) const = 0;
+    virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) = 0;
 
 private:
     int m_sid;
-
-    // connections
     std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;
     std::unique_ptr<mocca::net::IMessageConnection> m_controlConnection;
 

@@ -34,6 +34,6 @@ std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId) {
     }
 }
 
-std::unique_ptr<ICommandHandler> IOSession::createHandler(const Request& request) const {
-    return m_factory.createHandler(request);
+std::unique_ptr<ICommandHandler> IOSession::createHandler(const Request& request) {
+    return m_factory.createHandler(request, this);
 }

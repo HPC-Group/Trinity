@@ -7,13 +7,16 @@
 
 namespace trinity {
 
+class IONode;
+class IOSession;
+
 class IONodeCommandFactory {
 public:
-    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const;
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request, IONode* node) const;
 };
 
 class IOSessionCommandFactory {
 public:
-    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const;
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request, IOSession* session) const;
 };
 }

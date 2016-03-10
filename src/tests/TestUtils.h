@@ -16,8 +16,9 @@ template <typename T> T writeAndRead(const T& obj) {
     return result;
 }
 
-template <typename HandlerType, typename RequestType> typename RequestType::ReplyType handleRequest(const RequestType& request) {
-    HandlerType handler(request);
+template <typename HandlerType, typename RequestType, typename ParentType>
+typename RequestType::ReplyType handleRequest(const RequestType& request, ParentType* parent) {
+    HandlerType handler(request, parent);
     auto reply = handler.execute();
     return static_cast<const typename RequestType::ReplyType&>(*reply);
 }

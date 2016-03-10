@@ -18,7 +18,7 @@ namespace trinity {
 
     private:
         void run();
-        virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) const = 0;
+        virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) = 0;
 
     private:
         std::unique_ptr<mocca::net::ConnectionAggregator> m_aggregator;

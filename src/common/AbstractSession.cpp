@@ -18,7 +18,7 @@ AbstractSession::~AbstractSession() {
 }
 
 void AbstractSession::run() {
-    LINFO("(session) session control at \"" << m_acceptor->localEndpoint() << "\"");
+    LINFO("(session) session control at \"" << *m_acceptor->localEndpoint() << "\"");
 
     try {
         while (!m_controlConnection && !isInterrupted()) {
@@ -29,7 +29,6 @@ void AbstractSession::run() {
         return;
     }
 
-    // dmc: isn't this code very similar to the code in Node.cpp? maybe related to the comment in Node.cpp
     while (!isInterrupted()) {
         try {
             auto bytepacket = m_controlConnection->receive();

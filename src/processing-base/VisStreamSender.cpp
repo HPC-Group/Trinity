@@ -28,7 +28,7 @@ std::string VisStreamSender::getPort() const {
 }
 
 void VisStreamSender::run() {
-    LINFO("(p) vis sender binding to  \"" << m_acceptor->localEndpoint() << "\"");
+    LINFO("(p) vis sender binding to  \"" << *m_acceptor->localEndpoint() << "\"");
 
     try {
 

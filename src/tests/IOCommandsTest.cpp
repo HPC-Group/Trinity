@@ -69,12 +69,12 @@ TEST_F(IOCommandsTest, ListFilesReqRep) {
     {
         ListFilesCmd::RequestParams requestParams(0);
         ListFilesRequest request(requestParams, 1, 2);
-        auto reply = trinity::testing::handleRequest<ListFilesHdl>(request);
+        auto reply = trinity::testing::handleRequest<ListFilesHdl>(request, static_cast<IONode*>(nullptr));
         ASSERT_EQ(2, reply.getParams().getIOData().size());
     }
     {
         ListFilesCmd::RequestParams requestParams(42); // invalid directory ID
         ListFilesRequest request(requestParams, 1, 2);
-        ASSERT_THROW(trinity::testing::handleRequest<ListFilesHdl>(request), TrinityError);
+        ASSERT_THROW(trinity::testing::handleRequest<ListFilesHdl>(request, static_cast<IONode*>(nullptr)), TrinityError);
     }
 }

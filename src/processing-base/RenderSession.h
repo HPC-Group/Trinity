@@ -11,8 +11,6 @@
 #include "common/AbstractSession.h"
 #include "common/IOSessionProxy.h"
 #include "common/IRenderer.h"
-#include "common/SessionManager.h"
-
 #include "processing-base/VisStreamSender.h"
 #include "processing-base/ProcessingCommandFactory.h"
 
@@ -29,7 +27,7 @@ public:
 
 private:
     std::unique_ptr<IRenderer> createRenderer(const VclType&, std::unique_ptr<IOSessionProxy>);
-    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const override;
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
 
 private:
     ProcessingSessionCommandFactory m_factory;
@@ -37,6 +35,4 @@ private:
     std::unique_ptr<IRenderer> m_renderer;
     VisStreamSender m_visSender;
 };
-
-using RenderSessionManager = mocca::Singleton<SessionManager<RenderSession>>;
 }

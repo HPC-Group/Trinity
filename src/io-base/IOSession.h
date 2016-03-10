@@ -3,7 +3,6 @@
 #include "commands/Vcl.h"
 #include "common/AbstractSession.h"
 #include "common/IIO.h"
-#include "common/SessionManager.h"
 #include "io-base/IOCommandFactory.h"
 
 #include "mocca/base/Singleton.h"
@@ -24,12 +23,10 @@ public:
 
 private:
     std::unique_ptr<IIO> createIO(int fileId);
-    std::unique_ptr<ICommandHandler> createHandler(const Request& request) const override;
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
 
 private:
     IOSessionCommandFactory m_factory;
     std::unique_ptr<IIO> m_io;
 };
-
-using IOSessionManager = mocca::Singleton<SessionManager<IOSession>>;
 }
