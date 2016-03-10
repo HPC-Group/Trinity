@@ -22,10 +22,12 @@ public:
     void setData(int width,int height, unsigned char* data);
 
 private:
-  QOpenGLTexture *texture;
-  QOpenGLShaderProgram *program;
-  QOpenGLBuffer vbo;
+  QOpenGLTexture*       texture;
+  QOpenGLShaderProgram* program;
+  QOpenGLBuffer         vbo;
 
+  void createVBO();
+  void createShaderProgram();
 };
 
 #endif // OPENGLWIDGET_H
