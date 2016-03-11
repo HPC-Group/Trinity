@@ -11,7 +11,7 @@ using namespace trinity;
 
 AbstractSession::AbstractSession(const std::string& protocol)
     : m_sid(IDGenerator::nextID())
-    , m_acceptor(ConnectionFactorySelector::bind(Endpoint(protocol, "localhost", Endpoint::autoPort()))) {}
+    , m_acceptor(ConnectionFactorySelector::bind(Endpoint(protocol, "*", Endpoint::autoPort()))) {}
 
 AbstractSession::~AbstractSession() {
     join();

@@ -36,6 +36,7 @@
 #  include <GL/wglew.h>
 #elif !defined(__ANDROID__) && !defined(__native_client__) && !defined(__HAIKU__) && (!defined(__APPLE__) || defined(GLEW_APPLE_GLX))
 #  include <GL/glxew.h>
+#include <EGL/egl.h>
 #endif
 
 #include <stddef.h>  /* For size_t */
@@ -85,7 +86,8 @@ static void * (*regalGetProcAddress) (const GLchar *) = glGetProcAddressREGAL;
 #  endif
 #  define glGetProcAddressREGAL GLEW_GET_FUN(__glewGetProcAddressREGAL)
 
-#elif defined(__sgi) || defined (__sun) || defined(__HAIKU__) || defined(GLEW_APPLE_GLX)
+#elif !defined(_WIN32)
+
 #include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -98,7 +100,7 @@ void* dlGetProcAddress (const GLubyte* name)
   if (h == NULL)
   {
     if ((h = dlopen(NULL, RTLD_LAZY | RTLD_LOCAL)) == NULL) return NULL;
-    gpa = dlsym(h, "glXGetProcAddress");
+    gpa = dlsym(h, "eglGetProcAddress");
   }
 
   if (gpa != NULL)
@@ -106,7 +108,9 @@ void* dlGetProcAddress (const GLubyte* name)
   else
     return dlsym(h, (const char*)name);
 }
+
 #endif /* __sgi || __sun || GLEW_APPLE_GLX */
+
 
 #if defined(__APPLE__)
 #include <stdlib.h>
@@ -182,8 +186,13 @@ void* NSGLGetProcAddress (const GLubyte *name)
 #elif defined(__native_client__)
 #  define glewGetProcAddress(name) NULL /* TODO */
 #else /* __linux */
-#  define glewGetProcAddress(name) (*glXGetProcAddressARB)(name)
+//#  define glewGetProcAddress(name) (*glXGetProcAddressARB)(name)
+#  define glewGetProcAddress(name) dlGetProcAddress(name)
 #endif
+
+
+
+
 
 /*
  * Redefine GLEW_GET_VAR etc without const cast
@@ -12535,6 +12544,7 @@ GLboolean __GLXEW_SUN_video_resize = GL_FALSE;
 
 #ifdef GLX_VERSION_1_2
 
+/*
 static GLboolean _glewInit_GLX_VERSION_1_2 (GLXEW_CONTEXT_ARG_DEF_INIT)
 {
   GLboolean r = GL_FALSE;
@@ -12543,6 +12553,7 @@ static GLboolean _glewInit_GLX_VERSION_1_2 (GLXEW_CONTEXT_ARG_DEF_INIT)
 
   return r;
 }
+*/
 
 #endif /* GLX_VERSION_1_2 */
 
@@ -13082,6 +13093,7 @@ static GLboolean _glewInit_GLX_SUN_video_resize (GLXEW_CONTEXT_ARG_DEF_INIT)
 
 /* ------------------------------------------------------------------------ */
 
+/*
 GLboolean glxewGetExtension (const char* name)
 {    
   const GLubyte* start;
@@ -13093,6 +13105,8 @@ GLboolean glxewGetExtension (const char* name)
   end = start + _glewStrLen(start);
   return _glewSearchExtension(name, start, end);
 }
+*/
+
 
 #ifdef GLEW_MX
 GLenum glxewContextInit (GLXEW_CONTEXT_ARG_DEF_LIST)
@@ -13104,7 +13118,7 @@ GLenum glxewInit (GLXEW_CONTEXT_ARG_DEF_LIST)
   const GLubyte* extStart;
   const GLubyte* extEnd;
   /* initialize core GLX 1.2 */
-  if (_glewInit_GLX_VERSION_1_2(GLEW_CONTEXT_ARG_VAR_INIT)) return GLEW_ERROR_GLX_VERSION_11_ONLY;
+//  if (_glewInit_GLX_VERSION_1_2(GLEW_CONTEXT_ARG_VAR_INIT)) return GLEW_ERROR_GLX_VERSION_11_ONLY;
   /* initialize flags */
   GLXEW_VERSION_1_0 = GL_TRUE;
   GLXEW_VERSION_1_1 = GL_TRUE;
@@ -13112,7 +13126,10 @@ GLenum glxewInit (GLXEW_CONTEXT_ARG_DEF_LIST)
   GLXEW_VERSION_1_3 = GL_TRUE;
   GLXEW_VERSION_1_4 = GL_TRUE;
   /* query GLX version */
-  glXQueryVersion(glXGetCurrentDisplay(), &major, &minor);
+  //eglQueryString(eglGetCurrentDisplay(), EGL_VERSION); 
+  //eglQueryVersion(eglGetCurrentDisplay(), &major, &minor);
+  major = 1;
+  minor = 3;
   if (major == 1 && minor <= 3)
   {
     switch (minor)
@@ -13131,8 +13148,8 @@ GLenum glxewInit (GLXEW_CONTEXT_ARG_DEF_LIST)
   }
   /* query GLX extension string */
   extStart = 0;
-  if (glXGetCurrentDisplay != NULL)
-    extStart = (const GLubyte*)glXGetClientString(glXGetCurrentDisplay(), GLX_EXTENSIONS);
+  if (eglGetCurrentDisplay != NULL)
+    extStart = 0;//(const GLubyte*)eglGetClientString(eglGetCurrentDisplay(), GLX_EXTENSIONS);
   if (extStart == 0)
     extStart = (const GLubyte *)"";
   extEnd = extStart + _glewStrLen(extStart);
