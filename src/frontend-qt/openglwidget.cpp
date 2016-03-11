@@ -17,6 +17,8 @@ program(nullptr)
 }
 
 void OpenGLWidget::setData(int width, int height, unsigned char* data) {
+  if (!data) return;
+  
   if (texture == 0 || width != texture->width() || height != texture->height()) {
     texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
     texture->create();

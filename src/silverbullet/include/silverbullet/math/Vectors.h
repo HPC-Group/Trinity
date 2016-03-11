@@ -4,7 +4,7 @@
 #include "silverbullet/base/SilverBulletBase.h"
 
 #include <cassert>
-#define _USE_MATH_DEFINES
+//#define _USE_MATH_DEFINES
 #include <cmath>
 #include <istream>
 #include <iomanip>
