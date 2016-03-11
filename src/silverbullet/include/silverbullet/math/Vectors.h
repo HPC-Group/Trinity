@@ -3,24 +3,6 @@
 
 #include "silverbullet/base/SilverBulletBase.h"
 
-#if defined DIRECT3D_VERSION
-#define USEDX
-#endif
-
-#if defined __GL_H__
-#define USEGL
-#endif
-
-// some DX files define min/max but that interferes
-// with the numeric_limits so undef them
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
-
 #include <cassert>
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -40,12 +22,6 @@
 
 #ifdef DETECTED_OS_WINDOWS
 #pragma warning( disable : 4201 )  // Disable warning messages about nameless union
-#ifdef USEDX
-#pragma message("    [Vectors.h] Using DX extensions.\n")
-#endif
-#ifdef USEGL
-#pragma message("    [Vectors.h] Using GL extensions.\n")
-#endif
 #endif
 
 namespace Core
@@ -151,20 +127,7 @@ namespace Core
         y = std::max<T>(y,other.y);
       }
       
-#ifdef USEDX
-      VECTOR2<T>(const D3DXVECTOR2 &other): x(T(other.x)), y(T(other.y)) {}
-      D3DXVECTOR2 toD3DXVEC() const {return D3DXVECTOR2(float(x),float(y));}
-      bool operator == ( const D3DXVECTOR2& other ) const {return (other.x==T(x) && other.y== T(y)); }
-      bool operator != ( const D3DXVECTOR2& other ) const {return (other.x!=T(x) || other.y!= T(y)); }
-      operator D3DXVECTOR2(void) const {return toD3DXVEC();}
-#endif
       
-      // OpenGL
-#ifdef USEGL
-      void glVertex() {
-        glVertex2f(GLfloat(x),GLfloat(y));
-      }
-#endif
     };
     
     
@@ -321,29 +284,6 @@ namespace Core
         y = std::max<T>(y,other.y);
         z = std::max<T>(z,other.z);
       }
-      
-#ifdef USEDX
-      VECTOR3(const D3DXVECTOR3 &other): x(T(other.x)), y(T(other.y)), z(T(other.z)) {}
-      VECTOR3(const D3DXVECTOR4 &other): x(T(other.x)), y(T(other.y)), z(T(other.z)) {}
-      D3DXVECTOR3 toD3DXVEC() const {return D3DXVECTOR3(float(x),float(y),float(z));}
-      bool operator == ( const D3DXVECTOR3& other ) const {return (other.x==T(x) && other.y== T(y) && other.z== T(z)); }
-      bool operator != ( const D3DXVECTOR3& other ) const {return (other.x!=T(x) || other.y!= T(y) || other.z!= T(z)); }
-      operator D3DXVECTOR3(void) const {return toD3DXVEC();}
-#endif
-      
-      // OpenGL
-#ifdef USEGL
-      void glVertex() {
-        glVertex3f(GLfloat(x),GLfloat(y),GLfloat(z));
-      }
-      void glNormal() {
-        glNormal3f(GLfloat(x),GLfloat(y),GLfloat(z));
-      }
-      void glNNormal() {
-        normalize();
-        glNormal3f(GLfloat(x),GLfloat(y),GLfloat(z));
-      }
-#endif
       
     };
     
@@ -504,25 +444,7 @@ namespace Core
       
       VECTOR3<T> xyz() const {return VECTOR3<T>(x,y,z);}
       
-      // DirectX
-#ifdef USEDX
-      VECTOR4<T>(const D3DXVECTOR4 &other): x(T(other.x)), y(T(other.y)), z(T(other.z)), w(T(other.w)){}
-      D3DXVECTOR4 toD3DXVEC() const {return D3DXVECTOR4(float(x),float(y),float(z),float(w));}
       
-      bool operator == ( const D3DXVECTOR4& other ) const {return (other.x==T(x) && other.y==T(y) && other.z==T(z) && other.w==T(w)); }
-      bool operator != ( const D3DXVECTOR4& other ) const {return (other.x!=T(x) || other.y!=T(y) || other.z!=T(z) || other.w!=T(w)); }
-      operator D3DXVECTOR4(void) const {return toD3DXVEC();}
-#endif
-      
-      // OpenGL
-#ifdef USEGL
-      void glVertex() {
-        glVertex4f(GLfloat(x),GLfloat(y),GLfloat(z),GLfloat(w));
-      }
-      void glNormal() {
-        dehomo().glNormal();
-      }
-#endif
     };
     
     template <class T>
@@ -824,54 +746,6 @@ namespace Core
         return result;
       }
       
-      // DirectX
-#ifdef USEDX
-      MATRIX3( const D3DXMATRIX& other ) : m11(other(0,0)), m12(other(0,1)), m13(other(0,2)),
-      m21(other(1,0)), m22(other(1,1)), m23(other(1,2)),
-      m31(other(2,0)), m32(other(2,1)), m33(other(2,2)) {};
-      D3DXMATRIX toD3DXMAT() const {return D3DXMATRIX(m11,m12,m13,0,m21,m22,m23,0,m31,m32,m33,0,0,0,0,1);}
-      
-      operator D3DXMATRIX(void) const {return toD3DXMAT();}
-#endif
-      
-      // OpenGL
-#ifdef USEGL
-      void getProjection() {
-        float P[16];
-        glGetFloatv(GL_PROJECTION_MATRIX,P);
-        m11 = T(P[0]); m12 = T(P[1]); m13 = T(P[2]);
-        m21 = T(P[4]); m22 = T(P[5]); m23 = T(P[6]);
-        m31 = T(P[8]); m32 = T(P[9]); m33 = T(P[10]);
-      }
-      
-      void getModelview() {
-        float M[16];
-        glGetFloatv(GL_MODELVIEW_MATRIX,M);
-        m11 = T(M[0]); m12 = T(M[1]); m13 = T(M[2]);
-        m21 = T(M[4]); m22 = T(M[5]); m23 = T(M[6]);
-        m31 = T(M[8]); m32 = T(M[9]); m33 = T(M[10]);
-      }
-      
-      void multModelview() const {
-        float M[16];
-        M[0] = float(m11);  M[1] = float(m12);  M[2] = float(m13);  M[3] = 0;
-        M[4] = float(m21);  M[5] = float(m22);  M[6] = float(m23);  M[7] = 0;
-        M[8] = float(m31);  M[9] = float(m32); M[10] = float(m33); M[11] = 0;
-        M[12] = 0; M[13] = 0; M[14] = 0; M[15] =1;
-        glMatrixMode(GL_MODELVIEW);
-        glMultMatrixf(M);
-      }
-      
-      void setModelview() const {
-        float M[16];
-        M[0] = float(m11);  M[1] = float(m12);  M[2] = float(m13);  M[3] = 0;
-        M[4] = float(m21);  M[5] = float(m22);  M[6] = float(m23);  M[7] = 0;
-        M[8] = float(m31);  M[9] = float(m32); M[10] = float(m33); M[11] = 0;
-        M[12] = 0; M[13] = 0; M[14] = 0; M[15] =1;
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(M);
-      }
-#endif
       
     };
     
@@ -1204,43 +1078,6 @@ namespace Core
         return M * (*this) * M;
       }
       
-      // DirectX
-#ifdef USEDX
-      MATRIX4( const D3DXMATRIX& other ) : m11(other(0,0)), m12(other(0,1)), m13(other(0,2)),m14(other(0,3)),
-      m21(other(1,0)), m22(other(1,1)), m23(other(1,2)),m24(other(1,3)),
-      m31(other(2,0)), m32(other(2,1)), m33(other(2,2)),m34(other(2,3)),
-      m41(other(3,0)), m42(other(3,1)), m43(other(3,2)),m44(other(3,3)) {};
-      D3DXMATRIX toD3DXMAT() const {return D3DXMATRIX(FLOAT(m11),FLOAT(m12),FLOAT(m13),FLOAT(m14),
-                                                      FLOAT(m21),FLOAT(m22),FLOAT(m23),FLOAT(m24),
-                                                      FLOAT(m31),FLOAT(m32),FLOAT(m33),FLOAT(m34),
-                                                      FLOAT(m41),FLOAT(m42),FLOAT(m43),FLOAT(m44));}
-      operator D3DXMATRIX(void) const {return toD3DXMAT();}
-      
-      static void BuildTiledProjectionDX(T fFOVY, T fAspect, T fZNear, T fZFar, MATRIX4<T>& mProj,
-                                         T leftInGrid, T rightInGrid, T topInGrid, T bottomInGrid,
-                                         int iStereoID = 0, float fFocalLength = 0.0f, float fEyeDist = 0.0f) {
-        T radians = T(3.14159265358979323846/180.0) * fFOVY/T(2);
-        T wd2     = fZNear * T(tan(radians));
-        
-        T fShift  =  fEyeDist/2.0f * (fZNear / fFocalLength);
-        T left    =  leftInGrid * fAspect * wd2 +fShift*iStereoID;
-        T right   =  rightInGrid * fAspect * wd2 +fShift*iStereoID;
-        
-        T top     = topInGrid * wd2;
-        T bottom  = bottomInGrid * wd2;
-        
-        // projection matrix
-        D3DXMATRIX m;
-        D3DXMatrixPerspectiveOffCenterLH(&m, left, right, bottom, top, fZNear, fZFar);
-        
-        mProj = m;
-      }
-      
-      
-#endif
-      
-      // OpenGL
-#ifdef USEGL
       
       
       static void BuildStereoLookAtAndProjection(const VECTOR3<T> vEye, const VECTOR3<T> vAt, const VECTOR3<T> vUp,
@@ -1341,49 +1178,6 @@ namespace Core
         array[ 2]= T(0);                  array[ 6]=T(0);                   array[10]=-(f+n)/(f-n);               array[14]=T(-2)*(f*n)/(f-n);
         array[ 3]= T(0);                  array[ 7]=T(0);                   array[11]=T(-1);                      array[15]=T(0);
       }
-      
-      void getProjection() {
-        float P[16];
-        glGetFloatv(GL_PROJECTION_MATRIX,P);
-        for (int i=0;i<16;i++) array[i] = T(P[i]);
-      }
-      
-      void getModelview() {
-        float M[16];
-        glGetFloatv(GL_MODELVIEW_MATRIX,M);
-        for (int i=0;i<16;i++) array[i] = T(M[i]);
-      }
-      
-      void multModelview() const {
-        float M[16];
-        for (int i=0;i<16;i++) M[i] = float(array[i]);
-        glMatrixMode(GL_MODELVIEW);
-        glMultMatrixf(M);
-      }
-      
-      void setProjection() const {
-        float M[16];
-        for (int i=0;i<16;i++) M[i] = float(array[i]);
-        glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(M);
-      }
-      
-      void setModelview() const {
-        float M[16];
-        for (int i=0;i<16;i++) M[i] = float(array[i]);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(M);
-      }
-      
-      void setTextureMatrix(int iUnit = 0) const {
-        float M[16];
-        for (int i=0;i<16;i++) M[i] = float(array[i]);
-        glActiveTextureARB(GL_TEXTURE0_ARB+iUnit);
-        glMatrixMode(GL_TEXTURE);
-        glLoadMatrixf(M);
-      }
-      
-#endif
     };
     
     typedef MATRIX2<int32_t> Mat2i;

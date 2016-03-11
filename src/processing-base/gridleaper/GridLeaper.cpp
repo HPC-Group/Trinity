@@ -88,10 +88,9 @@ void GridLeaper::paint() {
     Core::Math::Mat4f world;
     Core::Math::Mat4f rotx, roty;
 
-#ifndef DETECTED_OS_APPLE
     projection.Perspective(45.0f, (float)_width / (float)_height, 0.01f, 1000.0f);
     view.BuildLookAt(Core::Math::Vec3f(0, 0, 10), Core::Math::Vec3f(0, 0, 0), Core::Math::Vec3f(0, 1, 0));
-#endif
+
     rotx.RotationX(m_isoValue);
     roty.RotationY(m_isoValue * 1.14f);
     world = rotx * roty;
