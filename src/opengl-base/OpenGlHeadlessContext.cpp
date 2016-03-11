@@ -14,8 +14,8 @@ deviceContext(0),
 window(0),
 #endif
 bIsValid(false),
-strVersion(""),
-strRenderer("")
+strRenderer(""),
+strVersion("")
 {
   createContext();
 }
@@ -109,7 +109,7 @@ void OpenGlHeadlessContext::createContext() {
 
 #ifdef DETECTED_OS_LINUX
   static const EGLint configAttribs[] = {
-    EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
+    EGL_SURFACE_TYPE,
     EGL_BLUE_SIZE, 8,
     EGL_GREEN_SIZE, 8,
     EGL_RED_SIZE, 8,
@@ -124,26 +124,21 @@ void OpenGlHeadlessContext::createContext() {
 
   EGLint major=0, minor=0;
   if(eglInitialize(eglDpy, &major, &minor) != EGL_TRUE) { bIsValid = false; return; }
-
   
   // Select an appropriate configuration
   EGLint numConfigs;
   EGLConfig eglCfg;
   
   if (eglChooseConfig(eglDpy, configAttribs, &eglCfg, 1, &numConfigs) != EGL_TRUE) { bIsValid = false; return; }
-
+  
   // Bind the API
   if (eglBindAPI(EGL_OPENGL_API) != EGL_TRUE) { bIsValid = false; return; }
   
   // Create a context and make it current
-  eglCtx = eglCreateContext(eglDpy, eglCfg, EGL_NO_CONTEXT,
+  EGLContext eglCtx = eglCreateContext(eglDpy, eglCfg, EGL_NO_CONTEXT,
                                        NULL);
   
   if (eglMakeCurrent(eglDpy, EGL_NO_SURFACE, EGL_NO_SURFACE, eglCtx) != EGL_TRUE) { bIsValid = false; return; }
-
-  GLenum err = glewInit();
-  if (GLEW_OK != err) {bIsValid = false; return;}
-
 #endif
   
   
@@ -185,7 +180,6 @@ float OpenGlHeadlessContext::getVersion() const {
   }
 }
 
-
 void OpenGlHeadlessContext::makeCurrent(){
 #ifdef DETECTED_OS_APPLE
     CGLError errorCode = CGLSetCurrentContext( context );
@@ -197,6 +191,10 @@ void OpenGlHeadlessContext::makeCurrent(){
 #endif
 
 #ifdef DETECTED_OS_LINUX
-  if (eglMakeCurrent(eglDpy, EGL_NO_SURFACE, EGL_NO_SURFACE, eglCtx) != EGL_TRUE) { bIsValid = false; return; }
+    //if (eglMakeCurrent(eglDpy, EGL_NO_SURFACE, EGL_NO_SURFACE, eglCtx) != EGL_TRUE) { bIsValid = false; return; }
 #endif
 }
+
+
+
+
