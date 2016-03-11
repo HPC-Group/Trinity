@@ -27,11 +27,11 @@ std::unique_ptr<RendererProxy> ProcessingNodeProxy::initRenderer(const VclType& 
     auto replyParams = reply->getParams();
 
 
-    mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint().protocol, "localhost", replyParams.getControlPort());
-    mocca::net::Endpoint visEndpoint(m_inputChannel.getEndpoint().protocol, "localhost", replyParams.getVisPort());
+    mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint().protocol, m_inputChannel.getEndpoint().machine, replyParams.getControlPort());
+    mocca::net::Endpoint visEndpoint(m_inputChannel.getEndpoint().protocol, m_inputChannel.getEndpoint().machine, replyParams.getVisPort());
 
     std::shared_ptr<VisStream> stream = std::make_shared<VisStream>(streamingParams);
-    LINFO("(f) creating render proxy for " + controlEndpoint.toString());
+    LINFO("(f) creating render proxy for " + controlEndpoint.machine);
 
     return mocca::make_unique<RendererProxy>(stream, std::move(controlEndpoint), std::move(visEndpoint), reply->getSid());
 }
