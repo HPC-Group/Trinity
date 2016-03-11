@@ -1,7 +1,8 @@
 #pragma once
 
 #include <silverbullet/base/DetectEnv.h>
-
+#include "OpenGLincludes.h"
+/*
 #ifdef DETECTED_OS_APPLE
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl3.h>
@@ -22,7 +23,7 @@
 #include <EGL/egl.h>
 #include <GL/gl.h>
 #endif
-
+*/
 
 #include <string>
 
