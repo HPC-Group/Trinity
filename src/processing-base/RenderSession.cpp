@@ -15,6 +15,7 @@ using namespace trinity;
 RenderSession::RenderSession(const VclType& rendererType, const StreamingParams& params,
                              const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession)
     : AbstractSession(protocol)
+    // FIXME dmc: "localhost" should be "*", but then the tests fail -> find out why!
     , m_visSender(mocca::net::Endpoint(protocol, "localhost", mocca::net::Endpoint::autoPort()), std::make_shared<VisStream>(params)) {
     m_renderer = createRenderer(rendererType, std::move(ioSession));
     m_visSender.startStreaming();

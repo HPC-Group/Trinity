@@ -11,7 +11,8 @@ using namespace trinity;
 
 AbstractSession::AbstractSession(const std::string& protocol)
     : m_sid(IDGenerator::nextID())
-    , m_acceptor(ConnectionFactorySelector::bind(Endpoint(protocol, "*", Endpoint::autoPort()))) {}
+    // FIXME dmc: "localhost" should be "*", but then the tests fail -> find out why!
+    , m_acceptor(ConnectionFactorySelector::bind(Endpoint(protocol, "localhost", Endpoint::autoPort()))) {}
 
 AbstractSession::~AbstractSession() {
     join();
