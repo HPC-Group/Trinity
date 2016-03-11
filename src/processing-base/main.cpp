@@ -17,8 +17,8 @@
 using namespace trinity;
 using namespace mocca::net;
 
-static int feTCPPort = 5678;
-static int feWSPort = 5679;
+static int feTCPPort = 8678;
+static int feWSPort = 8679;
 std::atomic<bool> exitFlag{false};
 
 
