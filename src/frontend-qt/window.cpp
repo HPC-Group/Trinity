@@ -17,8 +17,8 @@ static int reconnectInSec = 5;
 Window::Window(QWidget* parent)
     : QMainWindow(parent)
     , _initDone(false)
-    , _renderWidth(512)
-    , _renderHeight(512)
+    , _renderWidth(300)
+    , _renderHeight(300)
     , ui(new Ui::Window) {
     ui->setupUi(this);
     LINFO("Window created");
@@ -36,7 +36,7 @@ Window::~Window() {
 void Window::initRenderer() {
     trinity::StreamingParams params(_renderWidth, _renderHeight);
 
-    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
+    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "134.91.11.156", "6678");
 
     // the file id will be available after implementing the listdata command
     int fileId = 0;
@@ -49,13 +49,13 @@ void Window::initRenderer() {
 }
 
 void Window::on_IOconnectIP_clicked() {
-    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
+    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "134.91.11.156", "6678");
 
     _ioNode = std::unique_ptr<trinity::IONodeProxy>(new trinity::IONodeProxy(endpointIO));
 }
 
 void Window::on_PRconnectIP_clicked() {
-    Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "5678");
+    Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "134.91.11.156", "8678");
 
     _processingNode = std::unique_ptr<trinity::ProcessingNodeProxy>(new trinity::ProcessingNodeProxy(endpoint));
     LINFO("connected to processing node");
