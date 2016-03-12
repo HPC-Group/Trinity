@@ -1,3 +1,9 @@
+PROC_ELEFANTHdl::PROC_ELEFANTHdl(const PROC_ELEFANTRequest& request)
+    : m_request(request) {}
+
+std::unique_ptr<Reply> PROC_ELEFANTHdl::execute() {
+}
+
 #include "processing-base/ProcessingCommandsHandler.h"
 
 #include "common/ProxyUtils.h"

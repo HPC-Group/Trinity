@@ -1,3 +1,37 @@
+struct PROC_ELEFANTCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+    };
+};
+
+bool operator==(const PROC_ELEFANTCmd::RequestParams& lhs, const PROC_ELEFANTCmd::RequestParams& rhs);
+bool operator==(const PROC_ELEFANTCmd::ReplyParams& lhs, const PROC_ELEFANTCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const PROC_ELEFANTCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const PROC_ELEFANTCmd::ReplyParams& obj);
+
+using PROC_ELEFANTRequest = RequestTemplate<PROC_ELEFANTCmd>;
+using PROC_ELEFANTReply = ReplyTemplate<PROC_ELEFANTCmd>;
+
 #pragma once
 
 #include "commands/ISerializable.h"

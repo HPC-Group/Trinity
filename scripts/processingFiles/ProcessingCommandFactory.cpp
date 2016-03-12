@@ -1,3 +1,8 @@
+case VclType::testTypeVCL: {
+	return mocca::make_unique<PROC_ELEFANTHdl>(static_cast<const PROC_ELEFANTRequest&>(request));
+	break;
+}
+
 #include "processing-base/ProcessingCommandFactory.h"
 
 #include "processing-base/ProcessingCommandsHandler.h"
