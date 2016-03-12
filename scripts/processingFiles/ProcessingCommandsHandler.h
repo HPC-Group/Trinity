@@ -1,13 +1,3 @@
-class PROC_ELEFANTHdl : public commands::ICommandHandler {
-public:
-    PROC_ELEFANTHdl(const commands::PROC_ELEFANTRequest& request);
-
-    std::unique_ptr<commands::Reply> execute() override;
-
-private:
-    commands::PROC_ELEFANTRequest m_request;
-};
-
 #pragma once
 
 #include "commands/ErrorCommands.h"

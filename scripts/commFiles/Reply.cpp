@@ -1,7 +1,3 @@
-	else if (type == PROC_ELEFANTReply::Ifc::Type) {
-		return reader->getSerializablePtr<PROC_ELEFANTReply>("rep");
-	}
-
 #include "commands/Reply.h"
 
 #include "common/TrinityError.h"

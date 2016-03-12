@@ -1,7 +1,3 @@
-	else if (type == PROC_ELEFANTRequest::Ifc::Type) {
-		return reader->getSerializablePtr<PROC_ELEFANTRequest>("req");
-	}
-
 #include "commands/Request.h"
 
 #include "common/TrinityError.h"
