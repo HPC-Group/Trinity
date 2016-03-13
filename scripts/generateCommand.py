@@ -76,8 +76,8 @@ def openTemplate(templateName):
 
 
 def generateCommandsHdr():
-	refreshSrc()
-	
+  refreshSrc()
+
   if type == Types.proc:
     for i in processingFiles:
       if (i == 2):
