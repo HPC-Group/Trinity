@@ -25,6 +25,10 @@ void GridLeaper::setIsoValue(const float isoValue) {
     }
 }
 
+void GridLeaper::zoomCamera(float f) {
+    LINFO("(p) cam zoom of gridleaper set to " + std::to_string(f));
+}
+
 void GridLeaper::initContext() {
     _context = std::unique_ptr<OpenGlHeadlessContext>(new OpenGlHeadlessContext());
 

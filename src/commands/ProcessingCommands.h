@@ -131,6 +131,50 @@ bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::
 std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& obj);
 
 
+#define PYTHON_MAGIC
+
+struct ZoomCameraCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        explicit RequestParams(float value);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+        float getZoom() const;
+    private:
+        float m_zoom;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+    };
+};
+
+bool operator==(const ZoomCameraCmd::RequestParams& lhs, const ZoomCameraCmd::RequestParams& rhs);
+bool operator==(const ZoomCameraCmd::ReplyParams& lhs, const ZoomCameraCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::ReplyParams& obj);
+
+using ZoomCameraRequest = RequestTemplate<ZoomCameraCmd>;
+using ZoomCameraReply = ReplyTemplate<ZoomCameraCmd>;
+
+#undef PYTHON_MAGIC
+
+
+
 using InitProcessingSessionRequest = RequestTemplate<InitProcessingSessionCmd>;
 using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;
 

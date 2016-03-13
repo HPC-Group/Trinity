@@ -20,6 +20,7 @@ std::unique_ptr<ICommandHandler> ProcessingNodeCommandFactory::createHandler(con
     case VclType::InitRenderer:
         return mocca::make_unique<InitProcessingSessionHdl>(static_cast<const InitProcessingSessionRequest&>(request), node);
         break;
+
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }
@@ -35,6 +36,13 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::InitContext:
         return mocca::make_unique<InitContextHdl>(static_cast<const InitContextRequest&>(request), session);
         break;
+            
+#define PYTHON_MAGIC
+            
+    case VclType::ZoomCamera:
+        return mocca::make_unique<ZoomCameraHdl>(static_cast<const ZoomCameraRequest&>(request), session);
+        break;
+#undef PYTHON_MAGIC
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }

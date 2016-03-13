@@ -11,3 +11,7 @@ void DummyRenderer::setIsoValue(const float isoValue) {
     m_isoValue = isoValue;
     LINFO("(p) lod count: " + std::to_string(m_io->getLODLevelCount()));
 }
+
+void DummyRenderer::zoomCamera(float f){
+    LINFO("(p) camera zoom: " + std::to_string(f));
+}

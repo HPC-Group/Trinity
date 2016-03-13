@@ -43,8 +43,8 @@ void VisStreamReceiver::run() {
     LINFO("(f) vis receiver connected");
 
     while (!isInterrupted()) {
+        //auto bytepacket = m_connection->receive(std::chrono::milliseconds(100000));
         auto bytepacket = m_connection->receive();
-
         if (!bytepacket.isEmpty()) {
 
             /**

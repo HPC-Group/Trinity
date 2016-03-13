@@ -37,6 +37,15 @@ void RendererProxy::setIsoValue(const float value) {
     m_inputChannel.sendRequest(request);
 }
 
+void RendererProxy::zoomCamera(float f) {
+    // todo
+    ZoomCameraCmd::RequestParams requestParams(f);
+    ZoomCameraRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
+    
+    m_inputChannel.sendRequest(request);
+}
+
+
 void RendererProxy::initContext() {
     InitContextCmd::RequestParams requestParams(1);
     InitContextRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);

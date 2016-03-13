@@ -43,4 +43,20 @@ private:
     RenderSession* m_session;
     int m_sid;
 };
+
+#define PYTHON_MAGIC
+
+
+class ZoomCameraHdl : public ICommandHandler {
+public:
+    ZoomCameraHdl(const ZoomCameraRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    ZoomCameraRequest m_request;
+    RenderSession* m_session;
+};
+
+#undef PYTHON_MAGIC
 }

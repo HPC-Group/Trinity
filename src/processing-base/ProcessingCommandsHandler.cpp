@@ -58,3 +58,18 @@ std::unique_ptr<Reply> InitContextHdl::execute() {
     renderer.initContext();
     return nullptr;
 }
+
+#define PYTHON_MAGIC
+
+
+ZoomCameraHdl::ZoomCameraHdl(const ZoomCameraRequest& request, RenderSession* session)
+    : m_request(request), m_session(session) {
+    }
+
+std::unique_ptr<Reply> ZoomCameraHdl::execute() {
+    auto& renderer = m_session->getRenderer();
+    renderer.zoomCamera(m_request.getParams().getZoom());
+    return nullptr;
+}
+
+#undef PYTHON_MAGIC

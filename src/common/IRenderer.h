@@ -27,6 +27,7 @@ public:
 
     // base rendering api begin
     virtual void setIsoValue(const float) = 0;
+    virtual void zoomCamera(float f) = 0;
     virtual void initContext() = 0;
 
 protected:

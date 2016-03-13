@@ -131,6 +131,26 @@ TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
     ioNode->join();
 }
 
+TEST_F(NodeTest, SetCamZoomValueOnGridLeaperTest) {
+    auto processingNode = createProcessingNode("5678");
+    processingNode->start();
+    
+    auto ioNode = createIONode("6678");
+    ioNode->start();
+    
+    Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
+    Endpoint ioEndpoint(ConnectionFactorySelector::loopback(), "localhost", "6678");
+    ProcessingNodeProxy proxy(endpoint);
+    
+    StreamingParams params(2048, 1000);
+    auto renderer = proxy.initRenderer(VclType::GridLeaper, 0, ioEndpoint, params);
+    renderer->zoomCamera(12);
+    
+    processingNode->join();
+    ioNode->join();
+}
+
+
 TEST_F(NodeTest, CallLodFromDummyRendererTest) {
     auto processingNode = createProcessingNode("5678");
     processingNode->start();

@@ -31,6 +31,7 @@ enum class VclType {
     TrinityFile,
     TrinityDirectory,
     InitContext,
+    ZoomCamera,
     Paint,
     First = InitRenderer,
     Last = StreamingParams,
@@ -76,6 +77,7 @@ private:
         m_cmdMap.insert("IOD", VclType::IOData);
         m_cmdMap.insert("ICO", VclType::InitContext);
         m_cmdMap.insert("PAI", VclType::Paint);
+        m_cmdMap.insert("ZOC", VclType::ZoomCamera);
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));

@@ -15,8 +15,9 @@ public:
 
     virtual ~RendererProxy();
 
-    virtual void setIsoValue(const float);
-    virtual void initContext();
+    void setIsoValue(const float) override;
+    void initContext() override;
+    void zoomCamera(float f) override;
     int getRemoteSessionId() const;
 
 
