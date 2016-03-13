@@ -1,9 +1,9 @@
-class {CommandName}Hdl : public commands::ICommandHandler {
+class {CommandName}Hdl : public ICommandHandler {
 public:
-    {CommandName}Hdl(const commands::{CommandName}Request& request);
+    {CommandName}Hdl(const {CommandName}Request& request);
 
     std::unique_ptr<commands::Reply> execute() override;
 
 private:
-    commands::{CommandName}Request m_request;
+    {CommandName}Request m_request;
 };
