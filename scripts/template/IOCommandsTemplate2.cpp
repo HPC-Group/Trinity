@@ -9,6 +9,7 @@ void {CommandName}Cmd::RequestParams::deserialize(const ISerialReader& reader) {
 }
 
 bool {CommandName}Cmd::RequestParams::equals(const {CommandName}Cmd::RequestParams& other) const {
+	// TODO
     return true;
 }
 
