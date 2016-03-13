@@ -76,6 +76,8 @@ def openTemplate(templateName):
 
 
 def generateCommandsHdr():
+	refreshSrc()
+	
   if type == Types.proc:
     for i in processingFiles:
       if (i == 2):
@@ -108,6 +110,22 @@ def generateReply(lookup):
   openFile(commDir + commFiles[1], templateDir + "ReplyTemplate.cpp", lookup)
   
   
+def refreshSrc():
+  copyfile("../src/commands/" + processingFiles[0], procDir + processingFiles[0])
+  copyfile("../src/commands" + processingFiles[1], procDir + processingFiles[1])
+  copyfile("../src/processing-base/" + processingFiles[3], procDir + processingFiles[3])
+  copyfile("../src/processing-base/" + processingFiles[4], procDir + processingFiles[4])
+  copyfile("../src/processing-base/" + processingFiles[5], procDir + processingFiles[5])
+  
+  copyfile("../src/commands/" + ioFiles[0], ioDir + ioFiles[0])
+  copyfile("../src/commands/" + ioFiles[1], ioDir + ioFiles[1])
+  copyfile("../src/io-base/" + ioFiles[3], ioDir + ioFiles[3])
+  copyfile("../src/io-base/" + ioFiles[4], ioDir + ioFiles[4])
+  copyfile("../src/io-base/" + ioFiles[5], ioDir + ioFiles[5])
+      
+  copyfile("../src/commands/" + commFiles[0], commDir + commFiles[0])
+  copyfile("../src/commands/" + commFiles[1], commDir + commFiles[1])
+
 def copyFiles(type):
     if type == Types.proc:
       copyfile(procDir + processingFiles[0], "../src/commands/" + processingFiles[0])
@@ -131,7 +149,6 @@ def readFile(datafile):
 
 
 def determineStartStop(content, lookup):
-  print(commandsHdrPath())
   global start
   global stop
   start, stop = 0, 0
