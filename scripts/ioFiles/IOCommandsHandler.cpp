@@ -66,3 +66,8 @@ std::unique_ptr<Reply> ListFilesHdl::execute() {
     ListFilesCmd::ReplyParams replyParams(ioDataVec);
     return mocca::make_unique<ListFilesReply>(replyParams, m_request.getRid(), m_request.getSid());
 }
+
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC

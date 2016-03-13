@@ -131,6 +131,13 @@ bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::
 std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& obj);
 
 
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
+
+
+
 using InitProcessingSessionRequest = RequestTemplate<InitProcessingSessionCmd>;
 using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;
 

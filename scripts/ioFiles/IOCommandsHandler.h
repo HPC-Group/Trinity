@@ -41,4 +41,9 @@ private:
     IONode* m_node;
     ListFilesRequest m_request;
 };
+
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
 }

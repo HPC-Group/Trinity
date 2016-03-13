@@ -43,4 +43,9 @@ private:
     RenderSession* m_session;
     int m_sid;
 };
+
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
 }

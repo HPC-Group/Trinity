@@ -19,6 +19,10 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     if (type == InitProcessingSessionReply::Ifc::Type) {
         return reader->getSerializablePtr<InitProcessingSessionReply>("rep");
     }
+#define PYTHON_MAGIC_PROC
+
+
+#undef PYTHON_MAGIC_PROC
 
     // IO commands
     if (type == ListFilesRequest::Ifc::Type) {
@@ -28,6 +32,10 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     } else if (type == GetLODLevelCountReply::Ifc::Type) {
         return reader->getSerializablePtr<GetLODLevelCountReply>("rep");
     }
+#define PYTHON_MAGIC_IO
+
+
+#undef PYTHON_MAGIC_IO
 
     // error commands
     else if (type == ErrorReply::Ifc::Type) {

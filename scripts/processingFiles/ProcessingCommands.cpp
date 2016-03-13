@@ -185,6 +185,11 @@ std::string InitContextCmd::RequestParams::toString() const {
     return stream.str();
 }
 
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
+
 namespace trinity {
 bool operator==(const StreamingParams& lhs, const StreamingParams& rhs) {
     return lhs.equals(rhs);
@@ -219,4 +224,9 @@ bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::
 std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& obj) {
     return os << obj.toString();
 }
+
+#define PYTHON_MAGIC_DEFINITION
+
+
+#undef PYTHON_MAGIC_DEFINITION
 }

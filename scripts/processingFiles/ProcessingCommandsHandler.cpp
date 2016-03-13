@@ -58,3 +58,8 @@ std::unique_ptr<Reply> InitContextHdl::execute() {
     renderer.initContext();
     return nullptr;
 }
+
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC

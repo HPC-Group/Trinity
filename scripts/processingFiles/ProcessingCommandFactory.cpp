@@ -20,6 +20,10 @@ std::unique_ptr<ICommandHandler> ProcessingNodeCommandFactory::createHandler(con
     case VclType::InitRenderer:
         return mocca::make_unique<InitProcessingSessionHdl>(static_cast<const InitProcessingSessionRequest&>(request), node);
         break;
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }

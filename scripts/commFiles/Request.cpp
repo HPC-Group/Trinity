@@ -22,6 +22,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
     } else if (type == InitContextRequest::Ifc::Type) {
         return reader->getSerializablePtr<InitContextRequest>("req");
     }
+#define PYTHON_MAGIC_PROC
+
+
+#undef PYTHON_MAGIC_PROC
 
     // IO commands
     else if (type == ListFilesRequest::Ifc::Type) {
@@ -31,6 +35,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
     } else if (type == GetLODLevelCountRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetLODLevelCountRequest>("req");
     }
+#define PYTHON_MAGIC_IO
+
+
+#undef PYTHON_MAGIC_IO
 
     throw TrinityError("Invalid request type", __FILE__, __LINE__);
 }
