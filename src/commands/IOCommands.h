@@ -160,6 +160,11 @@ bool operator==(const GetLODLevelCountCmd::ReplyParams& lhs, const GetLODLevelCo
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestParams& obj);
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj);
 
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
+
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;
 using ListFilesReply = ReplyTemplate<ListFilesCmd>;
 

@@ -215,6 +215,11 @@ std::string GetLODLevelCountCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+#define PYTHON_MAGIC_DEFINITION
+
+
+#undef PYTHON_MAGIC_DEFINITION
+
 
 namespace trinity {
 bool operator==(const IOData& lhs, const IOData& rhs) {
@@ -262,4 +267,9 @@ std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestPar
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
+
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
 }
