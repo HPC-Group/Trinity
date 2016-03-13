@@ -112,7 +112,7 @@ def generateReply(lookup):
   
 def refreshSrc():
   copyfile("../src/commands/" + processingFiles[0], procDir + processingFiles[0])
-  copyfile("../src/commands" + processingFiles[1], procDir + processingFiles[1])
+  copyfile("../src/commands/" + processingFiles[1], procDir + processingFiles[1])
   copyfile("../src/processing-base/" + processingFiles[3], procDir + processingFiles[3])
   copyfile("../src/processing-base/" + processingFiles[4], procDir + processingFiles[4])
   copyfile("../src/processing-base/" + processingFiles[5], procDir + processingFiles[5])
