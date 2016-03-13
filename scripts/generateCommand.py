@@ -48,13 +48,6 @@ ioTemplates = {0 : "IOCommandsTemplate.h",
 	       5 : "IOCommandFactoryTemplate.cpp"}
 
 
-def commandsHdrPath():
-	if (type == Types.proc):
-		return os.path.join(srcPath, "commands", "ProcessingCommands.h")
-	else:
-		return os.path.join(srcPath, "commands", "IOCommands.h")
-
-
 def openFile(filename, templateName, lookup):
   with open(filename, "r+") as datafile:
     content = datafile.readlines()
@@ -86,7 +79,8 @@ def generateCommandsHdr():
         openFile(procDir + processingFiles[i], templateDir + processingTemplates[i], "#undef PYTHON_MAGIC")
 
     generateRequest("#undef PYTHON_MAGIC_PROC")
-    generateReply("#undef PYTHON_MAGIC_PROC")
+    if hasReply != "false":
+      generateReply("#undef PYTHON_MAGIC_PROC")
     
     copyFiles(Types.proc)
   else:  
@@ -97,7 +91,8 @@ def generateCommandsHdr():
         openFile(ioDir + ioFiles[i], templateDir + ioTemplates[i], "#undef PYTHON_MAGIC")
 
     generateRequest("#undef PYTHON_MAGIC_IO")
-    generateReply("#undef PYTHON_MAGIC_IO")
+    if hasReply != "false":
+      generateReply("#undef PYTHON_MAGIC_IO")
     
     copyFiles(Types.io)
 
@@ -126,10 +121,11 @@ def refreshSrc():
   copyfile("../src/commands/" + commFiles[0], commDir + commFiles[0])
   copyfile("../src/commands/" + commFiles[1], commDir + commFiles[1])
 
+
 def copyFiles(type):
     if type == Types.proc:
       copyfile(procDir + processingFiles[0], "../src/commands/" + processingFiles[0])
-      copyfile(procDir + processingFiles[1], "../src/commands" + processingFiles[1])
+      copyfile(procDir + processingFiles[1], "../src/commands/" + processingFiles[1])
       copyfile(procDir + processingFiles[3], "../src/processing-base/" + processingFiles[3])
       copyfile(procDir + processingFiles[4], "../src/processing-base/" + processingFiles[4])
       copyfile(procDir + processingFiles[5], "../src/processing-base/" + processingFiles[5])
