@@ -185,10 +185,10 @@ std::string InitContextCmd::RequestParams::toString() const {
     return stream.str();
 }
 
-#define PYTHON_MAGIC
+#define PYTHON_MAGIC_DEFINITION
 
 
-#undef PYTHON_MAGIC
+#undef PYTHON_MAGIC_DEFINITION
 
 namespace trinity {
 bool operator==(const StreamingParams& lhs, const StreamingParams& rhs) {
@@ -225,8 +225,8 @@ std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& 
     return os << obj.toString();
 }
 
-#define PYTHON_MAGIC_DEFINITION
+#define PYTHON_MAGIC
 
 
-#undef PYTHON_MAGIC_DEFINITION
+#undef PYTHON_MAGIC
 }
