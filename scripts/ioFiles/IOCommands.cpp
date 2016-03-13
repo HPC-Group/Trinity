@@ -215,10 +215,10 @@ std::string GetLODLevelCountCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
-#define PYTHON_MAGIC
+#define PYTHON_MAGIC_DEFINITION
 
 
-#undef PYTHON_MAGIC
+#undef PYTHON_MAGIC_DEFINITION
 
 
 namespace trinity {
@@ -268,8 +268,8 @@ std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParam
     return os << obj.toString();
 }
 
-#define PYTHON_MAGIC_DEFINITION
+#define PYTHON_MAGIC
 
 
-#undef PYTHON_MAGIC_DEFINITION
+#undef PYTHON_MAGIC
 }
