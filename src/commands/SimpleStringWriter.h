@@ -18,9 +18,6 @@ public:
     void append(const std::string& key, const std::vector<std::string>& vec) override;
     void append(const std::string& key, const std::vector<ISerializable*>& vec) override;
 
-    void push(const std::string& key) override;
-    void pop() override;
-
     mocca::ByteArray write() const override;
 
 private:

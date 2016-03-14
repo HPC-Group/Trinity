@@ -23,9 +23,6 @@ public:
     virtual void append(const std::string& key, const std::vector<std::string>& vec) = 0;
     virtual void append(const std::string& key, const std::vector<ISerializable*>& vec) = 0;
 
-    virtual void push(const std::string& key) = 0;
-    virtual void pop() = 0;
-
     virtual mocca::ByteArray write() const = 0;
 };
 }
