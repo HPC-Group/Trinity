@@ -18,6 +18,9 @@ public:
     std::vector<int> getIntVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 
+    void push(const std::string& key) override;
+    void pop() override;
+
 private:
     void getSerializableImpl(const std::string& key, ISerializable& obj) const override;
     std::vector<std::unique_ptr<ISerializable>> getSerializableVecImpl(const std::string& key, const ISerializable& prototype) const override;

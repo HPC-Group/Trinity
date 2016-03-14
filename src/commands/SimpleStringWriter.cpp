@@ -48,6 +48,12 @@ void SimpleStringWriter::append(const std::string& key, const std::vector<ISeria
     }
 }
 
+void SimpleStringWriter::push(const std::string& key) {
+    m_stream << key << " ";
+}
+
+void SimpleStringWriter::pop() {}
+
 mocca::ByteArray SimpleStringWriter::write() const {
     std::string str = m_stream.str();
     return mocca::ByteArray::createFromRaw(str.data(), str.size());

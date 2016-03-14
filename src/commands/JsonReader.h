@@ -18,6 +18,9 @@ public:
     std::vector<int> getIntVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 
+    void push(const std::string& key) override;
+    void pop() override;
+
 private:
     JsonReader(const JsonCpp::Value& root);
 
@@ -25,6 +28,10 @@ private:
     std::vector<std::unique_ptr<ISerializable>> getSerializableVecImpl(const std::string& key, const ISerializable& prototype) const override;
 
 private:
+    const JsonCpp::Value& current() const;
+
+private:
     JsonCpp::Value m_root;
+    std::vector<const JsonCpp::Value*> m_stack;
 };
 }

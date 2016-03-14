@@ -71,3 +71,11 @@ std::vector<std::unique_ptr<ISerializable>> SimpleStringReader::getSerializableV
     }
     return result;
 }
+
+void SimpleStringReader::push(const std::string& key) {
+    std::string dummy;
+    m_stream >> dummy;
+}
+
+void SimpleStringReader::pop() {
+}
