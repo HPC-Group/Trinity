@@ -40,7 +40,7 @@ void JsonWriter::appendIntVec(const std::string& key, const std::vector<int>& ve
 
 void JsonWriter::appendBoolVec(const std::string& key, const std::vector<bool>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
-        m_root[key][i] = vec[i];
+        m_root[key][i] = JsonCpp::Value(vec[i]);
     }
 }
 
