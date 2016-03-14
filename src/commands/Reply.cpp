@@ -50,8 +50,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 
 mocca::ByteArray Reply::createByteArray(const Reply& reply) {
     auto writer = ISerializerFactory::defaultFactory().createWriter();
-    writer->append("type", Vcl::instance().toString(reply.getType()));
-    writer->append("rep", reply);
+    writer->appendString("type", Vcl::instance().toString(reply.getType()));
+    writer->appendObject("rep", reply);
     return writer->write();
 }
 

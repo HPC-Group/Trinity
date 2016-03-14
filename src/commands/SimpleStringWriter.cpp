@@ -4,44 +4,56 @@
 
 using namespace trinity;
 
-void SimpleStringWriter::append(const std::string& key, float value) {
+void SimpleStringWriter::appendFloat(const std::string& key, float value) {
     m_stream << value << " ";
 }
 
-void SimpleStringWriter::append(const std::string& key, int value) {
+void SimpleStringWriter::appendInt(const std::string& key, int value) {
     m_stream << value << " ";
 }
 
-void SimpleStringWriter::append(const std::string& key, const std::string& value) {
+void SimpleStringWriter::appendBool(const std::string & key, bool value)
+{
     m_stream << value << " ";
 }
 
-void SimpleStringWriter::append(const std::string& key, const ISerializable& obj) {
+void SimpleStringWriter::appendString(const std::string& key, const std::string& value) {
+    m_stream << value << " ";
+}
+
+void SimpleStringWriter::appendObject(const std::string& key, const ISerializable& obj) {
     obj.serialize(*this);
 }
 
-void SimpleStringWriter::append(const std::string& key, const std::vector<float>& vec) {
+void SimpleStringWriter::appendFloatVec(const std::string& key, const std::vector<float>& vec) {
     m_stream << vec.size() << " ";
     for (size_t i = 0; i < vec.size(); ++i) {
         m_stream << vec[i] << " ";
     }
 }
 
-void SimpleStringWriter::append(const std::string& key, const std::vector<int>& vec) {
+void SimpleStringWriter::appendIntVec(const std::string& key, const std::vector<int>& vec) {
     m_stream << vec.size() << " ";
     for (size_t i = 0; i < vec.size(); ++i) {
         m_stream << vec[i] << " ";
     }
 }
 
-void SimpleStringWriter::append(const std::string& key, const std::vector<std::string>& vec) {
+void SimpleStringWriter::appendBoolVec(const std::string& key, const std::vector<bool>& vec) {
     m_stream << vec.size() << " ";
     for (size_t i = 0; i < vec.size(); ++i) {
         m_stream << vec[i] << " ";
     }
 }
 
-void SimpleStringWriter::append(const std::string& key, const std::vector<ISerializable*>& vec) {
+void SimpleStringWriter::appendStringVec(const std::string& key, const std::vector<std::string>& vec) {
+    m_stream << vec.size() << " ";
+    for (size_t i = 0; i < vec.size(); ++i) {
+        m_stream << vec[i] << " ";
+    }
+}
+
+void SimpleStringWriter::appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) {
     m_stream << vec.size() << " ";
     for (size_t i = 0; i < vec.size(); ++i) {
         vec[i]->serialize(*this);

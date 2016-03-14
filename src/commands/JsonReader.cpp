@@ -25,6 +25,10 @@ int JsonReader::getInt(const std::string& key) const {
     return m_root[key].asInt();
 }
 
+bool JsonReader::getBool(const std::string& key) const {
+    return m_root[key].asBool();
+}
+
 std::string JsonReader::getString(const std::string& key) const {
     return m_root[key].asString();
 }
@@ -46,6 +50,14 @@ std::vector<int> JsonReader::getIntVec(const std::string& key) const {
     std::vector<int> result;
     for (uint32_t i = 0; i < m_root[key].size(); ++i) {
         result.push_back(m_root[key][i].asInt());
+    }
+    return result;
+}
+
+std::vector<bool> JsonReader::getBoolVec(const std::string& key) const {
+    std::vector<bool> result;
+    for (uint32_t i = 0; i < m_root[key].size(); ++i) {
+        result.push_back(m_root[key][i].asBool());
     }
     return result;
 }

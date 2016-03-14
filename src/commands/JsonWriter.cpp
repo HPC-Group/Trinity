@@ -4,43 +4,53 @@
 
 using namespace trinity;
 
-void JsonWriter::append(const std::string& key, float value) {
+void JsonWriter::appendFloat(const std::string& key, float value) {
     m_root[key] = value;
 }
 
-void JsonWriter::append(const std::string& key, int value) {
+void JsonWriter::appendInt(const std::string& key, int value) {
     m_root[key] = value;
 }
 
-void JsonWriter::append(const std::string& key, const std::string& value) {
+void JsonWriter::appendBool(const std::string& key, bool value) {
     m_root[key] = value;
 }
 
-void JsonWriter::append(const std::string& key, const ISerializable& obj) {
+void JsonWriter::appendString(const std::string& key, const std::string& value) {
+    m_root[key] = value;
+}
+
+void JsonWriter::appendObject(const std::string& key, const ISerializable& obj) {
     JsonWriter subObject;
     obj.serialize(subObject);
     m_root[key] = subObject.m_root;
 }
 
-void JsonWriter::append(const std::string& key, const std::vector<float>& vec) {
+void JsonWriter::appendFloatVec(const std::string& key, const std::vector<float>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = vec[i];
     }
 }
 
-void JsonWriter::append(const std::string& key, const std::vector<int>& vec) {
+void JsonWriter::appendIntVec(const std::string& key, const std::vector<int>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = vec[i];
     }
 }
 
-void JsonWriter::append(const std::string& key, const std::vector<std::string>& vec) {
+void JsonWriter::appendBoolVec(const std::string& key, const std::vector<bool>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = vec[i];
     }
 }
 
-void JsonWriter::append(const std::string& key, const std::vector<ISerializable*>& vec) {
+void JsonWriter::appendStringVec(const std::string& key, const std::vector<std::string>& vec) {
+    for (uint32_t i = 0; i < vec.size(); ++i) {
+        m_root[key][i] = vec[i];
+    }
+}
+
+void JsonWriter::appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
         JsonWriter subObject;
         vec[i]->serialize(subObject);

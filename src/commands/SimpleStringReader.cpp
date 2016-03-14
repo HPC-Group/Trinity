@@ -19,6 +19,12 @@ int SimpleStringReader::getInt(const std::string& key) const {
     return x;
 }
 
+bool SimpleStringReader::getBool(const std::string& key) const {
+    bool x;
+    m_stream >> x;
+    return x;
+}
+
 std::string SimpleStringReader::getString(const std::string& key) const {
     std::string x;
     m_stream >> x;
@@ -45,6 +51,18 @@ std::vector<int> SimpleStringReader::getIntVec(const std::string& key) const {
     std::vector<int> result(size);
     for (int32_t i = 0; i < size; ++i) {
         m_stream >> result[i];
+    }
+    return result;
+}
+
+std::vector<bool> SimpleStringReader::getBoolVec(const std::string& key) const {
+    int32_t size;
+    m_stream >> size;
+    std::vector<bool> result(size);
+    for (int32_t i = 0; i < size; ++i) {
+        bool val;
+        m_stream >> val;
+        result[i] = val;
     }
     return result;
 }

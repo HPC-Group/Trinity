@@ -15,6 +15,7 @@ public:
 
     virtual float getFloat(const std::string& key) const = 0;
     virtual int getInt(const std::string& key) const = 0;
+    virtual bool getBool(const std::string& key) const = 0;
     virtual std::string getString(const std::string& key) const = 0;
     template <typename T> T getSerializable(const std::string& key) const {
         T prototype;
@@ -39,6 +40,7 @@ public:
 
     virtual std::vector<float> getFloatVec(const std::string& key) const = 0;
     virtual std::vector<int> getIntVec(const std::string& key) const = 0;
+    virtual std::vector<bool> getBoolVec(const std::string& key) const = 0;
     virtual std::vector<std::string> getStringVec(const std::string& key) const = 0;
 
 private:

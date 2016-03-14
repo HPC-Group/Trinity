@@ -23,9 +23,9 @@ IOData::IOData(const std::string& name, int fileId, DataType dataType)
     , m_dataType(dataType) {}
 
 void IOData::serialize(ISerialWriter& writer) const {
-    writer.append("name", m_name);
-    writer.append("fileid", m_fileId);
-    writer.append("datatype", dataTypeMapper().getByFirst(m_dataType));
+    writer.appendString("name", m_name);
+    writer.appendInt("fileid", m_fileId);
+    writer.appendString("datatype", dataTypeMapper().getByFirst(m_dataType));
 }
 
 void IOData::deserialize(const ISerialReader& reader) {
@@ -74,7 +74,7 @@ std::string ListFilesCmd::RequestParams::toString() const {
 }
 
 void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.append("dirid", m_dirID);
+    writer.appendInt("dirid", m_dirID);
 }
 
 void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {
@@ -101,7 +101,7 @@ std::string ListFilesCmd::ReplyParams::toString() const {
 }
 
 void ListFilesCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.append("iodata", mocca::transformToBasePtrVec<ISerializable>(begin(m_ioData), end(m_ioData)));
+    writer.appendObjectVec("iodata", mocca::transformToBasePtrVec<ISerializable>(begin(m_ioData), end(m_ioData)));
 }
 
 void ListFilesCmd::ReplyParams::deserialize(const ISerialReader& reader) {
@@ -122,8 +122,8 @@ InitIOSessionCmd::RequestParams::RequestParams(const std::string& protocol, int 
     , m_fileId(fileId) {}
 
 void InitIOSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.append("protocol", m_protocol);
-    writer.append("fileid", m_fileId);
+    writer.appendString("protocol", m_protocol);
+    writer.appendInt("fileid", m_fileId);
 }
 
 void InitIOSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
@@ -153,7 +153,7 @@ InitIOSessionCmd::ReplyParams::ReplyParams(const std::string& controlPort)
     : m_controlPort(controlPort) {}
 
 void InitIOSessionCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.append("controlport", m_controlPort);
+    writer.appendString("controlport", m_controlPort);
 }
 
 void InitIOSessionCmd::ReplyParams::deserialize(const ISerialReader& reader) {
@@ -194,7 +194,7 @@ GetLODLevelCountCmd::ReplyParams::ReplyParams(int lodCount)
     : m_lodCount(lodCount) {}
 
 void GetLODLevelCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.append("lodcount", m_lodCount);
+    writer.appendInt("lodcount", m_lodCount);
 }
 
 void GetLODLevelCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {

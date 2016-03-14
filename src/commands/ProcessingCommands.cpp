@@ -13,8 +13,8 @@ StreamingParams::StreamingParams()
     , m_resY(768) {}
 
 void StreamingParams::serialize(ISerialWriter& writer) const {
-    writer.append("xres", m_resX);
-    writer.append("yres", m_resY);
+    writer.appendInt("xres", m_resX);
+    writer.appendInt("yres", m_resY);
 }
 
 void StreamingParams::deserialize(const ISerialReader& reader) {
@@ -52,11 +52,11 @@ InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protoc
     , m_streamingParams(p) {}
 
 void InitProcessingSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.append("protocol", m_protocol);
-    writer.append("rendertype", Vcl::instance().toString(m_renderType));
-    writer.append("fileid", m_fileId);
-    writer.append("ioendpoint", m_ioEndpoint.toString());
-    writer.append("streamingparams", m_streamingParams);
+    writer.appendString("protocol", m_protocol);
+    writer.appendString("rendertype", Vcl::instance().toString(m_renderType));
+    writer.appendInt("fileid", m_fileId);
+    writer.appendString("ioendpoint", m_ioEndpoint.toString());
+    writer.appendObject("streamingparams", m_streamingParams);
 }
 
 void InitProcessingSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
@@ -112,8 +112,8 @@ std::string InitProcessingSessionCmd::ReplyParams::getVisPort() const {
 }
 
 void InitProcessingSessionCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.append("controlport", m_controlPort);
-    writer.append("visport", m_visPort);
+    writer.appendString("controlport", m_controlPort);
+    writer.appendString("visport", m_visPort);
 }
 
 void InitProcessingSessionCmd::ReplyParams::deserialize(const ISerialReader& reader) {
@@ -139,7 +139,7 @@ SetIsoValueCmd::RequestParams::RequestParams(float value)
     : m_isoValue(value) {}
 
 void SetIsoValueCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.append("isovalue", m_isoValue);
+    writer.appendFloat("isovalue", m_isoValue);
 }
 
 void SetIsoValueCmd::RequestParams::deserialize(const ISerialReader& reader) {
@@ -168,7 +168,7 @@ InitContextCmd::RequestParams::RequestParams(int32_t value)
     : m_dummy(value) {}
 
 void InitContextCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.append("dummy", m_dummy);
+    writer.appendInt("dummy", m_dummy);
 }
 
 void InitContextCmd::RequestParams::deserialize(const ISerialReader& reader) {
@@ -199,7 +199,7 @@ ZoomCameraCmd::RequestParams::RequestParams(float value)
 
 
 void ZoomCameraCmd::RequestParams::serialize(ISerialWriter& writer) const {
-	writer.append("zoom", m_zoom);
+	writer.appendFloat("zoom", m_zoom);
 }
 
 void ZoomCameraCmd::RequestParams::deserialize(const ISerialReader& reader) {

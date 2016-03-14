@@ -8,7 +8,7 @@ ErrorCmd::ReplyParams::ReplyParams(int errorCode)
     : m_errorCode(errorCode) {}
 
 void ErrorCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.append("code", m_errorCode);
+    writer.appendInt("code", m_errorCode);
 }
 
 void ErrorCmd::ReplyParams::deserialize(const ISerialReader& reader) {

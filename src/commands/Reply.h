@@ -32,8 +32,8 @@ public:
 private:
     virtual void serializeParams(ISerialWriter& writer) const = 0;
     void serialize(ISerialWriter& writer) const override {
-        writer.append("rid", m_rid);
-        writer.append("sid", m_sid);
+        writer.appendInt("rid", m_rid);
+        writer.appendInt("sid", m_sid);
         serializeParams(writer);
     }
 
@@ -79,7 +79,7 @@ public:
 
 private:
     void serializeParams(ISerialWriter& writer) const override {
-        writer.append("params", m_params);
+        writer.appendObject("params", m_params);
     }
 
     void deserializeParams(const ISerialReader& reader) override {

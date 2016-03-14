@@ -12,10 +12,12 @@ public:
 
     float getFloat(const std::string& key) const override;
     int getInt(const std::string& key) const override;
+    bool getBool(const std::string& key) const override;
     std::string getString(const std::string& key) const override;
 
     std::vector<float> getFloatVec(const std::string& key) const override;
     std::vector<int> getIntVec(const std::string& key) const override;
+    std::vector<bool> getBoolVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 
 private:

@@ -25,8 +25,8 @@ protected:
             , myString(s) {}
 
         void serialize(ISerialWriter& writer) const override {
-            writer.append("subFloat", myFloat);
-            writer.append("subString", myString);
+            writer.appendFloat("subFloat", myFloat);
+            writer.appendString("subString", myString);
         }
         void deserialize(const ISerialReader& reader) override {
             myFloat = reader.getFloat("subFloat");
@@ -44,14 +44,18 @@ TYPED_TEST_CASE(SerialObjectTest, MyTypes);
 TYPED_TEST(SerialObjectTest, BasicTypes) {
     TypeParam factory;
     auto writer = factory.createWriter();
-    writer->append("float", 3.14f);
-    writer->append("int", 42);
-    writer->append("string", "Hello");
+    writer->appendFloat("float", 3.14f);
+    writer->appendInt("int", 42);
+    writer->appendBool("boolTrue", true);
+    writer->appendBool("boolFalse", false);
+    writer->appendString("string", "Hello");
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ(3.14f, reader->getFloat("float"));
     ASSERT_EQ(42, reader->getInt("int"));
+    ASSERT_EQ(true, reader->getBool("boolTrue"));
+    ASSERT_EQ(false, reader->getBool("boolFalse"));
     ASSERT_EQ("Hello", reader->getString("string"));
 }
 
@@ -60,9 +64,9 @@ TYPED_TEST(SerialObjectTest, SubObjects) {
     using MyObj = typename SerialObjectTest<TypeParam>::MySerializable;
     auto writer = factory.createWriter();
     MyObj subObject{2.718f, "World"};
-    writer->append("float", 3.14f);
-    writer->append("subObject", subObject);
-    writer->append("string", "Hello");
+    writer->appendFloat("float", 3.14f);
+    writer->appendObject("subObject", subObject);
+    writer->appendString("string", "Hello");
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
@@ -83,9 +87,10 @@ TYPED_TEST(SerialObjectTest, SerializationError) {
 TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
     TypeParam factory;
     auto writer = factory.createWriter();
-    writer->append("float", std::vector<float>{0.1f, 0.2f, 0.3f});
-    writer->append("int", std::vector<int>{1, 2, 3, 4});
-    writer->append("string", std::vector<std::string>{"Hello", "World"});
+    writer->appendFloatVec("float", std::vector<float>{0.1f, 0.2f, 0.3f});
+    writer->appendIntVec("int", std::vector<int>{1, 2, 3, 4});
+    writer->appendBoolVec("bool", std::vector<bool>{true, false, true});
+    writer->appendStringVec("string", std::vector<std::string>{"Hello", "World"});
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
@@ -103,6 +108,12 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
     ASSERT_EQ(3, intRes[2]);
     ASSERT_EQ(4, intRes[3]);
 
+    auto boolRes = reader->getBoolVec("bool");
+    ASSERT_EQ(3, boolRes.size());
+    ASSERT_EQ(true, boolRes[0]);
+    ASSERT_EQ(false, boolRes[1]);
+    ASSERT_EQ(true, boolRes[2]);
+
     auto stringRes = reader->getStringVec("string");
     ASSERT_EQ(2, stringRes.size());
     ASSERT_EQ("Hello", stringRes[0]);
@@ -116,7 +127,7 @@ TYPED_TEST(SerialObjectTest, VectorSubObject) {
     auto subObject1 = mocca::make_unique<MyObj>(2.718f, "Hello");
     auto subObject2 = mocca::make_unique<MyObj>(3.14f, "World");
     std::vector<ISerializable*> vec{ subObject1.get(), subObject2.get() };
-    writer->append("subObjects", vec);
+    writer->appendObjectVec("subObjects", vec);
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);

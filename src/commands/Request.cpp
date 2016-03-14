@@ -49,8 +49,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 
 mocca::ByteArray Request::createByteArray(const Request& request) {
     auto writer = ISerializerFactory::defaultFactory().createWriter();
-    writer->append("type", Vcl::instance().toString(request.getType()));
-    writer->append("req", request);
+    writer->appendString("type", Vcl::instance().toString(request.getType()));
+    writer->appendObject("req", request);
     return writer->write();
 }
 
