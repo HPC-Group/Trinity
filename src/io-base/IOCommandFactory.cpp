@@ -42,7 +42,11 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::MaxMinForKey:
         return mocca::make_unique<MaxMinForKeyHdl>(static_cast<const MaxMinForKeyRequest&>(request), session);
         break;
+    case VclType::GetNumberOfTimesteps:
+        return mocca::make_unique<GetNumberOfTimestepsHdl>(static_cast<const GetNumberOfTimestepsRequest&>(request), session);
+        break;
 #define PYTHON_MAGIC
+
 
 
 

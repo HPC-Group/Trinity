@@ -175,3 +175,27 @@ TEST_F(IOCommandsTest, MaxMinForKeyReqRep) {
     auto reply = trinity::testing::handleRequest<MaxMinForKeyHdl>(request, session.get());
     ASSERT_EQ(MinMaxBlock(1.0, 2.0, 3.0, 4.0), reply.getParams().getMinMaxBlock());
 }
+
+TEST_F(IOCommandsTest, GetNumberOfTimestepsCmd) {
+    {
+        GetNumberOfTimestepsCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        uint64_t numberOfTimesteps = 42;
+        GetNumberOfTimestepsCmd::ReplyParams target(numberOfTimesteps);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetNumberOfTimestepsReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getNumberOfTimesteps()).Times(1).WillOnce(Return(42));
+
+    GetNumberOfTimestepsCmd::RequestParams requestParams;
+    GetNumberOfTimestepsRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetNumberOfTimestepsHdl>(request, session.get());
+    ASSERT_EQ(42, reply.getParams().getNumberOfTimesteps());
+}

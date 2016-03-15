@@ -19,13 +19,6 @@ IOSessionProxy::IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& 
     }
 }
 
-int IOSessionProxy::getLODLevelCount() const {
-    GetLODLevelCountCmd::RequestParams params;
-    GetLODLevelCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
-    auto reply = sendRequestChecked(m_inputChannel, request);
-    return reply->getParams().getLODLevelCount();
-}
-
 Core::Math::Vec3ui64 IOSessionProxy::getMaxBrickSize() const  {
     GetMaxBrickSizeCmd::RequestParams params;
     GetMaxBrickSizeRequest request(params, IDGenerator::nextID(), m_remoteSid);
@@ -47,11 +40,20 @@ MinMaxBlock IOSessionProxy::maxMinForKey(const BrickKey& brickKey) const {
     return reply->getParams().getMinMaxBlock();
 }
 
-//uint64_t IOSessionProxy::getNumberOfTimesteps() const {
-//    // TODO
-//    uint64_t x; return x;
-//}
-//
+int IOSessionProxy::getLODLevelCount() const {
+    GetLODLevelCountCmd::RequestParams params;
+    GetLODLevelCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getLODLevelCount();
+}
+
+uint64_t IOSessionProxy::getNumberOfTimesteps() const {
+    GetNumberOfTimestepsCmd::RequestParams params;
+    GetNumberOfTimestepsRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getNumberOfTimesteps();
+}
+
 //Core::Math::Vec3ui64 IOSessionProxy::getDomainSize(const uint64_t lod, const uint64_t ts) const {
 //    // TODO
 //    Core::Math::Vec3ui64 x; return x;

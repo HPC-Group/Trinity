@@ -51,6 +51,9 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 	else if (type == MaxMinForKeyRequest::Ifc::Type) {
 		return reader->getSerializablePtr<MaxMinForKeyRequest>("req");
 	}
+	else if (type == GetNumberOfTimestepsRequest::Ifc::Type) {
+		return reader->getSerializablePtr<GetNumberOfTimestepsRequest>("req");
+	}
 
 #undef PYTHON_MAGIC_IO
 

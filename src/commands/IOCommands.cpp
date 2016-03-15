@@ -264,11 +264,9 @@ Core::Math::Vec3ui64 GetMaxBrickSizeCmd::ReplyParams::getMaxBrickSize() const {
 
 VclType GetMaxUsedBrickSizesCmd::Type = VclType::GetMaxUsedBrickSizes;
 
-void GetMaxUsedBrickSizesCmd::RequestParams::serialize(ISerialWriter& writer) const {
-}
+void GetMaxUsedBrickSizesCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
-void GetMaxUsedBrickSizesCmd::RequestParams::deserialize(const ISerialReader& reader) {
-}
+void GetMaxUsedBrickSizesCmd::RequestParams::deserialize(const ISerialReader& reader) {}
 
 bool GetMaxUsedBrickSizesCmd::RequestParams::equals(const GetMaxUsedBrickSizesCmd::RequestParams& other) const {
     return true;
@@ -309,9 +307,8 @@ Core::Math::Vec3ui64 GetMaxUsedBrickSizesCmd::ReplyParams::getMaxUsedBrickSizes(
 
 VclType MaxMinForKeyCmd::Type = VclType::MaxMinForKey;
 
-MaxMinForKeyCmd::RequestParams::RequestParams(const BrickKey & brickKey)
-    : m_brickKey(brickKey)
-{}
+MaxMinForKeyCmd::RequestParams::RequestParams(const BrickKey& brickKey)
+    : m_brickKey(brickKey) {}
 
 void MaxMinForKeyCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendObject("brickKey", m_brickKey);
@@ -335,9 +332,8 @@ BrickKey MaxMinForKeyCmd::RequestParams::getBrickKey() const {
     return m_brickKey;
 }
 
-MaxMinForKeyCmd::ReplyParams::ReplyParams(const MinMaxBlock & minMaxBlock)
-    : m_minMaxBock(minMaxBlock)
-{}
+MaxMinForKeyCmd::ReplyParams::ReplyParams(const MinMaxBlock& minMaxBlock)
+    : m_minMaxBock(minMaxBlock) {}
 
 void MaxMinForKeyCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     writer.appendObject("minMaxBlock", m_minMaxBock);
@@ -359,6 +355,49 @@ std::string MaxMinForKeyCmd::ReplyParams::toString() const {
 
 MinMaxBlock MaxMinForKeyCmd::ReplyParams::getMinMaxBlock() const {
     return m_minMaxBock;
+}
+
+
+////////////// GetNumberOfTimestepsCmd //////////////
+
+VclType GetNumberOfTimestepsCmd::Type = VclType::GetNumberOfTimesteps;
+
+void GetNumberOfTimestepsCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetNumberOfTimestepsCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetNumberOfTimestepsCmd::RequestParams::equals(const GetNumberOfTimestepsCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetNumberOfTimestepsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetNumberOfTimestepsCmd::ReplyParams::ReplyParams(uint64_t numberOfTimesteps)
+    : m_numberOfTimesteps(numberOfTimesteps) {}
+
+void GetNumberOfTimestepsCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("numberOfTimesteps", m_numberOfTimesteps);
+}
+
+void GetNumberOfTimestepsCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_numberOfTimesteps = reader.getUInt64("numberOfTimesteps");
+}
+
+bool GetNumberOfTimestepsCmd::ReplyParams::equals(const GetNumberOfTimestepsCmd::ReplyParams& other) const {
+    return m_numberOfTimesteps == other.m_numberOfTimesteps;
+}
+
+std::string GetNumberOfTimestepsCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "numberOfTimesteps: " << m_numberOfTimesteps;
+    return stream.str();
+}
+
+uint64_t GetNumberOfTimestepsCmd::ReplyParams::getNumberOfTimesteps() const {
+    return m_numberOfTimesteps;
 }
 
 #undef PYTHON_MAGIC_DEFINITION
@@ -450,6 +489,19 @@ std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::RequestParams&
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetNumberOfTimestepsCmd::RequestParams& lhs, const GetNumberOfTimestepsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetNumberOfTimestepsCmd::ReplyParams& lhs, const GetNumberOfTimestepsCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetNumberOfTimestepsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetNumberOfTimestepsCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

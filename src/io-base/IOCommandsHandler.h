@@ -78,5 +78,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetNumberOfTimestepsHdl : public ICommandHandler {
+public:
+    GetNumberOfTimestepsHdl(const GetNumberOfTimestepsRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetNumberOfTimestepsRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

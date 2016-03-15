@@ -294,6 +294,46 @@ std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::ReplyParams& o
 using MaxMinForKeyRequest = RequestTemplate<MaxMinForKeyCmd>;
 using MaxMinForKeyReply = ReplyTemplate<MaxMinForKeyCmd>;
 
+struct GetNumberOfTimestepsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t numberOfTimesteps);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getNumberOfTimesteps() const;
+
+    private:
+        uint64_t m_numberOfTimesteps;
+    };
+};
+
+bool operator==(const GetNumberOfTimestepsCmd::RequestParams& lhs, const GetNumberOfTimestepsCmd::RequestParams& rhs);
+bool operator==(const GetNumberOfTimestepsCmd::ReplyParams& lhs, const GetNumberOfTimestepsCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetNumberOfTimestepsCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetNumberOfTimestepsCmd::ReplyParams& obj);
+
+using GetNumberOfTimestepsRequest = RequestTemplate<GetNumberOfTimestepsCmd>;
+using GetNumberOfTimestepsReply = ReplyTemplate<GetNumberOfTimestepsCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

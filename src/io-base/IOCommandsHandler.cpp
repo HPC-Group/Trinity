@@ -97,4 +97,12 @@ std::unique_ptr<Reply> MaxMinForKeyHdl::execute() {
     return mocca::make_unique<MaxMinForKeyReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetNumberOfTimestepsHdl::GetNumberOfTimestepsHdl(const GetNumberOfTimestepsRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetNumberOfTimestepsHdl::execute() {
+    GetNumberOfTimestepsCmd::ReplyParams params(m_session->getIO().getNumberOfTimesteps());
+    return mocca::make_unique<GetNumberOfTimestepsReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

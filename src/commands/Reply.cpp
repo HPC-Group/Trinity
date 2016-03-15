@@ -48,6 +48,9 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 	else if (type == MaxMinForKeyReply::Ifc::Type) {
 		return reader->getSerializablePtr<MaxMinForKeyReply>("rep");
 	}
+	else if (type == GetNumberOfTimestepsReply::Ifc::Type) {
+		return reader->getSerializablePtr<GetNumberOfTimestepsReply>("rep");
+	}
 
 #undef PYTHON_MAGIC_IO
 

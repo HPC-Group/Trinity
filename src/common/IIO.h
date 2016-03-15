@@ -10,15 +10,15 @@ class IIO {
 public:
     virtual ~IIO() {}
 
-    virtual int getLODLevelCount() const = 0;
 
     // changed from Vec3ui to Vec3ui64 (who did that? Andre?)
     virtual Core::Math::Vec3ui64 getMaxBrickSize() const = 0;
     virtual Core::Math::Vec3ui64 getMaxUsedBrickSizes() const = 0;
     virtual MinMaxBlock maxMinForKey(const BrickKey&) const = 0;
+    virtual int getLODLevelCount() const = 0;
+    virtual uint64_t getNumberOfTimesteps() const = 0;
 
 
-    //virtual uint64_t getNumberOfTimesteps() const = 0;
     //virtual Core::Math::Vec3ui64 getDomainSize(const uint64_t lod = 0, const uint64_t ts = 0) const = 0;
     //virtual Core::Math::Mat4d getTransformation() const = 0;
     //virtual Core::Math::Vec3ui getBrickOverlapSize() const = 0;
