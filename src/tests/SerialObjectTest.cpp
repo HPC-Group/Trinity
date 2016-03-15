@@ -45,7 +45,10 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
     TypeParam factory;
     auto writer = factory.createWriter();
     writer->appendFloat("float", 3.14f);
-    writer->appendInt32("int", 42);
+    writer->appendInt("int32", -17);
+    writer->appendInt("uint32", 42u);
+    writer->appendInt("int64", static_cast<int64_t>(-23));
+    writer->appendInt("uint64", static_cast<uint64_t>(123u));
     writer->appendBool("boolTrue", true);
     writer->appendBool("boolFalse", false);
     writer->appendString("string", "Hello");
@@ -53,7 +56,10 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ(3.14f, reader->getFloat("float"));
-    ASSERT_EQ(42, reader->getInt32("int"));
+    ASSERT_EQ(-17, reader->getInt32("int32"));
+    ASSERT_EQ(42u, reader->getUInt32("uint32"));
+    ASSERT_EQ(static_cast<int64_t>(-23), reader->getInt64("int64"));
+    ASSERT_EQ(static_cast<uint64_t>(123u), reader->getUInt64("uint64"));
     ASSERT_EQ(true, reader->getBool("boolTrue"));
     ASSERT_EQ(false, reader->getBool("boolFalse"));
     ASSERT_EQ("Hello", reader->getString("string"));
@@ -88,7 +94,7 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
     TypeParam factory;
     auto writer = factory.createWriter();
     writer->appendFloatVec("float", std::vector<float>{0.1f, 0.2f, 0.3f});
-    writer->appendInt32Vec("int", std::vector<int>{1, 2, 3, 4});
+    writer->appendIntVec("int", std::vector<int>{1, 2, 3, 4});
     writer->appendBoolVec("bool", std::vector<bool>{true, false, true});
     writer->appendStringVec("string", std::vector<std::string>{"Hello", "World"});
 

@@ -8,12 +8,23 @@ void SimpleStringWriter::appendFloat(const std::string& key, float value) {
     m_stream << value << " ";
 }
 
-void SimpleStringWriter::appendInt32(const std::string& key, int32_t value) {
+void SimpleStringWriter::appendInt(const std::string& key, int32_t value) {
     m_stream << value << " ";
 }
 
-void SimpleStringWriter::appendBool(const std::string & key, bool value)
-{
+void SimpleStringWriter::appendInt(const std::string& key, uint32_t value) {
+    m_stream << value << " ";
+}
+
+void SimpleStringWriter::appendInt(const std::string& key, int64_t value) {
+    m_stream << value << " ";
+}
+
+void SimpleStringWriter::appendInt(const std::string& key, uint64_t value) {
+    m_stream << value << " ";
+}
+
+void SimpleStringWriter::appendBool(const std::string& key, bool value) {
     m_stream << value << " ";
 }
 
@@ -32,7 +43,7 @@ void SimpleStringWriter::appendFloatVec(const std::string& key, const std::vecto
     }
 }
 
-void SimpleStringWriter::appendInt32Vec(const std::string& key, const std::vector<int32_t>& vec) {
+void SimpleStringWriter::appendIntVec(const std::string& key, const std::vector<int32_t>& vec) {
     m_stream << vec.size() << " ";
     for (size_t i = 0; i < vec.size(); ++i) {
         m_stream << vec[i] << " ";

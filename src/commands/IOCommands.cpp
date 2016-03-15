@@ -24,7 +24,7 @@ IOData::IOData(const std::string& name, int fileId, DataType dataType)
 
 void IOData::serialize(ISerialWriter& writer) const {
     writer.appendString("name", m_name);
-    writer.appendInt32("fileid", m_fileId);
+    writer.appendInt("fileid", m_fileId);
     writer.appendString("datatype", dataTypeMapper().getByFirst(m_dataType));
 }
 
@@ -74,7 +74,7 @@ std::string ListFilesCmd::RequestParams::toString() const {
 }
 
 void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt32("dirid", m_dirID);
+    writer.appendInt("dirid", m_dirID);
 }
 
 void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {
@@ -123,7 +123,7 @@ InitIOSessionCmd::RequestParams::RequestParams(const std::string& protocol, int 
 
 void InitIOSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendString("protocol", m_protocol);
-    writer.appendInt32("fileid", m_fileId);
+    writer.appendInt("fileid", m_fileId);
 }
 
 void InitIOSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
@@ -194,7 +194,7 @@ GetLODLevelCountCmd::ReplyParams::ReplyParams(int lodCount)
     : m_lodCount(lodCount) {}
 
 void GetLODLevelCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt32("lodcount", m_lodCount);
+    writer.appendInt("lodcount", m_lodCount);
 }
 
 void GetLODLevelCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {

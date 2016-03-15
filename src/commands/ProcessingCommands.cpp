@@ -13,8 +13,8 @@ StreamingParams::StreamingParams()
     , m_resY(768) {}
 
 void StreamingParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt32("xres", m_resX);
-    writer.appendInt32("yres", m_resY);
+    writer.appendInt("xres", m_resX);
+    writer.appendInt("yres", m_resY);
 }
 
 void StreamingParams::deserialize(const ISerialReader& reader) {
@@ -54,7 +54,7 @@ InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protoc
 void InitProcessingSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendString("protocol", m_protocol);
     writer.appendString("rendertype", Vcl::instance().toString(m_renderType));
-    writer.appendInt32("fileid", m_fileId);
+    writer.appendInt("fileid", m_fileId);
     writer.appendString("ioendpoint", m_ioEndpoint.toString());
     writer.appendObject("streamingparams", m_streamingParams);
 }
@@ -168,7 +168,7 @@ InitContextCmd::RequestParams::RequestParams(int32_t value)
     : m_dummy(value) {}
 
 void InitContextCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt32("dummy", m_dummy);
+    writer.appendInt("dummy", m_dummy);
 }
 
 void InitContextCmd::RequestParams::deserialize(const ISerialReader& reader) {

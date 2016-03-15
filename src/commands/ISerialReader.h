@@ -15,6 +15,9 @@ public:
 
     virtual float getFloat(const std::string& key) const = 0;
     virtual int32_t getInt32(const std::string& key) const = 0;
+    virtual uint32_t getUInt32(const std::string& key) const = 0;
+    virtual int64_t getInt64(const std::string& key) const = 0;
+    virtual uint64_t getUInt64(const std::string& key) const = 0;
     virtual bool getBool(const std::string& key) const = 0;
     virtual std::string getString(const std::string& key) const = 0;
     template <typename T> T getSerializable(const std::string& key) const {

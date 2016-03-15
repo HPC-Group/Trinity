@@ -8,7 +8,19 @@ void JsonWriter::appendFloat(const std::string& key, float value) {
     m_root[key] = value;
 }
 
-void JsonWriter::appendInt32(const std::string& key, int32_t value) {
+void JsonWriter::appendInt(const std::string& key, int32_t value) {
+    m_root[key] = value;
+}
+
+void JsonWriter::appendInt(const std::string& key, uint32_t value) {
+    m_root[key] = value;
+}
+
+void JsonWriter::appendInt(const std::string& key, int64_t value) {
+    m_root[key] = value;
+}
+
+void JsonWriter::appendInt(const std::string& key, uint64_t value) {
     m_root[key] = value;
 }
 
@@ -32,7 +44,7 @@ void JsonWriter::appendFloatVec(const std::string& key, const std::vector<float>
     }
 }
 
-void JsonWriter::appendInt32Vec(const std::string& key, const std::vector<int32_t>& vec) {
+void JsonWriter::appendIntVec(const std::string& key, const std::vector<int32_t>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = vec[i];
     }

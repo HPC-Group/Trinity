@@ -14,7 +14,25 @@ float SimpleStringReader::getFloat(const std::string& key) const {
 }
 
 int32_t SimpleStringReader::getInt32(const std::string& key) const {
-    int x;
+    int32_t x;
+    m_stream >> x;
+    return x;
+}
+
+uint32_t SimpleStringReader::getUInt32(const std::string& key) const {
+    uint32_t x;
+    m_stream >> x;
+    return x;
+}
+
+int64_t SimpleStringReader::getInt64(const std::string& key) const {
+    int64_t x;
+    m_stream >> x;
+    return x;
+}
+
+uint64_t SimpleStringReader::getUInt64(const std::string& key) const {
+    uint64_t x;
     m_stream >> x;
     return x;
 }

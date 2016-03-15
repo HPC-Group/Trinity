@@ -1,7 +1,7 @@
 #include "commands/JsonReader.h"
 
-#include "common/TrinityError.h"
 #include "commands/ISerializable.h"
+#include "common/TrinityError.h"
 
 using namespace trinity;
 
@@ -23,6 +23,18 @@ float JsonReader::getFloat(const std::string& key) const {
 
 int32_t JsonReader::getInt32(const std::string& key) const {
     return m_root[key].asInt();
+}
+
+uint32_t JsonReader::getUInt32(const std::string& key) const {
+    return m_root[key].asUInt();
+}
+
+int64_t JsonReader::getInt64(const std::string& key) const {
+    return m_root[key].asInt64();
+}
+
+uint64_t JsonReader::getUInt64(const std::string& key) const {
+    return m_root[key].asUInt64();
 }
 
 bool JsonReader::getBool(const std::string& key) const {

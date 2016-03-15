@@ -12,6 +12,9 @@ public:
 
     float getFloat(const std::string& key) const override;
     int32_t getInt32(const std::string& key) const override;
+    uint32_t getUInt32(const std::string& key) const override;
+    int64_t getInt64(const std::string& key) const override;
+    uint64_t getUInt64(const std::string& key) const override;
     bool getBool(const std::string& key) const override;
     std::string getString(const std::string& key) const override;
 
