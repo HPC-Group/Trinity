@@ -27,10 +27,11 @@ TYPED_TEST(MathSerializationTest, Vector2_Int32t) {
     
     int32_t x = 17;
     int32_t y = 42;
-    Core::Math::VECTOR2<int32_t> vec(x, y);
+    Core::Math::VECTOR2<int> vec(x, y);
     
     writer->appendObject("vec", vec);
-    auto reader = factory.createReader(writer->write());
+    auto byteArray = writer->write();
+    auto reader = factory.createReader(byteArray);
     auto result = reader->getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -45,7 +46,8 @@ TYPED_TEST(MathSerializationTest, Vector2_Float) {
     Core::Math::VECTOR2<float> vec(x, y);
 
     writer->appendObject("vec", vec);
-    auto reader = factory.createReader(writer->write());
+    auto byteArray = writer->write();
+    auto reader = factory.createReader(byteArray);
     auto result = reader->getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
