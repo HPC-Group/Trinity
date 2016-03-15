@@ -218,6 +218,48 @@ std::string GetLODLevelCountCmd::ReplyParams::toString() const {
 #define PYTHON_MAGIC_DEFINITION
 
 
+////////////// GetMaxBrickSizeCmd //////////////
+
+VclType GetMaxBrickSizeCmd::Type = VclType::GetMaxBrickSize;
+
+void GetMaxBrickSizeCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetMaxBrickSizeCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetMaxBrickSizeCmd::RequestParams::equals(const GetMaxBrickSizeCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetMaxBrickSizeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetMaxBrickSizeCmd::ReplyParams::ReplyParams(const Core::Math::Vec3ui64& maxBrickSize)
+    : m_maxBrickSize(maxBrickSize) {}
+
+void GetMaxBrickSizeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("maxBrickSize", m_maxBrickSize);
+}
+
+void GetMaxBrickSizeCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_maxBrickSize = reader.getSerializable<Core::Math::Vec3ui64>("maxBrickSize");
+}
+
+bool GetMaxBrickSizeCmd::ReplyParams::equals(const GetMaxBrickSizeCmd::ReplyParams& other) const {
+    return m_maxBrickSize == other.m_maxBrickSize;
+}
+
+std::string GetMaxBrickSizeCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "maxBrickSize: " << m_maxBrickSize;
+    return stream.str();
+}
+
+Core::Math::Vec3ui64 GetMaxBrickSizeCmd::ReplyParams::getMaxBrickSize() const {
+    return m_maxBrickSize;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -270,6 +312,19 @@ std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParam
 
 #define PYTHON_MAGIC
 
+
+bool operator==(const GetMaxBrickSizeCmd::RequestParams& lhs, const GetMaxBrickSizeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetMaxBrickSizeCmd::ReplyParams& lhs, const GetMaxBrickSizeCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetMaxBrickSizeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetMaxBrickSizeCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
 
 #undef PYTHON_MAGIC
 }

@@ -4,7 +4,10 @@
 #include "commands/Request.h"
 #include "commands/Reply.h"
 
+#include "silverbullet/math/Vectors.h"
+
 #include "mocca/base/BidirectionalMap.h"
+
 
 namespace trinity {
 
@@ -162,6 +165,46 @@ std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParam
 
 #define PYTHON_MAGIC
 
+
+struct GetMaxBrickSizeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec3ui64& maxBrickSize);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec3ui64 getMaxBrickSize() const;
+
+    private:
+        Core::Math::Vec3ui64 m_maxBrickSize;
+    };
+};
+
+bool operator==(const GetMaxBrickSizeCmd::RequestParams& lhs, const GetMaxBrickSizeCmd::RequestParams& rhs);
+bool operator==(const GetMaxBrickSizeCmd::ReplyParams& lhs, const GetMaxBrickSizeCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetMaxBrickSizeCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetMaxBrickSizeCmd::ReplyParams& obj);
+
+using GetMaxBrickSizeRequest = RequestTemplate<GetMaxBrickSizeCmd>;
+using GetMaxBrickSizeReply = ReplyTemplate<GetMaxBrickSizeCmd>;
 
 #undef PYTHON_MAGIC
 

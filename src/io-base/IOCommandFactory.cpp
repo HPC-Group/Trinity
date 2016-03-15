@@ -23,7 +23,6 @@ std::unique_ptr<ICommandHandler> IONodeCommandFactory::createHandler(const Reque
         break;
 #define PYTHON_MAGIC
 
-
 #undef PYTHON_MAGIC
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
@@ -37,6 +36,10 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetLODLevelCount:
         return mocca::make_unique<GetLODLevelCountHdl>(static_cast<const GetLODLevelCountRequest&>(request), session);
         break;
+    case VclType::GetMaxBrickSize: {
+        return mocca::make_unique<GetMaxBrickSizeHdl>(static_cast<const GetMaxBrickSizeRequest&>(request), session);
+        break;
+    }
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }

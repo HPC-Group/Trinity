@@ -38,6 +38,10 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 #define PYTHON_MAGIC_IO
 
 
+	else if (type == GetMaxBrickSizeReply::Ifc::Type) {
+		return reader->getSerializablePtr<GetMaxBrickSizeReply>("rep");
+	}
+
 #undef PYTHON_MAGIC_IO
 
     // error commands

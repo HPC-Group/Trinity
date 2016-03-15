@@ -45,5 +45,16 @@ private:
 #define PYTHON_MAGIC
 
 
+class GetMaxBrickSizeHdl : public ICommandHandler {
+public:
+    GetMaxBrickSizeHdl(const GetMaxBrickSizeRequest& request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetMaxBrickSizeRequest m_request;
+    IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

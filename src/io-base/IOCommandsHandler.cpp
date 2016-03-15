@@ -71,4 +71,11 @@ std::unique_ptr<Reply> ListFilesHdl::execute() {
 
 
 
+GetMaxBrickSizeHdl::GetMaxBrickSizeHdl(const GetMaxBrickSizeRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetMaxBrickSizeHdl::execute() {
+    return nullptr; // TODO dmc
+}
+
 #undef PYTHON_MAGIC

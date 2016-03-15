@@ -42,6 +42,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 #define PYTHON_MAGIC_IO
 
 
+	else if (type == GetMaxBrickSizeRequest::Ifc::Type) {
+		return reader->getSerializablePtr<GetMaxBrickSizeRequest>("req");
+	}
+
 #undef PYTHON_MAGIC_IO
 
     throw TrinityError("Invalid request type", __FILE__, __LINE__);

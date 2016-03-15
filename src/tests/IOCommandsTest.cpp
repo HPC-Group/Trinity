@@ -78,3 +78,17 @@ TEST_F(IOCommandsTest, ListFilesReqRep) {
         ASSERT_THROW(trinity::testing::handleRequest<ListFilesHdl>(request, static_cast<IONode*>(nullptr)), TrinityError);
     }
 }
+
+TEST_F(IOCommandsTest, GetMaxBrickSizeCmd) {
+    {
+        GetMaxBrickSizeCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        Core::Math::Vec3ui64 vec(1, 2, 3);
+        GetMaxBrickSizeCmd::ReplyParams target(vec);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
