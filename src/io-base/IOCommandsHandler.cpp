@@ -14,7 +14,7 @@ InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request, IONode* 
 std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     auto requestParams = m_request.getParams();
 
-    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), requestParams.getFileId());
+    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), IOSession::createIO(requestParams.getFileId()));
     session->start();
     
     InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());

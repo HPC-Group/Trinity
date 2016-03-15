@@ -9,15 +9,27 @@
 #include "io-base/IOCommandsHandler.h"
 
 #include "tests/TestUtils.h"
+#include "tests/IOMock.h"
+
+#include "mocca/net/ConnectionFactorySelector.h"
 
 using namespace trinity;
+using namespace ::testing;
 
 
 class IOCommandsTest : public ::testing::Test {
 protected:
-    IOCommandsTest() {}
+    IOCommandsTest() {
+        mocca::net::ConnectionFactorySelector::addDefaultFactories();
+    }
 
-    virtual ~IOCommandsTest() {}
+    virtual ~IOCommandsTest() {
+        mocca::net::ConnectionFactorySelector::removeAll();
+    }
+
+    std::unique_ptr<IOSession> createMockSession() {
+        return mocca::make_unique<IOSession>("loopback", mocca::make_unique<IOMock>());
+    }
 };
 
 TEST_F(IOCommandsTest, InitIOSessionCmd) {
@@ -93,4 +105,12 @@ TEST_F(IOCommandsTest, GetMaxBrickSizeCmd) {
     }
 }
 
-// TODO dmc: create IIO mock for testing purposes
+TEST_F(IOCommandsTest, GetMaxBrickSizeReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getMaxBrickSize()).Times(1).WillOnce(Return(Core::Math::Vec3ui64(1, 2, 3)));
+
+    GetMaxBrickSizeCmd::RequestParams requestParams;
+    GetMaxBrickSizeRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetMaxBrickSizeHdl>(request, session.get());
+    ASSERT_EQ(Core::Math::Vec3ui64(1, 2, 3), reply.getParams().getMaxBrickSize());
+}

@@ -17,12 +17,13 @@
 namespace trinity {
 class IOSession : public AbstractSession {
 public:
-    IOSession(const std::string& protocol, int fileId);
+    IOSession(const std::string& protocol, std::unique_ptr<IIO> io);
 
     const IIO& getIO() const { return *m_io; }
+    
+    static std::unique_ptr<IIO> createIO(int fileId);
 
 private:
-    std::unique_ptr<IIO> createIO(int fileId);
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
 
 private:

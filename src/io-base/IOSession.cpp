@@ -13,9 +13,8 @@
 
 using namespace trinity;
 
-IOSession::IOSession(const std::string& protocol, int fileId)
-    : AbstractSession(protocol) {
-    m_io = createIO(fileId);
+IOSession::IOSession(const std::string& protocol, std::unique_ptr<IIO> io)
+    : AbstractSession(protocol), m_io(std::move(io)) {
 }
 
 std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId) {
