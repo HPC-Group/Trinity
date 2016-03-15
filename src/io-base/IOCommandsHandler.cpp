@@ -79,4 +79,12 @@ std::unique_ptr<Reply> GetMaxBrickSizeHdl::execute() {
     return mocca::make_unique<GetMaxBrickSizeReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetMaxUsedBrickSizesHdl::GetMaxUsedBrickSizesHdl(const GetMaxUsedBrickSizesRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetMaxUsedBrickSizesHdl::execute() {
+    GetMaxUsedBrickSizesCmd::ReplyParams params(m_session->getIO().getMaxUsedBrickSizes());
+    return mocca::make_unique<GetMaxUsedBrickSizesReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

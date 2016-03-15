@@ -56,5 +56,16 @@ private:
     IOSession* m_session;
 };
 
+class GetMaxUsedBrickSizesHdl : public ICommandHandler {
+public:
+    GetMaxUsedBrickSizesHdl(const GetMaxUsedBrickSizesRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetMaxUsedBrickSizesRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

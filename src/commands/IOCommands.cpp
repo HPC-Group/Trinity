@@ -260,6 +260,50 @@ Core::Math::Vec3ui64 GetMaxBrickSizeCmd::ReplyParams::getMaxBrickSize() const {
     return m_maxBrickSize;
 }
 
+////////////// GetMaxUsedBrickSizesCmd //////////////
+
+VclType GetMaxUsedBrickSizesCmd::Type = VclType::getMaxUsedBrickSizes;
+
+void GetMaxUsedBrickSizesCmd::RequestParams::serialize(ISerialWriter& writer) const {
+}
+
+void GetMaxUsedBrickSizesCmd::RequestParams::deserialize(const ISerialReader& reader) {
+}
+
+bool GetMaxUsedBrickSizesCmd::RequestParams::equals(const GetMaxUsedBrickSizesCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetMaxUsedBrickSizesCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetMaxUsedBrickSizesCmd::ReplyParams::ReplyParams(const Core::Math::Vec3ui64& maxUsedBrickSizes)
+    : m_maxUsedBrickSizes(maxUsedBrickSizes) {}
+
+void GetMaxUsedBrickSizesCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("maxUsedBrickSizes", m_maxUsedBrickSizes);
+}
+
+void GetMaxUsedBrickSizesCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_maxUsedBrickSizes = reader.getSerializable<Core::Math::Vec3ui64>("maxUsedBrickSizes");
+}
+
+bool GetMaxUsedBrickSizesCmd::ReplyParams::equals(const GetMaxUsedBrickSizesCmd::ReplyParams& other) const {
+    return m_maxUsedBrickSizes == other.m_maxUsedBrickSizes;
+}
+
+std::string GetMaxUsedBrickSizesCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "maxUsedBrickSizes: " << m_maxUsedBrickSizes;
+    return stream.str();
+}
+
+Core::Math::Vec3ui64 GetMaxUsedBrickSizesCmd::ReplyParams::getMaxUsedBrickSizes() const {
+    return m_maxUsedBrickSizes;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -323,6 +367,19 @@ std::ostream& operator<<(std::ostream& os, const GetMaxBrickSizeCmd::RequestPara
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetMaxBrickSizeCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetMaxUsedBrickSizesCmd::RequestParams& lhs, const GetMaxUsedBrickSizesCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetMaxUsedBrickSizesCmd::ReplyParams& lhs, const GetMaxUsedBrickSizesCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

@@ -206,6 +206,46 @@ std::ostream& operator<<(std::ostream& os, const GetMaxBrickSizeCmd::ReplyParams
 using GetMaxBrickSizeRequest = RequestTemplate<GetMaxBrickSizeCmd>;
 using GetMaxBrickSizeReply = ReplyTemplate<GetMaxBrickSizeCmd>;
 
+struct GetMaxUsedBrickSizesCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec3ui64& maxusedBrickSizes);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec3ui64 getMaxUsedBrickSizes() const;
+
+    private:
+        Core::Math::Vec3ui64 m_maxUsedBrickSizes;
+    };
+};
+
+bool operator==(const GetMaxUsedBrickSizesCmd::RequestParams& lhs, const GetMaxUsedBrickSizesCmd::RequestParams& rhs);
+bool operator==(const GetMaxUsedBrickSizesCmd::ReplyParams& lhs, const GetMaxUsedBrickSizesCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::ReplyParams& obj);
+
+using GetMaxUsedBrickSizesRequest = RequestTemplate<GetMaxUsedBrickSizesCmd>;
+using GetMaxUsedBrickSizesReply = ReplyTemplate<GetMaxUsedBrickSizesCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

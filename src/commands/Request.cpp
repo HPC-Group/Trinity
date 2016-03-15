@@ -45,6 +45,9 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 	else if (type == GetMaxBrickSizeRequest::Ifc::Type) {
 		return reader->getSerializablePtr<GetMaxBrickSizeRequest>("req");
 	}
+	else if (type == GetMaxUsedBrickSizesRequest::Ifc::Type) {
+		return reader->getSerializablePtr<GetMaxUsedBrickSizesRequest>("req");
+	}
 
 #undef PYTHON_MAGIC_IO
 

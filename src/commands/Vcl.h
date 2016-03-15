@@ -33,8 +33,9 @@ enum class VclType {
     ZoomCamera,
     Paint,
     GetMaxBrickSize,
+    getMaxUsedBrickSizes,
     First = InitRenderer,
-    Last = GetMaxBrickSize,
+    Last = getMaxUsedBrickSizes,
 };
 
 VclType& operator++(VclType& x);
@@ -78,6 +79,7 @@ private:
         m_cmdMap.insert("Paint", VclType::Paint);
         m_cmdMap.insert("ZoomCamera", VclType::ZoomCamera);
         m_cmdMap.insert("GetMaxBrickSize", VclType::GetMaxBrickSize);
+        m_cmdMap.insert("getMaxUsedBrickSizes", VclType::getMaxUsedBrickSizes);
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));

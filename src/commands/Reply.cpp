@@ -41,6 +41,9 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 	else if (type == GetMaxBrickSizeReply::Ifc::Type) {
 		return reader->getSerializablePtr<GetMaxBrickSizeReply>("rep");
 	}
+	else if (type == GetMaxUsedBrickSizesReply::Ifc::Type) {
+		return reader->getSerializablePtr<GetMaxUsedBrickSizesReply>("rep");
+	}
 
 #undef PYTHON_MAGIC_IO
 

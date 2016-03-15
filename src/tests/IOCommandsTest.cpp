@@ -114,3 +114,27 @@ TEST_F(IOCommandsTest, GetMaxBrickSizeReqRep) {
     auto reply = trinity::testing::handleRequest<GetMaxBrickSizeHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui64(1, 2, 3), reply.getParams().getMaxBrickSize());
 }
+
+TEST_F(IOCommandsTest, GetMaxUsedBrickSizesCmd) {
+    {
+        GetMaxUsedBrickSizesCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        Core::Math::Vec3ui64 vec(1, 2, 3);
+        GetMaxUsedBrickSizesCmd::ReplyParams target(vec);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetMaxUsedBrickSizesReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getMaxUsedBrickSizes()).Times(1).WillOnce(Return(Core::Math::Vec3ui64(1, 2, 3)));
+
+    GetMaxUsedBrickSizesCmd::RequestParams requestParams;
+    GetMaxUsedBrickSizesRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetMaxUsedBrickSizesHdl>(request, session.get());
+    ASSERT_EQ(Core::Math::Vec3ui64(1, 2, 3), reply.getParams().getMaxUsedBrickSizes());
+}

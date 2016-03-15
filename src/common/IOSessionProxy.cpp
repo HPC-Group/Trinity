@@ -33,11 +33,13 @@ Core::Math::Vec3ui64 IOSessionProxy::getMaxBrickSize() const  {
     return reply->getParams().getMaxBrickSize();
 }
 
-//Core::Math::Vec3ui64 IOSessionProxy::getMaxUsedBrickSizes() const {
-//    // TODO
-//    Core::Math::Vec3ui64 x; return x;
-//}
-//
+Core::Math::Vec3ui64 IOSessionProxy::getMaxUsedBrickSizes() const {
+    GetMaxUsedBrickSizesCmd::RequestParams params;
+    GetMaxUsedBrickSizesRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getMaxUsedBrickSizes();
+}
+
 //MinMaxBlock IOSessionProxy::maxMinForKey(const BrickKey&) const {
 //    // TODO
 //    MinMaxBlock x; return x;

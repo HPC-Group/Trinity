@@ -17,9 +17,9 @@ public:
     IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint);
     int getLODLevelCount() const override;
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
+    Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
 
 
-    //Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
     //MinMaxBlock maxMinForKey(const BrickKey&) const override;
     //uint64_t getNumberOfTimesteps() const override;
     //Core::Math::Vec3ui64 getDomainSize(const uint64_t lod = 0, const uint64_t ts = 0) const override;
