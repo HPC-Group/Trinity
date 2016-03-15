@@ -17,9 +17,9 @@ public:
     virtual MinMaxBlock maxMinForKey(const BrickKey&) const = 0;
     virtual int getLODLevelCount() const = 0;
     virtual uint64_t getNumberOfTimesteps() const = 0;
+    virtual Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality, uint64_t ts) const = 0;
 
 
-    //virtual Core::Math::Vec3ui64 getDomainSize(const uint64_t lod = 0, const uint64_t ts = 0) const = 0;
     //virtual Core::Math::Mat4d getTransformation() const = 0;
     //virtual Core::Math::Vec3ui getBrickOverlapSize() const = 0;
     //virtual uint64_t getLargestSingleBrickLOD(uint64_t ts) const = 0;

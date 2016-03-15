@@ -400,6 +400,75 @@ uint64_t GetNumberOfTimestepsCmd::ReplyParams::getNumberOfTimesteps() const {
     return m_numberOfTimesteps;
 }
 
+
+////////////// GetDomainSizeCmd //////////////
+
+VclType GetDomainSizeCmd::Type = VclType::GetDomainSize;
+
+GetDomainSizeCmd::RequestParams::RequestParams(uint64_t lod, uint64_t modality, uint64_t ts)
+    : m_lod(lod)
+    , m_modality(modality)
+    , m_ts(ts) {}
+
+void GetDomainSizeCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("lod", m_lod);
+    writer.appendInt("modality", m_modality);
+    writer.appendInt("ts", m_ts);
+}
+
+void GetDomainSizeCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_lod = reader.getUInt64("lod");
+    m_modality = reader.getUInt64("modality");
+    m_ts = reader.getUInt64("ts");
+}
+
+bool GetDomainSizeCmd::RequestParams::equals(const GetDomainSizeCmd::RequestParams& other) const {
+    return m_lod == other.m_lod && m_modality == other.m_modality && m_ts == other.m_ts;
+}
+
+std::string GetDomainSizeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "lod: " << m_lod << "; modality: " << m_modality << "; ts: " << m_ts;
+    return stream.str();
+}
+
+uint64_t GetDomainSizeCmd::RequestParams::getLod() const {
+    return m_lod;
+}
+
+uint64_t GetDomainSizeCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+uint64_t GetDomainSizeCmd::RequestParams::getTs() const {
+    return m_ts;
+}
+
+GetDomainSizeCmd::ReplyParams::ReplyParams(const Core::Math::Vec3ui64& domainSize)
+    : m_domainSize(domainSize) {}
+
+void GetDomainSizeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("domainSize", m_domainSize);
+}
+
+void GetDomainSizeCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_domainSize = reader.getSerializable<Core::Math::Vec3ui64>("domainSize");
+}
+
+bool GetDomainSizeCmd::ReplyParams::equals(const GetDomainSizeCmd::ReplyParams& other) const {
+    return m_domainSize == other.m_domainSize;
+}
+
+std::string GetDomainSizeCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "domainSize: " << m_domainSize;
+    return stream.str();
+}
+
+Core::Math::Vec3ui64 GetDomainSizeCmd::ReplyParams::getDomainSize() const {
+    return m_domainSize;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -502,6 +571,19 @@ std::ostream& operator<<(std::ostream& os, const GetNumberOfTimestepsCmd::Reques
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetNumberOfTimestepsCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetDomainSizeCmd::RequestParams& lhs, const GetDomainSizeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetDomainSizeCmd::ReplyParams& lhs, const GetDomainSizeCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetDomainSizeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetDomainSizeCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

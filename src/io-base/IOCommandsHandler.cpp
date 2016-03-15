@@ -105,4 +105,15 @@ std::unique_ptr<Reply> GetNumberOfTimestepsHdl::execute() {
     return mocca::make_unique<GetNumberOfTimestepsReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetDomainSizeHdl::GetDomainSizeHdl(const GetDomainSizeRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetDomainSizeHdl::execute() {
+    auto lod = m_request.getParams().getLod();
+    auto modality = m_request.getParams().getModality();
+    auto ts = m_request.getParams().getTs();
+    GetDomainSizeCmd::ReplyParams params(m_session->getIO().getDomainSize(lod, modality, ts));
+    return mocca::make_unique<GetDomainSizeReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

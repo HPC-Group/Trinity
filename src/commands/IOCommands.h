@@ -334,6 +334,55 @@ std::ostream& operator<<(std::ostream& os, const GetNumberOfTimestepsCmd::ReplyP
 using GetNumberOfTimestepsRequest = RequestTemplate<GetNumberOfTimestepsCmd>;
 using GetNumberOfTimestepsReply = ReplyTemplate<GetNumberOfTimestepsCmd>;
 
+struct GetDomainSizeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams(uint64_t lod = 0, uint64_t modality = 0, uint64_t ts = 0);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getLod() const;
+        uint64_t getModality() const;
+        uint64_t getTs() const;
+
+    private:
+        uint64_t m_lod;
+        uint64_t m_modality;
+        uint64_t m_ts;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec3ui64& domainSize);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec3ui64 getDomainSize() const;
+
+    private:
+        Core::Math::Vec3ui64 m_domainSize;
+    };
+};
+
+bool operator==(const GetDomainSizeCmd::RequestParams& lhs, const GetDomainSizeCmd::RequestParams& rhs);
+bool operator==(const GetDomainSizeCmd::ReplyParams& lhs, const GetDomainSizeCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetDomainSizeCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetDomainSizeCmd::ReplyParams& obj);
+
+using GetDomainSizeRequest = RequestTemplate<GetDomainSizeCmd>;
+using GetDomainSizeReply = ReplyTemplate<GetDomainSizeCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

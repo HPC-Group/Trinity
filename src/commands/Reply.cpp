@@ -51,6 +51,9 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 	else if (type == GetNumberOfTimestepsReply::Ifc::Type) {
 		return reader->getSerializablePtr<GetNumberOfTimestepsReply>("rep");
 	}
+	else if (type == GetDomainSizeReply::Ifc::Type) {
+		return reader->getSerializablePtr<GetDomainSizeReply>("rep");
+	}
 
 #undef PYTHON_MAGIC_IO
 

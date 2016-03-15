@@ -89,5 +89,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetDomainSizeHdl : public ICommandHandler {
+public:
+    GetDomainSizeHdl(const GetDomainSizeRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetDomainSizeRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

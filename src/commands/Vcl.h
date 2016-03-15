@@ -36,6 +36,7 @@ enum class VclType {
     GetMaxUsedBrickSizes,
     MaxMinForKey,
     GetNumberOfTimesteps,
+    GetDomainSize,
     First = InitRenderer,
     Last = GetNumberOfTimesteps,
 };
@@ -84,6 +85,7 @@ private:
         m_cmdMap.insert("GetMaxUsedBrickSizes", VclType::GetMaxUsedBrickSizes);
         m_cmdMap.insert("MaxMinForKey", VclType::MaxMinForKey);
         m_cmdMap.insert("GetNumberOfTimesteps", VclType::GetNumberOfTimesteps);
+        m_cmdMap.insert("GetDomainSize", VclType::GetDomainSize);
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));

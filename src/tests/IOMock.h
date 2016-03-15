@@ -9,4 +9,5 @@ public:
     MOCK_CONST_METHOD0(getMaxUsedBrickSizes, Core::Math::Vec3ui64());
     MOCK_CONST_METHOD1(maxMinForKey, trinity::MinMaxBlock(const trinity::BrickKey&));
     MOCK_CONST_METHOD0(getNumberOfTimesteps, uint64_t());
+    MOCK_CONST_METHOD3(getDomainSize, Core::Math::Vec3ui64(const uint64_t, const uint64_t, const uint64_t));
 };

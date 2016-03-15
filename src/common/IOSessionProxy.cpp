@@ -54,11 +54,13 @@ uint64_t IOSessionProxy::getNumberOfTimesteps() const {
     return reply->getParams().getNumberOfTimesteps();
 }
 
-//Core::Math::Vec3ui64 IOSessionProxy::getDomainSize(const uint64_t lod, const uint64_t ts) const {
-//    // TODO
-//    Core::Math::Vec3ui64 x; return x;
-//}
-//
+Core::Math::Vec3ui64 IOSessionProxy::getDomainSize(uint64_t lod, uint64_t modality, uint64_t ts) const {
+    GetDomainSizeCmd::RequestParams params(lod, modality, ts);
+    GetDomainSizeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getDomainSize();
+}
+
 //Core::Math::Mat4d IOSessionProxy::getTransformation() const {
 //    // TODO
 //    Core::Math::Mat4d x; return x;

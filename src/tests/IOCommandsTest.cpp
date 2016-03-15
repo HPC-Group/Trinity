@@ -199,3 +199,26 @@ TEST_F(IOCommandsTest, GetNumberOfTimestepsReqRep) {
     auto reply = trinity::testing::handleRequest<GetNumberOfTimestepsHdl>(request, session.get());
     ASSERT_EQ(42, reply.getParams().getNumberOfTimesteps());
 }
+
+TEST_F(IOCommandsTest, GetDomainSizeCmd) {
+    {
+        GetDomainSizeCmd::RequestParams target(1, 2, 3);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetDomainSizeCmd::ReplyParams target(Core::Math::Vec3ui64(4, 5, 6));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetDomainSizeReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDomainSize(_,_,_)).Times(1).WillOnce(Return(Core::Math::Vec3ui64(4, 5, 6)));
+
+    GetDomainSizeCmd::RequestParams requestParams;
+    GetDomainSizeRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetDomainSizeHdl>(request, session.get());
+    ASSERT_EQ(Core::Math::Vec3ui64(4, 5, 6), reply.getParams().getDomainSize());
+}
