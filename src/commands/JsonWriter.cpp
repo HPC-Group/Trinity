@@ -8,20 +8,24 @@ void JsonWriter::appendFloat(const std::string& key, float value) {
     m_root[key] = value;
 }
 
-void JsonWriter::appendInt(const std::string& key, int32_t value) {
+void JsonWriter::appendDouble(const std::string& key, double value) {
     m_root[key] = value;
+}
+
+void JsonWriter::appendInt(const std::string& key, int32_t value) {
+    m_root[key] = static_cast<JsonCpp::Int>(value);
 }
 
 void JsonWriter::appendInt(const std::string& key, uint32_t value) {
-    m_root[key] = value;
+    m_root[key] = static_cast<JsonCpp::UInt>(value);
 }
 
 void JsonWriter::appendInt(const std::string& key, int64_t value) {
-    m_root[key] = value;
+    m_root[key] = static_cast<JsonCpp::Int64>(value);
 }
 
 void JsonWriter::appendInt(const std::string& key, uint64_t value) {
-    m_root[key] = value;
+    m_root[key] = static_cast<JsonCpp::UInt64>(value);
 }
 
 void JsonWriter::appendBool(const std::string& key, bool value) {

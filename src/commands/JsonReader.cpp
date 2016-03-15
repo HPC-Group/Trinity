@@ -21,6 +21,10 @@ float JsonReader::getFloat(const std::string& key) const {
     return m_root[key].asFloat();
 }
 
+double JsonReader::getDouble(const std::string& key) const {
+    return m_root[key].asDouble();
+}
+
 int32_t JsonReader::getInt32(const std::string& key) const {
     return m_root[key].asInt();
 }

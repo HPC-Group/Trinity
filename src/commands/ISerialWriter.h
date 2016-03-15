@@ -14,6 +14,7 @@ public:
     virtual ~ISerialWriter() {}
 
     virtual void appendFloat(const std::string& key, float value) = 0;
+    virtual void appendDouble(const std::string& key, double value) = 0;
     virtual void appendInt(const std::string& key, int32_t value) = 0;
     virtual void appendInt(const std::string& key, uint32_t value) = 0;
     virtual void appendInt(const std::string& key, int64_t value) = 0;

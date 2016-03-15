@@ -8,6 +8,10 @@ void SimpleStringWriter::appendFloat(const std::string& key, float value) {
     m_stream << value << " ";
 }
 
+void SimpleStringWriter::appendDouble(const std::string& key, double value) {
+    m_stream << value << " ";
+}
+
 void SimpleStringWriter::appendInt(const std::string& key, int32_t value) {
     m_stream << value << " ";
 }

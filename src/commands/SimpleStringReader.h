@@ -11,6 +11,7 @@ public:
     SimpleStringReader(const std::string& str);
 
     float getFloat(const std::string& key) const override;
+    double getDouble(const std::string& key) const override;
     int32_t getInt32(const std::string& key) const override;
     uint32_t getUInt32(const std::string& key) const override;
     int64_t getInt64(const std::string& key) const override;
