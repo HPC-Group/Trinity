@@ -1,6 +1,8 @@
 #ifndef TUVOK_MAX_MIN_BLOCK_H
 #define TUVOK_MAX_MIN_BLOCK_H
 
+#include "commands/ISerializable.h"
+
 #include <algorithm>
 #include <cfloat>
 
@@ -8,8 +10,13 @@
 namespace trinity {
 
 /// Stores minimum and maximum data for a block of data.
-class MinMaxBlock {
+class MinMaxBlock : public SerializableTemplate<MinMaxBlock> {
 public:
+    double minScalar;
+    double maxScalar;
+    double minGradient;
+    double maxGradient;
+
   MinMaxBlock() :
    minScalar(DBL_MAX),
    maxScalar(-FLT_MAX),
@@ -32,11 +39,14 @@ public:
     maxGradient = std::max(maxGradient, other.maxGradient);
   }
 
-  double minScalar;
-  double maxScalar;
-  double minGradient;
-  double maxGradient;
+  void serialize(ISerialWriter& writer) const;
+  void deserialize(const ISerialReader& reader);
+
+  bool equals(const MinMaxBlock& other) const;
 };
+
+bool operator==(const MinMaxBlock& lhs, const MinMaxBlock& rhs);
+
 }
 #endif
 /*

@@ -138,3 +138,15 @@ TEST_F(IOCommandsTest, GetMaxUsedBrickSizesReqRep) {
     auto reply = trinity::testing::handleRequest<GetMaxUsedBrickSizesHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui64(1, 2, 3), reply.getParams().getMaxUsedBrickSizes());
 }
+
+TEST_F(IOCommandsTest, BrickKey) {
+    BrickKey target{ 1, 2, 3, 4 };
+    auto result = trinity::testing::writeAndRead(target);
+    ASSERT_EQ(target, result);
+}
+
+TEST_F(IOCommandsTest, MinMaxBlock) {
+    MinMaxBlock target{ 1.0, 2.0, 3.0, 4.0 };
+    auto result = trinity::testing::writeAndRead(target);
+    ASSERT_EQ(target, result);
+}

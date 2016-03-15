@@ -37,12 +37,16 @@
 
 #include "silverbullet/base/StdTuvokDefines.h"
 
+#include "silverbullet/math/Vectors.h"
+
+#include "commands/ISerializable.h"
+
 #include <functional>
 #include <memory>
 #include <tuple>
 #include <unordered_map>
 #include <utility>
-#include "silverbullet/math/Vectors.h"
+
 using Core::Math::Vec3f;
 using Core::Math::Vec3ui;
 
@@ -52,11 +56,24 @@ namespace trinity {
 /// into this table consists of an LOD index plus a brick index.
 /// An element in the table contains
 /// brick metadata, but no data; to obtain the data one must query the dataset.
-/// @todo FIXME: this can be a tuple internally, but the interface should be a
-///  struct or similar: if a new component gets added to the key which is not
-///  the last component, it shifts all the indices, necessitating massive code
-///  changes.
-typedef std::tuple<uint64_t, uint64_t, uint64_t, uint64_t> BrickKey; ///< modality + timestep + LOD + 1D brick index
+
+struct BrickKey : public SerializableTemplate<BrickKey> {
+    uint64_t modality;
+    uint64_t timestep;
+    uint64_t lod;
+    uint64_t index;
+
+    BrickKey() = default;
+    BrickKey(uint64_t m, uint64_t t, uint64_t l, uint64_t i) : modality(m), timestep(t), lod(l), index(i) {}
+    
+    bool equals(const BrickKey& other) const;
+
+    void serialize(ISerialWriter& writer) const;
+    void deserialize(const ISerialReader& reader);
+};
+
+bool operator==(const BrickKey& lhs, const BrickKey& rhs);
+
 struct BrickMD {
   Vec3f center; ///< center of the brick, in world coords
   Vec3f extents; ///< width/height/depth of the brick.
@@ -64,9 +81,9 @@ struct BrickMD {
 };
 struct BKeyHash : std::unary_function<BrickKey, std::size_t> {
   std::size_t operator()(const BrickKey& bk) const {
-    size_t ts    = std::hash<size_t>()(std::get<0>(bk));
-    size_t h_lod = std::hash<size_t>()(std::get<1>(bk));
-    size_t brick = std::hash<size_t>()(std::get<2>(bk));
+    size_t ts    = std::hash<size_t>()(bk.timestep);
+    size_t h_lod = std::hash<size_t>()(bk.lod);
+    size_t brick = std::hash<size_t>()(bk.index);
     size_t seed = h_lod;
     seed ^= brick + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     seed ^= ts + 0x9e3779b9 + (seed << 6) + (seed >> 2);
