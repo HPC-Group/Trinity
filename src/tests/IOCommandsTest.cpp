@@ -92,3 +92,5 @@ TEST_F(IOCommandsTest, GetMaxBrickSizeCmd) {
         ASSERT_EQ(target, result);
     }
 }
+
+// TODO dmc: create IIO mock for testing purposes

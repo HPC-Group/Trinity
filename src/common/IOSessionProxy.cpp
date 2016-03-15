@@ -22,21 +22,15 @@ IOSessionProxy::IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& 
 int IOSessionProxy::getLODLevelCount() const {
     GetLODLevelCountCmd::RequestParams params;
     GetLODLevelCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
-
     auto reply = sendRequestChecked(m_inputChannel, request);
-
     return reply->getParams().getLODLevelCount();
 }
 
-
-
-
-
-
-
 Core::Math::Vec3ui64 IOSessionProxy::getMaxBrickSize() const  {
-    // TODO
-    Core::Math::Vec3ui64 x; return x;
+    GetMaxBrickSizeCmd::RequestParams params;
+    GetMaxBrickSizeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getMaxBrickSize();
 }
 
 Core::Math::Vec3ui64 IOSessionProxy::getMaxUsedBrickSizes() const {

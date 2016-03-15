@@ -75,7 +75,8 @@ GetMaxBrickSizeHdl::GetMaxBrickSizeHdl(const GetMaxBrickSizeRequest& request, IO
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> GetMaxBrickSizeHdl::execute() {
-    return nullptr; // TODO dmc
+    GetMaxBrickSizeCmd::ReplyParams params(m_session->getIO().getMaxBrickSize());
+    return mocca::make_unique<GetMaxBrickSizeReply>(params, m_request.getRid(), m_session->getSid());
 }
 
 #undef PYTHON_MAGIC
