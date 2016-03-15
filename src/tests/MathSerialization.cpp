@@ -32,7 +32,7 @@ TYPED_TEST(MathSerializationTest, Vector2_Int32t) {
     writer->appendObject("vec", vec);
     auto byteArray = writer->write();
     auto reader = factory.createReader(byteArray);
-    auto result = reader->getSerializable<decltype(vec)>("vec");
+    auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
 }
@@ -48,7 +48,7 @@ TYPED_TEST(MathSerializationTest, Vector2_Float) {
     writer->appendObject("vec", vec);
     auto byteArray = writer->write();
     auto reader = factory.createReader(byteArray);
-    auto result = reader->getSerializable<decltype(vec)>("vec");
+    auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
 }
