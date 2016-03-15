@@ -25,6 +25,10 @@ double JsonReader::getDouble(const std::string& key) const {
     return m_root[key].asDouble();
 }
 
+uint8_t JsonReader::getUInt8(const std::string& key) const {
+    return static_cast<uint8_t>(m_root[key].asUInt()); // uint8 not supported by JSON
+}
+
 int32_t JsonReader::getInt32(const std::string& key) const {
     return m_root[key].asInt();
 }

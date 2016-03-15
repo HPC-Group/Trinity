@@ -45,6 +45,7 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
     TypeParam factory;
     auto writer = factory.createWriter();
     writer->appendFloat("float", 3.14f);
+    writer->appendInt("uint8", static_cast<uint8_t>(128));
     writer->appendInt("int32", -17);
     writer->appendInt("uint32", 42u);
     writer->appendInt("int64", static_cast<int64_t>(-23));
@@ -56,6 +57,7 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ(3.14f, reader->getFloat("float"));
+    ASSERT_EQ(static_cast<uint8_t>(128), reader->getUInt8("uint8"));
     ASSERT_EQ(-17, reader->getInt32("int32"));
     ASSERT_EQ(42u, reader->getUInt32("uint32"));
     ASSERT_EQ(static_cast<int64_t>(-23), reader->getInt64("int64"));

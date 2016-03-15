@@ -21,6 +21,22 @@ typedef ::testing::Types<
 
 TYPED_TEST_CASE(MathSerializationTest, MyTypes);
 
+TYPED_TEST(MathSerializationTest, Vector2_UInt8) {
+    TypeParam factory;
+    auto writer = factory.createWriter();
+
+    uint8_t x = 128;
+    uint8_t y = 250;
+    Core::Math::VECTOR2<uint8_t> vec(x, y);
+
+    writer->appendObject("vec", vec);
+    auto byteArray = writer->write();
+    auto reader = factory.createReader(byteArray);
+    auto result = reader->template getSerializable<decltype(vec)>("vec");
+    ASSERT_EQ(x, result.x);
+    ASSERT_EQ(y, result.y);
+}
+
 TYPED_TEST(MathSerializationTest, Vector2_Int32) {
     TypeParam factory;
     auto writer = factory.createWriter();
@@ -108,6 +124,23 @@ TYPED_TEST(MathSerializationTest, Vector2_Double) {
     double x = 2.7;
     double y = 3.1;
     Core::Math::VECTOR2<double> vec(x, y);
+
+    writer->appendObject("vec", vec);
+    auto byteArray = writer->write();
+    auto reader = factory.createReader(byteArray);
+    auto result = reader->template getSerializable<decltype(vec)>("vec");
+    ASSERT_EQ(x, result.x);
+    ASSERT_EQ(y, result.y);
+}
+
+TYPED_TEST(MathSerializationTest, Vector3_UInt8) {
+    TypeParam factory;
+    auto writer = factory.createWriter();
+
+    uint8_t x = 128;
+    uint8_t y = 250;
+    uint8_t z = 255;
+    Core::Math::VECTOR3<uint8_t> vec(x, y, z);
 
     writer->appendObject("vec", vec);
     auto byteArray = writer->write();

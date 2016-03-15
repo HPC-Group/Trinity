@@ -184,6 +184,12 @@ public:
 
 private:
     template <typename U = T>
+    void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) const {
+        writer.appendInt("x", x);
+        writer.appendInt("y", y);
+    }
+
+    template <typename U = T>
     void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, int32_t>::value>::type* = nullptr) const {
         writer.appendInt("x", x);
         writer.appendInt("y", y);
@@ -220,6 +226,11 @@ private:
     }
 
 
+    template <typename U = T>
+    void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) {
+        x = reader.getUInt8("x");
+        y = reader.getUInt8("y");
+    }
 
     template <typename U = T>
     void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, int32_t>::value>::type* = nullptr) {
@@ -500,6 +511,13 @@ public:
 
 private:
     template <typename U = T>
+    void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) const {
+        writer.appendInt("x", x);
+        writer.appendInt("y", y);
+        writer.appendInt("z", z);
+    }
+
+    template <typename U = T>
     void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, int32_t>::value>::type* = nullptr) const {
         writer.appendInt("x", x);
         writer.appendInt("y", y);
@@ -539,6 +557,14 @@ private:
         writer.appendDouble("x", x);
         writer.appendDouble("y", y);
         writer.appendDouble("z", z);
+    }
+
+
+    template <typename U = T>
+    void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) {
+        x = reader.getUInt8("x");
+        y = reader.getUInt8("y");
+        z = reader.getUInt8("z");
     }
 
     template <typename U = T>

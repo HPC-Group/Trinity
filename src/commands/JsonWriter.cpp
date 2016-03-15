@@ -12,6 +12,10 @@ void JsonWriter::appendDouble(const std::string& key, double value) {
     m_root[key] = value;
 }
 
+void JsonWriter::appendInt(const std::string& key, uint8_t value) {
+    m_root[key] = static_cast<JsonCpp::UInt>(value); // uint8 not supported by JSON
+}
+
 void JsonWriter::appendInt(const std::string& key, int32_t value) {
     m_root[key] = static_cast<JsonCpp::Int>(value);
 }

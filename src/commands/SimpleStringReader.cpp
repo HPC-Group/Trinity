@@ -19,6 +19,12 @@ double SimpleStringReader::getDouble(const std::string& key) const {
     return x;
 }
 
+uint8_t SimpleStringReader::getUInt8(const std::string& key) const {
+    uint8_t x;
+    m_stream >> x;
+    return x;
+}
+
 int32_t SimpleStringReader::getInt32(const std::string& key) const {
     int32_t x;
     m_stream >> x;

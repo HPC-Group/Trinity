@@ -10,6 +10,7 @@ class JsonWriter : public ISerialWriter {
 public:
     void appendFloat(const std::string& key, float value) override;
     void appendDouble(const std::string& key, double value) override;
+    void appendInt(const std::string& key, uint8_t value) override;
     void appendInt(const std::string& key, int32_t value) override;
     void appendInt(const std::string& key, uint32_t value) override;
     void appendInt(const std::string& key, int64_t value) override;
