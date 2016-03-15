@@ -1250,7 +1250,7 @@ public:
     }
 };
 
-template <class T = int32_t> class MATRIX4 {
+template <class T = int32_t> class MATRIX4 : public trinity::ISerializable {
 public:
     union {
         struct {
@@ -1760,6 +1760,104 @@ public:
         array[7] = T(0);
         array[11] = T(-1);
         array[15] = T(0);
+    }
+
+    std::unique_ptr<trinity::ISerializable> clone() const { return std::unique_ptr<ISerializable>(new MATRIX4(*this)); }
+    void serialize(trinity::ISerialWriter& writer) const override { serializeImpl(writer); }
+    void deserialize(const trinity::ISerialReader& reader) override { deserializeImpl(reader); }
+
+private:
+    template <typename U = T>
+    void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, double>::value>::type* = nullptr) const {
+        writer.appendDouble("m11", m11);
+        writer.appendDouble("m12", m12);
+        writer.appendDouble("m13", m13);
+        writer.appendDouble("m14", m14);
+
+        writer.appendDouble("m21", m21);
+        writer.appendDouble("m22", m22);
+        writer.appendDouble("m23", m23);
+        writer.appendDouble("m24", m24);
+
+        writer.appendDouble("m31", m31);
+        writer.appendDouble("m32", m32);
+        writer.appendDouble("m33", m33);
+        writer.appendDouble("m34", m34);
+
+        writer.appendDouble("m41", m41);
+        writer.appendDouble("m42", m42);
+        writer.appendDouble("m43", m43);
+        writer.appendDouble("m44", m44);
+    }
+
+    template <typename U = T>
+    void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, float>::value>::type* = nullptr) const {
+        writer.appendFloat("m11", m11);
+        writer.appendFloat("m12", m12);
+        writer.appendFloat("m13", m13);
+        writer.appendFloat("m14", m14);
+
+        writer.appendFloat("m21", m21);
+        writer.appendFloat("m22", m22);
+        writer.appendFloat("m23", m23);
+        writer.appendFloat("m24", m24);
+
+        writer.appendFloat("m31", m31);
+        writer.appendFloat("m32", m32);
+        writer.appendFloat("m33", m33);
+        writer.appendFloat("m34", m34);
+
+        writer.appendFloat("m41", m41);
+        writer.appendFloat("m42", m42);
+        writer.appendFloat("m43", m43);
+        writer.appendFloat("m44", m44);
+    }
+
+
+    template <typename U = T>
+    void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, double>::value>::type* = nullptr) {
+        m11 = reader.getDouble("m11");
+        m12 = reader.getDouble("m12");
+        m13 = reader.getDouble("m13");
+        m14 = reader.getDouble("m14");
+
+        m21 = reader.getDouble("m21");
+        m22 = reader.getDouble("m22");
+        m23 = reader.getDouble("m23");
+        m24 = reader.getDouble("m24");
+
+        m31 = reader.getDouble("m31");
+        m32 = reader.getDouble("m32");
+        m33 = reader.getDouble("m33");
+        m34 = reader.getDouble("m34");
+
+        m41 = reader.getDouble("m41");
+        m42 = reader.getDouble("m42");
+        m43 = reader.getDouble("m43");
+        m44 = reader.getDouble("m44");
+    }
+
+    template <typename U = T>
+    void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, float>::value>::type* = nullptr) {
+        m11 = reader.getFloat("m11");
+        m12 = reader.getFloat("m12");
+        m13 = reader.getFloat("m13");
+        m14 = reader.getFloat("m14");
+
+        m21 = reader.getFloat("m21");
+        m22 = reader.getFloat("m22");
+        m23 = reader.getFloat("m23");
+        m24 = reader.getFloat("m24");
+
+        m31 = reader.getFloat("m31");
+        m32 = reader.getFloat("m32");
+        m33 = reader.getFloat("m33");
+        m34 = reader.getFloat("m34");
+
+        m41 = reader.getFloat("m41");
+        m42 = reader.getFloat("m42");
+        m43 = reader.getFloat("m43");
+        m44 = reader.getFloat("m44");
     }
 };
 
