@@ -8,11 +8,11 @@ ErrorCmd::ReplyParams::ReplyParams(int errorCode)
     : m_errorCode(errorCode) {}
 
 void ErrorCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt("code", m_errorCode);
+    writer.appendInt32("code", m_errorCode);
 }
 
 void ErrorCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_errorCode = reader.getInt("code");
+    m_errorCode = reader.getInt32("code");
 }
 
 std::string ErrorCmd::ReplyParams::printError() const {

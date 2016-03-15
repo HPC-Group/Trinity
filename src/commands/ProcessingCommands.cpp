@@ -13,13 +13,13 @@ StreamingParams::StreamingParams()
     , m_resY(768) {}
 
 void StreamingParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt("xres", m_resX);
-    writer.appendInt("yres", m_resY);
+    writer.appendInt32("xres", m_resX);
+    writer.appendInt32("yres", m_resY);
 }
 
 void StreamingParams::deserialize(const ISerialReader& reader) {
-    m_resX = reader.getInt("xres");
-    m_resY = reader.getInt("yres");
+    m_resX = reader.getInt32("xres");
+    m_resY = reader.getInt32("yres");
 }
 
 int StreamingParams::getResX() const {
@@ -54,7 +54,7 @@ InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protoc
 void InitProcessingSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendString("protocol", m_protocol);
     writer.appendString("rendertype", Vcl::instance().toString(m_renderType));
-    writer.appendInt("fileid", m_fileId);
+    writer.appendInt32("fileid", m_fileId);
     writer.appendString("ioendpoint", m_ioEndpoint.toString());
     writer.appendObject("streamingparams", m_streamingParams);
 }
@@ -62,7 +62,7 @@ void InitProcessingSessionCmd::RequestParams::serialize(ISerialWriter& writer) c
 void InitProcessingSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
     m_protocol = reader.getString("protocol");
     m_renderType = Vcl::instance().toType(reader.getString("rendertype"));
-    m_fileId = reader.getInt("fileid");
+    m_fileId = reader.getInt32("fileid");
     m_ioEndpoint = mocca::net::Endpoint(reader.getString("ioendpoint"));
     m_streamingParams = reader.getSerializable<StreamingParams>("streamingparams");
 }
@@ -168,11 +168,11 @@ InitContextCmd::RequestParams::RequestParams(int32_t value)
     : m_dummy(value) {}
 
 void InitContextCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt("dummy", m_dummy);
+    writer.appendInt32("dummy", m_dummy);
 }
 
 void InitContextCmd::RequestParams::deserialize(const ISerialReader& reader) {
-    m_dummy = reader.getInt("dummy");
+    m_dummy = reader.getInt32("dummy");
 }
 
 bool InitContextCmd::RequestParams::equals(const RequestParams& other) const {

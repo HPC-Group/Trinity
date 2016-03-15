@@ -185,8 +185,8 @@ public:
 private:
     template <typename U = T>
     void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_integral<U>::value>::type* = nullptr) const {
-        writer.appendInt("x", x);
-        writer.appendInt("y", y);
+        writer.appendInt32("x", x);
+        writer.appendInt32("y", y);
     }
 
     template <typename U = T>
@@ -198,8 +198,8 @@ private:
 
     template <typename U = T>
     void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_integral<U>::value>::type* = nullptr) {
-        x = reader.getInt("x");
-        y = reader.getInt("y");
+        x = reader.getInt32("x");
+        y = reader.getInt32("y");
     }
 
     template <typename U = T>

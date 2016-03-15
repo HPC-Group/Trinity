@@ -32,15 +32,15 @@ public:
 private:
     virtual void serializeParams(ISerialWriter& writer) const = 0;
     void serialize(ISerialWriter& writer) const override {
-        writer.appendInt("rid", m_rid);
-        writer.appendInt("sid", m_sid);
+        writer.appendInt32("rid", m_rid);
+        writer.appendInt32("sid", m_sid);
         serializeParams(writer);
     }
 
     virtual void deserializeParams(const ISerialReader& reader) = 0;
     void deserialize(const ISerialReader& reader) override {
-        m_rid = reader.getInt("rid");
-        m_sid = reader.getInt("sid");
+        m_rid = reader.getInt32("rid");
+        m_sid = reader.getInt32("sid");
         deserializeParams(reader);
     }
 

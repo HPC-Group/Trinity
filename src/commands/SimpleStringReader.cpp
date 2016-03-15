@@ -13,7 +13,7 @@ float SimpleStringReader::getFloat(const std::string& key) const {
     return x;
 }
 
-int SimpleStringReader::getInt(const std::string& key) const {
+int32_t SimpleStringReader::getInt32(const std::string& key) const {
     int x;
     m_stream >> x;
     return x;
@@ -45,7 +45,7 @@ std::vector<float> SimpleStringReader::getFloatVec(const std::string& key) const
     return result;
 }
 
-std::vector<int> SimpleStringReader::getIntVec(const std::string& key) const {
+std::vector<int32_t> SimpleStringReader::getInt32Vec(const std::string& key) const {
     int32_t size;
     m_stream >> size;
     std::vector<int> result(size);

@@ -8,7 +8,7 @@ void SimpleStringWriter::appendFloat(const std::string& key, float value) {
     m_stream << value << " ";
 }
 
-void SimpleStringWriter::appendInt(const std::string& key, int value) {
+void SimpleStringWriter::appendInt32(const std::string& key, int32_t value) {
     m_stream << value << " ";
 }
 
@@ -32,7 +32,7 @@ void SimpleStringWriter::appendFloatVec(const std::string& key, const std::vecto
     }
 }
 
-void SimpleStringWriter::appendIntVec(const std::string& key, const std::vector<int>& vec) {
+void SimpleStringWriter::appendInt32Vec(const std::string& key, const std::vector<int32_t>& vec) {
     m_stream << vec.size() << " ";
     for (size_t i = 0; i < vec.size(); ++i) {
         m_stream << vec[i] << " ";

@@ -45,7 +45,7 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
     TypeParam factory;
     auto writer = factory.createWriter();
     writer->appendFloat("float", 3.14f);
-    writer->appendInt("int", 42);
+    writer->appendInt32("int", 42);
     writer->appendBool("boolTrue", true);
     writer->appendBool("boolFalse", false);
     writer->appendString("string", "Hello");
@@ -53,7 +53,7 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ(3.14f, reader->getFloat("float"));
-    ASSERT_EQ(42, reader->getInt("int"));
+    ASSERT_EQ(42, reader->getInt32("int"));
     ASSERT_EQ(true, reader->getBool("boolTrue"));
     ASSERT_EQ(false, reader->getBool("boolFalse"));
     ASSERT_EQ("Hello", reader->getString("string"));
@@ -88,7 +88,7 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
     TypeParam factory;
     auto writer = factory.createWriter();
     writer->appendFloatVec("float", std::vector<float>{0.1f, 0.2f, 0.3f});
-    writer->appendIntVec("int", std::vector<int>{1, 2, 3, 4});
+    writer->appendInt32Vec("int", std::vector<int>{1, 2, 3, 4});
     writer->appendBoolVec("bool", std::vector<bool>{true, false, true});
     writer->appendStringVec("string", std::vector<std::string>{"Hello", "World"});
 
@@ -101,7 +101,7 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
     ASSERT_EQ(0.2f, floatRes[1]);
     ASSERT_EQ(0.3f, floatRes[2]);
 
-    auto intRes = reader->getIntVec("int");
+    auto intRes = reader->getInt32Vec("int");
     ASSERT_EQ(4, intRes.size());
     ASSERT_EQ(1, intRes[0]);
     ASSERT_EQ(2, intRes[1]);

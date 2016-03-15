@@ -11,12 +11,12 @@ public:
     SimpleStringReader(const std::string& str);
 
     float getFloat(const std::string& key) const override;
-    int getInt(const std::string& key) const override;
+    int32_t getInt32(const std::string& key) const override;
     bool getBool(const std::string& key) const override;
     std::string getString(const std::string& key) const override;
 
     std::vector<float> getFloatVec(const std::string& key) const override;
-    std::vector<int> getIntVec(const std::string& key) const override;
+    std::vector<int32_t> getInt32Vec(const std::string& key) const override;
     std::vector<bool> getBoolVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 

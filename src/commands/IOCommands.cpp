@@ -24,13 +24,13 @@ IOData::IOData(const std::string& name, int fileId, DataType dataType)
 
 void IOData::serialize(ISerialWriter& writer) const {
     writer.appendString("name", m_name);
-    writer.appendInt("fileid", m_fileId);
+    writer.appendInt32("fileid", m_fileId);
     writer.appendString("datatype", dataTypeMapper().getByFirst(m_dataType));
 }
 
 void IOData::deserialize(const ISerialReader& reader) {
     m_name = reader.getString("name");
-    m_fileId = reader.getInt("fileid");
+    m_fileId = reader.getInt32("fileid");
     m_dataType = dataTypeMapper().getBySecond(reader.getString("datatype"));
 }
 
@@ -74,11 +74,11 @@ std::string ListFilesCmd::RequestParams::toString() const {
 }
 
 void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt("dirid", m_dirID);
+    writer.appendInt32("dirid", m_dirID);
 }
 
 void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {
-    m_dirID = reader.getInt("dirid");
+    m_dirID = reader.getInt32("dirid");
 }
 
 int32_t ListFilesCmd::RequestParams::getDirID() const {
@@ -123,12 +123,12 @@ InitIOSessionCmd::RequestParams::RequestParams(const std::string& protocol, int 
 
 void InitIOSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendString("protocol", m_protocol);
-    writer.appendInt("fileid", m_fileId);
+    writer.appendInt32("fileid", m_fileId);
 }
 
 void InitIOSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
     m_protocol = reader.getString("protocol");
-    m_fileId = reader.getInt("fileid");
+    m_fileId = reader.getInt32("fileid");
 }
 
 std::string InitIOSessionCmd::RequestParams::getProtocol() const {
@@ -194,11 +194,11 @@ GetLODLevelCountCmd::ReplyParams::ReplyParams(int lodCount)
     : m_lodCount(lodCount) {}
 
 void GetLODLevelCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt("lodcount", m_lodCount);
+    writer.appendInt32("lodcount", m_lodCount);
 }
 
 void GetLODLevelCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_lodCount = reader.getInt("lodcount");
+    m_lodCount = reader.getInt32("lodcount");
 }
 
 int GetLODLevelCountCmd::ReplyParams::getLODLevelCount() const {

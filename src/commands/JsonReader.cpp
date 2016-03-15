@@ -21,7 +21,7 @@ float JsonReader::getFloat(const std::string& key) const {
     return m_root[key].asFloat();
 }
 
-int JsonReader::getInt(const std::string& key) const {
+int32_t JsonReader::getInt32(const std::string& key) const {
     return m_root[key].asInt();
 }
 
@@ -46,7 +46,7 @@ std::vector<float> JsonReader::getFloatVec(const std::string& key) const {
     return result;
 }
 
-std::vector<int> JsonReader::getIntVec(const std::string& key) const {
+std::vector<int32_t> JsonReader::getInt32Vec(const std::string& key) const {
     std::vector<int> result;
     for (uint32_t i = 0; i < m_root[key].size(); ++i) {
         result.push_back(m_root[key][i].asInt());
