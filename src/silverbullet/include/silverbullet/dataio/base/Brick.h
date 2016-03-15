@@ -46,7 +46,7 @@
 using Core::Math::Vec3f;
 using Core::Math::Vec3ui;
 
-namespace Tuvok {
+namespace trinity {
 
 /// Datasets are organized as a set of bricks, stored in a hash table.  A key
 /// into this table consists of an LOD index plus a brick index.

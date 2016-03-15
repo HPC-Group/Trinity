@@ -16,6 +16,24 @@ class IOSessionProxy : public IIO {
 public:
     IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint);
     int getLODLevelCount() const override;
+    
+    
+    Core::Math::Vec3ui64 getMaxBrickSize() const override;
+    Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
+    MinMaxBlock maxMinForKey(const BrickKey&) const override;
+    uint64_t getNumberOfTimesteps() const override;
+    Core::Math::Vec3ui64 getDomainSize(const uint64_t lod = 0, const uint64_t ts = 0) const override;
+    Core::Math::Mat4d getTransformation() const override;
+    Core::Math::Vec3ui getBrickOverlapSize() const override;
+    uint64_t getLargestSingleBrickLOD(uint64_t ts) const override;
+    Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const override;
+    Vec3f getBrickExtents(const BrickKey &) const override;
+    Core::Math::Vec3ui getBrickLayout(uint64_t LoD, uint64_t timestep) const override;
+    uint64_t getModalityCount() const override;
+    uint64_t getComponentCount(uint64_t modality) const override;
+    Core::Math::Vec2f getRange() const override;
+    uint64_t getTotalBrickCount() const override;
+    bool getBrick(const BrickKey&, std::vector<uint8_t>&) const override;
 
 private:
     CommandInputChannel m_inputChannel;

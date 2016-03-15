@@ -4,7 +4,8 @@
 #include <algorithm>
 #include <cfloat>
 
-namespace Tuvok {
+// renamed from Tuvok (@andrey)
+namespace trinity {
 
 /// Stores minimum and maximum data for a block of data.
 class MinMaxBlock {
