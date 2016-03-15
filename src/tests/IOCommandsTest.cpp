@@ -150,3 +150,28 @@ TEST_F(IOCommandsTest, MinMaxBlock) {
     auto result = trinity::testing::writeAndRead(target);
     ASSERT_EQ(target, result);
 }
+
+TEST_F(IOCommandsTest, MaxMinForKeyCmd) {
+    {
+        BrickKey key(1, 2, 3, 4);
+        MaxMinForKeyCmd::RequestParams target(key);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        MinMaxBlock minMax(1.0, 2.0, 3.0, 4.0);
+        MaxMinForKeyCmd::ReplyParams target(minMax);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, MaxMinForKeyReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), maxMinForKey(_)).Times(1).WillOnce(Return(MinMaxBlock(1.0, 2.0, 3.0, 4.0)));
+
+    MaxMinForKeyCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
+    MaxMinForKeyRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<MaxMinForKeyHdl>(request, session.get());
+    ASSERT_EQ(MinMaxBlock(1.0, 2.0, 3.0, 4.0), reply.getParams().getMinMaxBlock());
+}

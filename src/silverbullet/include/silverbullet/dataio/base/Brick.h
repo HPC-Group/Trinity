@@ -67,12 +67,14 @@ struct BrickKey : public SerializableTemplate<BrickKey> {
     BrickKey(uint64_t m, uint64_t t, uint64_t l, uint64_t i) : modality(m), timestep(t), lod(l), index(i) {}
     
     bool equals(const BrickKey& other) const;
+    std::string toString() const;
 
     void serialize(ISerialWriter& writer) const;
     void deserialize(const ISerialReader& reader);
 };
 
 bool operator==(const BrickKey& lhs, const BrickKey& rhs);
+std::ostream& operator<<(std::ostream& os, const BrickKey& obj);
 
 struct BrickMD {
   Vec3f center; ///< center of the brick, in world coords

@@ -17,9 +17,21 @@ void MinMaxBlock::deserialize(const ISerialReader& reader) {
 }
 
 bool MinMaxBlock::equals(const MinMaxBlock& other) const {
-    return minScalar == other.minScalar && maxScalar == other.maxScalar && minGradient == other.minGradient && maxGradient == other.maxGradient;
+    return minScalar == other.minScalar && maxScalar == other.maxScalar && minGradient == other.minGradient &&
+           maxGradient == other.maxGradient;
+}
+
+std::string MinMaxBlock::toString() const {
+    std::stringstream stream;
+    stream << "minScalar: " << minScalar << "; maxScalar: " << maxScalar << "; minGradient: " << minGradient
+           << "; maxGradient: " << maxGradient;
+    return stream.str();
 }
 
 bool trinity::operator==(const MinMaxBlock& lhs, const MinMaxBlock& rhs) {
     return lhs.equals(rhs);
+}
+
+std::ostream& trinity::operator<<(std::ostream& os, const MinMaxBlock& obj) {
+    return os << obj.toString();
 }

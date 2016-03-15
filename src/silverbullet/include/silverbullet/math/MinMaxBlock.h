@@ -43,9 +43,11 @@ public:
   void deserialize(const ISerialReader& reader);
 
   bool equals(const MinMaxBlock& other) const;
+  std::string toString() const;
 };
 
 bool operator==(const MinMaxBlock& lhs, const MinMaxBlock& rhs);
+std::ostream& operator<<(std::ostream& os, const MinMaxBlock& obj);
 
 }
 #endif

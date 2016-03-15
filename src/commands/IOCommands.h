@@ -5,6 +5,8 @@
 #include "commands/Reply.h"
 
 #include "silverbullet/math/Vectors.h"
+#include "silverbullet/math/MinMaxBlock.h"
+#include "silverbullet/dataio/base/Brick.h"
 
 #include "mocca/base/BidirectionalMap.h"
 
@@ -245,6 +247,52 @@ std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::ReplyP
 
 using GetMaxUsedBrickSizesRequest = RequestTemplate<GetMaxUsedBrickSizesCmd>;
 using GetMaxUsedBrickSizesReply = ReplyTemplate<GetMaxUsedBrickSizesCmd>;
+
+struct MaxMinForKeyCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const BrickKey& brickKey);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        BrickKey getBrickKey() const;
+
+    private:
+        BrickKey m_brickKey;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const MinMaxBlock& minMaxBlock);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        MinMaxBlock getMinMaxBlock() const;
+
+    private:
+        MinMaxBlock m_minMaxBock;
+    };
+};
+
+bool operator==(const MaxMinForKeyCmd::RequestParams& lhs, const MaxMinForKeyCmd::RequestParams& rhs);
+bool operator==(const MaxMinForKeyCmd::ReplyParams& lhs, const MaxMinForKeyCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::ReplyParams& obj);
+
+using MaxMinForKeyRequest = RequestTemplate<MaxMinForKeyCmd>;
+using MaxMinForKeyReply = ReplyTemplate<MaxMinForKeyCmd>;
 
 #undef PYTHON_MAGIC
 

@@ -36,10 +36,14 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetMaxBrickSize: 
         return mocca::make_unique<GetMaxBrickSizeHdl>(static_cast<const GetMaxBrickSizeRequest&>(request), session);
         break;
-    case VclType::getMaxUsedBrickSizes:
+    case VclType::GetMaxUsedBrickSizes:
         return mocca::make_unique<GetMaxUsedBrickSizesHdl>(static_cast<const GetMaxUsedBrickSizesRequest&>(request), session);
         break;
+    case VclType::MaxMinForKey:
+        return mocca::make_unique<MaxMinForKeyHdl>(static_cast<const MaxMinForKeyRequest&>(request), session);
+        break;
 #define PYTHON_MAGIC
+
 
 
 #undef PYTHON_MAGIC

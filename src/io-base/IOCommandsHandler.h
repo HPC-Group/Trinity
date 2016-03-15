@@ -67,5 +67,16 @@ private:
 	IOSession* m_session;
 };
 
+class MaxMinForKeyHdl : public ICommandHandler {
+public:
+    MaxMinForKeyHdl(const MaxMinForKeyRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    MaxMinForKeyRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

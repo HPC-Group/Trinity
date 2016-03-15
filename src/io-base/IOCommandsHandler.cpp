@@ -87,4 +87,14 @@ std::unique_ptr<Reply> GetMaxUsedBrickSizesHdl::execute() {
     return mocca::make_unique<GetMaxUsedBrickSizesReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+MaxMinForKeyHdl::MaxMinForKeyHdl(const MaxMinForKeyRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> MaxMinForKeyHdl::execute() {
+    auto brickKey = m_request.getParams().getBrickKey();
+    auto minMax = m_session->getIO().maxMinForKey(brickKey);
+    MaxMinForKeyCmd::ReplyParams params(minMax);
+    return mocca::make_unique<MaxMinForKeyReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

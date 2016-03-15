@@ -13,9 +13,9 @@ public:
     
     Core::Math::Vec3ui64 getMaxBrickSize() const override {Core::Math::Vec3ui64 x; return x; }
     Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override {Core::Math::Vec3ui64 x; return x; }
+    MinMaxBlock maxMinForKey(const BrickKey&) const override {MinMaxBlock x; return x; }
 
 
-    //MinMaxBlock maxMinForKey(const BrickKey&) const override {MinMaxBlock x; return x; }
     //uint64_t getNumberOfTimesteps() const override {uint64_t x; return x; }
     //Core::Math::Vec3ui64 getDomainSize(const uint64_t lod = 0, const uint64_t ts = 0) const override {Core::Math::Vec3ui64 x; return x; }
     //Core::Math::Mat4d getTransformation() const override {Core::Math::Mat4d x; return x; }
