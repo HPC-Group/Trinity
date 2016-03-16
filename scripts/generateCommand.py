@@ -128,6 +128,7 @@ def refreshSrc():
       
   copyfile("../src/commands/" + commFiles[0], commDir + commFiles[0])
   copyfile("../src/commands/" + commFiles[1], commDir + commFiles[1])
+  copyfile("../src/commands/" + commFiles[2], commDir + commFiles[2])
 
 
 def copyFiles(type):
@@ -146,6 +147,7 @@ def copyFiles(type):
       
     copyfile(commDir + commFiles[0], "../src/commands/" + commFiles[0])
     copyfile(commDir + commFiles[1], "../src/commands/" + commFiles[1])
+    copyfile(commDir + commFiles[2], "../src/commands/" + commFiles[2])
 
 
 def readFile(datafile):
