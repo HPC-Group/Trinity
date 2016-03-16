@@ -13,6 +13,7 @@ namespace trinity {
 class FractalIO : public IIO {
 public:
     FractalIO() { LINFO("(io) fractal io created"); }
+    FractalIO(int fileId) { LINFO("(io) fractal io created"); }
     // testing purpose
 
 

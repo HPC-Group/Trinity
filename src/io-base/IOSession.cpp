@@ -24,7 +24,7 @@ std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId) {
         break;
 
     case 24: // Fractal File
-        return std::unique_ptr<FractalIO>(new FractalIO());
+        return std::unique_ptr<FractalIO>(new FractalIO(fileId));
         break;
 
     default:
