@@ -362,3 +362,26 @@ TEST_F(IOCommandsTest, GetBrickLayoutReqRep) {
     auto reply = trinity::testing::handleRequest<GetBrickLayoutHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui(4, 5, 6), reply.getParams().getBrickLayout());
 }
+
+TEST_F(IOCommandsTest, GetModalityCountCmd) {
+    {
+        GetModalityCountCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetModalityCountCmd::ReplyParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetModalityCountReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getModalityCount()).Times(1).WillOnce(Return(23));
+
+    GetModalityCountCmd::RequestParams requestParams;
+    GetModalityCountRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetModalityCountHdl>(request, session.get());
+    ASSERT_EQ(23, reply.getParams().getModalityCount());
+}

@@ -806,6 +806,49 @@ Core::Math::Vec3ui GetBrickLayoutCmd::ReplyParams::getBrickLayout() const {
     return m_brickLayout;
 }
 
+
+////////////// GetBrickOverlapSizeCmd //////////////
+
+VclType GetModalityCountCmd::Type = VclType::GetModalityCount;
+
+void GetModalityCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetModalityCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetModalityCountCmd::RequestParams::equals(const GetModalityCountCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetModalityCountCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetModalityCountCmd::ReplyParams::ReplyParams(uint64_t modalityCount)
+    : m_modalityCount(modalityCount) {}
+
+void GetModalityCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modalityCount", m_modalityCount);
+}
+
+void GetModalityCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_modalityCount = reader.getUInt64("modalityCount");
+}
+
+bool GetModalityCountCmd::ReplyParams::equals(const GetModalityCountCmd::ReplyParams& other) const {
+    return m_modalityCount == other.m_modalityCount;
+}
+
+std::string GetModalityCountCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "modalityCount: " << m_modalityCount;
+    return stream.str();
+}
+
+uint64_t GetModalityCountCmd::ReplyParams::getModalityCount() const {
+    return m_modalityCount;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -999,6 +1042,19 @@ std::ostream& operator<<(std::ostream& os, const GetBrickLayoutCmd::RequestParam
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetBrickLayoutCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetModalityCountCmd::RequestParams& lhs, const GetModalityCountCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetModalityCountCmd::ReplyParams& lhs, const GetModalityCountCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetModalityCountCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetModalityCountCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

@@ -58,6 +58,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetBrickExtentsReply>("rep");
     } else if (type == GetBrickLayoutReply::Ifc::Type) {
         return reader->getSerializablePtr<GetBrickLayoutReply>("rep");
+    } else if (type == GetModalityCountReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetModalityCountReply>("rep");
     }
 
 #undef PYTHON_MAGIC_IO

@@ -659,6 +659,46 @@ std::ostream& operator<<(std::ostream& os, const GetBrickLayoutCmd::ReplyParams&
 using GetBrickLayoutRequest = RequestTemplate<GetBrickLayoutCmd>;
 using GetBrickLayoutReply = ReplyTemplate<GetBrickLayoutCmd>;
 
+struct GetModalityCountCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t modalityCount);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getModalityCount() const;
+
+    private:
+        uint64_t m_modalityCount;
+    };
+};
+
+bool operator==(const GetModalityCountCmd::RequestParams& lhs, const GetModalityCountCmd::RequestParams& rhs);
+bool operator==(const GetModalityCountCmd::ReplyParams& lhs, const GetModalityCountCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetModalityCountCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetModalityCountCmd::ReplyParams& obj);
+
+using GetModalityCountRequest = RequestTemplate<GetModalityCountCmd>;
+using GetModalityCountReply = ReplyTemplate<GetModalityCountCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

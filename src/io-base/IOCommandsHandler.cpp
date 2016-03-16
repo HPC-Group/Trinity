@@ -169,4 +169,12 @@ std::unique_ptr<Reply> GetBrickLayoutHdl::execute() {
     return mocca::make_unique<GetBrickLayoutReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetModalityCountHdl::GetModalityCountHdl(const GetModalityCountRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetModalityCountHdl::execute() {
+    GetModalityCountCmd::ReplyParams params(m_session->getIO().getModalityCount());
+    return mocca::make_unique<GetModalityCountReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

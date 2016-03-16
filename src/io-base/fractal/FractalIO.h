@@ -33,10 +33,10 @@ public:
     Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const override {Core::Math::Vec3ui x; return x; }
     Core::Math::Vec3f getBrickExtents(const BrickKey &) const override {Vec3f x; return x; }
     Core::Math::Vec3ui getBrickLayout(uint64_t lod, uint64_t modality, uint64_t timestep) const override {Core::Math::Vec3ui x; return x; }
+    uint64_t getModalityCount() const override {uint64_t x; return x; }
 
 
 
-    //uint64_t getModalityCount() const override {uint64_t x; return x; }
     //uint64_t getComponentCount(uint64_t modality) const override {uint64_t x; return x; }
     //Core::Math::Vec2f getRange() const override {Core::Math::Vec2f x; return x; }
     //uint64_t getTotalBrickCount() const override {uint64_t x; return x; }

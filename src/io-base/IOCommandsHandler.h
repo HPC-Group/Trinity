@@ -166,5 +166,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetModalityCountHdl : public ICommandHandler {
+public:
+    GetModalityCountHdl(const GetModalityCountRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetModalityCountRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

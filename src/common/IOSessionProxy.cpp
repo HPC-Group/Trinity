@@ -103,11 +103,13 @@ Core::Math::Vec3ui IOSessionProxy::getBrickLayout(uint64_t lod, uint64_t modalit
     return reply->getParams().getBrickLayout();
 }
 
-//uint64_t IOSessionProxy::getModalityCount() const {
-//    // TODO
-//    uint64_t x; return x;
-//}
-//
+uint64_t IOSessionProxy::getModalityCount() const {
+    GetModalityCountCmd::RequestParams params;
+    GetModalityCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getModalityCount();
+}
+
 //uint64_t IOSessionProxy::getComponentCount(uint64_t modality) const {
 //    // TODO
 //    uint64_t x; return x;
