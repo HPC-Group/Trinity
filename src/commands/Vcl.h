@@ -37,8 +37,10 @@ enum class VclType {
     MaxMinForKey,
     GetNumberOfTimesteps,
     GetDomainSize,
-    First = InitRenderer,
-    Last = GetNumberOfTimesteps,
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
 };
 
 VclType& operator++(VclType& x);
@@ -86,6 +88,10 @@ private:
         m_cmdMap.insert("MaxMinForKey", VclType::MaxMinForKey);
         m_cmdMap.insert("GetNumberOfTimesteps", VclType::GetNumberOfTimesteps);
         m_cmdMap.insert("GetDomainSize", VclType::GetDomainSize);
+#define PYTHON_MAGIC_STRING
+
+
+#undef PYTHON_MAGIC_STRING
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));
