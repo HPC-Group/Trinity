@@ -850,7 +850,7 @@ uint64_t GetModalityCountCmd::ReplyParams::getModalityCount() const {
 }
 
 
-////////////// GetBrickOverlapSizeCmd //////////////
+////////////// GetComponentCountCmd //////////////
 
 VclType GetComponentCountCmd::Type = VclType::GetComponentCount;
 
@@ -902,6 +902,61 @@ std::string GetComponentCountCmd::ReplyParams::toString() const {
 
 uint64_t GetComponentCountCmd::ReplyParams::getComponentCount() const {
     return m_componentCount;
+}
+
+
+////////////// GetRangeCmd //////////////
+
+VclType GetRangeCmd::Type = VclType::GetRange;
+
+GetRangeCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
+
+void GetRangeCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetRangeCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
+
+bool GetRangeCmd::RequestParams::equals(const GetRangeCmd::RequestParams& other) const {
+    return m_modality == other.m_modality;
+}
+
+std::string GetRangeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
+}
+
+uint64_t GetRangeCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+GetRangeCmd::ReplyParams::ReplyParams(const Core::Math::Vec2f& range)
+    : m_range(range) {}
+
+void GetRangeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("range", m_range);
+}
+
+void GetRangeCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_range = reader.getSerializable<Core::Math::Vec2f>("range");
+}
+
+bool GetRangeCmd::ReplyParams::equals(const GetRangeCmd::ReplyParams& other) const {
+    return m_range == other.m_range;
+}
+
+std::string GetRangeCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "range: " << m_range;
+    return stream.str();
+}
+
+Core::Math::Vec2f GetRangeCmd::ReplyParams::getRange() const {
+    return m_range;
 }
 
 #undef PYTHON_MAGIC_DEFINITION
@@ -1123,6 +1178,19 @@ std::ostream& operator<<(std::ostream& os, const GetComponentCountCmd::RequestPa
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetComponentCountCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetRangeCmd::RequestParams& lhs, const GetRangeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetRangeCmd::ReplyParams& lhs, const GetRangeCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetRangeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetRangeCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

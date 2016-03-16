@@ -408,3 +408,26 @@ TEST_F(IOCommandsTest, GetComponentCountReqRep) {
     auto reply = trinity::testing::handleRequest<GetComponentCountHdl>(request, session.get());
     ASSERT_EQ(42, reply.getParams().getComponentCount());
 }
+
+TEST_F(IOCommandsTest, GetRangeCmd) {
+    {
+        GetRangeCmd::RequestParams target(23);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetRangeCmd::ReplyParams target(Core::Math::Vec2f(1.0, 2.0));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetRangeReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getRange(23)).Times(1).WillOnce(Return(Core::Math::Vec2f(1.0, 2.0)));
+
+    GetRangeCmd::RequestParams requestParams(23);
+    GetRangeRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetRangeHdl>(request, session.get());
+    ASSERT_EQ(Core::Math::Vec2f(1.0, 2.0), reply.getParams().getRange());
+}

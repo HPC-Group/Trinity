@@ -185,4 +185,12 @@ std::unique_ptr<Reply> GetComponentCountHdl::execute() {
     return mocca::make_unique<GetComponentCountReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetRangeHdl::GetRangeHdl(const GetRangeRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetRangeHdl::execute() {
+    GetRangeCmd::ReplyParams params(m_session->getIO().getRange(m_request.getParams().getModality()));
+    return mocca::make_unique<GetRangeReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

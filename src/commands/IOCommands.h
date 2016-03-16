@@ -745,6 +745,52 @@ std::ostream& operator<<(std::ostream& os, const GetComponentCountCmd::ReplyPara
 using GetComponentCountRequest = RequestTemplate<GetComponentCountCmd>;
 using GetComponentCountReply = ReplyTemplate<GetComponentCountCmd>;
 
+struct GetRangeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t modality);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec2f& range);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec2f getRange() const;
+
+    private:
+        Core::Math::Vec2f m_range;
+    };
+};
+
+bool operator==(const GetRangeCmd::RequestParams& lhs, const GetRangeCmd::RequestParams& rhs);
+bool operator==(const GetRangeCmd::ReplyParams& lhs, const GetRangeCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetRangeCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetRangeCmd::ReplyParams& obj);
+
+using GetRangeRequest = RequestTemplate<GetRangeCmd>;
+using GetRangeReply = ReplyTemplate<GetRangeCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

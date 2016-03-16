@@ -188,5 +188,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetRangeHdl : public ICommandHandler {
+public:
+    GetRangeHdl(const GetRangeRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetRangeRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

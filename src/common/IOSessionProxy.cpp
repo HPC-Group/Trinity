@@ -117,11 +117,13 @@ uint64_t IOSessionProxy::getComponentCount(uint64_t modality) const {
     return reply->getParams().getComponentCount();
 }
 
-//Core::Math::Vec2f IOSessionProxy::getRange() const {
-//    // TODO
-//    Core::Math::Vec2f x; return x;
-//}
-//
+Core::Math::Vec2f IOSessionProxy::getRange(uint64_t modality) const {
+    GetRangeCmd::RequestParams params(modality);
+    GetRangeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getRange();
+}
+
 //uint64_t IOSessionProxy::getTotalBrickCount() const {
 //    // TODO
 //    uint64_t x; return x;
