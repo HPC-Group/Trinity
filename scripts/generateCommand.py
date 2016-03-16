@@ -71,6 +71,7 @@ def openTemplate(templateName):
 
 def generateCommandsHdr():
   refreshSrc()
+  generateVcl()
 
   if type == Types.proc:
     for i in processingFiles:
@@ -94,11 +95,9 @@ def generateCommandsHdr():
     generateRequest("#undef PYTHON_MAGIC_IO")
     if hasReply != "false":
       generateReply("#undef PYTHON_MAGIC_IO")
-    
-    generateVcl()
-    
+        
     copyFiles(Types.io)
-
+    
   
 def generateRequest(lookup):
   openFile(commDir + commFiles[0], templateDir + "RequestTemplate.cpp", lookup)
@@ -109,7 +108,7 @@ def generateReply(lookup):
   
 
 def generateVcl():
-  openFile(commDir + commFiles[2], templateDir + "VclTemplate.h", "#undef PYTHON_MAGIC")
+  openFile(commDir + commFiles[2], templateDir + "VclTemplate.h", "#undef PYTHON_ENUM")
   openFile(commDir + commFiles[2], templateDir + "VclTemplate2.h", "#undef PYTHON_MAGIC_STRING")
   
   
