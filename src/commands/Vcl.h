@@ -39,6 +39,8 @@ enum class VclType {
     MaxMinForKey,
     GetNumberOfTimesteps,
     GetDomainSize,
+    First = InitRenderer,
+    Last = GetDomainSize,
 #define PYTHON_ENUM
 
 
