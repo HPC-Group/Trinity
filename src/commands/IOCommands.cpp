@@ -474,17 +474,29 @@ Core::Math::Vec3ui64 GetDomainSizeCmd::ReplyParams::getDomainSize() const {
 
 VclType GetTransformationCmd::Type = VclType::GetTransformation;
 
-void GetTransformationCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+GetTransformationCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
 
-void GetTransformationCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+void GetTransformationCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetTransformationCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
 
 bool GetTransformationCmd::RequestParams::equals(const GetTransformationCmd::RequestParams& other) const {
-    return true;
+    return m_modality == other.m_modality;
 }
 
 std::string GetTransformationCmd::RequestParams::toString() const {
     std::stringstream stream;
+    stream << "modality: " << m_modality;
     return stream.str();
+}
+
+uint64_t GetTransformationCmd::RequestParams::getModality() const {
+    return m_modality;
 }
 
 GetTransformationCmd::ReplyParams::ReplyParams(const Core::Math::Mat4d& transformation)
@@ -558,25 +570,31 @@ Core::Math::Vec3ui GetBrickOverlapSizeCmd::ReplyParams::getOverlapSize() const {
 
 VclType GetLargestSingleBrickLODCmd::Type = VclType::GetLargestSingleBrickLOD;
 
-GetLargestSingleBrickLODCmd::RequestParams::RequestParams(uint64_t ts)
-    : m_ts(ts) {}
+GetLargestSingleBrickLODCmd::RequestParams::RequestParams(uint64_t modality, uint64_t ts)
+    : m_modality(modality), m_ts(ts) {}
 
 void GetLargestSingleBrickLODCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
     writer.appendInt("ts", m_ts);
 }
 
 void GetLargestSingleBrickLODCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
     m_ts = reader.getUInt64("ts");
 }
 
 bool GetLargestSingleBrickLODCmd::RequestParams::equals(const GetLargestSingleBrickLODCmd::RequestParams& other) const {
-    return m_ts == other.m_ts;
+    return m_modality == other.m_modality && m_ts == other.m_ts;
 }
 
 std::string GetLargestSingleBrickLODCmd::RequestParams::toString() const {
     std::stringstream stream;
-    stream << "ts: " << m_ts;
+    stream << "modality: " << m_modality << "; ts: " << m_ts;
     return stream.str();
+}
+
+uint64_t GetLargestSingleBrickLODCmd::RequestParams::getModality() const {
+    return m_modality;
 }
 
 uint64_t GetLargestSingleBrickLODCmd::RequestParams::getTs() const {

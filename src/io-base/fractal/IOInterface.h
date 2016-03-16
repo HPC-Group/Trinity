@@ -79,7 +79,7 @@ public:
     virtual uint64_t getLargestSingleBrickLOD(const uint64_t modality, uint64_t ts) const = 0;
     virtual Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const = 0;
     virtual Core::Math::Vec3f getBrickExtents(const BrickKey&) const = 0;
-    virtual Core::Math::Vec3ui getBrickLayout(uint64_t LoD, const uint64_t modality, uint64_t timestep) const = 0;
+    virtual Core::Math::Vec3ui getBrickLayout(uint64_t lod, const uint64_t modality, uint64_t timestep) const = 0;
 
     /*! \brief Replaces getBitWidth(), getIsSigned(), getIsFloat()
      */

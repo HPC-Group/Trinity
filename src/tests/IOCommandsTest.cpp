@@ -168,7 +168,7 @@ TEST_F(IOCommandsTest, MaxMinForKeyCmd) {
 
 TEST_F(IOCommandsTest, MaxMinForKeyReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), maxMinForKey(_)).Times(1).WillOnce(Return(MinMaxBlock(1.0, 2.0, 3.0, 4.0)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), maxMinForKey(BrickKey(1, 2, 3, 4))).Times(1).WillOnce(Return(MinMaxBlock(1.0, 2.0, 3.0, 4.0)));
 
     MaxMinForKeyCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
     MaxMinForKeyRequest request(requestParams, 1, 2);
@@ -215,9 +215,9 @@ TEST_F(IOCommandsTest, GetDomainSizeCmd) {
 
 TEST_F(IOCommandsTest, GetDomainSizeReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDomainSize(_,_,_)).Times(1).WillOnce(Return(Core::Math::Vec3ui64(4, 5, 6)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDomainSize(1,2,3)).Times(1).WillOnce(Return(Core::Math::Vec3ui64(4, 5, 6)));
 
-    GetDomainSizeCmd::RequestParams requestParams;
+    GetDomainSizeCmd::RequestParams requestParams(1, 2, 3);
     GetDomainSizeRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetDomainSizeHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui64(4, 5, 6), reply.getParams().getDomainSize());
@@ -225,7 +225,7 @@ TEST_F(IOCommandsTest, GetDomainSizeReqRep) {
 
 TEST_F(IOCommandsTest, GetTransformationCmd) {
     {
-        GetTransformationCmd::RequestParams target;
+        GetTransformationCmd::RequestParams target(42);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
@@ -240,9 +240,9 @@ TEST_F(IOCommandsTest, GetTransformationCmd) {
 TEST_F(IOCommandsTest, GetTransformationReqRep) {
     auto session = createMockSession();
     Core::Math::Mat4d transformation(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getTransformation()).Times(1).WillOnce(Return(transformation));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getTransformation(42)).Times(1).WillOnce(Return(transformation));
 
-    GetTransformationCmd::RequestParams requestParams;
+    GetTransformationCmd::RequestParams requestParams(42);
     GetTransformationRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetTransformationHdl>(request, session.get());
     ASSERT_EQ(transformation, reply.getParams().getTransformation());
@@ -273,7 +273,7 @@ TEST_F(IOCommandsTest, GetBrickOverlapSizeReqRep) {
 
 TEST_F(IOCommandsTest, GetLargestSingleBrickLODCmd) {
     {
-        GetLargestSingleBrickLODCmd::RequestParams target(42);
+        GetLargestSingleBrickLODCmd::RequestParams target(23, 42);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
@@ -286,9 +286,9 @@ TEST_F(IOCommandsTest, GetLargestSingleBrickLODCmd) {
 
 TEST_F(IOCommandsTest, GetLargestSingleBrickLODReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getLargestSingleBrickLOD(_)).Times(1).WillOnce(Return(42));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getLargestSingleBrickLOD(17, 23)).Times(1).WillOnce(Return(42));
 
-    GetLargestSingleBrickLODCmd::RequestParams requestParams(23);
+    GetLargestSingleBrickLODCmd::RequestParams requestParams(17, 23);
     GetLargestSingleBrickLODRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetLargestSingleBrickLODHdl>(request, session.get());
     ASSERT_EQ(42, reply.getParams().getLargestSingleBrickLOD());
@@ -309,7 +309,7 @@ TEST_F(IOCommandsTest, GetBrickVoxelCountsCmd) {
 
 TEST_F(IOCommandsTest, GetBrickVoxelCountsReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickVoxelCounts(_)).Times(1).WillOnce(Return(Core::Math::Vec3ui(5, 6, 7)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickVoxelCounts(BrickKey(1, 2, 3, 4))).Times(1).WillOnce(Return(Core::Math::Vec3ui(5, 6, 7)));
 
     GetBrickVoxelCountsCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
     GetBrickVoxelCountsRequest request(requestParams, 1, 2);
@@ -332,7 +332,7 @@ TEST_F(IOCommandsTest, GetBrickExtentsCmd) {
 
 TEST_F(IOCommandsTest, GetBrickExtentsReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickExtents(_)).Times(1).WillOnce(Return(Core::Math::Vec3f(5.0, 6.0, 7.0)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickExtents(BrickKey(1, 2, 3, 4))).Times(1).WillOnce(Return(Core::Math::Vec3f(5.0, 6.0, 7.0)));
 
     GetBrickExtentsCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
     GetBrickExtentsRequest request(requestParams, 1, 2);

@@ -61,8 +61,8 @@ Core::Math::Vec3ui64 IOSessionProxy::getDomainSize(uint64_t lod, uint64_t modali
     return reply->getParams().getDomainSize();
 }
 
-Core::Math::Mat4d IOSessionProxy::getTransformation() const {
-    GetTransformationCmd::RequestParams params;
+Core::Math::Mat4d IOSessionProxy::getTransformation(uint64_t modality) const {
+    GetTransformationCmd::RequestParams params(modality);
     GetTransformationRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getTransformation();
@@ -75,8 +75,8 @@ Core::Math::Vec3ui IOSessionProxy::getBrickOverlapSize() const {
     return reply->getParams().getOverlapSize();
 }
 
-uint64_t IOSessionProxy::getLargestSingleBrickLOD(uint64_t ts) const {
-    GetLargestSingleBrickLODCmd::RequestParams params(ts);
+uint64_t IOSessionProxy::getLargestSingleBrickLOD(uint64_t modality, uint64_t ts) const {
+    GetLargestSingleBrickLODCmd::RequestParams params(modality, ts);
     GetLargestSingleBrickLODRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getLargestSingleBrickLOD();
@@ -97,7 +97,7 @@ Core::Math::Vec3f IOSessionProxy::getBrickExtents(const BrickKey & brickKey) con
 }
 
 
-//Core::Math::Vec3ui IOSessionProxy::getBrickLayout(uint64_t LoD, uint64_t timestep) const {
+//Core::Math::Vec3ui IOSessionProxy::getBrickLayout(uint64_t lod, uint64_t timestep) const {
 //    // TODO
 //    Core::Math::Vec3ui x; return x;
 //}

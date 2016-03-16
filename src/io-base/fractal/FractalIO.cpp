@@ -104,7 +104,7 @@ Vec3f FractalgetBrickExtents(const BrickKey & key) const {
     }
 }
 
-Vec3ui FractalgetBrickLayout(uint64_t LoD, uint64_t timestep) const {
+Vec3ui FractalgetBrickLayout(uint64_t lod, uint64_t timestep) const {
     if (!m_bFlat) {
         // TODO
         throw new mocca::Error("case not implemented", __FILE__, __LINE__);

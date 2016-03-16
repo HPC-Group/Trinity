@@ -120,7 +120,7 @@ GetTransformationHdl::GetTransformationHdl(const GetTransformationRequest& reque
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> GetTransformationHdl::execute() {
-    GetTransformationCmd::ReplyParams params(m_session->getIO().getTransformation());
+    GetTransformationCmd::ReplyParams params(m_session->getIO().getTransformation(m_request.getParams().getModality()));
     return mocca::make_unique<GetTransformationReply>(params, m_request.getRid(), m_session->getSid());
 }
 
@@ -136,7 +136,9 @@ GetLargestSingleBrickLODHdl::GetLargestSingleBrickLODHdl(const GetLargestSingleB
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> GetLargestSingleBrickLODHdl::execute() {
-    GetLargestSingleBrickLODCmd::ReplyParams params(m_session->getIO().getLargestSingleBrickLOD(m_request.getParams().getTs()));
+    auto modality = m_request.getParams().getModality();
+    auto ts = m_request.getParams().getTs();
+    GetLargestSingleBrickLODCmd::ReplyParams params(m_session->getIO().getLargestSingleBrickLOD(modality, ts));
     return mocca::make_unique<GetLargestSingleBrickLODReply>(params, m_request.getRid(), m_session->getSid());
 }
 

@@ -18,17 +18,17 @@ public:
     virtual int getLODLevelCount() const = 0;
     virtual uint64_t getNumberOfTimesteps() const = 0;
     virtual Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality, uint64_t ts) const = 0;
-    virtual Core::Math::Mat4d getTransformation() const = 0;
+    virtual Core::Math::Mat4d getTransformation(uint64_t modality) const = 0;
     virtual Core::Math::Vec3ui getBrickOverlapSize() const = 0;
-    virtual uint64_t getLargestSingleBrickLOD(uint64_t ts) const = 0;
+    virtual uint64_t getLargestSingleBrickLOD(uint64_t modality, uint64_t ts) const = 0;
     virtual Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const = 0;
     virtual Core::Math::Vec3f getBrickExtents(const BrickKey &) const = 0;
 
 
-    //virtual Core::Math::Vec3ui getBrickLayout(uint64_t LoD, uint64_t timestep) const = 0;
+    //virtual Core::Math::Vec3ui getBrickLayout(uint64_t lod, uint64_t modality, uint64_t timestep) const = 0;
     //virtual uint64_t getModalityCount() const = 0;
     //virtual uint64_t getComponentCount(uint64_t modality) const = 0;
-    //virtual Core::Math::Vec2f getRange() const = 0;
+    //virtual Core::Math::Vec2f getRange(uint64_t modality) const = 0;
     //virtual uint64_t getTotalBrickCount() const = 0;
     //virtual bool getBrick(const BrickKey&, std::vector<uint8_t>&) const = 0;
 

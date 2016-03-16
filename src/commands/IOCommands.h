@@ -389,12 +389,18 @@ struct GetTransformationCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
+        RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
         std::string toString() const;
         bool equals(const RequestParams& other) const;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {
@@ -469,7 +475,7 @@ struct GetLargestSingleBrickLODCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t ts);
+        RequestParams(uint64_t modality, uint64_t ts);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -477,9 +483,11 @@ struct GetLargestSingleBrickLODCmd {
         std::string toString() const;
         bool equals(const RequestParams& other) const;
     
+        uint64_t getModality() const;
         uint64_t getTs() const;
 
     private:
+        uint64_t m_modality;
         uint64_t m_ts;
     };
 
