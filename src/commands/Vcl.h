@@ -1,10 +1,4 @@
-	MyVCLTest2222,
-	First = InitRenderer,
-	Last = MyVCLTest2222,
 
-	MyVCLTest2222,
-	First = InitRenderer,
-	Last = MyVCLTest2222,
 
 #pragma once
 
