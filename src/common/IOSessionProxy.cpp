@@ -110,11 +110,13 @@ uint64_t IOSessionProxy::getModalityCount() const {
     return reply->getParams().getModalityCount();
 }
 
-//uint64_t IOSessionProxy::getComponentCount(uint64_t modality) const {
-//    // TODO
-//    uint64_t x; return x;
-//}
-//
+uint64_t IOSessionProxy::getComponentCount(uint64_t modality) const {
+    GetComponentCountCmd::RequestParams params(modality);
+    GetComponentCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getComponentCount();
+}
+
 //Core::Math::Vec2f IOSessionProxy::getRange() const {
 //    // TODO
 //    Core::Math::Vec2f x; return x;

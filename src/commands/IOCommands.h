@@ -699,6 +699,52 @@ std::ostream& operator<<(std::ostream& os, const GetModalityCountCmd::ReplyParam
 using GetModalityCountRequest = RequestTemplate<GetModalityCountCmd>;
 using GetModalityCountReply = ReplyTemplate<GetModalityCountCmd>;
 
+struct GetComponentCountCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t modality);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t componentCount);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getComponentCount() const;
+
+    private:
+        uint64_t m_componentCount;
+    };
+};
+
+bool operator==(const GetComponentCountCmd::RequestParams& lhs, const GetComponentCountCmd::RequestParams& rhs);
+bool operator==(const GetComponentCountCmd::ReplyParams& lhs, const GetComponentCountCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetComponentCountCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetComponentCountCmd::ReplyParams& obj);
+
+using GetComponentCountRequest = RequestTemplate<GetComponentCountCmd>;
+using GetComponentCountReply = ReplyTemplate<GetComponentCountCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

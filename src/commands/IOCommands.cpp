@@ -849,6 +849,61 @@ uint64_t GetModalityCountCmd::ReplyParams::getModalityCount() const {
     return m_modalityCount;
 }
 
+
+////////////// GetBrickOverlapSizeCmd //////////////
+
+VclType GetComponentCountCmd::Type = VclType::GetComponentCount;
+
+GetComponentCountCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
+
+void GetComponentCountCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetComponentCountCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
+
+bool GetComponentCountCmd::RequestParams::equals(const GetComponentCountCmd::RequestParams& other) const {
+    return m_modality == other.m_modality;
+}
+
+std::string GetComponentCountCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
+}
+
+uint64_t GetComponentCountCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+GetComponentCountCmd::ReplyParams::ReplyParams(uint64_t componentCount)
+    : m_componentCount(componentCount) {}
+
+void GetComponentCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("componentCount", m_componentCount);
+}
+
+void GetComponentCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_componentCount = reader.getUInt64("componentCount");
+}
+
+bool GetComponentCountCmd::ReplyParams::equals(const GetComponentCountCmd::ReplyParams& other) const {
+    return m_componentCount == other.m_componentCount;
+}
+
+std::string GetComponentCountCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "componentCount: " << m_componentCount;
+    return stream.str();
+}
+
+uint64_t GetComponentCountCmd::ReplyParams::getComponentCount() const {
+    return m_componentCount;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1055,6 +1110,19 @@ std::ostream& operator<<(std::ostream& os, const GetModalityCountCmd::RequestPar
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetModalityCountCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetComponentCountCmd::RequestParams& lhs, const GetComponentCountCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetComponentCountCmd::ReplyParams& lhs, const GetComponentCountCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetComponentCountCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetComponentCountCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

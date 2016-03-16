@@ -177,5 +177,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetComponentCountHdl : public ICommandHandler {
+public:
+    GetComponentCountHdl(const GetComponentCountRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetComponentCountRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

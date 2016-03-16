@@ -28,9 +28,9 @@ public:
     Core::Math::Vec3f getBrickExtents(const BrickKey & brickKey) const override;
     Core::Math::Vec3ui getBrickLayout(uint64_t lod, uint64_t modality, uint64_t timestep) const override;
     uint64_t getModalityCount() const override;
+    uint64_t getComponentCount(uint64_t modality) const override;
 
 
-    //uint64_t getComponentCount(uint64_t modality) const override;
     //Core::Math::Vec2f getRange() const override;
     //uint64_t getTotalBrickCount() const override;
     //bool getBrick(const BrickKey&, std::vector<uint8_t>&) const override;

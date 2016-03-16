@@ -71,6 +71,9 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetModalityCount:
         return mocca::make_unique<GetModalityCountHdl>(static_cast<const GetModalityCountRequest&>(request), session);
         break;
+    case VclType::GetComponentCount:
+        return mocca::make_unique<GetComponentCountHdl>(static_cast<const GetComponentCountRequest&>(request), session);
+        break;
 
 #undef PYTHON_MAGIC
     default:

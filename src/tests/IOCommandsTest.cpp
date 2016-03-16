@@ -385,3 +385,26 @@ TEST_F(IOCommandsTest, GetModalityCountReqRep) {
     auto reply = trinity::testing::handleRequest<GetModalityCountHdl>(request, session.get());
     ASSERT_EQ(23, reply.getParams().getModalityCount());
 }
+
+TEST_F(IOCommandsTest, GetComponentCountCmd) {
+    {
+        GetComponentCountCmd::RequestParams target(23);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetComponentCountCmd::ReplyParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetComponentCountReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getComponentCount(23)).Times(1).WillOnce(Return(42));
+
+    GetComponentCountCmd::RequestParams requestParams(23);
+    GetComponentCountRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetComponentCountHdl>(request, session.get());
+    ASSERT_EQ(42, reply.getParams().getComponentCount());
+}

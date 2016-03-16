@@ -17,4 +17,5 @@ public:
     MOCK_CONST_METHOD1(getBrickExtents, Core::Math::Vec3f(const trinity::BrickKey&));
     MOCK_CONST_METHOD3(getBrickLayout, Core::Math::Vec3ui(uint64_t, uint64_t, uint64_t));
     MOCK_CONST_METHOD0(getModalityCount, uint64_t());
+    MOCK_CONST_METHOD1(getComponentCount, uint64_t(uint64_t));
 };

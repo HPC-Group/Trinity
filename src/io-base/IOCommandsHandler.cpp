@@ -177,4 +177,12 @@ std::unique_ptr<Reply> GetModalityCountHdl::execute() {
     return mocca::make_unique<GetModalityCountReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetComponentCountHdl::GetComponentCountHdl(const GetComponentCountRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetComponentCountHdl::execute() {
+    GetComponentCountCmd::ReplyParams params(m_session->getIO().getComponentCount(m_request.getParams().getModality()));
+    return mocca::make_unique<GetComponentCountReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC
