@@ -31,7 +31,8 @@ ioFiles = {0 : "IOCommands.h",
 	   5 : "IOCommandFactory.cpp"}
 
 commFiles = {0 : "Request.cpp",
-	     1 : "Reply.cpp"}
+	     1 : "Reply.cpp",
+	     2 : "Vcl.h"}
 
 processingTemplates = {0 : "ProcessingCommandsTemplate.h",
 		       1 : "ProcessingCommandsTemplate.cpp",
@@ -94,6 +95,8 @@ def generateCommandsHdr():
     if hasReply != "false":
       generateReply("#undef PYTHON_MAGIC_IO")
     
+    generateVcl()
+    
     copyFiles(Types.io)
 
   
@@ -103,6 +106,11 @@ def generateRequest(lookup):
   
 def generateReply(lookup):
   openFile(commDir + commFiles[1], templateDir + "ReplyTemplate.cpp", lookup)
+  
+
+def generateVcl():
+  openFile(commDir + commFiles[2], templateDir + "VclTemplate.h", "#undef PYTHON_MAGIC")
+  openFile(commDir + commFiles[2], templateDir + "VclTemplate2.h", "#undef PYTHON_MAGIC_STRING")
   
   
 def refreshSrc():
