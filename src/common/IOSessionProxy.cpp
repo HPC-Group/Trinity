@@ -82,12 +82,14 @@ uint64_t IOSessionProxy::getLargestSingleBrickLOD(uint64_t ts) const {
     return reply->getParams().getLargestSingleBrickLOD();
 }
 
+Core::Math::Vec3ui IOSessionProxy::getBrickVoxelCounts(const BrickKey& brickKey) const {
+    GetBrickVoxelCountsCmd::RequestParams params(brickKey);
+    GetBrickVoxelCountsRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getBrickVoxelCounts();
+}
 
-//Core::Math::Vec3ui IOSessionProxy::getBrickVoxelCounts(const BrickKey&) const {
-//    // TODO
-//    Core::Math::Vec3ui x; return x;
-//}
-//
+
 //Vec3f IOSessionProxy::getBrickExtents(const BrickKey &) const {
 //    // TODO
 //    Vec3f x; return x;

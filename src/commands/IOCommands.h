@@ -509,6 +509,52 @@ std::ostream& operator<<(std::ostream& os, const GetLargestSingleBrickLODCmd::Re
 using GetLargestSingleBrickLODRequest = RequestTemplate<GetLargestSingleBrickLODCmd>;
 using GetLargestSingleBrickLODReply = ReplyTemplate<GetLargestSingleBrickLODCmd>;
 
+struct GetBrickVoxelCountsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const BrickKey& brickKey);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        BrickKey getBrickKey() const;
+
+    private:
+        BrickKey m_brickKey;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec3ui& brickVoxelCounts);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec3ui getBrickVoxelCounts() const;
+
+    private:
+        Core::Math::Vec3ui m_brickVoxelCounts;
+    };
+};
+
+bool operator==(const GetBrickVoxelCountsCmd::RequestParams& lhs, const GetBrickVoxelCountsCmd::RequestParams& rhs);
+bool operator==(const GetBrickVoxelCountsCmd::ReplyParams& lhs, const GetBrickVoxelCountsCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBrickVoxelCountsCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetBrickVoxelCountsCmd::ReplyParams& obj);
+
+using GetBrickVoxelCountsRequest = RequestTemplate<GetBrickVoxelCountsCmd>;
+using GetBrickVoxelCountsReply = ReplyTemplate<GetBrickVoxelCountsCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

@@ -133,5 +133,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetBrickVoxelCountsHdl : public ICommandHandler {
+public:
+    GetBrickVoxelCountsHdl(const GetBrickVoxelCountsRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetBrickVoxelCountsRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

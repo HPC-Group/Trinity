@@ -19,9 +19,9 @@ public:
     Core::Math::Mat4d getTransformation() const override {Core::Math::Mat4d x; return x; }
     Core::Math::Vec3ui getBrickOverlapSize() const override {Core::Math::Vec3ui x; return x; }
     uint64_t getLargestSingleBrickLOD(uint64_t ts) const override {uint64_t x; return x; }
+    Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const override {Core::Math::Vec3ui x; return x; }
 
 
-    //Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const override {Core::Math::Vec3ui x; return x; }
     //Vec3f getBrickExtents(const BrickKey &) const override {Vec3f x; return x; }
     //Core::Math::Vec3ui getBrickLayout(uint64_t LoD, uint64_t timestep) const override {Core::Math::Vec3ui x; return x; }
     //uint64_t getModalityCount() const override {uint64_t x; return x; }

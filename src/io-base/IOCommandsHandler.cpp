@@ -140,4 +140,12 @@ std::unique_ptr<Reply> GetLargestSingleBrickLODHdl::execute() {
     return mocca::make_unique<GetLargestSingleBrickLODReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetBrickVoxelCountsHdl::GetBrickVoxelCountsHdl(const GetBrickVoxelCountsRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetBrickVoxelCountsHdl::execute() {
+    GetBrickVoxelCountsCmd::ReplyParams params(m_session->getIO().getBrickVoxelCounts(m_request.getParams().getBrickKey()));
+    return mocca::make_unique<GetBrickVoxelCountsReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

@@ -59,6 +59,9 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetLargestSingleBrickLOD:
         return mocca::make_unique<GetLargestSingleBrickLODHdl>(static_cast<const GetLargestSingleBrickLODRequest&>(request), session);
         break;
+    case VclType::GetBrickVoxelCounts:
+        return mocca::make_unique<GetBrickVoxelCountsHdl>(static_cast<const GetBrickVoxelCountsRequest&>(request), session);
+        break;
 
 #undef PYTHON_MAGIC
     default:

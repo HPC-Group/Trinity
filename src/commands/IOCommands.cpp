@@ -608,6 +608,61 @@ uint64_t GetLargestSingleBrickLODCmd::ReplyParams::getLargestSingleBrickLOD() co
     return m_largestSingleBrickLOD;
 }
 
+
+////////////// GetBrickVoxelCountsCmd //////////////
+
+VclType GetBrickVoxelCountsCmd::Type = VclType::GetBrickVoxelCounts;
+
+GetBrickVoxelCountsCmd::RequestParams::RequestParams(const BrickKey& brickKey)
+    : m_brickKey(brickKey) {}
+
+void GetBrickVoxelCountsCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("brickKey", m_brickKey);
+}
+
+void GetBrickVoxelCountsCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_brickKey = reader.getSerializable<BrickKey>("brickKey");
+}
+
+bool GetBrickVoxelCountsCmd::RequestParams::equals(const GetBrickVoxelCountsCmd::RequestParams& other) const {
+    return m_brickKey == other.m_brickKey;
+}
+
+std::string GetBrickVoxelCountsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "brickKey: " << m_brickKey;
+    return stream.str();
+}
+
+BrickKey GetBrickVoxelCountsCmd::RequestParams::getBrickKey() const {
+    return m_brickKey;
+}
+
+GetBrickVoxelCountsCmd::ReplyParams::ReplyParams(const Core::Math::Vec3ui& brickVoxelCounts)
+    : m_brickVoxelCounts(brickVoxelCounts) {}
+
+void GetBrickVoxelCountsCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("brickVoxelCounts", m_brickVoxelCounts);
+}
+
+void GetBrickVoxelCountsCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_brickVoxelCounts = reader.getSerializable<Core::Math::Vec3ui>("brickVoxelCounts");
+}
+
+bool GetBrickVoxelCountsCmd::ReplyParams::equals(const GetBrickVoxelCountsCmd::ReplyParams& other) const {
+    return m_brickVoxelCounts == other.m_brickVoxelCounts;
+}
+
+std::string GetBrickVoxelCountsCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "brickVoxelCounts: " << m_brickVoxelCounts;
+    return stream.str();
+}
+
+Core::Math::Vec3ui GetBrickVoxelCountsCmd::ReplyParams::getBrickVoxelCounts() const {
+    return m_brickVoxelCounts;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -762,6 +817,19 @@ std::ostream& operator<<(std::ostream& os, const GetLargestSingleBrickLODCmd::Re
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetLargestSingleBrickLODCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBrickVoxelCountsCmd::RequestParams& lhs, const GetBrickVoxelCountsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetBrickVoxelCountsCmd::ReplyParams& lhs, const GetBrickVoxelCountsCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickVoxelCountsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickVoxelCountsCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

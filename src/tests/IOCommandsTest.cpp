@@ -271,7 +271,6 @@ TEST_F(IOCommandsTest, GetBrickOverlapSizeReqRep) {
     ASSERT_EQ(Core::Math::Vec3ui(4, 5, 6), reply.getParams().getOverlapSize());
 }
 
-
 TEST_F(IOCommandsTest, GetLargestSingleBrickLODCmd) {
     {
         GetLargestSingleBrickLODCmd::RequestParams target(42);
@@ -293,4 +292,27 @@ TEST_F(IOCommandsTest, GetLargestSingleBrickLODReqRep) {
     GetLargestSingleBrickLODRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetLargestSingleBrickLODHdl>(request, session.get());
     ASSERT_EQ(42, reply.getParams().getLargestSingleBrickLOD());
+}
+
+TEST_F(IOCommandsTest, GetBrickVoxelCountsCmd) {
+    {
+        GetBrickVoxelCountsCmd::RequestParams target(BrickKey(1, 2, 3, 4));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetBrickVoxelCountsCmd::ReplyParams target(Core::Math::Vec3ui(5, 6, 7));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetBrickVoxelCountsReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickVoxelCounts(_)).Times(1).WillOnce(Return(Core::Math::Vec3ui(5, 6, 7)));
+
+    GetBrickVoxelCountsCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
+    GetBrickVoxelCountsRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetBrickVoxelCountsHdl>(request, session.get());
+    ASSERT_EQ(Core::Math::Vec3ui(5, 6, 7), reply.getParams().getBrickVoxelCounts());
 }
