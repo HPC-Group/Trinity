@@ -423,6 +423,46 @@ std::ostream& operator<<(std::ostream& os, const GetTransformationCmd::ReplyPara
 using GetTransformationRequest = RequestTemplate<GetTransformationCmd>;
 using GetTransformationReply = ReplyTemplate<GetTransformationCmd>;
 
+struct GetBrickOverlapSizeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec3ui& overlapSize);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec3ui getOverlapSize() const;
+
+    private:
+        Core::Math::Vec3ui m_overlapSize;
+    };
+};
+
+bool operator==(const GetBrickOverlapSizeCmd::RequestParams& lhs, const GetBrickOverlapSizeCmd::RequestParams& rhs);
+bool operator==(const GetBrickOverlapSizeCmd::ReplyParams& lhs, const GetBrickOverlapSizeCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBrickOverlapSizeCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetBrickOverlapSizeCmd::ReplyParams& obj);
+
+using GetBrickOverlapSizeRequest = RequestTemplate<GetBrickOverlapSizeCmd>;
+using GetBrickOverlapSizeReply = ReplyTemplate<GetBrickOverlapSizeCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

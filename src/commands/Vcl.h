@@ -35,9 +35,8 @@ enum class VclType {
     ZoomCamera,
     Paint,
 #define PYTHON_ENUM
-
-
     GetTransformation,
+    GetBrickOverlapSize,
 
 #undef PYTHON_ENUM
     GetMaxBrickSize,
@@ -95,9 +94,8 @@ private:
         m_cmdMap.insert("GetNumberOfTimesteps", VclType::GetNumberOfTimesteps);
         m_cmdMap.insert("GetDomainSize", VclType::GetDomainSize);
 #define PYTHON_MAGIC_STRING
-
-
         m_cmdMap.insert("GetTransformation", VclType::GetTransformation);
+        m_cmdMap.insert("GetBrickOverlapSize", VclType::GetBrickOverlapSize);
 
 #undef PYTHON_MAGIC_STRING
 

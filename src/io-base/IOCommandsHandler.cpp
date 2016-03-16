@@ -124,4 +124,12 @@ std::unique_ptr<Reply> GetTransformationHdl::execute() {
     return mocca::make_unique<GetTransformationReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetBrickOverlapSizeHdl::GetBrickOverlapSizeHdl(const GetBrickOverlapSizeRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetBrickOverlapSizeHdl::execute() {
+    GetBrickOverlapSizeCmd::ReplyParams params(m_session->getIO().getBrickOverlapSize());
+    return mocca::make_unique<GetBrickOverlapSizeReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

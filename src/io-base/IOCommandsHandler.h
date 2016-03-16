@@ -111,5 +111,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetBrickOverlapSizeHdl : public ICommandHandler {
+public:
+    GetBrickOverlapSizeHdl(const GetBrickOverlapSizeRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetBrickOverlapSizeRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

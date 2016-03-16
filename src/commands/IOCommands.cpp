@@ -512,6 +512,49 @@ Core::Math::Mat4d GetTransformationCmd::ReplyParams::getTransformation() const {
     return m_transformation;
 }
 
+////////////// GetBrickOverlapSizeCmd //////////////
+
+
+VclType GetBrickOverlapSizeCmd::Type = VclType::GetBrickOverlapSize;
+
+void GetBrickOverlapSizeCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetBrickOverlapSizeCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetBrickOverlapSizeCmd::RequestParams::equals(const GetBrickOverlapSizeCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetBrickOverlapSizeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetBrickOverlapSizeCmd::ReplyParams::ReplyParams(const Core::Math::Vec3ui& overlapSize)
+    : m_overlapSize(overlapSize) {}
+
+void GetBrickOverlapSizeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("overlapSize", m_overlapSize);
+}
+
+void GetBrickOverlapSizeCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_overlapSize = reader.getSerializable<Core::Math::Vec3ui>("overlapSize");
+}
+
+bool GetBrickOverlapSizeCmd::ReplyParams::equals(const GetBrickOverlapSizeCmd::ReplyParams& other) const {
+    return m_overlapSize == other.m_overlapSize;
+}
+
+std::string GetBrickOverlapSizeCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "overlapSize: " << m_overlapSize;
+    return stream.str();
+}
+
+Core::Math::Vec3ui GetBrickOverlapSizeCmd::ReplyParams::getOverlapSize() const {
+    return m_overlapSize;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -640,6 +683,19 @@ std::ostream& operator<<(std::ostream& os, const GetTransformationCmd::RequestPa
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetTransformationCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBrickOverlapSizeCmd::RequestParams& lhs, const GetBrickOverlapSizeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetBrickOverlapSizeCmd::ReplyParams& lhs, const GetBrickOverlapSizeCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickOverlapSizeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickOverlapSizeCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

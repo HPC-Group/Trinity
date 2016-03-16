@@ -60,6 +60,9 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 	else if (type == GetTransformationRequest::Ifc::Type) {
 		return reader->getSerializablePtr<GetTransformationRequest>("req");
 	}
+	else if (type == GetBrickOverlapSizeRequest::Ifc::Type) {
+		return reader->getSerializablePtr<GetBrickOverlapSizeRequest>("req");
+	}
 
 #undef PYTHON_MAGIC_IO
 

@@ -19,9 +19,9 @@ public:
     virtual uint64_t getNumberOfTimesteps() const = 0;
     virtual Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality, uint64_t ts) const = 0;
     virtual Core::Math::Mat4d getTransformation() const = 0;
+    virtual Core::Math::Vec3ui getBrickOverlapSize() const = 0;
 
 
-    //virtual Core::Math::Vec3ui getBrickOverlapSize() const = 0;
     //virtual uint64_t getLargestSingleBrickLOD(uint64_t ts) const = 0;
     //virtual Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const = 0;
     //virtual Vec3f getBrickExtents(const BrickKey &) const = 0;

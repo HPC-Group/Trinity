@@ -247,3 +247,26 @@ TEST_F(IOCommandsTest, GetTransformationReqRep) {
     auto reply = trinity::testing::handleRequest<GetTransformationHdl>(request, session.get());
     ASSERT_EQ(transformation, reply.getParams().getTransformation());
 }
+
+TEST_F(IOCommandsTest, GetBrickOverlapSizeCmd) {
+    {
+        GetBrickOverlapSizeCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetBrickOverlapSizeCmd::ReplyParams target(Core::Math::Vec3ui(4, 5, 6));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetBrickOverlapSizeReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickOverlapSize()).Times(1).WillOnce(Return(Core::Math::Vec3ui(4, 5, 6)));
+
+    GetBrickOverlapSizeCmd::RequestParams requestParams;
+    GetBrickOverlapSizeRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetBrickOverlapSizeHdl>(request, session.get());
+    ASSERT_EQ(Core::Math::Vec3ui(4, 5, 6), reply.getParams().getOverlapSize());
+}

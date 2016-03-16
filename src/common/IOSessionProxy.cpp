@@ -68,11 +68,13 @@ Core::Math::Mat4d IOSessionProxy::getTransformation() const {
     return reply->getParams().getTransformation();
 }
 
-//Core::Math::Vec3ui IOSessionProxy::getBrickOverlapSize() const {
-//    // TODO
-//    Core::Math::Vec3ui x; return x;
-//}
-//
+Core::Math::Vec3ui IOSessionProxy::getBrickOverlapSize() const {
+    GetBrickOverlapSizeCmd::RequestParams params;
+    GetBrickOverlapSizeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getOverlapSize();
+}
+
 //uint64_t IOSessionProxy::getLargestSingleBrickLOD(uint64_t ts) const {
 //    // TODO
 //    uint64_t x; return x;

@@ -50,10 +50,11 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
         break;
 
 #define PYTHON_MAGIC
-
-
     case VclType::GetTransformation:
         return mocca::make_unique<GetTransformationHdl>(static_cast<const GetTransformationRequest&>(request), session);
+        break;
+    case VclType::GetBrickOverlapSize:
+        return mocca::make_unique<GetBrickOverlapSizeHdl>(static_cast<const GetBrickOverlapSizeRequest&>(request), session);
         break;
 
 #undef PYTHON_MAGIC
