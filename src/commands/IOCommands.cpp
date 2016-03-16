@@ -1002,6 +1002,62 @@ uint64_t GetTotalBrickCountCmd::ReplyParams::getTotalBrickCount() const {
     return m_totalBrickCount;
 }
 
+
+////////////// GetBrickCmd //////////////
+
+VclType GetBrickCmd::Type = VclType::GetBrick;
+
+GetBrickCmd::RequestParams::RequestParams(const BrickKey& brickKey)
+    : m_brickKey(brickKey) {}
+
+void GetBrickCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("brickKey", m_brickKey);
+}
+
+void GetBrickCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_brickKey = reader.getSerializable<BrickKey>("brickKey");
+}
+
+bool GetBrickCmd::RequestParams::equals(const GetBrickCmd::RequestParams& other) const {
+    return m_brickKey == other.m_brickKey;
+}
+
+std::string GetBrickCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "brickKey: " << m_brickKey;
+    return stream.str();
+}
+
+BrickKey GetBrickCmd::RequestParams::getBrickKey() const {
+    return m_brickKey;
+}
+
+GetBrickCmd::ReplyParams::ReplyParams(std::vector<uint8_t> brick)
+    : m_brick(std::move(brick)) {}
+
+void GetBrickCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendIntVec("brick", m_brick);
+}
+
+void GetBrickCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_brick = reader.getUInt8Vec("brick");
+}
+
+bool GetBrickCmd::ReplyParams::equals(const GetBrickCmd::ReplyParams& other) const {
+    return m_brick == other.m_brick;
+}
+
+std::string GetBrickCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "brick: ";
+    ::operator<<(stream, m_brick); // ugly, but necessary because of namespaces
+    return stream.str();
+}
+
+std::vector<uint8_t> GetBrickCmd::ReplyParams::getBrick() const {
+    return m_brick;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1247,6 +1303,19 @@ std::ostream& operator<<(std::ostream& os, const GetTotalBrickCountCmd::RequestP
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetTotalBrickCountCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBrickCmd::RequestParams& lhs, const GetBrickCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetBrickCmd::ReplyParams& lhs, const GetBrickCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

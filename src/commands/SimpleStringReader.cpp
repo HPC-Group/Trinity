@@ -78,7 +78,17 @@ std::vector<float> SimpleStringReader::getFloatVec(const std::string& key) const
 std::vector<int32_t> SimpleStringReader::getInt32Vec(const std::string& key) const {
     int32_t size;
     m_stream >> size;
-    std::vector<int> result(size);
+    std::vector<int32_t> result(size);
+    for (int32_t i = 0; i < size; ++i) {
+        m_stream >> result[i];
+    }
+    return result;
+}
+
+std::vector<uint8_t> SimpleStringReader::getUInt8Vec(const std::string& key) const {
+    int32_t size;
+    m_stream >> size;
+    std::vector<uint8_t> result(size);
     for (int32_t i = 0; i < size; ++i) {
         m_stream >> result[i];
     }

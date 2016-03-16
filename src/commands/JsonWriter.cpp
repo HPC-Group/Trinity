@@ -58,6 +58,12 @@ void JsonWriter::appendIntVec(const std::string& key, const std::vector<int32_t>
     }
 }
 
+void JsonWriter::appendIntVec(const std::string& key, const std::vector<uint8_t>& vec) {
+    for (uint32_t i = 0; i < vec.size(); ++i) {
+        m_root[key][i] = JsonCpp::UInt(vec[i]); // uint8 not supported by JSON
+    }
+}
+
 void JsonWriter::appendBoolVec(const std::string& key, const std::vector<bool>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = JsonCpp::Value(vec[i]);

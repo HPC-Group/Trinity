@@ -201,4 +201,13 @@ std::unique_ptr<Reply> GetTotalBrickCountHdl::execute() {
     return mocca::make_unique<GetTotalBrickCountReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetBrickHdl::GetBrickHdl(const GetBrickRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetBrickHdl::execute() {
+    bool mysteriousFlag;
+    GetBrickCmd::ReplyParams params(m_session->getIO().getBrick(m_request.getParams().getBrickKey(), mysteriousFlag));
+    return mocca::make_unique<GetBrickReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

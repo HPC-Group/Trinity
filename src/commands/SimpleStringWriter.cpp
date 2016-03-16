@@ -58,6 +58,13 @@ void SimpleStringWriter::appendIntVec(const std::string& key, const std::vector<
     }
 }
 
+void SimpleStringWriter::appendIntVec(const std::string& key, const std::vector<uint8_t>& vec) {
+    m_stream << vec.size() << " ";
+    for (size_t i = 0; i < vec.size(); ++i) {
+        m_stream << vec[i] << " ";
+    }
+}
+
 void SimpleStringWriter::appendBoolVec(const std::string& key, const std::vector<bool>& vec) {
     m_stream << vec.size() << " ";
     for (size_t i = 0; i < vec.size(); ++i) {

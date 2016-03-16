@@ -210,5 +210,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetBrickHdl : public ICommandHandler {
+public:
+    GetBrickHdl(const GetBrickRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetBrickRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

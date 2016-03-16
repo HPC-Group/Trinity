@@ -37,10 +37,7 @@ public:
     uint64_t getComponentCount(uint64_t modality) const override {uint64_t x; return x; }
     Core::Math::Vec2f getRange(uint64_t modality) const override {Core::Math::Vec2f x; return x; }
     uint64_t getTotalBrickCount() const override {uint64_t x; return x; }
-
-
-
-    //bool getBrick(const BrickKey&, std::vector<uint8_t>&) const override {bool x; return x; }
+    std::vector<uint8_t> getBrick(const BrickKey& brickKey, bool&) const override { return std::vector<uint8_t>(); }
 
 private:
     Core::Math::Vec3ui64 m_totalSize;

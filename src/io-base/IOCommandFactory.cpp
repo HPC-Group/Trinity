@@ -80,6 +80,9 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetTotalBrickCount:
         return mocca::make_unique<GetTotalBrickCountHdl>(static_cast<const GetTotalBrickCountRequest&>(request), session);
         break;
+    case VclType::GetBrick:
+        return mocca::make_unique<GetBrickHdl>(static_cast<const GetBrickRequest&>(request), session);
+        break;
 
 #undef PYTHON_MAGIC
     default:

@@ -28,9 +28,7 @@ public:
     virtual uint64_t getComponentCount(uint64_t modality) const = 0;
     virtual Core::Math::Vec2f getRange(uint64_t modality) const = 0;
     virtual uint64_t getTotalBrickCount() const = 0;
-
-
-    //virtual bool getBrick(const BrickKey&, std::vector<uint8_t>&) const = 0;
+    virtual std::vector<uint8_t> getBrick(const BrickKey& brickKey, bool& mysteriousFlag) const = 0; // todo: what does the mysterious flag stand for? does it need to be serialized?
 
     // not sure if we need that
     // virtual ValueType getType() const;

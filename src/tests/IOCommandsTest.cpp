@@ -454,3 +454,27 @@ TEST_F(IOCommandsTest, GetTotalBrickCountReqRep) {
     auto reply = trinity::testing::handleRequest<GetTotalBrickCountHdl>(request, session.get());
     ASSERT_EQ(42, reply.getParams().getTotalBrickCount());
 }
+
+TEST_F(IOCommandsTest, GetBrickCmd) {
+    {
+        GetBrickCmd::RequestParams target(BrickKey(1, 2, 3, 4));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetBrickCmd::ReplyParams target(std::vector<uint8_t>{ 0x12, 0x34, 0x56, 0x78, 0x9A });
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetBrickReqRep) {
+    auto session = createMockSession();
+    std::vector<uint8_t> brick{ 0x12, 0x34, 0x56, 0x78, 0x9A };
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrick(BrickKey(1, 2, 3, 4), _)).Times(1).WillOnce(Return(brick));
+
+    GetBrickCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
+    GetBrickRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetBrickHdl>(request, session.get());
+    ASSERT_EQ(brick, reply.getParams().getBrick());
+}

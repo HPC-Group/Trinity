@@ -45,6 +45,7 @@ enum class VclType {
     GetComponentCount,
     GetRange,
     GetTotalBrickCount,
+    GetBrick,
 
 #undef PYTHON_ENUM
     GetMaxBrickSize,
@@ -112,6 +113,7 @@ private:
         m_cmdMap.insert("GetComponentCount", VclType::GetComponentCount);
         m_cmdMap.insert("GetRange", VclType::GetRange);
         m_cmdMap.insert("GetTotalBrickCount", VclType::GetTotalBrickCount);
+        m_cmdMap.insert("GetBrick", VclType::GetBrick);
 
 #undef PYTHON_MAGIC_STRING
 
