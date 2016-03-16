@@ -68,6 +68,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetComponentCountRequest>("req");
     } else if (type == GetRangeRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetRangeRequest>("req");
+    } else if (type == GetTotalBrickCountRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetTotalBrickCountRequest>("req");
     }
 
 #undef PYTHON_MAGIC_IO

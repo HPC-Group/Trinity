@@ -199,5 +199,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetTotalBrickCountHdl : public ICommandHandler {
+public:
+    GetTotalBrickCountHdl(const GetTotalBrickCountRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetTotalBrickCountRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

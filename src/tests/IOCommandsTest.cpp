@@ -431,3 +431,26 @@ TEST_F(IOCommandsTest, GetRangeReqRep) {
     auto reply = trinity::testing::handleRequest<GetRangeHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec2f(1.0, 2.0), reply.getParams().getRange());
 }
+
+TEST_F(IOCommandsTest, GetTotalBrickCountCmd) {
+    {
+        GetTotalBrickCountCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetTotalBrickCountCmd::ReplyParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetTotalBrickCountReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getTotalBrickCount()).Times(1).WillOnce(Return(42));
+
+    GetTotalBrickCountCmd::RequestParams requestParams;
+    GetTotalBrickCountRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetTotalBrickCountHdl>(request, session.get());
+    ASSERT_EQ(42, reply.getParams().getTotalBrickCount());
+}

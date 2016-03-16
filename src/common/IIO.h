@@ -27,9 +27,9 @@ public:
     virtual uint64_t getModalityCount() const = 0;
     virtual uint64_t getComponentCount(uint64_t modality) const = 0;
     virtual Core::Math::Vec2f getRange(uint64_t modality) const = 0;
+    virtual uint64_t getTotalBrickCount() const = 0;
 
 
-    //virtual uint64_t getTotalBrickCount() const = 0;
     //virtual bool getBrick(const BrickKey&, std::vector<uint8_t>&) const = 0;
 
     // not sure if we need that

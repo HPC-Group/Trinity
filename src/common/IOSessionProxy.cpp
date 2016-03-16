@@ -124,11 +124,13 @@ Core::Math::Vec2f IOSessionProxy::getRange(uint64_t modality) const {
     return reply->getParams().getRange();
 }
 
-//uint64_t IOSessionProxy::getTotalBrickCount() const {
-//    // TODO
-//    uint64_t x; return x;
-//}
-//
+uint64_t IOSessionProxy::getTotalBrickCount() const {
+    GetTotalBrickCountCmd::RequestParams params;
+    GetTotalBrickCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getTotalBrickCount();
+}
+
 //bool IOSessionProxy::getBrick(const BrickKey&, std::vector<uint8_t>&) const {
 //    // TODO
 //    bool x; return x;

@@ -791,6 +791,46 @@ std::ostream& operator<<(std::ostream& os, const GetRangeCmd::ReplyParams& obj);
 using GetRangeRequest = RequestTemplate<GetRangeCmd>;
 using GetRangeReply = ReplyTemplate<GetRangeCmd>;
 
+struct GetTotalBrickCountCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t totalBrickCount);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getTotalBrickCount() const;
+
+    private:
+        uint64_t m_totalBrickCount;
+    };
+};
+
+bool operator==(const GetTotalBrickCountCmd::RequestParams& lhs, const GetTotalBrickCountCmd::RequestParams& rhs);
+bool operator==(const GetTotalBrickCountCmd::ReplyParams& lhs, const GetTotalBrickCountCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetTotalBrickCountCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetTotalBrickCountCmd::ReplyParams& obj);
+
+using GetTotalBrickCountRequest = RequestTemplate<GetTotalBrickCountCmd>;
+using GetTotalBrickCountReply = ReplyTemplate<GetTotalBrickCountCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

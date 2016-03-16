@@ -959,6 +959,49 @@ Core::Math::Vec2f GetRangeCmd::ReplyParams::getRange() const {
     return m_range;
 }
 
+
+////////////// GetTotalBrickCountCmd //////////////
+
+VclType GetTotalBrickCountCmd::Type = VclType::GetTotalBrickCount;
+
+void GetTotalBrickCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetTotalBrickCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetTotalBrickCountCmd::RequestParams::equals(const GetTotalBrickCountCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetTotalBrickCountCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetTotalBrickCountCmd::ReplyParams::ReplyParams(uint64_t totalBrickCount)
+    : m_totalBrickCount(totalBrickCount) {}
+
+void GetTotalBrickCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("totalBrickCount", m_totalBrickCount);
+}
+
+void GetTotalBrickCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_totalBrickCount = reader.getUInt64("totalBrickCount");
+}
+
+bool GetTotalBrickCountCmd::ReplyParams::equals(const GetTotalBrickCountCmd::ReplyParams& other) const {
+    return m_totalBrickCount == other.m_totalBrickCount;
+}
+
+std::string GetTotalBrickCountCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "totalBrickCount: " << m_totalBrickCount;
+    return stream.str();
+}
+
+uint64_t GetTotalBrickCountCmd::ReplyParams::getTotalBrickCount() const {
+    return m_totalBrickCount;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1191,6 +1234,19 @@ std::ostream& operator<<(std::ostream& os, const GetRangeCmd::RequestParams& obj
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetRangeCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetTotalBrickCountCmd::RequestParams& lhs, const GetTotalBrickCountCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetTotalBrickCountCmd::ReplyParams& lhs, const GetTotalBrickCountCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetTotalBrickCountCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetTotalBrickCountCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

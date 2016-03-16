@@ -30,9 +30,9 @@ public:
     uint64_t getModalityCount() const override;
     uint64_t getComponentCount(uint64_t modality) const override;
     Core::Math::Vec2f getRange(uint64_t modality) const override;
+    uint64_t getTotalBrickCount() const override;
 
 
-    //uint64_t getTotalBrickCount() const override;
     //bool getBrick(const BrickKey&, std::vector<uint8_t>&) const override;
 
 private:

@@ -19,4 +19,5 @@ public:
     MOCK_CONST_METHOD0(getModalityCount, uint64_t());
     MOCK_CONST_METHOD1(getComponentCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD1(getRange, Core::Math::Vec2f(uint64_t));
+    MOCK_CONST_METHOD0(getTotalBrickCount, uint64_t());
 };
