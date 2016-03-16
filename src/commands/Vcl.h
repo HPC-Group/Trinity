@@ -1,3 +1,11 @@
+	MyVCLTest2222,
+	First = InitRenderer,
+	Last = MyVCLTest2222,
+
+	MyVCLTest2222,
+	First = InitRenderer,
+	Last = MyVCLTest2222,
+
 #pragma once
 
 #include <map>
@@ -37,10 +45,10 @@ enum class VclType {
     MaxMinForKey,
     GetNumberOfTimesteps,
     GetDomainSize,
-#define PYTHON_MAGIC
+#define PYTHON_ENUM
 
 
-#undef PYTHON_MAGIC
+#undef PYTHON_ENUM
 };
 
 VclType& operator++(VclType& x);
