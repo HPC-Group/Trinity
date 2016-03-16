@@ -34,6 +34,10 @@ enum class VclType {
     InitContext,
     ZoomCamera,
     Paint,
+#define PYTHON_ENUM
+
+
+#undef PYTHON_ENUM
     GetMaxBrickSize,
     GetMaxUsedBrickSizes,
     MaxMinForKey,
@@ -41,10 +45,6 @@ enum class VclType {
     GetDomainSize,
     First = InitRenderer,
     Last = GetDomainSize,
-#define PYTHON_ENUM
-
-
-#undef PYTHON_ENUM
 };
 
 VclType& operator++(VclType& x);
