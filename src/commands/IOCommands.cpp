@@ -514,7 +514,6 @@ Core::Math::Mat4d GetTransformationCmd::ReplyParams::getTransformation() const {
 
 ////////////// GetBrickOverlapSizeCmd //////////////
 
-
 VclType GetBrickOverlapSizeCmd::Type = VclType::GetBrickOverlapSize;
 
 void GetBrickOverlapSizeCmd::RequestParams::serialize(ISerialWriter& writer) const {}
@@ -553,6 +552,60 @@ std::string GetBrickOverlapSizeCmd::ReplyParams::toString() const {
 
 Core::Math::Vec3ui GetBrickOverlapSizeCmd::ReplyParams::getOverlapSize() const {
     return m_overlapSize;
+}
+
+////////////// GetBrickOverlapSizeCmd //////////////
+
+VclType GetLargestSingleBrickLODCmd::Type = VclType::GetLargestSingleBrickLOD;
+
+GetLargestSingleBrickLODCmd::RequestParams::RequestParams(uint64_t ts)
+    : m_ts(ts) {}
+
+void GetLargestSingleBrickLODCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("ts", m_ts);
+}
+
+void GetLargestSingleBrickLODCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_ts = reader.getUInt64("ts");
+}
+
+bool GetLargestSingleBrickLODCmd::RequestParams::equals(const GetLargestSingleBrickLODCmd::RequestParams& other) const {
+    return m_ts == other.m_ts;
+}
+
+std::string GetLargestSingleBrickLODCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "ts: " << m_ts;
+    return stream.str();
+}
+
+uint64_t GetLargestSingleBrickLODCmd::RequestParams::getTs() const {
+    return m_ts;
+}
+
+GetLargestSingleBrickLODCmd::ReplyParams::ReplyParams(uint64_t largestSingleBrickLOD)
+    : m_largestSingleBrickLOD(largestSingleBrickLOD) {}
+
+void GetLargestSingleBrickLODCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("largestSingleBrickLOD", m_largestSingleBrickLOD);
+}
+
+void GetLargestSingleBrickLODCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_largestSingleBrickLOD = reader.getUInt64("largestSingleBrickLOD");
+}
+
+bool GetLargestSingleBrickLODCmd::ReplyParams::equals(const GetLargestSingleBrickLODCmd::ReplyParams& other) const {
+    return m_largestSingleBrickLOD == other.m_largestSingleBrickLOD;
+}
+
+std::string GetLargestSingleBrickLODCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "largestSingleBrickLOD: " << m_largestSingleBrickLOD;
+    return stream.str();
+}
+
+uint64_t GetLargestSingleBrickLODCmd::ReplyParams::getLargestSingleBrickLOD() const {
+    return m_largestSingleBrickLOD;
 }
 
 #undef PYTHON_MAGIC_DEFINITION
@@ -696,6 +749,19 @@ std::ostream& operator<<(std::ostream& os, const GetBrickOverlapSizeCmd::Request
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetBrickOverlapSizeCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetLargestSingleBrickLODCmd::RequestParams& lhs, const GetLargestSingleBrickLODCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetLargestSingleBrickLODCmd::ReplyParams& lhs, const GetLargestSingleBrickLODCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetLargestSingleBrickLODCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetLargestSingleBrickLODCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

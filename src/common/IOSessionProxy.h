@@ -23,9 +23,9 @@ public:
     Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality, uint64_t ts) const override;
     Core::Math::Mat4d getTransformation() const override;
     Core::Math::Vec3ui getBrickOverlapSize() const override;
+    uint64_t getLargestSingleBrickLOD(uint64_t ts) const override;
 
 
-    //uint64_t getLargestSingleBrickLOD(uint64_t ts) const override;
     //Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const override;
     //Vec3f getBrickExtents(const BrickKey &) const override;
     //Core::Math::Vec3ui getBrickLayout(uint64_t LoD, uint64_t timestep) const override;

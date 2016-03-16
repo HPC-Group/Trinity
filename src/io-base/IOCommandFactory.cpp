@@ -56,6 +56,9 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetBrickOverlapSize:
         return mocca::make_unique<GetBrickOverlapSizeHdl>(static_cast<const GetBrickOverlapSizeRequest&>(request), session);
         break;
+    case VclType::GetLargestSingleBrickLOD:
+        return mocca::make_unique<GetLargestSingleBrickLODHdl>(static_cast<const GetLargestSingleBrickLODRequest&>(request), session);
+        break;
 
 #undef PYTHON_MAGIC
     default:

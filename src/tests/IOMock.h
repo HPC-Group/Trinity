@@ -12,4 +12,5 @@ public:
     MOCK_CONST_METHOD3(getDomainSize, Core::Math::Vec3ui64(const uint64_t, const uint64_t, const uint64_t));
     MOCK_CONST_METHOD0(getTransformation, Core::Math::Mat4d());
     MOCK_CONST_METHOD0(getBrickOverlapSize, Core::Math::Vec3ui());
+    MOCK_CONST_METHOD1(getLargestSingleBrickLOD, uint64_t(uint64_t));
 };

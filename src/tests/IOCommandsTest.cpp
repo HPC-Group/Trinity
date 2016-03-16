@@ -270,3 +270,27 @@ TEST_F(IOCommandsTest, GetBrickOverlapSizeReqRep) {
     auto reply = trinity::testing::handleRequest<GetBrickOverlapSizeHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui(4, 5, 6), reply.getParams().getOverlapSize());
 }
+
+
+TEST_F(IOCommandsTest, GetLargestSingleBrickLODCmd) {
+    {
+        GetLargestSingleBrickLODCmd::RequestParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetLargestSingleBrickLODCmd::ReplyParams target(23);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetLargestSingleBrickLODReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getLargestSingleBrickLOD(_)).Times(1).WillOnce(Return(42));
+
+    GetLargestSingleBrickLODCmd::RequestParams requestParams(23);
+    GetLargestSingleBrickLODRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetLargestSingleBrickLODHdl>(request, session.get());
+    ASSERT_EQ(42, reply.getParams().getLargestSingleBrickLOD());
+}

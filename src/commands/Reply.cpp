@@ -60,6 +60,9 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 	else if (type == GetBrickOverlapSizeReply::Ifc::Type) {
 		return reader->getSerializablePtr<GetBrickOverlapSizeReply>("rep");
 	}
+	else if (type == GetLargestSingleBrickLODReply::Ifc::Type) {
+		return reader->getSerializablePtr<GetLargestSingleBrickLODReply>("rep");
+	}
 
 #undef PYTHON_MAGIC_IO
 

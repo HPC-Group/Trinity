@@ -63,6 +63,9 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 	else if (type == GetBrickOverlapSizeRequest::Ifc::Type) {
 		return reader->getSerializablePtr<GetBrickOverlapSizeRequest>("req");
 	}
+	else if (type == GetLargestSingleBrickLODRequest::Ifc::Type) {
+		return reader->getSerializablePtr<GetLargestSingleBrickLODRequest>("req");
+	}
 
 #undef PYTHON_MAGIC_IO
 

@@ -122,5 +122,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetLargestSingleBrickLODHdl : public ICommandHandler {
+public:
+    GetLargestSingleBrickLODHdl(const GetLargestSingleBrickLODRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetLargestSingleBrickLODRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

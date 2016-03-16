@@ -75,11 +75,14 @@ Core::Math::Vec3ui IOSessionProxy::getBrickOverlapSize() const {
     return reply->getParams().getOverlapSize();
 }
 
-//uint64_t IOSessionProxy::getLargestSingleBrickLOD(uint64_t ts) const {
-//    // TODO
-//    uint64_t x; return x;
-//}
-//
+uint64_t IOSessionProxy::getLargestSingleBrickLOD(uint64_t ts) const {
+    GetLargestSingleBrickLODCmd::RequestParams params(ts);
+    GetLargestSingleBrickLODRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getLargestSingleBrickLOD();
+}
+
+
 //Core::Math::Vec3ui IOSessionProxy::getBrickVoxelCounts(const BrickKey&) const {
 //    // TODO
 //    Core::Math::Vec3ui x; return x;

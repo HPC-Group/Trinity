@@ -463,6 +463,52 @@ std::ostream& operator<<(std::ostream& os, const GetBrickOverlapSizeCmd::ReplyPa
 using GetBrickOverlapSizeRequest = RequestTemplate<GetBrickOverlapSizeCmd>;
 using GetBrickOverlapSizeReply = ReplyTemplate<GetBrickOverlapSizeCmd>;
 
+struct GetLargestSingleBrickLODCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t ts);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    
+        uint64_t getTs() const;
+
+    private:
+        uint64_t m_ts;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t largestSingleBrickLOD);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getLargestSingleBrickLOD() const;
+
+    private:
+        uint64_t m_largestSingleBrickLOD;
+    };
+};
+
+bool operator==(const GetLargestSingleBrickLODCmd::RequestParams& lhs, const GetLargestSingleBrickLODCmd::RequestParams& rhs);
+bool operator==(const GetLargestSingleBrickLODCmd::ReplyParams& lhs, const GetLargestSingleBrickLODCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetLargestSingleBrickLODCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetLargestSingleBrickLODCmd::ReplyParams& obj);
+
+using GetLargestSingleBrickLODRequest = RequestTemplate<GetLargestSingleBrickLODCmd>;
+using GetLargestSingleBrickLODReply = ReplyTemplate<GetLargestSingleBrickLODCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

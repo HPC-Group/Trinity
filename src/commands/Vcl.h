@@ -37,6 +37,7 @@ enum class VclType {
 #define PYTHON_ENUM
     GetTransformation,
     GetBrickOverlapSize,
+    GetLargestSingleBrickLOD,
 
 #undef PYTHON_ENUM
     GetMaxBrickSize,
@@ -96,6 +97,7 @@ private:
 #define PYTHON_MAGIC_STRING
         m_cmdMap.insert("GetTransformation", VclType::GetTransformation);
         m_cmdMap.insert("GetBrickOverlapSize", VclType::GetBrickOverlapSize);
+        m_cmdMap.insert("GetLargestSingleBrickLOD", VclType::GetLargestSingleBrickLOD);
 
 #undef PYTHON_MAGIC_STRING
 
