@@ -96,12 +96,13 @@ Core::Math::Vec3f IOSessionProxy::getBrickExtents(const BrickKey & brickKey) con
     return reply->getParams().getBrickExtents();
 }
 
+Core::Math::Vec3ui IOSessionProxy::getBrickLayout(uint64_t lod, uint64_t modality, uint64_t timestep) const {
+    GetBrickLayoutCmd::RequestParams params(lod, modality, timestep);
+    GetBrickLayoutRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getBrickLayout();
+}
 
-//Core::Math::Vec3ui IOSessionProxy::getBrickLayout(uint64_t lod, uint64_t timestep) const {
-//    // TODO
-//    Core::Math::Vec3ui x; return x;
-//}
-//
 //uint64_t IOSessionProxy::getModalityCount() const {
 //    // TODO
 //    uint64_t x; return x;

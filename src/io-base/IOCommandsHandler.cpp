@@ -158,4 +158,15 @@ std::unique_ptr<Reply> GetBrickExtentsHdl::execute() {
     return mocca::make_unique<GetBrickExtentsReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetBrickLayoutHdl::GetBrickLayoutHdl(const GetBrickLayoutRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetBrickLayoutHdl::execute() {
+    auto lod = m_request.getParams().getLod();
+    auto modality = m_request.getParams().getModality();
+    auto timestep = m_request.getParams().getTimestep();
+    GetBrickLayoutCmd::ReplyParams params(m_session->getIO().getBrickLayout(lod, modality, timestep));
+    return mocca::make_unique<GetBrickLayoutReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

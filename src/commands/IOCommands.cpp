@@ -571,7 +571,8 @@ Core::Math::Vec3ui GetBrickOverlapSizeCmd::ReplyParams::getOverlapSize() const {
 VclType GetLargestSingleBrickLODCmd::Type = VclType::GetLargestSingleBrickLOD;
 
 GetLargestSingleBrickLODCmd::RequestParams::RequestParams(uint64_t modality, uint64_t ts)
-    : m_modality(modality), m_ts(ts) {}
+    : m_modality(modality)
+    , m_ts(ts) {}
 
 void GetLargestSingleBrickLODCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendInt("modality", m_modality);
@@ -734,6 +735,75 @@ std::string GetBrickExtentsCmd::ReplyParams::toString() const {
 
 Core::Math::Vec3f GetBrickExtentsCmd::ReplyParams::getBrickExtents() const {
     return m_brickExtents;
+}
+
+
+////////////// GetBrickOverlapSizeCmd //////////////
+
+VclType GetBrickLayoutCmd::Type = VclType::GetBrickLayout;
+
+GetBrickLayoutCmd::RequestParams::RequestParams(uint64_t lod, uint64_t modality, uint64_t timestep)
+    : m_lod(lod)
+    , m_modality(modality)
+    , m_timestep(timestep) {}
+
+void GetBrickLayoutCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("lod", m_lod);
+    writer.appendInt("modality", m_modality);
+    writer.appendInt("timestep", m_timestep);
+}
+
+void GetBrickLayoutCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_lod = reader.getUInt64("lod");
+    m_modality = reader.getUInt64("modality");
+    m_timestep = reader.getUInt64("timestep");
+}
+
+bool GetBrickLayoutCmd::RequestParams::equals(const GetBrickLayoutCmd::RequestParams& other) const {
+    return m_lod == other.m_lod && m_modality == other.m_modality && m_timestep == other.m_timestep;
+}
+
+std::string GetBrickLayoutCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "lod: " << m_lod << "; modality: " << m_modality << "; timestep: " << m_timestep;
+    return stream.str();
+}
+
+uint64_t GetBrickLayoutCmd::RequestParams::getLod() const {
+    return m_lod;
+}
+
+uint64_t GetBrickLayoutCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+uint64_t GetBrickLayoutCmd::RequestParams::getTimestep() const {
+    return m_timestep;
+}
+
+GetBrickLayoutCmd::ReplyParams::ReplyParams(const Core::Math::Vec3ui& brickLayout)
+    : m_brickLayout(brickLayout) {}
+
+void GetBrickLayoutCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("brickLayout", m_brickLayout);
+}
+
+void GetBrickLayoutCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_brickLayout = reader.getSerializable<Core::Math::Vec3ui>("brickLayout");
+}
+
+bool GetBrickLayoutCmd::ReplyParams::equals(const GetBrickLayoutCmd::ReplyParams& other) const {
+    return m_brickLayout == other.m_brickLayout;
+}
+
+std::string GetBrickLayoutCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "brickLayout: " << m_brickLayout;
+    return stream.str();
+}
+
+Core::Math::Vec3ui GetBrickLayoutCmd::ReplyParams::getBrickLayout() const {
+    return m_brickLayout;
 }
 
 #undef PYTHON_MAGIC_DEFINITION
@@ -916,6 +986,19 @@ std::ostream& operator<<(std::ostream& os, const GetBrickExtentsCmd::RequestPara
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetBrickExtentsCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBrickLayoutCmd::RequestParams& lhs, const GetBrickLayoutCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetBrickLayoutCmd::ReplyParams& lhs, const GetBrickLayoutCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickLayoutCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickLayoutCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

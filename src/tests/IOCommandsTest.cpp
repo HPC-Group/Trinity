@@ -339,3 +339,26 @@ TEST_F(IOCommandsTest, GetBrickExtentsReqRep) {
     auto reply = trinity::testing::handleRequest<GetBrickExtentsHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3f(5.0, 6.0, 7.0), reply.getParams().getBrickExtents());
 }
+
+TEST_F(IOCommandsTest, GetBrickLayoutCmd) {
+    {
+        GetBrickLayoutCmd::RequestParams target(1, 2, 3);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetBrickLayoutCmd::ReplyParams target(Core::Math::Vec3ui(4, 5, 6));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetBrickLayoutReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickLayout(1, 2, 3)).Times(1).WillOnce(Return(Core::Math::Vec3ui(4, 5, 6)));
+
+    GetBrickLayoutCmd::RequestParams requestParams(1, 2, 3);
+    GetBrickLayoutRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetBrickLayoutHdl>(request, session.get());
+    ASSERT_EQ(Core::Math::Vec3ui(4, 5, 6), reply.getParams().getBrickLayout());
+}

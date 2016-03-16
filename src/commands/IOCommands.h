@@ -609,6 +609,56 @@ std::ostream& operator<<(std::ostream& os, const GetBrickExtentsCmd::ReplyParams
 using GetBrickExtentsRequest = RequestTemplate<GetBrickExtentsCmd>;
 using GetBrickExtentsReply = ReplyTemplate<GetBrickExtentsCmd>;
 
+struct GetBrickLayoutCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t lod, uint64_t modality, uint64_t timestep);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getLod() const;
+        uint64_t getModality() const;
+        uint64_t getTimestep() const;
+
+    private:
+        uint64_t m_lod;
+        uint64_t m_modality;
+        uint64_t m_timestep;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec3ui& brickLayout);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec3ui getBrickLayout() const;
+
+    private:
+        Core::Math::Vec3ui m_brickLayout;
+    };
+};
+
+bool operator==(const GetBrickLayoutCmd::RequestParams& lhs, const GetBrickLayoutCmd::RequestParams& rhs);
+bool operator==(const GetBrickLayoutCmd::ReplyParams& lhs, const GetBrickLayoutCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBrickLayoutCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetBrickLayoutCmd::ReplyParams& obj);
+
+using GetBrickLayoutRequest = RequestTemplate<GetBrickLayoutCmd>;
+using GetBrickLayoutReply = ReplyTemplate<GetBrickLayoutCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

@@ -1,10 +1,10 @@
 #include "commands/Request.h"
 
-#include "common/TrinityError.h"
 #include "commands/ErrorCommands.h"
 #include "commands/IOCommands.h"
 #include "commands/ProcessingCommands.h"
 #include "commands/SerializerFactory.h"
+#include "common/TrinityError.h"
 
 #include "mocca/base/Memory.h"
 
@@ -25,9 +25,9 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 #define PYTHON_MAGIC_PROC
 
 
-	else if (type == ZoomCameraRequest::Ifc::Type) {
-		return reader->getSerializablePtr<ZoomCameraRequest>("req");
-	}
+    else if (type == ZoomCameraRequest::Ifc::Type) {
+        return reader->getSerializablePtr<ZoomCameraRequest>("req");
+    }
 
 #undef PYTHON_MAGIC_PROC
 
@@ -40,38 +40,29 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetLODLevelCountRequest>("req");
     }
 #define PYTHON_MAGIC_IO
-
-
-	else if (type == GetMaxBrickSizeRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetMaxBrickSizeRequest>("req");
-	}
-	else if (type == GetMaxUsedBrickSizesRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetMaxUsedBrickSizesRequest>("req");
-	}
-	else if (type == MaxMinForKeyRequest::Ifc::Type) {
-		return reader->getSerializablePtr<MaxMinForKeyRequest>("req");
-	}
-	else if (type == GetNumberOfTimestepsRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetNumberOfTimestepsRequest>("req");
-	}
-	else if (type == GetDomainSizeRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetDomainSizeRequest>("req");
-	}
-	else if (type == GetTransformationRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetTransformationRequest>("req");
-	}
-	else if (type == GetBrickOverlapSizeRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetBrickOverlapSizeRequest>("req");
-	}
-	else if (type == GetLargestSingleBrickLODRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetLargestSingleBrickLODRequest>("req");
-	}
-	else if (type == GetBrickVoxelCountsRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetBrickVoxelCountsRequest>("req");
-	}
-	else if (type == GetBrickExtentsRequest::Ifc::Type) {
-		return reader->getSerializablePtr<GetBrickExtentsRequest>("req");
-	}
+    else if (type == GetMaxBrickSizeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetMaxBrickSizeRequest>("req");
+    } else if (type == GetMaxUsedBrickSizesRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetMaxUsedBrickSizesRequest>("req");
+    } else if (type == MaxMinForKeyRequest::Ifc::Type) {
+        return reader->getSerializablePtr<MaxMinForKeyRequest>("req");
+    } else if (type == GetNumberOfTimestepsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetNumberOfTimestepsRequest>("req");
+    } else if (type == GetDomainSizeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetDomainSizeRequest>("req");
+    } else if (type == GetTransformationRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetTransformationRequest>("req");
+    } else if (type == GetBrickOverlapSizeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetBrickOverlapSizeRequest>("req");
+    } else if (type == GetLargestSingleBrickLODRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetLargestSingleBrickLODRequest>("req");
+    } else if (type == GetBrickVoxelCountsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetBrickVoxelCountsRequest>("req");
+    } else if (type == GetBrickExtentsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetBrickExtentsRequest>("req");
+    } else if (type == GetBrickLayoutRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetBrickLayoutRequest>("req");
+    }
 
 #undef PYTHON_MAGIC_IO
 

@@ -155,5 +155,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetBrickLayoutHdl : public ICommandHandler {
+public:
+    GetBrickLayoutHdl(const GetBrickLayoutRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetBrickLayoutRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }
