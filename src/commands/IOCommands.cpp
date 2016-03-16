@@ -663,6 +663,61 @@ Core::Math::Vec3ui GetBrickVoxelCountsCmd::ReplyParams::getBrickVoxelCounts() co
     return m_brickVoxelCounts;
 }
 
+
+////////////// GetBrickExtentsCmd //////////////
+
+VclType GetBrickExtentsCmd::Type = VclType::GetBrickExtents;
+
+GetBrickExtentsCmd::RequestParams::RequestParams(const BrickKey& brickKey)
+    : m_brickKey(brickKey) {}
+
+void GetBrickExtentsCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("brickKey", m_brickKey);
+}
+
+void GetBrickExtentsCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_brickKey = reader.getSerializable<BrickKey>("brickKey");
+}
+
+bool GetBrickExtentsCmd::RequestParams::equals(const GetBrickExtentsCmd::RequestParams& other) const {
+    return m_brickKey == other.m_brickKey;
+}
+
+std::string GetBrickExtentsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "brickKey: " << m_brickKey;
+    return stream.str();
+}
+
+BrickKey GetBrickExtentsCmd::RequestParams::getBrickKey() const {
+    return m_brickKey;
+}
+
+GetBrickExtentsCmd::ReplyParams::ReplyParams(const Core::Math::Vec3f& brickExtents)
+    : m_brickExtents(brickExtents) {}
+
+void GetBrickExtentsCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("brickExtents", m_brickExtents);
+}
+
+void GetBrickExtentsCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_brickExtents = reader.getSerializable<Core::Math::Vec3f>("brickExtents");
+}
+
+bool GetBrickExtentsCmd::ReplyParams::equals(const GetBrickExtentsCmd::ReplyParams& other) const {
+    return m_brickExtents == other.m_brickExtents;
+}
+
+std::string GetBrickExtentsCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "brickExtents: " << m_brickExtents;
+    return stream.str();
+}
+
+Core::Math::Vec3f GetBrickExtentsCmd::ReplyParams::getBrickExtents() const {
+    return m_brickExtents;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -830,6 +885,19 @@ std::ostream& operator<<(std::ostream& os, const GetBrickVoxelCountsCmd::Request
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetBrickVoxelCountsCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBrickExtentsCmd::RequestParams& lhs, const GetBrickExtentsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetBrickExtentsCmd::ReplyParams& lhs, const GetBrickExtentsCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickExtentsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickExtentsCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

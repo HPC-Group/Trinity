@@ -316,3 +316,26 @@ TEST_F(IOCommandsTest, GetBrickVoxelCountsReqRep) {
     auto reply = trinity::testing::handleRequest<GetBrickVoxelCountsHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui(5, 6, 7), reply.getParams().getBrickVoxelCounts());
 }
+
+TEST_F(IOCommandsTest, GetBrickExtentsCmd) {
+    {
+        GetBrickExtentsCmd::RequestParams target(BrickKey(1, 2, 3, 4));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetBrickExtentsCmd::ReplyParams target(Core::Math::Vec3f(5.0, 6.0, 7.0));
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetBrickExtentsReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickExtents(_)).Times(1).WillOnce(Return(Core::Math::Vec3f(5.0, 6.0, 7.0)));
+
+    GetBrickExtentsCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
+    GetBrickExtentsRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetBrickExtentsHdl>(request, session.get());
+    ASSERT_EQ(Core::Math::Vec3f(5.0, 6.0, 7.0), reply.getParams().getBrickExtents());
+}

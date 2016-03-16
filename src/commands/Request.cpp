@@ -69,6 +69,9 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 	else if (type == GetBrickVoxelCountsRequest::Ifc::Type) {
 		return reader->getSerializablePtr<GetBrickVoxelCountsRequest>("req");
 	}
+	else if (type == GetBrickExtentsRequest::Ifc::Type) {
+		return reader->getSerializablePtr<GetBrickExtentsRequest>("req");
+	}
 
 #undef PYTHON_MAGIC_IO
 

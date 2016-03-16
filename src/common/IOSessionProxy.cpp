@@ -89,12 +89,14 @@ Core::Math::Vec3ui IOSessionProxy::getBrickVoxelCounts(const BrickKey& brickKey)
     return reply->getParams().getBrickVoxelCounts();
 }
 
+Core::Math::Vec3f IOSessionProxy::getBrickExtents(const BrickKey & brickKey) const {
+    GetBrickExtentsCmd::RequestParams params(brickKey);
+    GetBrickExtentsRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getBrickExtents();
+}
 
-//Vec3f IOSessionProxy::getBrickExtents(const BrickKey &) const {
-//    // TODO
-//    Vec3f x; return x;
-//}
-//
+
 //Core::Math::Vec3ui IOSessionProxy::getBrickLayout(uint64_t LoD, uint64_t timestep) const {
 //    // TODO
 //    Core::Math::Vec3ui x; return x;

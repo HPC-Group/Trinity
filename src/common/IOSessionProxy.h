@@ -25,9 +25,9 @@ public:
     Core::Math::Vec3ui getBrickOverlapSize() const override;
     uint64_t getLargestSingleBrickLOD(uint64_t ts) const override;
     Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey& brickKey) const override;
+    Core::Math::Vec3f getBrickExtents(const BrickKey & brickKey) const override;
 
 
-    //Vec3f getBrickExtents(const BrickKey &) const override;
     //Core::Math::Vec3ui getBrickLayout(uint64_t LoD, uint64_t timestep) const override;
     //uint64_t getModalityCount() const override;
     //uint64_t getComponentCount(uint64_t modality) const override;

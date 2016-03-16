@@ -14,4 +14,5 @@ public:
     MOCK_CONST_METHOD0(getBrickOverlapSize, Core::Math::Vec3ui());
     MOCK_CONST_METHOD1(getLargestSingleBrickLOD, uint64_t(uint64_t));
     MOCK_CONST_METHOD1(getBrickVoxelCounts, Core::Math::Vec3ui(const trinity::BrickKey&));
+    MOCK_CONST_METHOD1(getBrickExtents, Core::Math::Vec3f(const trinity::BrickKey&));
 };

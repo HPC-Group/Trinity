@@ -39,6 +39,7 @@ enum class VclType {
     GetBrickOverlapSize,
     GetLargestSingleBrickLOD,
     GetBrickVoxelCounts,
+    GetBrickExtents,
 
 #undef PYTHON_ENUM
     GetMaxBrickSize,
@@ -100,6 +101,7 @@ private:
         m_cmdMap.insert("GetBrickOverlapSize", VclType::GetBrickOverlapSize);
         m_cmdMap.insert("GetLargestSingleBrickLOD", VclType::GetLargestSingleBrickLOD);
         m_cmdMap.insert("GetBrickVoxelCounts", VclType::GetBrickVoxelCounts);
+        m_cmdMap.insert("GetBrickExtents", VclType::GetBrickExtents);
 
 #undef PYTHON_MAGIC_STRING
 

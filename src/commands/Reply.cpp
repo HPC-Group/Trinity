@@ -66,6 +66,9 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 	else if (type == GetBrickVoxelCountsReply::Ifc::Type) {
 		return reader->getSerializablePtr<GetBrickVoxelCountsReply>("rep");
 	}
+	else if (type == GetBrickExtentsReply::Ifc::Type) {
+		return reader->getSerializablePtr<GetBrickExtentsReply>("rep");
+	}
 
 #undef PYTHON_MAGIC_IO
 
