@@ -469,6 +469,49 @@ Core::Math::Vec3ui64 GetDomainSizeCmd::ReplyParams::getDomainSize() const {
     return m_domainSize;
 }
 
+
+////////////// GetTransformationCmd //////////////
+
+VclType GetTransformationCmd::Type = VclType::GetTransformation;
+
+void GetTransformationCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetTransformationCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetTransformationCmd::RequestParams::equals(const GetTransformationCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetTransformationCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetTransformationCmd::ReplyParams::ReplyParams(const Core::Math::Mat4d& transformation)
+    : m_transformation(transformation) {}
+
+void GetTransformationCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("transformation", m_transformation);
+}
+
+void GetTransformationCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_transformation = reader.getSerializable<Core::Math::Mat4d>("transformation");
+}
+
+bool GetTransformationCmd::ReplyParams::equals(const GetTransformationCmd::ReplyParams& other) const {
+    return m_transformation == other.m_transformation;
+}
+
+std::string GetTransformationCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "transformation" << m_transformation;
+    return stream.str();
+}
+
+Core::Math::Mat4d GetTransformationCmd::ReplyParams::getTransformation() const {
+    return m_transformation;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -584,6 +627,19 @@ std::ostream& operator<<(std::ostream& os, const GetDomainSizeCmd::RequestParams
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetDomainSizeCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetTransformationCmd::RequestParams& lhs, const GetTransformationCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetTransformationCmd::ReplyParams& lhs, const GetTransformationCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetTransformationCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetTransformationCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

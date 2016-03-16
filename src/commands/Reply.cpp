@@ -54,6 +54,9 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 	else if (type == GetDomainSizeReply::Ifc::Type) {
 		return reader->getSerializablePtr<GetDomainSizeReply>("rep");
 	}
+	else if (type == GetTransformationReply::Ifc::Type) {
+		return reader->getSerializablePtr<GetTransformationReply>("rep");
+	}
 
 #undef PYTHON_MAGIC_IO
 

@@ -61,11 +61,13 @@ Core::Math::Vec3ui64 IOSessionProxy::getDomainSize(uint64_t lod, uint64_t modali
     return reply->getParams().getDomainSize();
 }
 
-//Core::Math::Mat4d IOSessionProxy::getTransformation() const {
-//    // TODO
-//    Core::Math::Mat4d x; return x;
-//}
-//
+Core::Math::Mat4d IOSessionProxy::getTransformation() const {
+    GetTransformationCmd::RequestParams params;
+    GetTransformationRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getTransformation();
+}
+
 //Core::Math::Vec3ui IOSessionProxy::getBrickOverlapSize() const {
 //    // TODO
 //    Core::Math::Vec3ui x; return x;

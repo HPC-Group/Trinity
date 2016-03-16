@@ -57,6 +57,9 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 	else if (type == GetDomainSizeRequest::Ifc::Type) {
 		return reader->getSerializablePtr<GetDomainSizeRequest>("req");
 	}
+	else if (type == GetTransformationRequest::Ifc::Type) {
+		return reader->getSerializablePtr<GetTransformationRequest>("req");
+	}
 
 #undef PYTHON_MAGIC_IO
 

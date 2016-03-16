@@ -222,3 +222,28 @@ TEST_F(IOCommandsTest, GetDomainSizeReqRep) {
     auto reply = trinity::testing::handleRequest<GetDomainSizeHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui64(4, 5, 6), reply.getParams().getDomainSize());
 }
+
+TEST_F(IOCommandsTest, GetTransformationCmd) {
+    {
+        GetTransformationCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        Core::Math::Mat4d transformation(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
+        GetTransformationCmd::ReplyParams target(transformation);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetTransformationReqRep) {
+    auto session = createMockSession();
+    Core::Math::Mat4d transformation(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getTransformation()).Times(1).WillOnce(Return(transformation));
+
+    GetTransformationCmd::RequestParams requestParams;
+    GetTransformationRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetTransformationHdl>(request, session.get());
+    ASSERT_EQ(transformation, reply.getParams().getTransformation());
+}

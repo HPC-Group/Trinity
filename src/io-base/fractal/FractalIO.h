@@ -27,10 +27,10 @@ public:
     int getLODLevelCount() const override { return 44; }
     uint64_t getNumberOfTimesteps() const override {uint64_t x; return x; }
     Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality, uint64_t ts) const override {Core::Math::Vec3ui64 x; return x; }
+    Core::Math::Mat4d getTransformation() const override {Core::Math::Mat4d x; return x; }
 
 
 
-    //Core::Math::Mat4d getTransformation() const override {Core::Math::Mat4d x; return x; }
     //Core::Math::Vec3ui getBrickOverlapSize() const override {Core::Math::Vec3ui x; return x; }
     //uint64_t getLargestSingleBrickLOD(uint64_t ts) const override {uint64_t x; return x; }
     //Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey&) const override {Core::Math::Vec3ui x; return x; }

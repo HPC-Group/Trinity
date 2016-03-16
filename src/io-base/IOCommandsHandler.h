@@ -100,5 +100,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetTransformationHdl : public ICommandHandler {
+public:
+    GetTransformationHdl(const GetTransformationRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetTransformationRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

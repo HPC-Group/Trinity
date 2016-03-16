@@ -1353,7 +1353,7 @@ public:
     bool operator==(const MATRIX4<T>& other) const {
         return (other.m11 == m11 && other.m12 == m12 && other.m13 == m13 && other.m14 == m14 && other.m21 == m21 && other.m22 == m22 &&
                 other.m23 == m23 && other.m24 == m24 && other.m31 == m31 && other.m32 == m32 && other.m33 == m33 && other.m34 == m34 &&
-                other.m31 == m41 && other.m32 == m42 && other.m33 == m43 && other.m44 == m44);
+                other.m41 == m41 && other.m42 == m42 && other.m43 == m43 && other.m44 == m44);
     }
     bool operator!=(const MATRIX4<T>& other) const {
         return (other.m11 != m11 || other.m12 != m12 || other.m13 != m13 || other.m14 != m14 || other.m21 != m21 || other.m22 != m22 ||

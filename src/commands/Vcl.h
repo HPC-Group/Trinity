@@ -37,6 +37,8 @@ enum class VclType {
 #define PYTHON_ENUM
 
 
+    GetTransformation,
+
 #undef PYTHON_ENUM
     GetMaxBrickSize,
     GetMaxUsedBrickSizes,
@@ -94,6 +96,8 @@ private:
         m_cmdMap.insert("GetDomainSize", VclType::GetDomainSize);
 #define PYTHON_MAGIC_STRING
 
+
+        m_cmdMap.insert("GetTransformation", VclType::GetTransformation);
 
 #undef PYTHON_MAGIC_STRING
 

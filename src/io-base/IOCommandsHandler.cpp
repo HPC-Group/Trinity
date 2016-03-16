@@ -116,4 +116,12 @@ std::unique_ptr<Reply> GetDomainSizeHdl::execute() {
     return mocca::make_unique<GetDomainSizeReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetTransformationHdl::GetTransformationHdl(const GetTransformationRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetTransformationHdl::execute() {
+    GetTransformationCmd::ReplyParams params(m_session->getIO().getTransformation());
+    return mocca::make_unique<GetTransformationReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

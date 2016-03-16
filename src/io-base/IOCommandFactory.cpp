@@ -52,6 +52,10 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
 #define PYTHON_MAGIC
 
 
+    case VclType::GetTransformation:
+        return mocca::make_unique<GetTransformationHdl>(static_cast<const GetTransformationRequest&>(request), session);
+        break;
+
 #undef PYTHON_MAGIC
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

@@ -383,6 +383,46 @@ std::ostream& operator<<(std::ostream& os, const GetDomainSizeCmd::ReplyParams& 
 using GetDomainSizeRequest = RequestTemplate<GetDomainSizeCmd>;
 using GetDomainSizeReply = ReplyTemplate<GetDomainSizeCmd>;
 
+struct GetTransformationCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Mat4d& transformation);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+    
+        Core::Math::Mat4d getTransformation() const;
+
+    private:
+        Core::Math::Mat4d m_transformation;
+    };
+};
+
+bool operator==(const GetTransformationCmd::RequestParams& lhs, const GetTransformationCmd::RequestParams& rhs);
+bool operator==(const GetTransformationCmd::ReplyParams& lhs, const GetTransformationCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetTransformationCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetTransformationCmd::ReplyParams& obj);
+
+using GetTransformationRequest = RequestTemplate<GetTransformationCmd>;
+using GetTransformationReply = ReplyTemplate<GetTransformationCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;
