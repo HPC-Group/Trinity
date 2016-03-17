@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "mocca/log/LogManager.h"
+
 OpenGlHeadlessContext::OpenGlHeadlessContext() :
 #ifdef DETECTED_OS_APPLE
 context(0),
@@ -45,7 +47,10 @@ void OpenGlHeadlessContext::createContext() {
   CGLDestroyPixelFormat( pix );
 
   errorCode = CGLSetCurrentContext( context );
-  if (errorCode != kCGLNoError) {bIsValid = false; return;}
+  if (errorCode != kCGLNoError) {
+      LERROR("(gl) error code: " + std::to_string(errorCode));
+      bIsValid = false; return;
+  }
 
 #endif
   
@@ -53,11 +58,17 @@ void OpenGlHeadlessContext::createContext() {
   window = CreateWindowExW(WS_EX_TOOLWINDOW, L"Static", L"OpenGLContextWindow",
                            WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                            0, 0, 1, 1, 0, 0, GetModuleHandle(NULL), 0);
-  if (!window) {bIsValid = false; return;}
+  if (!window) {
+      LERROR("(gl) can't create window");
+      bIsValid = false; return;
+  }
   ShowWindow(window, SW_HIDE);
   
   deviceContext = GetDC(window);
-  if (!deviceContext) {bIsValid = false; return;}
+  if (!deviceContext) {
+      LERROR("(gl) no device context");
+      bIsValid = false; return;
+  }
 
   PIXELFORMATDESCRIPTOR pfd;
   pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
@@ -88,12 +99,18 @@ void OpenGlHeadlessContext::createContext() {
   pfd.dwDamageMask = 0;
   
   int pixelFormat = ChoosePixelFormat(deviceContext, &pfd);
-  if (!pixelFormat) {bIsValid = false; return;}
+  if (!pixelFormat) {
+      LERROR("(gl) no pixel format");
+      bIsValid = false; return;
+  }
   
   PIXELFORMATDESCRIPTOR pfdResult;
   DescribePixelFormat(deviceContext, pixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfdResult);
   
-  if (!(pfdResult.dwFlags & PFD_SUPPORT_OPENGL)) {bIsValid = false; return;}
+    // todo add more LERRORs
+  if (!(pfdResult.dwFlags & PFD_SUPPORT_OPENGL)) {
+      bIsValid = false; return;
+  }
   
   if (!SetPixelFormat(deviceContext, pixelFormat, &pfd)) {bIsValid = false; return;}
   
@@ -123,26 +140,41 @@ void OpenGlHeadlessContext::createContext() {
   eglDpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
   EGLint major=0, minor=0;
-  if(eglInitialize(eglDpy, &major, &minor) != EGL_TRUE) { bIsValid = false; return; }
+  if(eglInitialize(eglDpy, &major, &minor) != EGL_TRUE) {
+      LERROR("(gl) egl initialize failed");
+      bIsValid = false; return;
+  }
 
   
   // Select an appropriate configuration
   EGLint numConfigs;
   EGLConfig eglCfg;
   
-  if (eglChooseConfig(eglDpy, configAttribs, &eglCfg, 1, &numConfigs) != EGL_TRUE) { bIsValid = false; return; }
+  if (eglChooseConfig(eglDpy, configAttribs, &eglCfg, 1, &numConfigs) != EGL_TRUE) {
+      LERROR("(gl) eglChooseConfig failed");
+      bIsValid = false; return;
+  }
 
   // Bind the API
-  if (eglBindAPI(EGL_OPENGL_API) != EGL_TRUE) { bIsValid = false; return; }
+  if (eglBindAPI(EGL_OPENGL_API) != EGL_TRUE) {
+      LERROR("(gl) eglBindAPI failed");
+      bIsValid = false; return;
+  }
   
   // Create a context and make it current
   eglCtx = eglCreateContext(eglDpy, eglCfg, EGL_NO_CONTEXT,
                                        NULL);
   
-  if (eglMakeCurrent(eglDpy, EGL_NO_SURFACE, EGL_NO_SURFACE, eglCtx) != EGL_TRUE) { bIsValid = false; return; }
+  if (eglMakeCurrent(eglDpy, EGL_NO_SURFACE, EGL_NO_SURFACE, eglCtx) != EGL_TRUE) {
+      LERROR("(gl) eglMakeCurrent failed");
+      bIsValid = false; return;
+  }
 
   GLenum err = glewInit();
-  if (GLEW_OK != err) {bIsValid = false; return;}
+  if (GLEW_OK != err) {
+      LERROR("(gl) glewInit failed");
+      bIsValid = false; return;
+  }
 
 #endif
   
