@@ -33,7 +33,9 @@ namespace trinity {
 
     // HACK
     std::vector<uint8_t> getBrick(const BrickKey& brickKey,
-                                  bool& success) const override {}
+        bool& success) const override {
+        return std::vector<uint8_t>();
+    }
     
     
   private:

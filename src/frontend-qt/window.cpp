@@ -96,15 +96,15 @@ void Window::initRenderer() {
 
 void Window::on_IOconnectIP_clicked() {
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(),
-                        ui->IOaddressIPedit->text().toUtf8().constData(),
-                        ui->IOaddressPortedit->text().toUtf8().constData());
+                        ui->IOaddressIPedit->text().toStdString(),
+                        ui->IOaddressPortedit->text().toStdString());
     _ioNode = std::unique_ptr<trinity::IONodeProxy>(new trinity::IONodeProxy(endpointIO));
 }
 
 void Window::on_PRconnectIP_clicked() {
     Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(),
-                      ui->PRaddressIPedit->text().toUtf8().constData(),
-                      ui->PRaddressPortedit->text().toUtf8().constData());
+                      ui->PRaddressIPedit->text().toStdString(),
+                      ui->PRaddressPortedit->text().toStdString());
     
     _processingNode = std::unique_ptr<trinity::ProcessingNodeProxy>(new trinity::ProcessingNodeProxy(endpoint));
     LINFO("connected to processing node");

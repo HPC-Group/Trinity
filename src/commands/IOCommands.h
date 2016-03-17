@@ -339,7 +339,7 @@ struct GetDomainSizeCmd {
 
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
-        RequestParams(uint64_t lod = 0, uint64_t modality = 0, uint64_t ts = 0);
+        RequestParams(uint64_t lod = 0, uint64_t modality = 0);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -349,12 +349,10 @@ struct GetDomainSizeCmd {
 
         uint64_t getLod() const;
         uint64_t getModality() const;
-        uint64_t getTs() const;
 
     private:
         uint64_t m_lod;
         uint64_t m_modality;
-        uint64_t m_ts;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {
@@ -475,7 +473,7 @@ struct GetLargestSingleBrickLODCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t modality, uint64_t ts);
+        RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -484,11 +482,9 @@ struct GetLargestSingleBrickLODCmd {
         bool equals(const RequestParams& other) const;
     
         uint64_t getModality() const;
-        uint64_t getTs() const;
 
     private:
         uint64_t m_modality;
-        uint64_t m_ts;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {
@@ -615,7 +611,7 @@ struct GetBrickLayoutCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t lod, uint64_t modality, uint64_t timestep);
+        RequestParams(uint64_t lod, uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -625,12 +621,10 @@ struct GetBrickLayoutCmd {
 
         uint64_t getLod() const;
         uint64_t getModality() const;
-        uint64_t getTimestep() const;
 
     private:
         uint64_t m_lod;
         uint64_t m_modality;
-        uint64_t m_timestep;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {

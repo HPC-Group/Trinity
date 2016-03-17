@@ -202,7 +202,7 @@ TEST_F(IOCommandsTest, GetNumberOfTimestepsReqRep) {
 
 TEST_F(IOCommandsTest, GetDomainSizeCmd) {
     {
-        GetDomainSizeCmd::RequestParams target(1, 2, 3);
+        GetDomainSizeCmd::RequestParams target(1, 2);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
@@ -217,7 +217,7 @@ TEST_F(IOCommandsTest, GetDomainSizeReqRep) {
     auto session = createMockSession();
     EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDomainSize(1,2)).Times(1).WillOnce(Return(Core::Math::Vec3ui64(4, 5, 6)));
 
-    GetDomainSizeCmd::RequestParams requestParams(1, 2, 3);
+    GetDomainSizeCmd::RequestParams requestParams(1, 2);
     GetDomainSizeRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetDomainSizeHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui64(4, 5, 6), reply.getParams().getDomainSize());
@@ -273,7 +273,7 @@ TEST_F(IOCommandsTest, GetBrickOverlapSizeReqRep) {
 
 TEST_F(IOCommandsTest, GetLargestSingleBrickLODCmd) {
     {
-        GetLargestSingleBrickLODCmd::RequestParams target(23, 42);
+        GetLargestSingleBrickLODCmd::RequestParams target(23);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
@@ -288,7 +288,7 @@ TEST_F(IOCommandsTest, GetLargestSingleBrickLODReqRep) {
     auto session = createMockSession();
     EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getLargestSingleBrickLOD(17)).Times(1).WillOnce(Return(42));
 
-    GetLargestSingleBrickLODCmd::RequestParams requestParams(17, 23);
+    GetLargestSingleBrickLODCmd::RequestParams requestParams(17);
     GetLargestSingleBrickLODRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetLargestSingleBrickLODHdl>(request, session.get());
     ASSERT_EQ(42, reply.getParams().getLargestSingleBrickLOD());
@@ -342,7 +342,7 @@ TEST_F(IOCommandsTest, GetBrickExtentsReqRep) {
 
 TEST_F(IOCommandsTest, GetBrickLayoutCmd) {
     {
-        GetBrickLayoutCmd::RequestParams target(1, 2, 3);
+        GetBrickLayoutCmd::RequestParams target(1, 2);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
@@ -357,7 +357,7 @@ TEST_F(IOCommandsTest, GetBrickLayoutReqRep) {
     auto session = createMockSession();
     EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickLayout(1, 2)).Times(1).WillOnce(Return(Core::Math::Vec3ui(4, 5, 6)));
 
-    GetBrickLayoutCmd::RequestParams requestParams(1, 2, 3);
+    GetBrickLayoutCmd::RequestParams requestParams(1, 2);
     GetBrickLayoutRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetBrickLayoutHdl>(request, session.get());
     ASSERT_EQ(Core::Math::Vec3ui(4, 5, 6), reply.getParams().getBrickLayout());
