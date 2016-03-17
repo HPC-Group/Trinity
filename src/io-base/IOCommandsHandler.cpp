@@ -9,7 +9,7 @@
 using namespace trinity;
 
 InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request, IONode* node)
-    : m_request(request), m_node(node) {}
+    : m_node(node), m_request(request) {}
 
 std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     auto requestParams = m_request.getParams();
@@ -27,7 +27,7 @@ std::unique_ptr<Reply> InitIOSessionHdl::execute() {
 
 
 GetLODLevelCountHdl::GetLODLevelCountHdl(const GetLODLevelCountRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_session(session), m_request(request) {}
 
 std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
     const auto& io = m_session->getIO();
@@ -37,7 +37,7 @@ std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
 
 
 ListFilesHdl::ListFilesHdl(const ListFilesRequest& request, IONode* node)
-    : m_request(request), m_node(node) {}
+    : m_node(node), m_request(request) {}
 
 std::unique_ptr<Reply> ListFilesHdl::execute() {
     std::vector<IOData> ioDataVec;

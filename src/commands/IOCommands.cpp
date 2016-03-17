@@ -961,8 +961,9 @@ BrickKey GetBrickCmd::RequestParams::getBrickKey() const {
 }
 
 GetBrickCmd::ReplyParams::ReplyParams(std::vector<uint8_t> brick, bool success)
-    : m_brick(std::move(brick))
-    , m_success(success) {}
+    : m_success(success),
+    m_brick(std::move(brick))
+     {}
 
 void GetBrickCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     writer.appendBool("success", m_success);
