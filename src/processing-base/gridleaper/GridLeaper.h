@@ -18,7 +18,7 @@ class GridLeaper : public IRenderer {
 
 public:
     GridLeaper(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
-
+    ~GridLeaper();
     void setIsoValue(const float) override;
     void initContext() override;
     void paint();

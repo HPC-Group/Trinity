@@ -17,8 +17,12 @@ GridLeaper::GridLeaper(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> i
     : IRenderer(stream, std::move(ioSession))
     , _context(nullptr) {}
 
+GridLeaper::~GridLeaper() {
+    LINFO("(p) destroying a gridleaper");
+}
+
 void GridLeaper::setIsoValue(const float isoValue) {
-    LINFO("(p) iso value of gridleaper set to " + std::to_string(isoValue));
+   // LINFO("(p) iso value of gridleaper set to " + std::to_string(isoValue));
     m_isoValue = isoValue;
     if (_context != nullptr) {
         paint();
@@ -73,7 +77,7 @@ bool GridLeaper::LoadAndCheckShaders(std::shared_ptr<GLProgram>& programPtr, Sha
     programPtr->Load(sd);
 
     if (!programPtr->IsValid()) {
-        cout << "programm not valid" << endl;
+        LERROR("(p) invalid shader program");
         return false;
     }
     return true;

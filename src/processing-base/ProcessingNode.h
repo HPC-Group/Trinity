@@ -16,9 +16,8 @@ namespace trinity {
 
     private:
         std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
-
-    private:
         ProcessingNodeCommandFactory m_factory;
         std::vector<std::unique_ptr<RenderSession>> m_sessions;
+        void cleanupInterruptedSessions();
     };
 }
