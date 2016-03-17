@@ -189,4 +189,12 @@ std::unique_ptr<Reply> GetBrickHdl::execute() {
     return mocca::make_unique<GetBrickReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetTypeHdl::GetTypeHdl(const GetTypeRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetTypeHdl::execute() {
+    GetTypeCmd::ReplyParams params(m_session->getIO().getType());
+    return mocca::make_unique<GetTypeReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

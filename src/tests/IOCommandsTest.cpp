@@ -480,3 +480,26 @@ TEST_F(IOCommandsTest, GetBrickReqRep) {
     ASSERT_EQ(true, reply.getParams().getSuccess());
     ASSERT_EQ(brick, reply.getParams().getBrick());
 }
+
+TEST_F(IOCommandsTest, GetTypeCmd) {
+    {
+        GetTypeCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetTypeCmd::ReplyParams target(IIO::ValueType::T_INT32);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetTypeReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getType()).Times(1).WillOnce(Return(IIO::ValueType::T_INT32));
+
+    GetTypeCmd::RequestParams requestParams;
+    GetTypeRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetTypeHdl>(request, session.get());
+    ASSERT_EQ(IIO::ValueType::T_INT32, reply.getParams().getValueType());
+}

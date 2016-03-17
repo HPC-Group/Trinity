@@ -32,7 +32,7 @@ public:
     Core::Math::Vec2f getRange(uint64_t modality) const override;
     uint64_t getTotalBrickCount() const override;
     bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const override;
-
+    IIO::ValueType getType() const override;
 
 
 private:

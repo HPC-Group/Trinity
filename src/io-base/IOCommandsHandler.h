@@ -221,5 +221,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetTypeHdl : public ICommandHandler {
+public:
+    GetTypeHdl(const GetTypeRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetTypeRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

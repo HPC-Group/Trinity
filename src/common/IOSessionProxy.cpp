@@ -140,3 +140,10 @@ bool IOSessionProxy::getBrick(const BrickKey& brickKey, std::vector<uint8_t>& da
     std::copy(begin(brick), end(brick), begin(data)); // fixme: avoid copying of brick
     return replyParams.getSuccess();
 }
+
+IIO::ValueType IOSessionProxy::getType() const {
+    GetTypeCmd::RequestParams params;
+    GetTypeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getValueType();
+}

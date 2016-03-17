@@ -994,6 +994,49 @@ const std::vector<uint8_t>& GetBrickCmd::ReplyParams::getBrick() const {
     return m_brick;
 }
 
+
+////////////// GetTypeCmd //////////////
+
+VclType GetTypeCmd::Type = VclType::GetType;
+
+void GetTypeCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetTypeCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetTypeCmd::RequestParams::equals(const GetTypeCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetTypeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+trinity::GetTypeCmd::ReplyParams::ReplyParams(IIO::ValueType valueType)
+    : m_valueType(valueType) {}
+
+void GetTypeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendString("valueType", IIO::valueTypeMapper().getByFirst(m_valueType));
+}
+
+void GetTypeCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_valueType = IIO::valueTypeMapper().getBySecond(reader.getString("valueType"));
+}
+
+bool GetTypeCmd::ReplyParams::equals(const GetTypeCmd::ReplyParams& other) const {
+    return m_valueType == other.m_valueType;
+}
+
+std::string GetTypeCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "valueType: " << IIO::valueTypeMapper().getByFirst(m_valueType);
+    return stream.str();
+}
+
+IIO::ValueType trinity::GetTypeCmd::ReplyParams::getValueType() const {
+    return m_valueType;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1252,6 +1295,19 @@ std::ostream& operator<<(std::ostream& os, const GetBrickCmd::RequestParams& obj
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetBrickCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetTypeCmd::RequestParams& lhs, const GetTypeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetTypeCmd::ReplyParams& lhs, const GetTypeCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetTypeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetTypeCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

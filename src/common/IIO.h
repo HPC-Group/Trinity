@@ -4,11 +4,22 @@
 #include "silverbullet/math/MinMaxBlock.h"
 #include "silverbullet/math/Vectors.h"
 
+#include "mocca/base/BidirectionalMap.h"
+
 namespace trinity {
 
 class IIO {
 public:
     virtual ~IIO() {}
+
+    enum class Semantic { Scalar, Vector, Color };
+    enum class ValueType { T_FLOAT, T_DOUBLE, T_UINT8, T_UINT16, T_UINT32, T_UINT64, T_INT8, T_INT16, T_INT32, T_INT64 };
+
+    using SemanticMapper = mocca::BidirectionalMap<Semantic, std::string>;
+    using ValueTypeMapper = mocca::BidirectionalMap<ValueType, std::string>;
+
+    static const SemanticMapper& semanticMapper();
+    static const ValueTypeMapper& valueTypeMapper();
 
 
     // changed from Vec3ui to Vec3ui64 (who did that? Andre?)
@@ -29,9 +40,9 @@ public:
     virtual Core::Math::Vec2f getRange(uint64_t modality) const = 0;
     virtual uint64_t getTotalBrickCount() const = 0;
     virtual bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const = 0;
+    virtual ValueType getType() const = 0;
 
     // not sure if we need that
-    // virtual ValueType getType() const;
     // virtual std::string getUserDefinedSemantic(uint64_t modality) const;
     // virtual Semantic getSemantict(uint64_t modality) const;
 };

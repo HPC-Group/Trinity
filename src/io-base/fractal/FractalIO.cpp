@@ -212,4 +212,9 @@ namespace trinity {
     }
     return created;
   }
-}
+
+  IIO::ValueType FractalIO::getType() const {
+      // TODO
+      return IIO::ValueType();
+  }
+  }
