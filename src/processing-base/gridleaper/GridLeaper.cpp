@@ -41,17 +41,19 @@ void GridLeaper::initContext() {
         // std::cout << "can't create context" << std::endl;
     }
 
-    LINFO("(p) grid leaper created. OpenGL Version " << _context->getVersion());
+    
 
     
     _width = m_visStream->getStreamingParams().getResX();
     _height = m_visStream->getStreamingParams().getResY();
+    LINFO("(p) grid leaper: resolution: " + std::to_string(_width) + " x " + std::to_string(_height));
 
     LoadFrameBuffer();
     LoadShader();
     LoadGeometry();
 
     _targetBinder = std::unique_ptr<GLTargetBinder>(new GLTargetBinder());
+    LINFO("(p) grid leaper created. OpenGL Version " << _context->getVersion());
 }
 
 bool GridLeaper::LoadShader() {

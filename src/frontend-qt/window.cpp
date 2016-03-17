@@ -17,12 +17,9 @@ static int reconnectInSec = 5;
 Window::Window(QWidget* parent)
 : QMainWindow(parent)
 , _initDone(false)
-, _renderWidth(800)
-, _renderHeight(800)
 , ui(new Ui::Window) {
     ui->setupUi(this);
     LINFO("Window created");
-    
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(10);
@@ -81,6 +78,8 @@ Window::~Window() {
 
 
 void Window::initRenderer() {
+    _renderWidth = (ui->resx->text().toInt());
+    _renderHeight =(ui->resy->text().toInt());
     trinity::StreamingParams params(_renderWidth, _renderHeight);
  
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");

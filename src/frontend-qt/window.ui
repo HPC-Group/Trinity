@@ -261,17 +261,31 @@
 </property>
 </widget>
 </item>
-<item row="1" column="0">
+<item row="3" column="0">
 <widget class="QLineEdit" name="PRaddressIPedit">
 <property name="text">
 <string>127.0.0.1</string>
 </property>
 </widget>
 </item>
+<item row="1" column="0">
+<widget class="QLineEdit" name="resx">
+<property name="text">
+<string>800</string>
+</property>
+</widget>
+</item>
+<item row="2" column="0">
+<widget class="QLineEdit" name="resy">
+<property name="text">
+<string>600</string>
+</property>
+</widget>
+</item>
 </layout>
 </widget>
 </item>
-<item row="3" column="0">
+<item row="2" column="0">
 <widget class="QFrame" name="selectDS">
 <property name="maximumSize">
 <size>
