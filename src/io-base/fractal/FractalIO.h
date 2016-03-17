@@ -1,15 +1,17 @@
 #pragma once
 
-#include "Mandelbulb.h"
+#include "io-base/fractal/Mandelbulb.h"
+#include "io-base/IListData.h"
 #include "common/IIO.h"
+
 #include "mocca/log/LogManager.h"
 
 namespace trinity {
   
   class FractalIO : public IIO {
   public:
-    FractalIO();
-    FractalIO(int fileId);
+    //FractalIO();
+    FractalIO(int fileId, IListData& listData);
     
     
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
@@ -43,7 +45,9 @@ namespace trinity {
     Core::Math::Vec3ui64 m_brickSize;
     bool m_bFlat;
     Mandelbulb<uint8_t> m_mbGenerator;
-    
+    IListData& m_listData;
+
+
     // HACK: that's what I would like todo but the API won't let me so I had to
     // move the constructor into the pseudo constructor below
     /*

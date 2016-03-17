@@ -1,21 +1,23 @@
-#include "FractalIO.h"
-#include "mocca/base/Error.h"
+#include "io-base/fractal/FractalIO.h"
+
 #include "common/TrinityError.h"
+
+#include "mocca/base/Error.h"
 
 using namespace Core::Math;
 
 namespace trinity {
+
+  //FractalIO::FractalIO() :
+  //  m_mbGenerator(0,0,0)  // HACK: worthless init which will be overriden below
+  //{
+  //  // HACK: I don't know why this constructor even exists
+  //  throw new TrinityError("this is a worthless constructor, don't call it",
+  //                         __FILE__, __LINE__);
+  //}
   
-  FractalIO::FractalIO() :
-    m_mbGenerator(0,0,0)  // HACK: worthless init which will be overriden below
-  {
-    // HACK: I don't know why this constructor even exists
-    throw new TrinityError("this is a worthless constructor, don't call it",
-                           __FILE__, __LINE__);
-  }
-  
-  FractalIO::FractalIO(int fileId) :
-  m_mbGenerator(0,0,0)  // HACK: worthless init which will be overriden below
+  FractalIO::FractalIO(int fileId, IListData& listData) :
+  m_mbGenerator(0,0,0), m_listData(listData)  // HACK: worthless init which will be overriden below
   {
     switch (fileId) {
       case 3:

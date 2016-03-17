@@ -14,7 +14,9 @@ InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request, IONode* 
 std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     auto requestParams = m_request.getParams();
 
-    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), IOSession::createIO(requestParams.getFileId()));
+    auto fileID = requestParams.getFileId();
+    auto& listData = m_node->getListDataForID(fileID);
+    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), IOSession::createIO(fileID, listData));
     session->start();
     
     InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());
@@ -40,30 +42,8 @@ ListFilesHdl::ListFilesHdl(const ListFilesRequest& request, IONode* node)
 std::unique_ptr<Reply> ListFilesHdl::execute() {
     std::vector<IOData> ioDataVec;
     int32_t dirID = m_request.getParams().getDirID();
-    switch (dirID) {
-    case 0: {
-        ioDataVec.push_back(IOData("Flat Data", 1, IOData::DataType::Directory));
-        ioDataVec.push_back(IOData("Bricked Data", 2, IOData::DataType::Directory));
-        break;
-    }
-    case 1: {
-        ioDataVec.push_back(IOData("64^3", 3, IOData::DataType::Directory));
-        ioDataVec.push_back(IOData("128^3", 4, IOData::DataType::Directory));
-        ioDataVec.push_back(IOData("256^3", 5, IOData::DataType::Directory));
-        break;
-    }
-    case 2: {
-        ioDataVec.push_back(IOData("512^3 (32^3 bricks)", 6, IOData::DataType::Directory));
-        ioDataVec.push_back(IOData("1024^3 (32^3 bricks)", 7, IOData::DataType::Directory));
-        ioDataVec.push_back(IOData("2048^3 (32^3 bricks)", 8, IOData::DataType::Directory));
-        ioDataVec.push_back(IOData("4096^3 (32^3 bricks)", 9, IOData::DataType::Directory));
-        break;
-    }
-    default:
-        throw TrinityError("Invalid directory ID: " + std::to_string(dirID), __FILE__, __LINE__);
-        break;
-    }
-    ListFilesCmd::ReplyParams replyParams(ioDataVec);
+    auto& listData = m_node->getListDataForID(dirID);
+    ListFilesCmd::ReplyParams replyParams(listData.listData(dirID));
     return mocca::make_unique<ListFilesReply>(replyParams, m_request.getRid(), m_request.getSid());
 }
 

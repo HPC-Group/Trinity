@@ -4,6 +4,7 @@
 #include "common/AbstractSession.h"
 #include "common/IIO.h"
 #include "io-base/IOCommandFactory.h"
+#include "io-base/IListData.h"
 
 #include "mocca/base/Singleton.h"
 #include "mocca/base/Thread.h"
@@ -21,7 +22,7 @@ public:
 
     const IIO& getIO() const { return *m_io; }
     
-    static std::unique_ptr<IIO> createIO(int fileId);
+    static std::unique_ptr<IIO> createIO(int fileId, IListData& listData);
 
 private:
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;

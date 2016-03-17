@@ -17,8 +17,8 @@ IOSession::IOSession(const std::string& protocol, std::unique_ptr<IIO> io)
     : AbstractSession(protocol), m_io(std::move(io)) {
 }
 
-std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId) {
-    return std::unique_ptr<FractalIO>(new FractalIO(fileId));
+std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId, IListData& listData) {
+    return std::unique_ptr<FractalIO>(new FractalIO(fileId, listData));
     /*
     switch (fileId) {
     case 0:  // Dummy File

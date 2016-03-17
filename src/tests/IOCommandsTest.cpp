@@ -78,16 +78,17 @@ TEST_F(IOCommandsTest, ListFilesCmd) {
 }
 
 TEST_F(IOCommandsTest, ListFilesReqRep) {
+    auto ioNode = mocca::make_unique<IONode>();
     {
         ListFilesCmd::RequestParams requestParams(0);
         ListFilesRequest request(requestParams, 1, 2);
-        auto reply = trinity::testing::handleRequest<ListFilesHdl>(request, static_cast<IONode*>(nullptr));
+        auto reply = trinity::testing::handleRequest<ListFilesHdl>(request, ioNode.get());
         ASSERT_EQ(2, reply.getParams().getIOData().size());
     }
     {
         ListFilesCmd::RequestParams requestParams(42); // invalid directory ID
         ListFilesRequest request(requestParams, 1, 2);
-        ASSERT_THROW(trinity::testing::handleRequest<ListFilesHdl>(request, static_cast<IONode*>(nullptr)), TrinityError);
+        ASSERT_THROW(trinity::testing::handleRequest<ListFilesHdl>(request, ioNode.get()), TrinityError);
     }
 }
 
