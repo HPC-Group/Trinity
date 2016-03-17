@@ -18,6 +18,8 @@ IOSession::IOSession(const std::string& protocol, std::unique_ptr<IIO> io)
 }
 
 std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId) {
+    return std::unique_ptr<FractalIO>(new FractalIO(fileId));
+    /*
     switch (fileId) {
     case 0:  // Dummy File
         return std::unique_ptr<DummyIO>(new DummyIO());
@@ -31,6 +33,7 @@ std::unique_ptr<trinity::IIO> IOSession::createIO(int fileId) {
         throw TrinityError("can't create renderer: no such type", __FILE__, __LINE__);
         break;
     }
+     */
 }
 
 std::unique_ptr<ICommandHandler> IOSession::createHandler(const Request& request) {

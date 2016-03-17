@@ -39,8 +39,9 @@ void GridLeaper::initContext() {
 
     LINFO("(p) grid leaper created. OpenGL Version " << _context->getVersion());
 
-    _width = 512;
-    _height = 512;
+    
+    _width = m_visStream->getStreamingParams().getResX();
+    _height = m_visStream->getStreamingParams().getResY();
 
     LoadFrameBuffer();
     LoadShader();
