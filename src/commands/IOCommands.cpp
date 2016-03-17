@@ -356,8 +356,7 @@ VclType GetDomainSizeCmd::Type = VclType::GetDomainSize;
 
 GetDomainSizeCmd::RequestParams::RequestParams(uint64_t lod, uint64_t modality)
     : m_lod(lod)
-    , m_modality(modality)
-{}
+    , m_modality(modality) {}
 
 void GetDomainSizeCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendInt("lod", m_lod);
@@ -514,8 +513,7 @@ Core::Math::Vec3ui GetBrickOverlapSizeCmd::ReplyParams::getOverlapSize() const {
 VclType GetLargestSingleBrickLODCmd::Type = VclType::GetLargestSingleBrickLOD;
 
 GetLargestSingleBrickLODCmd::RequestParams::RequestParams(uint64_t modality)
-    : m_modality(modality)
-{}
+    : m_modality(modality) {}
 
 void GetLargestSingleBrickLODCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendInt("modality", m_modality);
@@ -681,8 +679,7 @@ VclType GetBrickLayoutCmd::Type = VclType::GetBrickLayout;
 
 GetBrickLayoutCmd::RequestParams::RequestParams(uint64_t lod, uint64_t modality)
     : m_lod(lod)
-    , m_modality(modality)
- {}
+    , m_modality(modality) {}
 
 void GetBrickLayoutCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendInt("lod", m_lod);
@@ -963,29 +960,37 @@ BrickKey GetBrickCmd::RequestParams::getBrickKey() const {
     return m_brickKey;
 }
 
-GetBrickCmd::ReplyParams::ReplyParams(std::vector<uint8_t> brick)
-    : m_brick(std::move(brick)) {}
+GetBrickCmd::ReplyParams::ReplyParams(std::vector<uint8_t> brick, bool success)
+    : m_brick(std::move(brick))
+    , m_success(success) {}
 
 void GetBrickCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendBool("success", m_success);
     writer.appendIntVec("brick", m_brick);
 }
 
 void GetBrickCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_success = reader.getBool("success");
     m_brick = reader.getUInt8Vec("brick");
 }
 
 bool GetBrickCmd::ReplyParams::equals(const GetBrickCmd::ReplyParams& other) const {
-    return m_brick == other.m_brick;
+    return m_success == other.m_success && m_brick == other.m_brick;
 }
 
 std::string GetBrickCmd::ReplyParams::toString() const {
     std::stringstream stream;
-    stream << "brick: ";
+    stream << "success: " << m_success;
+    stream << "; brick: ";
     ::operator<<(stream, m_brick); // ugly, but necessary because of namespaces
     return stream.str();
 }
 
-std::vector<uint8_t> GetBrickCmd::ReplyParams::getBrick() const {
+bool GetBrickCmd::ReplyParams::getSuccess() const {
+    return m_success;
+}
+
+const std::vector<uint8_t>& GetBrickCmd::ReplyParams::getBrick() const {
     return m_brick;
 }
 

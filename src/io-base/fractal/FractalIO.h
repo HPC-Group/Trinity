@@ -30,15 +30,7 @@ namespace trinity {
     uint64_t getComponentCount(uint64_t modality) const override;
     Core::Math::Vec2f getRange(uint64_t modality) const override;
     uint64_t getTotalBrickCount() const override;
-    bool getBrick(const BrickKey& brickKey,
-                  std::vector<uint8_t>& data) const; // HACK: override;
-
-    // HACK
-    std::vector<uint8_t> getBrick(const BrickKey& brickKey,
-        bool& success) const override {
-        return std::vector<uint8_t>();
-    }
-    
+    bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const override;
     
   private:
     Core::Math::Vec3ui64 m_totalSize;

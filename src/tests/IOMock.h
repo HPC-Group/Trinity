@@ -20,5 +20,5 @@ public:
     MOCK_CONST_METHOD1(getComponentCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD1(getRange, Core::Math::Vec2f(uint64_t));
     MOCK_CONST_METHOD0(getTotalBrickCount, uint64_t());
-    MOCK_CONST_METHOD2(getBrick, std::vector<uint8_t>(const trinity::BrickKey&, bool&));
+    MOCK_CONST_METHOD2(getBrick, bool(const trinity::BrickKey&, std::vector<uint8_t>&));
 };

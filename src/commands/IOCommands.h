@@ -1,13 +1,13 @@
 #pragma once
 
-#include "commands/ISerializable.h"
 #include "commands/IOData.h"
-#include "commands/Request.h"
+#include "commands/ISerializable.h"
 #include "commands/Reply.h"
+#include "commands/Request.h"
 
-#include "silverbullet/math/Vectors.h"
-#include "silverbullet/math/MinMaxBlock.h"
 #include "silverbullet/dataio/base/Brick.h"
+#include "silverbullet/math/MinMaxBlock.h"
+#include "silverbullet/math/Vectors.h"
 
 
 namespace trinity {
@@ -27,7 +27,7 @@ struct ListFilesCmd {
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
-    
+
     private:
         int32_t m_dirID;
     };
@@ -383,7 +383,7 @@ struct GetTransformationCmd {
 
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
-    
+
         Core::Math::Mat4d getTransformation() const;
 
     private:
@@ -452,7 +452,7 @@ struct GetLargestSingleBrickLODCmd {
 
         std::string toString() const;
         bool equals(const RequestParams& other) const;
-    
+
         uint64_t getModality() const;
 
     private:
@@ -820,7 +820,7 @@ struct GetBrickCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(std::vector<uint8_t> brick);
+        ReplyParams(std::vector<uint8_t> brick, bool success);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -828,9 +828,11 @@ struct GetBrickCmd {
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
-        std::vector<uint8_t> getBrick() const;
+        bool getSuccess() const;
+        const std::vector<uint8_t>& getBrick() const; // returning reference for performance reasons, be careful!
 
     private:
+        bool m_success;
         std::vector<uint8_t> m_brick;
     };
 };

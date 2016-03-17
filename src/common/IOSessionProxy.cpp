@@ -131,10 +131,12 @@ uint64_t IOSessionProxy::getTotalBrickCount() const {
     return reply->getParams().getTotalBrickCount();
 }
 
-std::vector<uint8_t> IOSessionProxy::getBrick(const BrickKey& brickKey, bool& mysteriousFlag) const {
+bool IOSessionProxy::getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const {
     GetBrickCmd::RequestParams params(brickKey);
     GetBrickRequest request(params, IDGenerator::nextID(), m_remoteSid);
-    // todo: what about the mysterious flag?
     auto reply = sendRequestChecked(m_inputChannel, request);
-    return reply->getParams().getBrick();
+    const auto& replyParams = reply->getParams();
+    const auto& brick = replyParams.getBrick();
+    std::copy(begin(brick), end(brick), begin(data)); // fixme: avoid copying of brick
+    return replyParams.getSuccess();
 }
