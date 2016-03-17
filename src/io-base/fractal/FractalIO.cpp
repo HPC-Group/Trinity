@@ -70,7 +70,8 @@ MinMaxBlock FractalIO::maxMinForKey(const BrickKey&) const {
 int FractalIO::getLODLevelCount() const {
     if (!m_bFlat) {
         // TODO
-        throw new TrinityError("case not implemented", __FILE__, __LINE__);
+        return 1;
+        //throw new TrinityError("case not implemented", __FILE__, __LINE__);
     } else {
         return 1;
     }
