@@ -15,7 +15,7 @@ class ProcessingNodeProxy  {
 public:
     ProcessingNodeProxy(const mocca::net::Endpoint& ep);
 
-    std::unique_ptr<RendererProxy> initRenderer(const VclType& type, int fileId,
+    std::unique_ptr<RendererProxy> initRenderer(const VclType& type, const std::string& fileId,
                                                 const mocca::net::Endpoint& endpoint, // io endpoint
                                                 const StreamingParams& streamingParams);
 

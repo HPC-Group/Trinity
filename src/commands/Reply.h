@@ -68,7 +68,7 @@ public:
     VclType getType() const override { return Interface::Type; }
     const ReplyParams& getParams() const { return m_params; } // returning reference for performance reasons, be careful!
 
-    std::unique_ptr<ISerializable> clone() const { return mocca::make_unique<ReplyTemplate<Interface>>(*this); }
+    std::unique_ptr<ISerializable> clone() const override { return mocca::make_unique<ReplyTemplate<Interface>>(*this); }
 
     std::string toString() const override {
         std::stringstream stream;

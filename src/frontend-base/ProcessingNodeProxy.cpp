@@ -16,7 +16,7 @@ ProcessingNodeProxy::ProcessingNodeProxy(const mocca::net::Endpoint& ep)
     }
 }
 
-std::unique_ptr<RendererProxy> ProcessingNodeProxy::initRenderer(const VclType& type, int fileId, const mocca::net::Endpoint& endpoint,
+std::unique_ptr<RendererProxy> ProcessingNodeProxy::initRenderer(const VclType& type, const std::string& fileId, const mocca::net::Endpoint& endpoint,
                                                                  const StreamingParams& streamingParams) {
     // creating the cmd that will initialize a remote renderer of the given type
     InitProcessingSessionCmd::RequestParams params(m_inputChannel.getEndpoint().protocol, type, fileId, endpoint,

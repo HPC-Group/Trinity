@@ -22,7 +22,7 @@ public:
 
     const IIO& getIO() const { return *m_io; }
     
-    static std::unique_ptr<IIO> createIO(int fileId, IListData& listData);
+    static std::unique_ptr<IIO> createIO(const std::string& fileId, IListData& listData);
 
 private:
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;

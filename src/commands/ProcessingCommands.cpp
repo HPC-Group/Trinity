@@ -43,8 +43,11 @@ bool StreamingParams::equals(const StreamingParams& other) const {
 
 VclType InitProcessingSessionCmd::Type = VclType::InitRenderer;
 
-InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protocol, const VclType& renderType, int fileId,
-                                                       const mocca::net::Endpoint& ioEndpoint, const StreamingParams& p)
+InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protocol,
+                                                       const VclType& renderType,
+                                                       const std::string& fileId,
+                                                       const mocca::net::Endpoint& ioEndpoint,
+                                                       const StreamingParams& p)
     : m_protocol(protocol)
     , m_renderType(renderType)
     , m_fileId(fileId)
@@ -54,7 +57,7 @@ InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protoc
 void InitProcessingSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendString("protocol", m_protocol);
     writer.appendString("rendertype", Vcl::instance().toString(m_renderType));
-    writer.appendInt("fileid", m_fileId);
+    writer.appendString("fileid", m_fileId);
     writer.appendString("ioendpoint", m_ioEndpoint.toString());
     writer.appendObject("streamingparams", m_streamingParams);
 }
@@ -62,7 +65,7 @@ void InitProcessingSessionCmd::RequestParams::serialize(ISerialWriter& writer) c
 void InitProcessingSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
     m_protocol = reader.getString("protocol");
     m_renderType = Vcl::instance().toType(reader.getString("rendertype"));
-    m_fileId = reader.getInt32("fileid");
+    m_fileId = reader.getString("fileid");
     m_ioEndpoint = mocca::net::Endpoint(reader.getString("ioendpoint"));
     m_streamingParams = reader.getSerializable<StreamingParams>("streamingparams");
 }
@@ -75,7 +78,7 @@ std::string InitProcessingSessionCmd::RequestParams::getProtocol() const {
     return m_protocol;
 }
 
-int InitProcessingSessionCmd::RequestParams::getFileId() const {
+std::string InitProcessingSessionCmd::RequestParams::getFileId() const {
     return m_fileId;
 }
 

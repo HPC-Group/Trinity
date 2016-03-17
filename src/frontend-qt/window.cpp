@@ -86,7 +86,7 @@ void Window::initRenderer() {
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
     
     // the file id will be available after implementing the listdata command
-    int fileId = 0;
+    std::string fileId = "0";
     try {
         _renderer = _processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
         _renderer->initContext();

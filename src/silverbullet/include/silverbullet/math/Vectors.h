@@ -178,7 +178,7 @@ public:
         y = std::max<T>(y, other.y);
     }
 
-    std::unique_ptr<trinity::ISerializable> clone() const { return std::unique_ptr<ISerializable>(new VECTOR2(*this)); }
+    std::unique_ptr<trinity::ISerializable> clone() const override { return std::unique_ptr<ISerializable>(new VECTOR2(*this)); }
     void serialize(trinity::ISerialWriter& writer) const override { serializeImpl(writer); }
     void deserialize(const trinity::ISerialReader& reader) override { deserializeImpl(reader); }
 
@@ -505,7 +505,7 @@ public:
         z = std::max<T>(z, other.z);
     }
 
-    std::unique_ptr<trinity::ISerializable> clone() const { return std::unique_ptr<ISerializable>(new VECTOR3(*this)); }
+    std::unique_ptr<trinity::ISerializable> clone() const override { return std::unique_ptr<ISerializable>(new VECTOR3(*this)); }
     void serialize(trinity::ISerialWriter& writer) const override { serializeImpl(writer); }
     void deserialize(const trinity::ISerialReader& reader) override { deserializeImpl(reader); }
 
@@ -1762,7 +1762,7 @@ public:
         array[15] = T(0);
     }
 
-    std::unique_ptr<trinity::ISerializable> clone() const { return std::unique_ptr<ISerializable>(new MATRIX4(*this)); }
+    std::unique_ptr<trinity::ISerializable> clone() const override { return std::unique_ptr<ISerializable>(new MATRIX4(*this)); }
     void serialize(trinity::ISerialWriter& writer) const override { serializeImpl(writer); }
     void deserialize(const trinity::ISerialReader& reader) override { deserializeImpl(reader); }
 

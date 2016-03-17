@@ -11,20 +11,20 @@ const mocca::BidirectionalMap<IOData::DataType, std::string>& IOData::dataTypeMa
     return mapper;
 }
 
-IOData::IOData(const std::string& name, int fileId, DataType dataType)
+IOData::IOData(const std::string& name, const std::string&  fileId, DataType dataType)
     : m_name(name)
     , m_fileId(fileId)
     , m_dataType(dataType) {}
 
 void IOData::serialize(ISerialWriter& writer) const {
     writer.appendString("name", m_name);
-    writer.appendInt("fileid", m_fileId);
+    writer.appendString("fileid", m_fileId);
     writer.appendString("datatype", dataTypeMapper().getByFirst(m_dataType));
 }
 
 void IOData::deserialize(const ISerialReader& reader) {
     m_name = reader.getString("name");
-    m_fileId = reader.getInt32("fileid");
+    m_fileId = reader.getString("fileid");
     m_dataType = dataTypeMapper().getBySecond(reader.getString("datatype"));
 }
 
@@ -32,7 +32,7 @@ std::string IOData::getName() const {
     return m_name;
 }
 
-int IOData::getFileId() const {
+std::string IOData::getFileId() const {
     return m_fileId;
 }
 

@@ -41,7 +41,7 @@ ListFilesHdl::ListFilesHdl(const ListFilesRequest& request, IONode* node)
 
 std::unique_ptr<Reply> ListFilesHdl::execute() {
     std::vector<IOData> ioDataVec;
-    int32_t dirID = m_request.getParams().getDirID();
+    auto dirID = m_request.getParams().getDirID();
     auto& listData = m_node->getListDataForID(dirID);
     ListFilesCmd::ReplyParams replyParams(listData.listData(dirID));
     return mocca::make_unique<ListFilesReply>(replyParams, m_request.getRid(), m_request.getSid());

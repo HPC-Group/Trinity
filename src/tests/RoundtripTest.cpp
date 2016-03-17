@@ -89,7 +89,7 @@ TEST_F(NodeTest, InitDummyRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::DummyRenderer, 0, ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, "0", ioEndpoint, params);
     processingNode->join();
     ioNode->join();
 }
@@ -106,7 +106,7 @@ TEST_F(NodeTest, InitWrongRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    ASSERT_THROW(proxy.initRenderer(VclType::FractalIO, 0, ioEndpoint, params), TrinityError);
+    ASSERT_THROW(proxy.initRenderer(VclType::FractalIO, "0", ioEndpoint, params), TrinityError);
 
     processingNode->join();
     ioNode->join();
@@ -124,7 +124,7 @@ TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::GridLeaper, 0, ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::GridLeaper, "0", ioEndpoint, params);
     renderer->setIsoValue(123);
 
     processingNode->join();
@@ -143,7 +143,7 @@ TEST_F(NodeTest, SetCamZoomValueOnGridLeaperTest) {
     ProcessingNodeProxy proxy(endpoint);
     
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::GridLeaper, 0, ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::GridLeaper, "0", ioEndpoint, params);
     renderer->zoomCamera(12);
     
     processingNode->join();
@@ -163,7 +163,7 @@ TEST_F(NodeTest, CallLodFromDummyRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::DummyRenderer, 24, ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, "0", ioEndpoint, params);
     std::this_thread::sleep_for(std::chrono::seconds(1));
     renderer->setIsoValue(123);
 

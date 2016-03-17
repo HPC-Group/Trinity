@@ -35,7 +35,8 @@ struct InitProcessingSessionCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        explicit RequestParams(const std::string& protocol, const VclType& renderType, int fileId, const mocca::net::Endpoint& ioEndpoint,
+        explicit RequestParams(const std::string& protocol, const VclType& renderType,
+                               const std::string& fileId, const mocca::net::Endpoint& ioEndpoint,
                                const StreamingParams& p);
 
         void serialize(ISerialWriter& writer) const override;
@@ -43,7 +44,7 @@ struct InitProcessingSessionCmd {
 
         std::string getProtocol() const;
         mocca::net::Endpoint getIoEndpoint() const;
-        int getFileId() const;
+        std::string getFileId() const;
         VclType getRenderType() const;
         StreamingParams getStreamingParams() const;
 
@@ -53,7 +54,7 @@ struct InitProcessingSessionCmd {
     private:
         std::string m_protocol;
         VclType m_renderType;
-        int m_fileId;
+        std::string m_fileId;
         mocca::net::Endpoint m_ioEndpoint;
         StreamingParams m_streamingParams;
     };

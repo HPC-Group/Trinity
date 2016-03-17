@@ -19,18 +19,18 @@ struct ListFilesCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        explicit RequestParams(int32_t dirID);
+        explicit RequestParams(const std::string& dirID);
 
         bool equals(const ListFilesCmd::RequestParams& other) const;
         std::string toString() const;
 
-        int32_t getDirID() const;
+        std::string getDirID() const;
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
     private:
-        int32_t m_dirID;
+        std::string m_dirID;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {
@@ -62,20 +62,20 @@ struct InitIOSessionCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        explicit RequestParams(const std::string& protocol, int fileId);
+        explicit RequestParams(const std::string& protocol, const std::string& fileId);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
         std::string getProtocol() const;
-        int getFileId() const;
+        std::string getFileId() const;
 
         std::string toString() const;
         bool equals(const InitIOSessionCmd::RequestParams& other) const;
 
     private:
         std::string m_protocol;
-        int m_fileId;
+        std::string m_fileId;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {

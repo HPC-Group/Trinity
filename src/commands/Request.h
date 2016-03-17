@@ -69,10 +69,10 @@ public:
         : Request(rid, sid)
         , m_params(params) {}
 
-    VclType getType() const { return Interface::Type; }
+    VclType getType() const override { return Interface::Type; }
     RequestParams getParams() const { return m_params; }
 
-    std::unique_ptr<ISerializable> clone() const { return mocca::make_unique<RequestTemplate<Interface>>(*this); }
+    std::unique_ptr<ISerializable> clone() const override { return mocca::make_unique<RequestTemplate<Interface>>(*this); }
 
     std::string toString() const override {
         std::stringstream stream;

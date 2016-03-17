@@ -9,7 +9,7 @@ using namespace trinity;
 
 VclType ListFilesCmd::Type = VclType::ListFiles;
 
-ListFilesCmd::RequestParams::RequestParams(int32_t dirID)
+ListFilesCmd::RequestParams::RequestParams(const std::string& dirID)
     : m_dirID(dirID) {}
 
 bool ListFilesCmd::RequestParams::equals(const ListFilesCmd::RequestParams& other) const {
@@ -23,14 +23,14 @@ std::string ListFilesCmd::RequestParams::toString() const {
 }
 
 void ListFilesCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt("dirid", m_dirID);
+    writer.appendString("dirid", m_dirID);
 }
 
 void ListFilesCmd::RequestParams::deserialize(const ISerialReader& reader) {
-    m_dirID = reader.getInt32("dirid");
+    m_dirID = reader.getString("dirid");
 }
 
-int32_t ListFilesCmd::RequestParams::getDirID() const {
+std::string ListFilesCmd::RequestParams::getDirID() const {
     return m_dirID;
 }
 
@@ -66,25 +66,25 @@ std::vector<IOData> ListFilesCmd::ReplyParams::getIOData() const {
 
 VclType InitIOSessionCmd::Type = VclType::InitIOSession;
 
-InitIOSessionCmd::RequestParams::RequestParams(const std::string& protocol, int fileId)
+InitIOSessionCmd::RequestParams::RequestParams(const std::string& protocol, const std::string& fileId)
     : m_protocol(protocol)
     , m_fileId(fileId) {}
 
 void InitIOSessionCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendString("protocol", m_protocol);
-    writer.appendInt("fileid", m_fileId);
+    writer.appendString("fileid", m_fileId);
 }
 
 void InitIOSessionCmd::RequestParams::deserialize(const ISerialReader& reader) {
     m_protocol = reader.getString("protocol");
-    m_fileId = reader.getInt32("fileid");
+    m_fileId = reader.getString("fileid");
 }
 
 std::string InitIOSessionCmd::RequestParams::getProtocol() const {
     return m_protocol;
 }
 
-int InitIOSessionCmd::RequestParams::getFileId() const {
+std::string InitIOSessionCmd::RequestParams::getFileId() const {
     return m_fileId;
 }
 

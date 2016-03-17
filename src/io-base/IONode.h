@@ -13,7 +13,7 @@ namespace trinity {
         IONode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator);
         ~IONode();
 
-        IListData& getListDataForID(int fileID) const;
+        IListData& getListDataForID(const std::string& fileID) const;
         void addSession(std::unique_ptr<IOSession> session);
 
     private:

@@ -12,13 +12,13 @@ namespace trinity {
         static const mocca::BidirectionalMap<DataType, std::string>& dataTypeMapper();
 
         IOData() = default;
-        IOData(const std::string& name, int fileId, DataType dataType);
+        IOData(const std::string& name, const std::string&  fileId, DataType dataType);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
         std::string getName() const;
-        int getFileId() const;
+        std::string getFileId() const;
         DataType getDataType() const;
 
         std::string toString() const;
@@ -26,7 +26,7 @@ namespace trinity {
 
     private:
         std::string m_name;
-        int m_fileId;
+        std::string m_fileId;
         DataType m_dataType;
     };
 

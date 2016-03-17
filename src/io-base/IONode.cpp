@@ -28,11 +28,11 @@ void IONode::addSession(std::unique_ptr<IOSession> session) {
     m_sessions.push_back(std::move(session));
 }
 
-IListData& IONode::getListDataForID(int fileID) const {
+IListData& IONode::getListDataForID(const std::string& fileID) const {
     for (auto& lister : m_listData) {
         if (lister->canList(fileID)) {
             return *lister;
         }
     }
-    throw TrinityError("No matching data lister for file ID " + std::to_string(fileID), __FILE__, __LINE__);
+    throw TrinityError("No matching data lister for file ID " + fileID, __FILE__, __LINE__);
 }

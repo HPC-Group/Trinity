@@ -5,22 +5,12 @@
 #include "mocca/base/Error.h"
 
 using namespace Core::Math;
+using namespace trinity;
 
-namespace trinity {
-
-// FractalIO::FractalIO() :
-//  m_mbGenerator(0,0,0)  // HACK: worthless init which will be overriden below
-//{
-//  // HACK: I don't know why this constructor even exists
-//  throw new TrinityError("this is a worthless constructor, don't call it",
-//                         __FILE__, __LINE__);
-//}
-
-FractalIO::FractalIO(int fileId, IListData& listData)
-    : m_mbGenerator(0, 0, 0)
-    , m_listData(listData) // HACK: worthless init which will be overriden below
-{
-    switch (fileId) {
+FractalIO::FractalIO(const std::string& fileId, IListData& listData)
+: m_mbGenerator(0, 0, 0)
+, m_listData(listData) {
+    switch (stoi(fileId)) {
     case 3:
         pseudoConstructor(64, 64, 64, 64, 64, 64);
         break;
@@ -224,5 +214,4 @@ IIO::ValueType FractalIO::getType() const {
 IIO::Semantic trinity::FractalIO::getSemantic(uint64_t modality) const {
     // TODO
     return IIO::Semantic();
-}
 }

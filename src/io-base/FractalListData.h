@@ -5,7 +5,7 @@
 namespace trinity {
 class FractalListData : public IListData {
 public:
-    bool canList(int fileID) const;
-    std::vector<IOData> listData(uint32_t dirID = 0) const override;
+    bool canList(const std::string& fileID) const override;
+    std::vector<IOData> listData(const std::string& dirID) const override;
 };
 }

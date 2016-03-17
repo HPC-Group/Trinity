@@ -16,7 +16,7 @@ IONodeProxy::IONodeProxy(const mocca::net::Endpoint& ep)
     }
 }
 
-std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(int fileId) {
+std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(const std::string& fileId) {
     InitIOSessionCmd::RequestParams params(m_inputChannel.getEndpoint().protocol, fileId);
     InitIOSessionRequest request(params, IDGenerator::nextID(), 0);
 
@@ -29,7 +29,7 @@ std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(int fileId) {
     return mocca::make_unique<IOSessionProxy>(reply->getSid(), controlEndpoint);
 }
 
-std::vector<IOData> IONodeProxy::listFiles(int32_t dirID) {
+std::vector<IOData> IONodeProxy::listFiles(const std::string& dirID) {
     ListFilesCmd::RequestParams params(dirID);
     ListFilesRequest request(params, IDGenerator::nextID(), 0);
     auto reply = sendRequestChecked(m_inputChannel, request);
