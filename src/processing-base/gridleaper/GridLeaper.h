@@ -34,10 +34,10 @@ private:
     uint32_t    _width;
     uint32_t    _height;
 
-    std::unique_ptr<OpenGlHeadlessContext>          _context;
+    std::unique_ptr<OpenGL::GLTargetBinder>         _targetBinder;
     std::shared_ptr<OpenGL::GLCore::GLProgram>      _sampleShader;
     std::shared_ptr<OpenGL::GLCore::GLFBOTex>       _sampleFrameBuffer;
     std::unique_ptr<OpenGL::GLCore::GLVolumeBox>    _sampleBox;
-    std::unique_ptr<OpenGL::GLTargetBinder>         _targetBinder;
+    std::unique_ptr<OpenGlHeadlessContext>          _context;
 };
 }
