@@ -8,6 +8,7 @@
 #include "mocca/log/LogManager.h"
 
 #include "commands/Vcl.h"
+#include "common/TrinityError.h"
 
 using namespace std;
 using namespace mocca::net;
@@ -86,10 +87,13 @@ void Window::initRenderer() {
     
     // the file id will be available after implementing the listdata command
     int fileId = 0;
-    _renderer = _processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
+    try {
+        _renderer = _processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
+        _renderer->initContext();
+    } catch (const trinity::TrinityError&) {
+        LERROR("(qt) no connection to a renderer");
+    }
     
-    // sending commands
-    _renderer->initContext();
     std::this_thread::sleep_for(std::chrono::seconds(1));
     _initDone = true;
 }
@@ -114,7 +118,7 @@ void Window::on_PRconnectIP_clicked() {
 
 static float rot = 0.0f;
 void Window::update() {
-    if (_initDone) {
+    if (_initDone && _renderer) {
         _renderer->setIsoValue(rot);
         rot += 0.01f;
         

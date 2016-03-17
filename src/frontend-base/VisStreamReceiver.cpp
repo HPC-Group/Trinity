@@ -43,17 +43,24 @@ void VisStreamReceiver::run() {
     LINFO("(f) vis receiver connected");
 
     while (!isInterrupted()) {
-        //auto bytepacket = m_connection->receive(std::chrono::milliseconds(100000));
-        auto bytepacket = m_connection->receive();
-        if (!bytepacket.isEmpty()) {
-
-            /**
-            * THIS IS THE POINT TO DECOMPRESS THE JPED-COMPRESSED IMAGE
-            JPegFrame f(bytepacket);
-            m_visStream->put(f.decompress)... sth. like this
-            */
-
-            m_visStream->put(std::move(bytepacket));
+        
+        try {
+            
+            auto bytepacket = m_connection->receive();
+            if (!bytepacket.isEmpty()) {
+                
+                /**
+                 * THIS IS THE POINT TO DECOMPRESS THE JPED-COMPRESSED IMAGE
+                 JPegFrame f(bytepacket);
+                 m_visStream->put(f.decompress)... sth. like this
+                 */
+                
+                m_visStream->put(std::move(bytepacket));
+            }
+            
+        } catch (const mocca::net::NetworkError& err) {
+            LERROR("(f) receiving visualization failed: " << err.what());
+            interrupt();
         }
     }
 

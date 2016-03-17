@@ -31,7 +31,12 @@ void CommandInputChannel::sendRequest(const Request& request) const {
         throw TrinityError("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
 
     auto serialRequest = Request::createByteArray(request);
-    m_mainChannel->send(std::move(serialRequest));
+    
+    try {
+        m_mainChannel->send(std::move(serialRequest));
+    } catch (const mocca::net::NetworkError& err) {
+        LERROR("(chn) cannot send request: " << err.what());
+    }
 }
 
 mocca::net::Endpoint CommandInputChannel::getEndpoint() const {
