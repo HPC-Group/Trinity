@@ -111,8 +111,8 @@ GetDomainSizeHdl::GetDomainSizeHdl(const GetDomainSizeRequest& request, IOSessio
 std::unique_ptr<Reply> GetDomainSizeHdl::execute() {
     auto lod = m_request.getParams().getLod();
     auto modality = m_request.getParams().getModality();
-    auto ts = m_request.getParams().getTs();
-    GetDomainSizeCmd::ReplyParams params(m_session->getIO().getDomainSize(lod, modality, ts));
+    auto ts = m_request.getParams().getTs(); // todo remove
+    GetDomainSizeCmd::ReplyParams params(m_session->getIO().getDomainSize(lod, modality));
     return mocca::make_unique<GetDomainSizeReply>(params, m_request.getRid(), m_session->getSid());
 }
 
@@ -137,8 +137,8 @@ GetLargestSingleBrickLODHdl::GetLargestSingleBrickLODHdl(const GetLargestSingleB
 
 std::unique_ptr<Reply> GetLargestSingleBrickLODHdl::execute() {
     auto modality = m_request.getParams().getModality();
-    auto ts = m_request.getParams().getTs();
-    GetLargestSingleBrickLODCmd::ReplyParams params(m_session->getIO().getLargestSingleBrickLOD(modality, ts));
+    auto ts = m_request.getParams().getTs(); // todo remove
+    GetLargestSingleBrickLODCmd::ReplyParams params(m_session->getIO().getLargestSingleBrickLOD(modality));
     return mocca::make_unique<GetLargestSingleBrickLODReply>(params, m_request.getRid(), m_session->getSid());
 }
 
@@ -164,8 +164,8 @@ GetBrickLayoutHdl::GetBrickLayoutHdl(const GetBrickLayoutRequest& request, IOSes
 std::unique_ptr<Reply> GetBrickLayoutHdl::execute() {
     auto lod = m_request.getParams().getLod();
     auto modality = m_request.getParams().getModality();
-    auto timestep = m_request.getParams().getTimestep();
-    GetBrickLayoutCmd::ReplyParams params(m_session->getIO().getBrickLayout(lod, modality, timestep));
+    auto timestep = m_request.getParams().getTimestep(); // todo remove
+    GetBrickLayoutCmd::ReplyParams params(m_session->getIO().getBrickLayout(lod, modality));
     return mocca::make_unique<GetBrickLayoutReply>(params, m_request.getRid(), m_session->getSid());
 }
 

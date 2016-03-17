@@ -215,7 +215,7 @@ TEST_F(IOCommandsTest, GetDomainSizeCmd) {
 
 TEST_F(IOCommandsTest, GetDomainSizeReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDomainSize(1,2,3)).Times(1).WillOnce(Return(Core::Math::Vec3ui64(4, 5, 6)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDomainSize(1,2)).Times(1).WillOnce(Return(Core::Math::Vec3ui64(4, 5, 6)));
 
     GetDomainSizeCmd::RequestParams requestParams(1, 2, 3);
     GetDomainSizeRequest request(requestParams, 1, 2);
@@ -286,7 +286,7 @@ TEST_F(IOCommandsTest, GetLargestSingleBrickLODCmd) {
 
 TEST_F(IOCommandsTest, GetLargestSingleBrickLODReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getLargestSingleBrickLOD(17, 23)).Times(1).WillOnce(Return(42));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getLargestSingleBrickLOD(17)).Times(1).WillOnce(Return(42));
 
     GetLargestSingleBrickLODCmd::RequestParams requestParams(17, 23);
     GetLargestSingleBrickLODRequest request(requestParams, 1, 2);
@@ -355,7 +355,7 @@ TEST_F(IOCommandsTest, GetBrickLayoutCmd) {
 
 TEST_F(IOCommandsTest, GetBrickLayoutReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickLayout(1, 2, 3)).Times(1).WillOnce(Return(Core::Math::Vec3ui(4, 5, 6)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickLayout(1, 2)).Times(1).WillOnce(Return(Core::Math::Vec3ui(4, 5, 6)));
 
     GetBrickLayoutCmd::RequestParams requestParams(1, 2, 3);
     GetBrickLayoutRequest request(requestParams, 1, 2);

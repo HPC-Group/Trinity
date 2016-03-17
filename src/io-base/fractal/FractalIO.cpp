@@ -81,8 +81,7 @@ namespace trinity {
     return 1;
   }
   
-  Vec3ui64 FractalIO::getDomainSize(uint64_t lod, uint64_t modality,
-                                    uint64_t ts) const {
+  Vec3ui64 FractalIO::getDomainSize(uint64_t lod, uint64_t modality) const {
     if (!m_bFlat) {
       // TODO
       throw new TrinityError("case not implemented", __FILE__, __LINE__);
@@ -103,8 +102,7 @@ namespace trinity {
     }
   }
   
-  uint64_t FractalIO::getLargestSingleBrickLOD(uint64_t modality,
-                                               uint64_t ts) const {
+  uint64_t FractalIO::getLargestSingleBrickLOD(uint64_t modality) const {
     if (!m_bFlat) {
       // TODO
       throw new TrinityError("case not implemented", __FILE__, __LINE__);
@@ -135,8 +133,7 @@ namespace trinity {
     }
   }
   
-  Vec3ui FractalIO::getBrickLayout(uint64_t lod, uint64_t modality,
-                                   uint64_t timestep) const {
+  Vec3ui FractalIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
     if (!m_bFlat) {
       // TODO
       throw new TrinityError("case not implemented", __FILE__, __LINE__);
