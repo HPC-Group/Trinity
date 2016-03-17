@@ -14,136 +14,6 @@ using namespace Core::Math;
 
 
 
-static float CubeData[72] =
-{
-	//0123 top
-	-0.5f, 0.5f, -0.5f,
-	-0.5f, 0.5f, 0.5f,
-	0.5f, 0.5f, 0.5f,
-	0.5f, 0.5f, -0.5f,
-
-	//4567 bot
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, 0.5f,
-	0.5f, -0.5f, 0.5f,
-	0.5f, -0.5f, -0.5f,
-
-	//8-9-10-11 front
-	-0.5f, 0.5f, 0.5f,
-	-0.5f, -0.5f, 0.5f,
-	0.5f, -0.5f, 0.5f,
-	0.5f, 0.5f, 0.5f,
-
-	//12-13-14-15 back
-	-0.5f, 0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, 0.5f, -0.5f,
-
-	//16-17-18-19 left
-	-0.5f, 0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, 0.5f,
-	-0.5f, 0.5f, 0.5f,
-
-	//20-21-22-23 right
-	0.5f, 0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, 0.5f,
-	0.5f, 0.5f, 0.5f,
-};
-
-static Side Cube[6]{
-
-		//top
-		Side(
-		Vec3f(-0.5f, 0.5f, -0.5f),
-		Vec3f(-0.5f, 0.5f, 0.5f),
-		Vec3f(0.5f, 0.5f, 0.5f),
-		Vec3f(0.5f, 0.5f, -0.5f)
-		),
-
-		//bottom
-		Side(
-		Vec3f(-0.5f, -0.5f, -0.5f),
-		Vec3f(-0.5f, -0.5f, 0.5f),
-		Vec3f(0.5f, -0.5f, 0.5f),
-		Vec3f(0.5f, -0.5f, -0.5f)
-		),
-
-		//front
-		Side(
-		Vec3f(-0.5f, 0.5f, 0.5f),
-		Vec3f(-0.5f, -0.5f, 0.5f),
-		Vec3f(0.5f, -0.5f, 0.5f),
-		Vec3f(0.5f, 0.5f, 0.5f)
-		),
-
-		//back
-		Side(
-		Vec3f(-0.5f, 0.5f, -0.5f),
-		Vec3f(-0.5f, -0.5f, -0.5f),
-		Vec3f(0.5f, -0.5f, -0.5f),
-		Vec3f(0.5f, 0.5f, -0.5f)
-		),
-
-		//left
-		Side(
-		Vec3f(-0.5f, 0.5f, -0.5f),
-		Vec3f(-0.5f, -0.5f, -0.5f),
-		Vec3f(-0.5f, -0.5f, 0.5f),
-		Vec3f(-0.5f, 0.5f, 0.5f)
-		),
-
-		//right
-		Side(
-		Vec3f(0.5f, 0.5f, -0.5f),
-		Vec3f(0.5f, -0.5f, -0.5f),
-		Vec3f(0.5f, -0.5f, 0.5f),
-		Vec3f(0.5f, 0.5f, 0.5f)
-		)
-};
-
-
-/*static float CubeData[72] =
-{
-	//0123 top
-	-0.5f, 0.5f, -0.5f,
-	-0.5f, 0.5f, 0.5f,
-	0.5f, 0.5f, 0.5f,
-	0.5f, 0.5f, -0.5f,
-
-	//4567 bot
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, 0.5f,
-	0.5f, -0.5f, 0.5f,
-	0.5f, -0.5f, -0.5f,
-
-	//8-9-10-11 front
-	-0.5f, 0.5f, 0.5f,
-	-0.5f, -0.5f, 0.5f,
-	0.5f, -0.5f, 0.5f,
-	0.5f, 0.5f, 0.5f,
-
-	//12-13-14-15 back
-	-0.5f, 0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, 0.5f, -0.5f,
-
-	//16-17-18-19 left
-	-0.5f, 0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, 0.5f,
-	-0.5f, 0.5f, 0.5f,
-
-	//20-21-22-23 right
-	0.5f, 0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, 0.5f,
-	0.5f, 0.5f, 0.5f,
-};*/
-
 static int CubeIndicies[36]{
   0, 1, 2,
   2, 3, 0,
@@ -166,12 +36,13 @@ static int CubeIndicies[36]{
 
 
 GLVolumeBox::GLVolumeBox(){
-	m_Cube = new Side[6];
+	m_Cube = new float[6*4*3];
 	FillCube(Vec3f(-0.5f, -0.5f, -0.5f), Vec3f(0.5f, 0.5f, 0.5f));
-	Initialize(&(m_Cube[0].m_p1.x), CubeIndicies, 24, 36);
+	Initialize(m_Cube, CubeIndicies, 24, 36);
 }
-GLVolumeBox::~GLVolumeBox(){}
-
+GLVolumeBox::~GLVolumeBox(){
+    delete [] m_Cube;
+}
 
 void GLVolumeBox::FillCube(Core::Math::Vec3f min, Core::Math::Vec3f max){
 
@@ -196,45 +67,46 @@ void GLVolumeBox::FillCube(Core::Math::Vec3f min, Core::Math::Vec3f max){
 		std::swap(max.z, min.z);
 	}
 
+    size_t i = 0;
 	//top
-	m_Cube[0].m_p1 = Vec3f(min.x, max.y, min.z);
-	m_Cube[0].m_p2 = Vec3f(min.x, max.y, max.z);
-	m_Cube[0].m_p3 = Vec3f(max.x, max.y, max.z);
-	m_Cube[0].m_p4 = Vec3f(max.x, max.y, min.z);
-
+    m_Cube[i++] = min.x; m_Cube[i++] = max.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = min.x; m_Cube[i++] = max.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = max.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = max.y; m_Cube[i++] = min.z;
+    
 	//bottom
-	m_Cube[1].m_p1 = Vec3f(min.x, min.y, min.z);
-	m_Cube[1].m_p2 = Vec3f(min.x, min.y, max.z);
-	m_Cube[1].m_p3 = Vec3f(max.x, min.y, max.z);
-	m_Cube[1].m_p4 = Vec3f(max.x, min.y, min.z);
+    m_Cube[i++] = min.x; m_Cube[i++] = min.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = min.x; m_Cube[i++] = min.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = min.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = min.y; m_Cube[i++] = min.z;
 
 	//front
-	m_Cube[2].m_p1 = Vec3f(min.x, max.y, max.z);
-	m_Cube[2].m_p2 = Vec3f(min.x, min.y, max.z);
-	m_Cube[2].m_p3 = Vec3f(max.x, min.y, max.z);
-	m_Cube[2].m_p4 = Vec3f(max.x, max.y, max.z);
+    m_Cube[i++] = min.x; m_Cube[i++] = max.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = min.x; m_Cube[i++] = min.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = min.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = max.y; m_Cube[i++] = max.z;
 
 	//back
-	m_Cube[3].m_p1 = Vec3f(min.x, max.y, min.z);
-	m_Cube[3].m_p2 = Vec3f(min.x, min.y, min.z);
-	m_Cube[3].m_p3 = Vec3f(max.x, min.y, min.z);
-	m_Cube[3].m_p4 = Vec3f(max.x, max.y, min.z);
+    m_Cube[i++] = min.x; m_Cube[i++] = max.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = min.x; m_Cube[i++] = min.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = min.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = max.y; m_Cube[i++] = min.z;
 
 	//left
-	m_Cube[4].m_p1 = Vec3f(min.x, max.y, min.z);
-	m_Cube[4].m_p2 = Vec3f(min.x, min.y, min.z);
-	m_Cube[4].m_p3 = Vec3f(min.x, min.y, max.z);
-	m_Cube[4].m_p4 = Vec3f(min.x, max.y, max.z);
+    m_Cube[i++] = min.x; m_Cube[i++] = max.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = min.x; m_Cube[i++] = min.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = min.x; m_Cube[i++] = min.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = min.x; m_Cube[i++] = max.y; m_Cube[i++] = max.z;
 
 	//right
-	m_Cube[5].m_p1 = Vec3f(max.x, max.y, min.z);
-	m_Cube[5].m_p2 = Vec3f(max.x, min.y, min.z);
-	m_Cube[5].m_p3 = Vec3f(max.x, min.y, max.z);
-	m_Cube[5].m_p4 = Vec3f(max.x, max.y, max.z);
+    m_Cube[i++] = max.x; m_Cube[i++] = max.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = min.y; m_Cube[i++] = min.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = min.y; m_Cube[i++] = max.z;
+    m_Cube[i++] = max.x; m_Cube[i++] = max.y; m_Cube[i++] = max.z;
 }
 
 
 void GLVolumeBox::SetSlideLevels(Core::Math::Vec3f min, Core::Math::Vec3f max){
 	FillCube(min, max);
-	updateVertexData(&(m_Cube[0].m_p1.x), 24);
+	updateVertexData(m_Cube, 24);
 }

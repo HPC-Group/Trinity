@@ -11,28 +11,6 @@
 
 #include "GLModel.h"
 
-
-struct Side{
-	Side() :
-	m_p1(0, 0, 0),
-	m_p2(0, 0, 0),
-	m_p3(0, 0, 0),
-	m_p4(0, 0, 0){
-	};
-
-	Side(Core::Math::Vec3f p1, Core::Math::Vec3f p2, Core::Math::Vec3f p3, Core::Math::Vec3f p4) :
-		m_p1(p1),
-		m_p2(p2),
-		m_p3(p3),
-		m_p4(p4){
-	};
-
-	Core::Math::Vec3f m_p1;
-	Core::Math::Vec3f m_p2;
-	Core::Math::Vec3f m_p3;
-	Core::Math::Vec3f m_p4;
-};
-
 namespace OpenGL{
 namespace GLCore{
             
@@ -47,7 +25,7 @@ namespace GLCore{
                 
     private:
         void FillCube(Core::Math::Vec3f min, Core::Math::Vec3f max);
-        Side*		m_Cube;
+        float*		m_Cube;
 
     };
           

@@ -17,8 +17,8 @@ static int reconnectInSec = 5;
 Window::Window(QWidget* parent)
 : QMainWindow(parent)
 , _initDone(false)
-, _renderWidth(512)
-, _renderHeight(512)
+, _renderWidth(800)
+, _renderHeight(800)
 , ui(new Ui::Window) {
     ui->setupUi(this);
     LINFO("Window created");
