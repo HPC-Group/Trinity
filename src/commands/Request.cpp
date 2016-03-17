@@ -74,6 +74,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetBrickRequest>("req");
     } else if (type == GetTypeRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetTypeRequest>("req");
+    } else if (type == GetSemanticRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetSemanticRequest>("req");
     }
 
 #undef PYTHON_MAGIC_IO

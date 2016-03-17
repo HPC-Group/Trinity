@@ -32,6 +32,7 @@ namespace trinity {
     uint64_t getTotalBrickCount() const override;
     bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const override;
     IIO::ValueType getType() const override;
+    IIO::Semantic getSemantic(uint64_t modality) const override;
         
   private:
     Core::Math::Vec3ui64 m_totalSize;

@@ -197,4 +197,12 @@ std::unique_ptr<Reply> GetTypeHdl::execute() {
     return mocca::make_unique<GetTypeReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetSemanticHdl::GetSemanticHdl(const GetSemanticRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetSemanticHdl::execute() {
+    GetSemanticCmd::ReplyParams params(m_session->getIO().getSemantic(m_request.getParams().getModality()));
+    return mocca::make_unique<GetSemanticReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

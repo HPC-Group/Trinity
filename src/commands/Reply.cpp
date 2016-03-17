@@ -70,6 +70,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetBrickReply>("rep");
     } else if (type == GetTypeReply::Ifc::Type) {
         return reader->getSerializablePtr<GetTypeReply>("rep");
+    } else if (type == GetSemanticReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetSemanticReply>("rep");
     }
 
 #undef PYTHON_MAGIC_IO

@@ -47,6 +47,7 @@ enum class VclType {
     GetTotalBrickCount,
     GetBrick,
     GetType,
+    GetSemantic,
 
 #undef PYTHON_ENUM
     GetMaxBrickSize,
@@ -116,6 +117,7 @@ private:
         m_cmdMap.insert("GetTotalBrickCount", VclType::GetTotalBrickCount);
         m_cmdMap.insert("GetBrick", VclType::GetBrick);
         m_cmdMap.insert("GetType", VclType::GetType);
+        m_cmdMap.insert("GetSemantic", VclType::GetSemantic);
 
 #undef PYTHON_MAGIC_STRING
 

@@ -147,3 +147,10 @@ IIO::ValueType IOSessionProxy::getType() const {
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getValueType();
 }
+
+IIO::Semantic IOSessionProxy::getSemantic(uint64_t modality) const {
+    GetSemanticCmd::RequestParams params(modality);
+    GetSemanticRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getSemantic();
+}

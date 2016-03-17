@@ -1037,6 +1037,61 @@ IIO::ValueType trinity::GetTypeCmd::ReplyParams::getValueType() const {
     return m_valueType;
 }
 
+
+////////////// GetSemanticCmd //////////////
+
+VclType GetSemanticCmd::Type = VclType::GetSemantic;
+
+GetSemanticCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
+
+void GetSemanticCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetSemanticCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
+
+bool GetSemanticCmd::RequestParams::equals(const GetSemanticCmd::RequestParams& other) const {
+    return m_modality == other.m_modality;
+}
+
+std::string GetSemanticCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
+}
+
+uint64_t GetSemanticCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+GetSemanticCmd::ReplyParams::ReplyParams(IIO::Semantic semantic)
+    : m_semantic(semantic) {}
+
+void GetSemanticCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendString("semantic", IIO::semanticMapper().getByFirst(m_semantic));
+}
+
+void GetSemanticCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_semantic = IIO::semanticMapper().getBySecond(reader.getString("semantic"));
+}
+
+bool GetSemanticCmd::ReplyParams::equals(const GetSemanticCmd::ReplyParams& other) const {
+    return m_semantic == other.m_semantic;
+}
+
+std::string GetSemanticCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "semantic: " << m_semantic;
+    return stream.str();
+}
+
+IIO::Semantic GetSemanticCmd::ReplyParams::getSemantic() const {
+    return m_semantic;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1308,6 +1363,19 @@ std::ostream& operator<<(std::ostream& os, const GetTypeCmd::RequestParams& obj)
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetTypeCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetSemanticCmd::RequestParams& lhs, const GetSemanticCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetSemanticCmd::ReplyParams& lhs, const GetSemanticCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetSemanticCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetSemanticCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

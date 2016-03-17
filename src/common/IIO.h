@@ -41,9 +41,9 @@ public:
     virtual uint64_t getTotalBrickCount() const = 0;
     virtual bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const = 0;
     virtual ValueType getType() const = 0;
+    virtual Semantic getSemantic(uint64_t modality) const = 0;
 
     // not sure if we need that
     // virtual std::string getUserDefinedSemantic(uint64_t modality) const;
-    // virtual Semantic getSemantict(uint64_t modality) const;
 };
 }

@@ -86,6 +86,9 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetType:
         return mocca::make_unique<GetTypeHdl>(static_cast<const GetTypeRequest&>(request), session);
         break;
+    case VclType::GetSemantic:
+        return mocca::make_unique<GetSemanticHdl>(static_cast<const GetSemanticRequest&>(request), session);
+        break;
 
 #undef PYTHON_MAGIC
     default:

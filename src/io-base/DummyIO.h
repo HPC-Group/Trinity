@@ -27,6 +27,7 @@ public:
     Core::Math::Vec2f getRange(uint64_t modality) const override {Core::Math::Vec2f x; return x; }
     uint64_t getTotalBrickCount() const override {uint64_t x; return x; }
     bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const override { return true; };
-    IIO::ValueType getType() const override { return ValueType::T_FLOAT; }
+    IIO::ValueType getType() const override { return IIO::ValueType::T_FLOAT; }
+    IIO::Semantic getSemantic(uint64_t modality) const { return IIO::Semantic::Scalar; }
 };
 }

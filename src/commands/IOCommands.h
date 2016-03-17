@@ -886,6 +886,52 @@ std::ostream& operator<<(std::ostream& os, const GetTypeCmd::ReplyParams& obj);
 using GetTypeRequest = RequestTemplate<GetTypeCmd>;
 using GetTypeReply = ReplyTemplate<GetTypeCmd>;
 
+struct GetSemanticCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t modality);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(IIO::Semantic semantic);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+    
+        IIO::Semantic getSemantic() const;
+
+    private:
+        IIO::Semantic m_semantic;
+    };
+};
+
+bool operator==(const GetSemanticCmd::RequestParams& lhs, const GetSemanticCmd::RequestParams& rhs);
+bool operator==(const GetSemanticCmd::ReplyParams& lhs, const GetSemanticCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetSemanticCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetSemanticCmd::ReplyParams& obj);
+
+using GetSemanticRequest = RequestTemplate<GetSemanticCmd>;
+using GetSemanticReply = ReplyTemplate<GetSemanticCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

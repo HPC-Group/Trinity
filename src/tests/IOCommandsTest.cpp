@@ -503,3 +503,26 @@ TEST_F(IOCommandsTest, GetTypeReqRep) {
     auto reply = trinity::testing::handleRequest<GetTypeHdl>(request, session.get());
     ASSERT_EQ(IIO::ValueType::T_INT32, reply.getParams().getValueType());
 }
+
+TEST_F(IOCommandsTest, GetSemanticCmd) {
+    {
+        GetSemanticCmd::RequestParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetSemanticCmd::ReplyParams target(IIO::Semantic::Color);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetSemanticReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getSemantic(42)).Times(1).WillOnce(Return(IIO::Semantic::Color));
+
+    GetSemanticCmd::RequestParams requestParams(42);
+    GetSemanticRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetSemanticHdl>(request, session.get());
+    ASSERT_EQ(IIO::Semantic::Color, reply.getParams().getSemantic());
+}
