@@ -29,11 +29,14 @@ void ProcessingNode::cleanupInterruptedSessions() {
     int counter = 0;
     std::vector<std::unique_ptr<RenderSession>> newSessions;
     for(auto& s : m_sessions) {
+	LINFO("(p) iter...");
         if(!s->isInterrupted()) {
             newSessions.push_back(std::move(s));  // todo at david, ok like that?
         } else {
             counter++;
-            s.reset();
+		LINFO("reset...");
+            //s.reset();
+		LINFO("reset done");
         }
     }
     LINFO("(p) removed " + std::to_string(counter) + " sessions");

@@ -55,9 +55,10 @@ void VisStreamSender::run() {
 
         if (!frameNullable.isNull()) {
             try {
-                m_connection->send(std::move(frameNullable.release()));
-            } catch (const mocca::net::NetworkError& err) {
+                m_connection->send(std::move(frameNullable.release()));           
+ 	} catch (const mocca::net::NetworkError& err) {
                 LERROR("(p) cannot send vis: " << err.what());
+		interrupt();
             }
         }
     }

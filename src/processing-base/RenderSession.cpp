@@ -23,8 +23,11 @@ RenderSession::RenderSession(const VclType& rendererType, const StreamingParams&
 }
 
 RenderSession::~RenderSession() {
+	LINFO("(p) trying to end the vis stream");
     m_visSender.endStreaming();
+	LINFO("(p) vis stream closed");
     join();
+	LINFO("(p) render session joined");
 }
 
 std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& rendererType, std::unique_ptr<IOSessionProxy> ioSession) {

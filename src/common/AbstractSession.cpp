@@ -15,7 +15,9 @@ AbstractSession::AbstractSession(const std::string& protocol)
     , m_acceptor(ConnectionFactorySelector::bind(Endpoint(protocol, "localhost", Endpoint::autoPort()))) {}
 
 AbstractSession::~AbstractSession() {
-    join();
+    	LINFO("(session) joining session...");
+	join();
+	LINFO("(session) session joined");
 }
 
 void AbstractSession::run() {
