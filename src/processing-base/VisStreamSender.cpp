@@ -43,6 +43,10 @@ void VisStreamSender::run() {
 
     LINFO("(p) vis sender was bound");
     while (!isInterrupted()) {
+        if(!m_connection->isConnected()) {
+            interrupt();
+            continue;
+        }
 
         auto frameNullable = m_visStream->get();
 
@@ -53,9 +57,12 @@ void VisStreamSender::run() {
             m_connection->send(std::move(*newFrame));
         */
 
+        if(m_connection->isConnected()) {
+        }
         if (!frameNullable.isNull()) {
             try {
-                m_connection->send(std::move(frameNullable.release()));           
+                m_connection->send(std::move(frameNullable.release()));
+                LINFO("(p) frame out");
  	} catch (const mocca::net::NetworkError& err) {
                 LERROR("(p) cannot send vis: " << err.what());
 		interrupt();

@@ -44,8 +44,8 @@ int main(int argc, char** argv) {
 
     // endpoints for processing and io nodes
     // hint: do not implement any cmd line parsers for that. They are already available
-    Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "localhost", "8678");
-    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
+    Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), "134.91.11.156", "8678");
+    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "134.91.11.156", "6678");
 
 
     ioNode = std::unique_ptr<trinity::IONodeProxy>(new trinity::IONodeProxy(endpointIO));

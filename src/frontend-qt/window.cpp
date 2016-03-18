@@ -83,7 +83,9 @@ void Window::initRenderer() {
     _renderHeight =(ui->resy->text().toInt());
     trinity::StreamingParams params(_renderWidth, _renderHeight);
  
-    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), "localhost", "6678");
+    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(),
+                        ui->IOaddressIPedit->text().toStdString(),
+                        ui->IOaddressPortedit->text().toStdString());
     
     // the file id will be available after implementing the listdata command
     std::string fileId = "0";
@@ -112,7 +114,6 @@ void Window::on_PRconnectIP_clicked() {
     
     _processingNode = std::unique_ptr<trinity::ProcessingNodeProxy>(new trinity::ProcessingNodeProxy(endpoint));
     LINFO("connected to processing node");
-    
     initRenderer();
 }
 
