@@ -6,7 +6,7 @@
 #include <silverbullet/base/StdDefines.h>
 
 // for the small fixed size vectors
-#include <silverbullet/Math/Vectors.h>
+#include <silverbullet/math/Vectors.h>
 using Core::Math::Vec3d;
 using Core::Math::VECTOR3;
 
