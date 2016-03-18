@@ -3,8 +3,12 @@
 #include <silverbullet/base/DetectEnv.h>
 
 #ifdef DETECTED_OS_APPLE
-#include <OpenGL/OpenGL.h>
+
+# define __gl_h_ 1 // make sure the gl header file is not included
+# define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED // disable warning
+
 #include <OpenGL/gl3.h>
+#include <OpenGL/OpenGL.h>
 
 #include <OpenGL/CGLTypes.h>
 #include <OpenGL/CGLCurrent.h>

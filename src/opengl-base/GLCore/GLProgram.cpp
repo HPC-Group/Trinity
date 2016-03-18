@@ -106,7 +106,7 @@ void GLProgram::Enable(){
     }
 }
 void GLProgram::Disable(){
-    if (glUseProgram != NULL) glUseProgram(0);
+    glUseProgram(0);
 }
 
 bool GLProgram::IsValid() const{
