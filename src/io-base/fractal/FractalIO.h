@@ -10,7 +10,7 @@ namespace trinity {
   
   class FractalIO : public IIO {
   public:
-    FractalIO(const std::string& fileId, std::shared_ptr<IListData> listData);
+    FractalIO(const std::string& fileId, const IListData& listData);
     
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
     Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
