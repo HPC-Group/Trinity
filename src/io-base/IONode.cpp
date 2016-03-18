@@ -3,6 +3,8 @@
 #include "io-base/FractalListData.h"
 
 #include "mocca/base/Memory.h"
+#include "mocca/net/NetworkError.h"
+#include "mocca/log/LogManager.h"
 
 using namespace trinity;
 
@@ -35,4 +37,20 @@ IListData& IONode::getListDataForID(const std::string& fileID) const {
         }
     }
     throw TrinityError("No matching data lister for file ID " + fileID, __FILE__, __LINE__);
+}
+
+void IONode::handleSessionErrors() {
+    auto it = begin(m_sessions);
+    while (it != end(m_sessions)) {
+        try {
+            (*it)->rethrowException();
+            ++it;
+        } catch (const mocca::net::NetworkError& err) {
+            LWARNING("(p) session terminated because of a network error: " << err.what());
+            it = m_sessions.erase(it);
+        } catch (...) {
+            LDEBUG("(p) error in session detected");
+            setException(std::current_exception());
+        }
+    }
 }

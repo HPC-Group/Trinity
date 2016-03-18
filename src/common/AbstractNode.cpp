@@ -17,21 +17,26 @@ AbstractNode::~AbstractNode() {
 void AbstractNode::run() {
     LINFO("(node) listening... ");
     while (!isInterrupted()) {
-        // receive request
-        auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_REPLY);
-        if (!msgEnvelope.isNull()) {
-            auto env = msgEnvelope.release();
-            auto request = Request::createFromByteArray(env.message);
-            LINFO("request: " << *request);
-            // handle request
-            auto handler = createHandler(*request);
-            auto reply = handler->execute();
-            if (reply != nullptr) {
-                // send reply
-                auto serialReply = Reply::createByteArray(*reply);
-                LINFO("reply: " << *reply);
-                m_aggregator->send(mocca::net::MessageEnvelope(std::move(serialReply), env.connectionID));
+        try {
+            // receive request
+            auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_REPLY);
+            if (!msgEnvelope.isNull()) {
+                auto env = msgEnvelope.release();
+                auto request = Request::createFromByteArray(env.message);
+                LINFO("request: " << *request);
+                // handle request
+                auto handler = createHandler(*request);
+                auto reply = handler->execute();
+                if (reply != nullptr) {
+                    // send reply
+                    auto serialReply = Reply::createByteArray(*reply);
+                    LINFO("reply: " << *reply);
+                    m_aggregator->send(mocca::net::MessageEnvelope(std::move(serialReply), env.connectionID));
+                }
             }
+            handleSessionErrors();
+        } catch (...) {
+            setException(std::current_exception());
         }
     }
 }

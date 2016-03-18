@@ -18,6 +18,7 @@ namespace trinity {
 
     private:
         std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
+        void handleSessionErrors() override;
 
     private:
         IONodeCommandFactory m_factory;

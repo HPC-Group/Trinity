@@ -88,7 +88,7 @@ void Window::initRenderer() {
                         ui->IOaddressPortedit->text().toStdString());
     
     // the file id will be available after implementing the listdata command
-    std::string fileId = "0";
+    std::string fileId = "FractalData@1"; // fixme: should be selectable from the gui
     try {
         _renderer = _processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
         _renderer->initContext();

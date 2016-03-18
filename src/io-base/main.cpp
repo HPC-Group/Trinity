@@ -55,6 +55,12 @@ int main(int argc, char** argv) {
 
     node.start();
     while (!exitFlag) {
+        try {
+            node.rethrowException();
+        }
+        catch (const std::runtime_error& err) {
+            LERROR("(io) Error occurred: " << err.what());
+        }
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     node.join();

@@ -6,6 +6,7 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 
+
 using namespace mocca::net;
 using namespace trinity;
 
@@ -15,9 +16,9 @@ AbstractSession::AbstractSession(const std::string& protocol)
     , m_acceptor(ConnectionFactorySelector::bind(Endpoint(protocol, "localhost", Endpoint::autoPort()))) {}
 
 AbstractSession::~AbstractSession() {
-    	LINFO("(session) joining session...");
-	join();
-	LINFO("(session) session joined");
+    LINFO("(session) joining session...");
+    join();
+    LINFO("(session) session joined");
 }
 
 void AbstractSession::run() {
@@ -32,8 +33,8 @@ void AbstractSession::run() {
         return;
     }
 
-    while (!isInterrupted()) {
-        try {
+    try {
+        while (!isInterrupted()) {
             auto bytepacket = m_controlConnection->receive();
             if (!bytepacket.isEmpty()) {
                 auto request = Request::createFromByteArray(bytepacket);
@@ -47,9 +48,9 @@ void AbstractSession::run() {
                     m_controlConnection->send(std::move(serialReply));
                 }
             }
-        } catch (const mocca::net::NetworkError& err) {
-            LWARNING("(session) interrupting because remote session has gone: " << err.what());
-            interrupt();
         }
+    } catch (...) {
+        interrupt();
+        setException(std::current_exception());
     }
 }

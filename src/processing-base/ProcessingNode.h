@@ -5,19 +5,21 @@
 #include "processing-base/RenderSession.h"
 
 namespace trinity {
-    class ProcessingNode : public AbstractNode {
+class ProcessingNode : public AbstractNode {
 
-    public:
-        ProcessingNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator);
-        ~ProcessingNode();
+public:
+    ProcessingNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator);
+    ~ProcessingNode();
 
-        void addSession(std::unique_ptr<RenderSession> session);
-        std::vector<std::unique_ptr<RenderSession>>& getSessions();
+    void addSession(std::unique_ptr<RenderSession> session);
+    std::vector<std::unique_ptr<RenderSession>>& getSessions();
 
-    private:
-        std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
-        ProcessingNodeCommandFactory m_factory;
-        std::vector<std::unique_ptr<RenderSession>> m_sessions;
-        void cleanupInterruptedSessions();
-    };
+private:
+    std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
+    void handleSessionErrors() override;
+
+private:
+    ProcessingNodeCommandFactory m_factory;
+    std::vector<std::unique_ptr<RenderSession>> m_sessions;
+};
 }
