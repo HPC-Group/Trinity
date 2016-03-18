@@ -88,12 +88,16 @@
 
 
  void GLHashTable::Enable() {
+#ifndef DETECTED_OS_APPLE
  glBindImageTexture(m_iMountPoint, m_pHashTableTex->GetGLID(), 0, false, 0, GL_READ_WRITE, GL_R32UI);
+#endif
  }
 
 
  std::vector<UINTVECTOR4> GLHashTable::GetData() {
+#ifndef DETECTED_OS_APPLE
  glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
  #ifdef GLHASHTABLE_PROFILE
  glFinish();
  #endif
