@@ -1,5 +1,4 @@
 
-#include <GL/glew.h>
 #include "GLHashTable.h"
 #define GLHASHTABLE_PROFILE
  #ifdef WRITE_SHADERS
