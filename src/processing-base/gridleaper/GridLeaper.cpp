@@ -9,24 +9,35 @@
 
 using namespace trinity;
 using namespace OpenGL::GLCore;
+using namespace Core::Math;
 using namespace OpenGL;
 using namespace std;
 
 
-GridLeaper::GridLeaper(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession)
-: IRenderer(stream, std::move(ioSession))
-, _context(nullptr) {}
+GridLeaper::GridLeaper(std::shared_ptr<VisStream> stream,
+                       std::unique_ptr<IIO> ioSession) :
+IRenderer(stream, std::move(ioSession)),
+m_targetBinder(nullptr),
+m_sampleShader(nullptr),
+m_sampleFrameBuffer(nullptr),
+m_sampleBox(nullptr),
+m_context(nullptr)
+{
+}
 
 GridLeaper::~GridLeaper() {
   LINFO("(p) destroying a gridleaper");
+  
+  m_targetBinder = nullptr;
+  m_sampleShader = nullptr;
+  m_sampleFrameBuffer = nullptr;
+  m_sampleBox = nullptr;
+  m_context = nullptr;
 }
 
 void GridLeaper::setIsoValue(const float isoValue) {
-  // LINFO("(p) iso value of gridleaper set to " + std::to_string(isoValue));
   m_isoValue = isoValue;
-  if (_context != nullptr) {
-    paint();
-  }
+  paint();
 }
 
 void GridLeaper::zoomCamera(float f) {
@@ -34,26 +45,28 @@ void GridLeaper::zoomCamera(float f) {
 }
 
 void GridLeaper::initContext() {
-  _context = std::unique_ptr<OpenGlHeadlessContext>(new OpenGlHeadlessContext());
+  m_context = mocca::make_unique<OpenGlHeadlessContext>();
 
-  if (!_context->isValid()) {
+  if (!m_context->isValid()) {
     LERROR("(p) can't create opengl context");
-    // std::cout << "can't create context" << std::endl;
+    m_context = nullptr;
+    return;
   }
 
+  m_width = m_visStream->getStreamingParams().getResX();
+  m_height = m_visStream->getStreamingParams().getResY();
+  m_bufferData.resize(m_width * m_height);
 
-
-
-  _width = m_visStream->getStreamingParams().getResX();
-  _height = m_visStream->getStreamingParams().getResY();
-  LINFO("(p) grid leaper: resolution: " + std::to_string(_width) + " x " + std::to_string(_height));
+  
+  LINFO("(p) grid leaper: resolution: " +
+        std::to_string(m_width) + " x " + std::to_string(m_height));
 
   LoadFrameBuffer();
   LoadShader();
   LoadGeometry();
 
-  _targetBinder = std::unique_ptr<GLTargetBinder>(new GLTargetBinder());
-  LINFO("(p) grid leaper created. OpenGL Version " << _context->getVersion());
+  m_targetBinder = mocca::make_unique<GLTargetBinder>();
+  LINFO("(p) grid leaper created. OpenGL Version " << m_context->getVersion());
 }
 
 bool GridLeaper::LoadShader() {
@@ -61,47 +74,50 @@ bool GridLeaper::LoadShader() {
   vs.push_back("SampleVertex.glsl");
   fs.push_back("SampleFragment.glsl");
   ShaderDescriptor sd(vs, fs);
-  if (!LoadAndCheckShaders(_sampleShader, sd))
+  
+  m_sampleShader = mocca::make_unique<GLProgram>();
+  m_sampleShader->Load(sd);
+  
+  if (!m_sampleShader->IsValid()) {
+    LERROR("(p) invalid shader program");
+    m_sampleShader = nullptr;
     return false;
+  }
+  
   return true;
 }
 
 void GridLeaper::LoadGeometry() {
-  _sampleBox = std::unique_ptr<GLVolumeBox>(new GLVolumeBox());
+  m_sampleBox = mocca::make_unique<GLVolumeBox>();
 }
 
 void GridLeaper::LoadFrameBuffer() {
-  _sampleFrameBuffer =
-  std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, _width, _height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, true, 1);
-}
-
-bool GridLeaper::LoadAndCheckShaders(std::shared_ptr<GLProgram>& programPtr, ShaderDescriptor& sd) {
-  programPtr = std::make_shared<GLProgram>();
-  programPtr->Load(sd);
-
-  if (!programPtr->IsValid()) {
-    LERROR("(p) invalid shader program");
-    return false;
-  }
-  return true;
+  m_sampleFrameBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+                                                   GL_CLAMP_TO_EDGE,
+                                                   m_width, m_height,
+                                                   GL_RGBA, GL_RGBA,
+                                                   GL_UNSIGNED_BYTE, true, 1);
 }
 
 void GridLeaper::paint() {
-  _context->makeCurrent();
+  if (!m_context || !m_sampleShader) return;
+  
+  m_context->makeCurrent();
 
-  _targetBinder->Bind(_sampleFrameBuffer);
-  GL_CHECK(glViewport(0, 0, _width, _height));
+  m_targetBinder->Bind(m_sampleFrameBuffer);
+  GL_CHECK(glViewport(0, 0, m_width, m_height));
 
 
-  _sampleFrameBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
+  m_sampleFrameBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
 
-  Core::Math::Mat4f projection;
-  Core::Math::Mat4f view;
-  Core::Math::Mat4f world;
-  Core::Math::Mat4f rotx, roty;
+  Mat4f projection;
+  Mat4f view;
+  Mat4f world;
+  Mat4f rotx, roty;
 
-  projection.Perspective(45.0f, (float)_width / (float)_height, 0.01f, 1000.0f);
-  view.BuildLookAt(Core::Math::Vec3f(0, 0, 10), Core::Math::Vec3f(0, 0, 0), Core::Math::Vec3f(0, 1, 0));
+  projection.Perspective(45.0f, (float)m_width / (float)m_height,
+                         0.01f, 1000.0f);
+  view.BuildLookAt(Vec3f(0, 0, 10), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
 
   rotx.RotationX(m_isoValue);
   roty.RotationY(m_isoValue * 1.14f);
@@ -112,22 +128,20 @@ void GridLeaper::paint() {
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
 
-  _sampleShader->Enable();
-  _sampleShader->Set("projectionMatrix", projection);
-  _sampleShader->Set("viewMatrix", view);
-  _sampleShader->Set("worldMatrix", world);
+  m_sampleShader->Enable();
+  m_sampleShader->Set("projectionMatrix", projection);
+  m_sampleShader->Set("viewMatrix", view);
+  m_sampleShader->Set("worldMatrix", world);
 
-  _sampleBox->paint();
+  m_sampleBox->paint();
 
-  _sampleShader->Disable();
+  m_sampleShader->Disable();
 
+  
+  m_sampleFrameBuffer->ReadBackPixels(0, 0, m_width, m_height,
+                                      m_bufferData.data());
 
-  // read buffer
-  std::vector<Core::Math::Vec4ui8> buffer;
-  buffer.resize(_width * _height);
-
-  _sampleFrameBuffer->ReadBackPixels(0, 0, _width, _height, &buffer[0]);
-
-  auto f1 = trinity::Frame::createFromRaw(&buffer[0], buffer.size()*sizeof(Core::Math::Vec4ui8));
+  auto f1 = Frame::createFromRaw(m_bufferData.data(),
+                                 m_bufferData.size()*sizeof(Vec4ui8));
   getVisStream()->put(std::move(f1));
 }

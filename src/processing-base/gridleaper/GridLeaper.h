@@ -28,16 +28,16 @@ private:
     void LoadGeometry();
     void LoadFrameBuffer();
 
-    bool LoadAndCheckShaders(std::shared_ptr<OpenGL::GLCore::GLProgram>& programPtr, ShaderDescriptor& sd);
 private:
-    float m_isoValue;
-    uint32_t    _width;
-    uint32_t    _height;
+    float       m_isoValue;
+    uint32_t    m_width;
+    uint32_t    m_height;
 
-    std::unique_ptr<OpenGL::GLTargetBinder>         _targetBinder;
-    std::shared_ptr<OpenGL::GLCore::GLProgram>      _sampleShader;
-    std::shared_ptr<OpenGL::GLCore::GLFBOTex>       _sampleFrameBuffer;
-    std::unique_ptr<OpenGL::GLCore::GLVolumeBox>    _sampleBox;
-    std::unique_ptr<OpenGlHeadlessContext>          _context;
+    std::vector<Core::Math::Vec4ui8> m_bufferData;
+    std::unique_ptr<OpenGL::GLTargetBinder>         m_targetBinder;
+    std::unique_ptr<OpenGL::GLCore::GLProgram>      m_sampleShader;
+    std::shared_ptr<OpenGL::GLCore::GLFBOTex>       m_sampleFrameBuffer;
+    std::unique_ptr<OpenGL::GLCore::GLVolumeBox>    m_sampleBox;
+    std::shared_ptr<OpenGlHeadlessContext>          m_context;
 };
 }
