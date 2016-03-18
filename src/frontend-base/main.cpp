@@ -73,6 +73,7 @@ int main(int argc, char** argv) {
     trinity::StreamingParams params(1024, 768);
     auto renderer = processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
 
+    renderer->initContext();
     // sending commands
     renderer->setIsoValue(22);
 
