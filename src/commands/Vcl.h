@@ -21,7 +21,6 @@ enum class VclType {
     TrinityError,
     DummyRenderer,
     GridLeaper,
-    DummyIO,
     FractalIO,
     SetIsoValue,
     GetLODLevelCount,
@@ -91,7 +90,6 @@ private:
         m_cmdMap.insert("InitIOSession", VclType::InitIOSession);
         m_cmdMap.insert("ListFiles", VclType::ListFiles);
         m_cmdMap.insert("GetLODLevelCount", VclType::GetLODLevelCount);
-        m_cmdMap.insert("DummyIO", VclType::DummyIO);
         m_cmdMap.insert("FractalIO", VclType::FractalIO);
         m_cmdMap.insert("TrinityDirectory", VclType::TrinityDirectory);
         m_cmdMap.insert("TrinityFile", VclType::TrinityFile);

@@ -63,13 +63,13 @@ TEST_F(IOCommandsTest, IOData) {
 
 TEST_F(IOCommandsTest, ListFilesCmd) {
     {
-        ListFilesCmd::RequestParams target("0");
+        ListFilesCmd::RequestParams target("FractalData@1");
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
     {
-        IOData data1("name1", "1", IOData::DataType::Dataset);
-        IOData data2("name2", "2", IOData::DataType::Directory);
+        IOData data1("name1", "FractalData@1", IOData::DataType::Dataset);
+        IOData data2("name2", "FractalData@2", IOData::DataType::Directory);
         std::vector<IOData> dataVec{ data1, data2 };
         ListFilesCmd::ReplyParams target(dataVec);
         auto result = trinity::testing::writeAndRead(target);
@@ -80,13 +80,13 @@ TEST_F(IOCommandsTest, ListFilesCmd) {
 TEST_F(IOCommandsTest, ListFilesReqRep) {
     auto ioNode = mocca::make_unique<IONode>();
     {
-        ListFilesCmd::RequestParams requestParams("0");
+        ListFilesCmd::RequestParams requestParams("FractalData@1");
         ListFilesRequest request(requestParams, 1, 2);
         auto reply = trinity::testing::handleRequest<ListFilesHdl>(request, ioNode.get());
-        ASSERT_EQ(2, reply.getParams().getIOData().size());
+        ASSERT_EQ(0, reply.getParams().getIOData().size());
     }
     {
-        ListFilesCmd::RequestParams requestParams("-1"); // invalid directory ID
+        ListFilesCmd::RequestParams requestParams("invalid"); // invalid directory ID
         ListFilesRequest request(requestParams, 1, 2);
         ASSERT_THROW(trinity::testing::handleRequest<ListFilesHdl>(request, ioNode.get()), TrinityError);
     }

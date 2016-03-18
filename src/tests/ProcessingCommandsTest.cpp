@@ -27,7 +27,7 @@ TEST_F(ProcessingCommandsTest, StreamParams) {
 TEST_F(ProcessingCommandsTest, InitProcessingSessionCmd) {
     {
         StreamingParams streamingParams(2048, 1000);
-        InitProcessingSessionCmd::RequestParams target("tcp.prefixed", VclType::DummyRenderer, "0", mocca::net::Endpoint("loopback", "local", "mq"), streamingParams);
+        InitProcessingSessionCmd::RequestParams target("tcp.prefixed", VclType::DummyRenderer, "FractalData@1", mocca::net::Endpoint("loopback", "local", "mq"), streamingParams);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }

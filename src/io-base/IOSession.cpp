@@ -3,7 +3,6 @@
 #include "common/TrinityError.h"
 #include "commands/Vcl.h"
 #include "fractal/FractalIO.h"
-#include "io-base/DummyIO.h"
 
 #include "mocca/base/Error.h"
 #include "mocca/base/StringTools.h"
@@ -21,10 +20,6 @@ std::unique_ptr<trinity::IIO> IOSession::createIO(const std::string& fileId, ILi
     return std::unique_ptr<FractalIO>(new FractalIO(fileId, listData));
     /*
     switch (fileId) {
-    case 0:  // Dummy File
-        return std::unique_ptr<DummyIO>(new DummyIO());
-        break;
-
     case 24: // Fractal File
         return std::unique_ptr<FractalIO>(new FractalIO(fileId));
         break;
