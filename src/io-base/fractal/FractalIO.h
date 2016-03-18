@@ -10,9 +10,7 @@ namespace trinity {
   
   class FractalIO : public IIO {
   public:
-    //FractalIO();
-    FractalIO(const std::string& fileId, IListData& listData);
-    
+    FractalIO(const std::string& fileId, std::shared_ptr<IListData> listData);
     
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
     Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
@@ -38,20 +36,7 @@ namespace trinity {
     Core::Math::Vec3ui64 m_totalSize;
     Core::Math::Vec3ui64 m_brickSize;
     bool m_bFlat;
-    Mandelbulb<uint8_t> m_mbGenerator;
-    IListData& m_listData;
+    std::shared_ptr<Mandelbulb<uint8_t>> m_mbGenerator;
 
-
-    // HACK: that's what I would like todo but the API won't let me so I had to
-    // move the constructor into the pseudo constructor below
-    /*
-     FractalIO(uint64_t sx, uint64_t sy, uint64_t sz,
-     uint64_t bx, uint64_t by, uint64_t bz);
-     */
-    
-    void pseudoConstructor(uint64_t sx, uint64_t sy, uint64_t sz,
-                           uint64_t bx, uint64_t by, uint64_t bz);
-    
-    
   };
 }
