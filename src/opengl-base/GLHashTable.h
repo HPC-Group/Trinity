@@ -8,7 +8,7 @@
 
 #include <opengl-base/OpenGLError.h>
 
-#include <silverbullet/Math/Vectors.h>
+#include <silverbullet/math/Vectors.h>
 #include <memory>
 #include <string>
 

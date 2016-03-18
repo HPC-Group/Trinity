@@ -40,7 +40,7 @@
 
 #include <memory>
 #include "GLTexture.h"
-#include <silverbullet/Math/Vectors.h>
+#include <silverbullet/math/Vectors.h>
 
 
 namespace OpenGL {
