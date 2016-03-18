@@ -8,8 +8,9 @@ using namespace Core::Math;
 using namespace trinity;
 
 FractalIO::FractalIO(const std::string& fileId, IListData& listData)
-: m_mbGenerator(0, 0, 0)
-, m_listData(listData) {
+    : m_bFlat(true)
+    , m_mbGenerator(0, 0, 0)
+    , m_listData(listData) {
     switch (stoi(fileId)) {
     case 3:
         pseudoConstructor(64, 64, 64, 64, 64, 64);
@@ -71,7 +72,7 @@ int FractalIO::getLODLevelCount() const {
     if (!m_bFlat) {
         // TODO
         return 1;
-        //throw new TrinityError("case not implemented", __FILE__, __LINE__);
+        // throw new TrinityError("case not implemented", __FILE__, __LINE__);
     } else {
         return 1;
     }
