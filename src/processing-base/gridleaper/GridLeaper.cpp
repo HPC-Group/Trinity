@@ -29,10 +29,15 @@ GridLeaper::~GridLeaper() {
   LINFO("(p) destroying a gridleaper");
   
   m_targetBinder = nullptr;
+  LINFO("1");
   m_sampleShader = nullptr;
+  LINFO("2");
   m_sampleFrameBuffer = nullptr;
+  LINFO("3");
   m_sampleBox = nullptr;
+  LINFO("4");
   m_context = nullptr;
+  LINFO("5");
 }
 
 void GridLeaper::setIsoValue(const float isoValue) {
