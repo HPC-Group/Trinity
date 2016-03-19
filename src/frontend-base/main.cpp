@@ -49,27 +49,22 @@ int main(int argc, char** argv) {
 
 
     ioNode = std::unique_ptr<trinity::IONodeProxy>(new trinity::IONodeProxy(endpointIO));
-    auto datalist = ioNode->listFiles("0");
-    LINFO("listing dir 0: ");
+	LINFO("listing fractal dir 1: ");
+    auto datalist = ioNode->listFiles("FractalData@1");
     for(const auto& data : datalist) {
         LINFO(data.toString());
     }
-    datalist = ioNode->listFiles("1");
-    LINFO("listing dir 1: ");
+	LINFO("listing fractal dir 2: ");
+    datalist = ioNode->listFiles("FractalData@2");
     for(const auto& data : datalist) {
         LINFO(data.toString());
     }
-    datalist = ioNode->listFiles("2");
-    LINFO("listing dir 2: ");
-    for(const auto& data : datalist) {
-        LINFO(data.toString());
-    }
-    
+ 
     
     processingNode = std::unique_ptr<trinity::ProcessingNodeProxy>(new trinity::ProcessingNodeProxy(endpoint));
 
     // the file id will be available after implementing the listdata command
-    std::string fileId = "0";
+    std::string fileId = "FractalData@3";
     trinity::StreamingParams params(1024, 768);
     auto renderer = processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
 

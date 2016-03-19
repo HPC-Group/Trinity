@@ -1,6 +1,7 @@
 #include <array>
 #include "io-base/FractalListData.h"
 #include "common/TrinityError.h"
+#include "mocca/log/LogManager.h"
 
 using namespace trinity;
 using namespace Core::Math;
@@ -24,8 +25,8 @@ struct FractalData {
 };
 
 static std::array<FractalData, 10> data {
-  FractalData("", IOData("Flat Data", "FractalData@1", IOData::DataType::Directory)),
-  FractalData("", IOData("Bricked Data", "FractalData@2", IOData::DataType::Directory)),
+  FractalData("FractalData", IOData("Flat Data", "FractalData@1", IOData::DataType::Directory)),
+  FractalData("FractalData", IOData("Bricked Data", "FractalData@2", IOData::DataType::Directory)),
 
   FractalData("FractalData@1", IOData("64^3", "FractalData@3", IOData::DataType::Dataset),
               Vec3ui64(64, 64, 64), Vec3ui64(64, 64, 64)),
@@ -46,35 +47,27 @@ static std::array<FractalData, 10> data {
               Vec3ui64(4096, 4096, 4096), Vec3ui64(16, 16, 16))
 };
 
-bool FractalListData::canList(const std::string& dirID) const {
+bool FractalListData::containsIOData(const std::string& fileOrDirID) const {
   for(const auto& s: data) {
-    if (s.m_ioData.getFileId() == dirID &&
-        s.m_ioData.getDataType() == IOData::DataType::Directory) return true;
-  }
-  return false;
-}
-
-bool FractalListData::canOpen(const std::string& fileID) const {
-  for(const auto& s: data) {
-    if (s.m_ioData.getFileId() == fileID &&
-        s.m_ioData.getDataType() == IOData::DataType::Dataset) return true;
+	  if (s.m_ioData.getFileId() == fileOrDirID) return true;
   }
   return false;
 }
 
 std::vector<IOData> FractalListData::listData(const std::string& dirID) const {
   std::vector<IOData> ioDataVec;
+  LINFO("(fractalio) listData for directory id " + dirID);
   for(const auto& s: data) {
-    if (s.m_container == dirID &&
-        s.m_ioData.getDataType() == IOData::DataType::Directory)
-      ioDataVec.push_back(s.m_ioData);
+	  if (s.m_container == dirID) {
+			  ioDataVec.push_back(s.m_ioData);
+	  }		  
   }
   return ioDataVec;
 }
 
 Core::Math::Vec3ui64 FractalListData::totalSize(const std::string& fileID) const {
   for(const auto& s: data) {
-    if (s.m_container == fileID &&
+	  if (s.m_ioData.getFileId() == fileID &&
         s.m_ioData.getDataType() == IOData::DataType::Dataset)
       return s.m_size;
   }
@@ -84,7 +77,7 @@ Core::Math::Vec3ui64 FractalListData::totalSize(const std::string& fileID) const
 
 Core::Math::Vec3ui64 FractalListData::brickSize(const std::string& fileID) const {
   for(const auto& s: data) {
-    if (s.m_container == fileID &&
+	  if (s.m_ioData.getFileId() == fileID &&
         s.m_ioData.getDataType() == IOData::DataType::Dataset)
       return s.m_brick;
   }

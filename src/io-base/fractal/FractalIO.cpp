@@ -3,7 +3,7 @@
 
 
 #include "common/TrinityError.h"
-
+#include "mocca/log/LogManager.h"
 #include "mocca/base/Error.h"
 
 using namespace Core::Math;
@@ -11,14 +11,18 @@ using namespace trinity;
 
 FractalIO::FractalIO(const std::string& fileId, const IListData& listData)
     : m_mbGenerator(nullptr) {
-
+	LINFO("(fractalio) initializing fractal for file id " + fileId);
     const auto fractalListData = dynamic_cast<const FractalListData*>(&listData);
 
     if (fractalListData) {
+		LINFO("(fractalio) acquiring total size... ");
         m_totalSize = fractalListData->totalSize(fileId);
+		LINFO("(fractalio) acquiring brick size... ");
         m_brickSize = fractalListData->brickSize(fileId);
         m_bFlat = (m_totalSize.x <= m_brickSize.x && m_totalSize.z <= m_brickSize.z && m_totalSize.z <= m_brickSize.z);
+		LINFO("(fractalio) creating mandelbulb... ");
         m_mbGenerator = std::make_shared<Mandelbulb<uint8_t>>(m_totalSize.x, m_totalSize.y, m_totalSize.z);
+		LINFO("(fractalio) mandelbulb created");
     } else {
         throw new TrinityError("invalid listData type", __FILE__, __LINE__);
     }

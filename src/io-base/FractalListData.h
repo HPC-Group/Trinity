@@ -7,8 +7,7 @@ namespace trinity {
   class FractalListData : public IListData {
   public:
     // IListData interface implementation
-    bool canList(const std::string& dirID) const override;
-    bool canOpen(const std::string& fileID) const override;
+    bool containsIOData(const std::string& dirOrFileID) const override;
     std::vector<IOData> listData(const std::string& dirID) const override;
 
     // special fractal functions

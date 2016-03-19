@@ -32,7 +32,7 @@ void IONode::addSession(std::unique_ptr<IOSession> session) {
 
 IListData& IONode::getListDataForID(const std::string& fileID) const {
     for (auto& lister : m_listData) {
-        if (lister->canList(fileID)) {
+        if (lister->containsIOData(fileID)) { // if it is a dir or a file of that lister
             return *lister;
         }
     }
