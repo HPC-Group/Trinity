@@ -89,7 +89,7 @@ TEST_F(NodeTest, InitDummyRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::DummyRenderer, "FractalData@1", ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, "FractalData@3", ioEndpoint, params);
     processingNode->join();
     ioNode->join();
 }
@@ -106,7 +106,7 @@ TEST_F(NodeTest, InitWrongRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    ASSERT_THROW(proxy.initRenderer(VclType::FractalIO, "FractalData@1", ioEndpoint, params), TrinityError);
+    ASSERT_THROW(proxy.initRenderer(VclType::FractalIO, "FractalData@3", ioEndpoint, params), TrinityError);
 
     processingNode->join();
     ioNode->join();
@@ -124,7 +124,7 @@ TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::GridLeaper, "FractalData@1", ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::GridLeaper, "FractalData@3", ioEndpoint, params);
     renderer->setIsoValue(123);
 
     processingNode->join();
@@ -143,7 +143,7 @@ TEST_F(NodeTest, SetCamZoomValueOnGridLeaperTest) {
     ProcessingNodeProxy proxy(endpoint);
     
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::GridLeaper, "FractalData@1", ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::GridLeaper, "FractalData@3", ioEndpoint, params);
     renderer->zoomCamera(12);
     
     processingNode->join();
@@ -163,7 +163,7 @@ TEST_F(NodeTest, CallLodFromDummyRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::DummyRenderer, "FractalData@1", ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, "FractalData@3", ioEndpoint, params);
     std::this_thread::sleep_for(std::chrono::seconds(1));
     renderer->setIsoValue(123);
 

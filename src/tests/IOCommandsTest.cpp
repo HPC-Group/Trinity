@@ -63,12 +63,12 @@ TEST_F(IOCommandsTest, IOData) {
 
 TEST_F(IOCommandsTest, ListFilesCmd) {
     {
-        ListFilesCmd::RequestParams target("FractalData@1");
+        ListFilesCmd::RequestParams target("FractalData@3");
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
     {
-        IOData data1("name1", "FractalData@1", IOData::DataType::Dataset);
+        IOData data1("name1", "FractalData@3", IOData::DataType::Dataset);
         IOData data2("name2", "FractalData@2", IOData::DataType::Directory);
         std::vector<IOData> dataVec{ data1, data2 };
         ListFilesCmd::ReplyParams target(dataVec);
@@ -80,7 +80,7 @@ TEST_F(IOCommandsTest, ListFilesCmd) {
 TEST_F(IOCommandsTest, ListFilesReqRep) {
     auto ioNode = mocca::make_unique<IONode>();
     {
-        ListFilesCmd::RequestParams requestParams("FractalData@1");
+        ListFilesCmd::RequestParams requestParams("FractalData@3");
         ListFilesRequest request(requestParams, 1, 2);
         auto reply = trinity::testing::handleRequest<ListFilesHdl>(request, ioNode.get());
         ASSERT_EQ(0, reply.getParams().getIOData().size());

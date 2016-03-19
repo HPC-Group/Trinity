@@ -29,7 +29,7 @@ TEST_F(CmdFactoryTest, VCLCompleteTest) {
 
 TEST_F(CmdFactoryTest, WrongRequest) {
     StreamingParams streamingParams(2048, 1000);
-    InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, "FractalData@1",
+    InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, "FractalData@3",
                                                           mocca::net::Endpoint("tcp.prefixed:loopback:5678"), streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
     IONodeCommandFactory factory;
@@ -47,7 +47,7 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     ioNode.start();
 
     StreamingParams streamingParams(2048, 1000);
-    InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, "FractalData@1", ioEndpoint, streamingParams);
+    InitProcessingSessionCmd::RequestParams requestParams("loopback", VclType::DummyRenderer, "FractalData@3", ioEndpoint, streamingParams);
     InitProcessingSessionRequest request(requestParams, 0, 0);
 
     mocca::net::Endpoint processingEndpoint(ConnectionFactorySelector::loopback(), "localhost", "5679");
