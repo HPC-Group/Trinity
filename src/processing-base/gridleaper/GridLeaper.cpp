@@ -30,14 +30,23 @@ GridLeaper::~GridLeaper() {
   
   m_targetBinder = nullptr;
   LINFO("1");
+  CheckOpenGLError("summary 1", __FILE__, __LINE__);
+
   m_sampleShader = nullptr;
   LINFO("2");
+  CheckOpenGLError("summary 2", __FILE__, __LINE__);
+  
   m_sampleFrameBuffer = nullptr;
   LINFO("3");
+  CheckOpenGLError("summary 3", __FILE__, __LINE__);
+
   m_sampleBox = nullptr;
   LINFO("4");
+  CheckOpenGLError("summary 4", __FILE__, __LINE__);
+
   m_context = nullptr;
   LINFO("5");
+  CheckOpenGLError("summary 5", __FILE__, __LINE__);
 }
 
 void GridLeaper::setIsoValue(const float isoValue) {
