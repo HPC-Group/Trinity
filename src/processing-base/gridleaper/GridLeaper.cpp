@@ -137,6 +137,7 @@ void GridLeaper::paint() {
 
   m_sampleShader->Disable();
 
+  m_targetBinder->Unbind();
   
   m_sampleFrameBuffer->ReadBackPixels(0, 0, m_width, m_height,
                                       m_bufferData.data());
