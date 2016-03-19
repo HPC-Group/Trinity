@@ -1,3 +1,6 @@
+#add_subdirectory(libjpeg-turbo)
+
+# old rainer stuff
 # find_package(zlib QUIET)
 # if(ZLIB_FOUND)
 # else(ZLIB_FOUND)
