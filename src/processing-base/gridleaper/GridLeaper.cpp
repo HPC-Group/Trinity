@@ -137,11 +137,12 @@ void GridLeaper::paint() {
 
   m_sampleShader->Disable();
 
-  m_targetBinder->Unbind();
   
   m_sampleFrameBuffer->ReadBackPixels(0, 0, m_width, m_height,
                                       m_bufferData.data());
 
+  m_targetBinder->Unbind();
+  
   auto f1 = Frame::createFromRaw(m_bufferData.data(),
                                  m_bufferData.size()*sizeof(Vec4ui8));
   getVisStream()->put(std::move(f1));
