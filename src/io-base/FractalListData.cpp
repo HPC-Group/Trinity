@@ -26,8 +26,8 @@ struct FractalData {
   Vec3ui64 m_brick;
 };
 
-static std::array<FractalData, 21> data {
-  FractalData(FractalDataRoot, IOData("Flat Data", "FractalData@Flat",
+static std::array<FractalData, 22> data {
+  {FractalData(FractalDataRoot, IOData("Flat Data", "FractalData@Flat",
                                     IOData::DataType::Directory)),
   FractalData(FractalDataRoot, IOData("Bricked Data", "FractalData@Bricked",
                                     IOData::DataType::Directory)),
@@ -42,7 +42,11 @@ static std::array<FractalData, 21> data {
   FractalData("FractalData@Bricked", IOData("Non Power of 2", "FractalData@2b",
                                          IOData::DataType::Directory)),
 
-  
+    // used for testing and dummy purposes. DO NOT REMOVE
+    FractalData("FractalData@1a", IOData("DUMMY AND TEST IO DATA", "FractalData@3",
+                                         IOData::DataType::Dataset),
+                Vec3ui64(64, 64, 64), Vec3ui64(64, 64, 64)),
+    
   FractalData("FractalData@1a", IOData("64^3", "FractalData@3a",
                                       IOData::DataType::Dataset),
               Vec3ui64(64, 64, 64), Vec3ui64(64, 64, 64)),
@@ -90,7 +94,7 @@ static std::array<FractalData, 21> data {
               Vec3ui64(4000, 4000, 4000), Vec3ui64(32, 32, 32)),
   FractalData("FractalData@2b", IOData("4000^3 (30^3 bricks)","FractalData@10b",
                                        IOData::DataType::Dataset),
-              Vec3ui64(4000, 4000, 4000), Vec3ui64(30, 30, 30))
+              Vec3ui64(4000, 4000, 4000), Vec3ui64(30, 30, 30))}
 };
 
 bool FractalListData::containsIOData(const std::string& fileOrDirID) const {

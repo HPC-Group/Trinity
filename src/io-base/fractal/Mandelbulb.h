@@ -15,8 +15,8 @@ public:
   , m_totalZ(totalZ)
   , m_bulbSize(bulbSize)
   , m_fBailout(fBailout)
-  , m_n(n)
-  , m_iMaxIterations(iMaxIterations) {}
+  , m_iMaxIterations(iMaxIterations)
+  , m_n(n)  {}
   
   T computePoint(uint64_t sx, uint64_t sy, uint64_t sz) const {
     return computePointFloat(m_bulbSize * double(sx) /
