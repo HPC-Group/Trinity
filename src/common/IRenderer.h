@@ -28,7 +28,10 @@ public:
     // base rendering api begin
     virtual void setIsoValue(const float) = 0;
     virtual void zoomCamera(float f) = 0;
+
+	// postponed init and delete due to opengl specific things
     virtual void initContext() = 0;
+	virtual void deleteContext() = 0;
 
 protected:
     std::shared_ptr<VisStream> m_visStream;

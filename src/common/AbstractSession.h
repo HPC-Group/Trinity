@@ -22,6 +22,8 @@ public:
     int getSid() const { return m_sid; }
     std::string getControlPort() const { return m_acceptor->localEndpoint()->port; }
 
+protected:
+	virtual void performThreadSpecificTeardown() {};
 private:
     void run() override;
     virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) = 0;

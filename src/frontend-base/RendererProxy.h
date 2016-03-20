@@ -17,6 +17,7 @@ public:
 
     void setIsoValue(const float) override;
     void initContext() override;
+	void deleteContext() override {};  // that does not to go over network... bad design, however
     void zoomCamera(float f) override;
     int getRemoteSessionId() const;
 

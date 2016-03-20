@@ -25,28 +25,16 @@ m_context(nullptr)
 {
 }
 
+void GridLeaper::deleteContext() {
+	m_targetBinder = nullptr;
+	m_sampleShader = nullptr;
+	m_sampleFrameBuffer = nullptr;
+	m_sampleBox = nullptr;
+	m_context = nullptr;
+}
+
 GridLeaper::~GridLeaper() {
   LINFO("(p) destroying a gridleaper");
-  
-  m_targetBinder = nullptr;
-  LINFO("1");
-  GL_CHECK_EXT();
-
-  m_sampleShader = nullptr;
-  LINFO("2");
-  GL_CHECK_EXT();
-  
-  m_sampleFrameBuffer = nullptr;
-  LINFO("3");
-  GL_CHECK_EXT();
-
-  m_sampleBox = nullptr;
-  LINFO("4");
-  GL_CHECK_EXT();
-
-  m_context = nullptr;
-  LINFO("5");
-  GL_CHECK_EXT();
 }
 
 void GridLeaper::setIsoValue(const float isoValue) {
@@ -59,6 +47,8 @@ void GridLeaper::zoomCamera(float f) {
 }
 
 void GridLeaper::initContext() {
+	std::thread::id threadId = std::this_thread::get_id();
+	LINFO("gridleaper performs cotext init from thread " << threadId);
   m_context = mocca::make_unique<OpenGlHeadlessContext>();
 
   if (!m_context->isValid()) {

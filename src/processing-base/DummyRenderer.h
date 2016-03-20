@@ -11,6 +11,7 @@ public:
 
     void setIsoValue(const float) override;
     void initContext() override {};
+	void deleteContext() override {};
 
     // unit test purposes
     float getIsoValue() const { return m_isoValue; };

@@ -55,3 +55,9 @@ IRenderer& RenderSession::getRenderer() {
 std::unique_ptr<ICommandHandler> RenderSession::createHandler(const Request& request) {
     return m_factory.createHandler(request, this);
 }
+
+void RenderSession::performThreadSpecificTeardown() {
+	std::thread::id threadId = std::this_thread::get_id();
+	LINFO("rendersession performs specific rendering teardown from thread " << threadId);
+	m_renderer->deleteContext();
+}

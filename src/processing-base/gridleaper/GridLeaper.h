@@ -21,6 +21,7 @@ public:
     ~GridLeaper();
     void setIsoValue(const float) override;
     void initContext() override;
+	void deleteContext() override;
     void paint();
     void zoomCamera(float f) override;
 private:

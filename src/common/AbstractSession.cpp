@@ -51,6 +51,7 @@ void AbstractSession::run() {
         }
     } catch (...) {
         interrupt();
+		performThreadSpecificTeardown();
         setException(std::current_exception());
     }
 }
