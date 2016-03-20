@@ -4,7 +4,7 @@
 
 static std::string errToString(GLenum e) {
   switch (e) {
-    case 0 : return "NO_ERROR";
+    case 0      : return "NO_ERROR";
     case 0x0500 : return "INVALID_ENUM";
     case 0x0501 : return "INVALID_VALUE";
     case 0x0502 : return "INVALID_OPERATION";
