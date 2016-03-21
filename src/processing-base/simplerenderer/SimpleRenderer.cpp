@@ -122,6 +122,8 @@ void SimpleRenderer::LoadVolumeData() {
     LERROR("invalid volume data vector. size should be " <<
            brickSize.volume() << " but is " << volume.size());
     return;
+  } else {
+    LINFO("(p) volume data ok");
   }
 
   m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x,
