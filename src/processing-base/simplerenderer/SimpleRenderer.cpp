@@ -112,18 +112,23 @@ void SimpleRenderer::LoadVolumeData() {
   // "best" LoD that consists of a single brick
   uint64_t singleBrickLoD = m_io->getLargestSingleBrickLOD(0);
 
-  std::vector<uint8_t> volume;
   BrickKey brickKey(0, 0, singleBrickLoD, 0);
-  m_io->getBrick(brickKey, volume);
   
   Core::Math::Vec3ui brickSize = m_io->getBrickVoxelCounts(brickKey);
+
+  
+  LINFO("found suitable volume with single brick of size " << brickSize);
+  
+  
+  std::vector<uint8_t> volume;
+  m_io->getBrick(brickKey, volume);
   
   if (volume.size() != brickSize.volume()) {
     LERROR("invalid volume data vector. size should be " <<
            brickSize.volume() << " but is " << volume.size());
     return;
   } else {
-    LINFO("(p) volume data ok");
+    LINFO("(p) volume size data ok");
   }
 
   m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x,
