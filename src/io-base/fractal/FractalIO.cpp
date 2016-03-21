@@ -46,9 +46,9 @@ Vec3ui64 FractalIO::getMaxBrickSize() const {
 
 Vec3ui64 FractalIO::getMaxUsedBrickSizes() const {
   if (!m_bFlat) {
-    return Vec3ui64(std::max(m_brickSize.x, m_totalSize.x),
-                    std::max(m_brickSize.y, m_totalSize.y),
-                    std::max(m_brickSize.z, m_totalSize.z));
+    return Vec3ui64(std::min(m_brickSize.x, m_totalSize.x),
+                    std::min(m_brickSize.y, m_totalSize.y),
+                    std::min(m_brickSize.z, m_totalSize.z));
   } else {
     return m_totalSize;
   }
