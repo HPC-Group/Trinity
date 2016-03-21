@@ -3,15 +3,15 @@ if(NOT DEFINED NASM)
 endif()
 
 #orig code
-#if(SIMD_X86_64)
-#  set(NAFLAGS -fwin64 -DWIN64 -D__x86_64__ -I${CMAKE_SOURCE_DIR}/win/
-#    -I${CMAKE_CURRENT_SOURCE_DIR}/)
-#else()
-#  set(NAFLAGS -fwin32 -DWIN32 -I${CMAKE_SOURCE_DIR}/win/
-#    -I${CMAKE_CURRENT_SOURCE_DIR}/)
-#endif()
+if(SIMD_X86_64)
+  set(NAFLAGS -fwin64 -DWIN64 -D__x86_64__ -I${CMAKE_SOURCE_DIR}/win/
+    -I${CMAKE_CURRENT_SOURCE_DIR}/)
+else()
+  set(NAFLAGS -fwin32 -DWIN32 -I${CMAKE_SOURCE_DIR}/win/
+    -I${CMAKE_CURRENT_SOURCE_DIR}/)
+endif()
 
-set(NAFLAGS -I${CMAKE_CURRENT_SOURCE_DIR}/ -I${CMAKE_SOURCE_DIR}/win/)
+set(NAFLAGS ${NAFLAGS} -I${CMAKE_CURRENT_SOURCE_DIR}/ -I${CMAKE_SOURCE_DIR}/win/)
 if(SIMD_X86_64) #64bit
 	set(NAFLAGS ${NAFLAGS} -D__x86_64__)
 	if(WIN32)
