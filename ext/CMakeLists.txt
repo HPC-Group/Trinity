@@ -1,4 +1,4 @@
-add_subdirectory(libjpeg-turbo)
+#add_subdirectory(libjpeg-turbo)
 
 # old rainer stuff
 # find_package(zlib QUIET)

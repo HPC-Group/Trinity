@@ -37,7 +37,7 @@ endif()
 
 option(JPEG_TURBO_FORCE32bit "Force 32-bit" FALSE)
 
-option(JPEG_TURBO_WITH_SIMD "Include SIMD extensions" FALSE)
+option(JPEG_TURBO_WITH_SIMD "Include SIMD extensions" TRUE)
 option(JPEG_TURBO_WITH_ARITH_ENC "Include arithmetic encoding support" TRUE)
 option(JPEG_TURBO_WITH_ARITH_DEC "Include arithmetic decoding support" TRUE)
 option(JPEG_TURBO_WITH_JPEG7 "Emulate libjpeg v7 API/ABI (this makes libjpeg-turbo backward incompatible with libjpeg v6b)" FALSE)
