@@ -84,11 +84,9 @@ MinMaxBlock FractalIO::maxMinForKey(const BrickKey& key) const {
   }
 }
 
-/*uint64_t */ int FractalIO::getLODLevelCount(/* uint64_t modality */) const {
-  /*
+uint64_t FractalIO::getLODLevelCount(uint64_t modality) const {
    if (modality != 0 )
      throw new TrinityError("invalid modality", __FILE__, __LINE__);
-   */
   
   if (!m_bFlat) {
     return m_vLODTable.size();
@@ -239,13 +237,13 @@ Vec2f FractalIO::getRange(uint64_t modality) const {
 }
 
 
-uint64_t FractalIO::getTotalBrickCount(/* uint64_t modality */) const {
+uint64_t FractalIO::getTotalBrickCount(uint64_t modality) const {
   if (!m_bFlat) {
-    uint64_t lodLevel = getLODLevelCount(/* modality */);
+    uint64_t lodLevel = getLODLevelCount(modality);
     
     uint64_t totalBrickCount = 0;
     for (uint64_t lod = 0;lod<lodLevel;++lod)
-      totalBrickCount += getBrickLayout(lod, 0 /* modality */).volume();
+      totalBrickCount += getBrickLayout(lod, modality).volume();
     return totalBrickCount;
   } else {
     return 1;
@@ -291,7 +289,7 @@ bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
   return created;
 }
 
-IIO::ValueType FractalIO::getType() const {
+IIO::ValueType FractalIO::getType(uint64_t modality) const {
   return ValueType::T_UINT8;
 }
 

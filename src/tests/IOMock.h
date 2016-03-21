@@ -4,7 +4,7 @@
 
 class IOMock : public trinity::IIO {
 public:
-    MOCK_CONST_METHOD0(getLODLevelCount, int());
+    MOCK_CONST_METHOD1(getLODLevelCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD0(getMaxBrickSize, Core::Math::Vec3ui64());
     MOCK_CONST_METHOD0(getMaxUsedBrickSizes, Core::Math::Vec3ui64());
     MOCK_CONST_METHOD1(maxMinForKey, trinity::MinMaxBlock(const trinity::BrickKey&));
@@ -19,8 +19,8 @@ public:
     MOCK_CONST_METHOD0(getModalityCount, uint64_t());
     MOCK_CONST_METHOD1(getComponentCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD1(getRange, Core::Math::Vec2f(uint64_t));
-    MOCK_CONST_METHOD0(getTotalBrickCount, uint64_t());
+    MOCK_CONST_METHOD1(getTotalBrickCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD2(getBrick, bool(const trinity::BrickKey&, std::vector<uint8_t>&));
-    MOCK_CONST_METHOD0(getType, IIO::ValueType());
+    MOCK_CONST_METHOD1(getType, IIO::ValueType(uint64_t));
     MOCK_CONST_METHOD1(getSemantic, IIO::Semantic(uint64_t));
 };

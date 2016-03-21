@@ -9,7 +9,6 @@ DummyRenderer::DummyRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<
 void DummyRenderer::setIsoValue(const float isoValue) {
     LINFO("(p) iso value set to " + std::to_string(isoValue));
     m_isoValue = isoValue;
-    LINFO("(p) lod count: " + std::to_string(m_io->getLODLevelCount()));
 }
 
 void DummyRenderer::zoomCamera(float f){

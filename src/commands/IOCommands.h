@@ -107,29 +107,35 @@ struct GetLODLevelCountCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
+        explicit RequestParams(uint64_t modality);
 
         std::string toString() const;
         bool equals(const GetLODLevelCountCmd::RequestParams& other) const;
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        explicit ReplyParams(int lodCount);
+        explicit ReplyParams(uint64_t lodCount);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
-        int getLODLevelCount() const;
+        uint64_t getLODLevelCount() const;
 
         std::string toString() const;
         bool equals(const GetLODLevelCountCmd::ReplyParams& other) const;
 
     private:
-        int m_lodCount;
+        uint64_t m_lodCount;
     };
 };
 
@@ -158,7 +164,7 @@ struct GetMaxBrickSizeCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Vec3ui64& maxBrickSize);
+        explicit ReplyParams(const Core::Math::Vec3ui64& maxBrickSize);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -198,7 +204,7 @@ struct GetMaxUsedBrickSizesCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Vec3ui64& maxusedBrickSizes);
+        explicit ReplyParams(const Core::Math::Vec3ui64& maxusedBrickSizes);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -227,7 +233,7 @@ struct MaxMinForKeyCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(const BrickKey& brickKey);
+        explicit RequestParams(const BrickKey& brickKey);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -244,7 +250,7 @@ struct MaxMinForKeyCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const MinMaxBlock& minMaxBlock);
+        explicit ReplyParams(const MinMaxBlock& minMaxBlock);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -284,7 +290,7 @@ struct GetNumberOfTimestepsCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(uint64_t numberOfTimesteps);
+        explicit ReplyParams(uint64_t numberOfTimesteps);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -312,7 +318,7 @@ struct GetDomainSizeCmd {
 
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
-        RequestParams(uint64_t lod = 0, uint64_t modality = 0);
+        explicit RequestParams(uint64_t lod = 0, uint64_t modality = 0);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -331,7 +337,7 @@ struct GetDomainSizeCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Vec3ui64& domainSize);
+        explicit ReplyParams(const Core::Math::Vec3ui64& domainSize);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -360,7 +366,7 @@ struct GetTransformationCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t modality);
+        explicit RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -377,7 +383,7 @@ struct GetTransformationCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Mat4d& transformation);
+        explicit ReplyParams(const Core::Math::Mat4d& transformation);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -417,7 +423,7 @@ struct GetBrickOverlapSizeCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Vec3ui& overlapSize);
+        explicit ReplyParams(const Core::Math::Vec3ui& overlapSize);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -446,7 +452,7 @@ struct GetLargestSingleBrickLODCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t modality);
+        explicit RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -463,7 +469,7 @@ struct GetLargestSingleBrickLODCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(uint64_t largestSingleBrickLOD);
+        explicit ReplyParams(uint64_t largestSingleBrickLOD);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -492,7 +498,7 @@ struct GetBrickVoxelCountsCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(const BrickKey& brickKey);
+        explicit RequestParams(const BrickKey& brickKey);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -509,7 +515,7 @@ struct GetBrickVoxelCountsCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Vec3ui& brickVoxelCounts);
+        explicit ReplyParams(const Core::Math::Vec3ui& brickVoxelCounts);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -538,7 +544,7 @@ struct GetBrickExtentsCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(const BrickKey& brickKey);
+        explicit RequestParams(const BrickKey& brickKey);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -555,7 +561,7 @@ struct GetBrickExtentsCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Vec3f& brickExtents);
+        explicit ReplyParams(const Core::Math::Vec3f& brickExtents);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -584,7 +590,7 @@ struct GetBrickLayoutCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t lod, uint64_t modality);
+        explicit RequestParams(uint64_t lod, uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -603,7 +609,7 @@ struct GetBrickLayoutCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Vec3ui& brickLayout);
+        explicit ReplyParams(const Core::Math::Vec3ui& brickLayout);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -643,7 +649,7 @@ struct GetModalityCountCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(uint64_t modalityCount);
+        explicit ReplyParams(uint64_t modalityCount);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -672,7 +678,7 @@ struct GetComponentCountCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t modality);
+        explicit RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -689,7 +695,7 @@ struct GetComponentCountCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(uint64_t componentCount);
+        explicit ReplyParams(uint64_t componentCount);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -718,7 +724,7 @@ struct GetRangeCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t modality);
+        explicit RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -735,7 +741,7 @@ struct GetRangeCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const Core::Math::Vec2f& range);
+        explicit ReplyParams(const Core::Math::Vec2f& range);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -764,18 +770,24 @@ struct GetTotalBrickCountCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
+        explicit RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
         std::string toString() const;
         bool equals(const RequestParams& other) const;
+    
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(uint64_t totalBrickCount);
+        explicit ReplyParams(uint64_t totalBrickCount);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -804,7 +816,7 @@ struct GetBrickCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(const BrickKey& brickKey);
+        explicit RequestParams(const BrickKey& brickKey);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -821,7 +833,7 @@ struct GetBrickCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(std::vector<uint8_t> brick, bool success);
+        explicit ReplyParams(std::vector<uint8_t> brick, bool success);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -852,18 +864,24 @@ struct GetTypeCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
+        explicit RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
         std::string toString() const;
         bool equals(const RequestParams& other) const;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(IIO::ValueType valueType);
+        explicit ReplyParams(IIO::ValueType valueType);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -892,7 +910,7 @@ struct GetSemanticCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        RequestParams(uint64_t modality);
+        explicit RequestParams(uint64_t modality);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -909,7 +927,7 @@ struct GetSemanticCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(IIO::Semantic semantic);
+        explicit ReplyParams(IIO::Semantic semantic);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;

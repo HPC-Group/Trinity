@@ -15,7 +15,6 @@ public:
 
     // unit test purposes
     float getIsoValue() const { return m_isoValue; };
-    int getLodLevelCountFromIO() { return m_io->getLODLevelCount(); }
     void zoomCamera(float f) override;
 
 private:

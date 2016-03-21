@@ -127,19 +127,32 @@ std::string InitIOSessionCmd::ReplyParams::toString() const {
 
 VclType GetLODLevelCountCmd::Type = VclType::GetLODLevelCount;
 
-void GetLODLevelCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+GetLODLevelCountCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
 
-void GetLODLevelCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+void GetLODLevelCountCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetLODLevelCountCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
 
 bool GetLODLevelCountCmd::RequestParams::equals(const GetLODLevelCountCmd::RequestParams& other) const {
-    return true;
+    return m_modality == other.m_modality;
 }
 
 std::string GetLODLevelCountCmd::RequestParams::toString() const {
-    return std::string();
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
 }
 
-GetLODLevelCountCmd::ReplyParams::ReplyParams(int lodCount)
+uint64_t GetLODLevelCountCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+GetLODLevelCountCmd::ReplyParams::ReplyParams(uint64_t lodCount)
     : m_lodCount(lodCount) {}
 
 void GetLODLevelCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
@@ -150,7 +163,7 @@ void GetLODLevelCountCmd::ReplyParams::deserialize(const ISerialReader& reader) 
     m_lodCount = reader.getInt32("lodcount");
 }
 
-int GetLODLevelCountCmd::ReplyParams::getLODLevelCount() const {
+uint64_t GetLODLevelCountCmd::ReplyParams::getLODLevelCount() const {
     return m_lodCount;
 }
 
@@ -892,17 +905,29 @@ Core::Math::Vec2f GetRangeCmd::ReplyParams::getRange() const {
 
 VclType GetTotalBrickCountCmd::Type = VclType::GetTotalBrickCount;
 
-void GetTotalBrickCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+GetTotalBrickCountCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
 
-void GetTotalBrickCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+void GetTotalBrickCountCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetTotalBrickCountCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
 
 bool GetTotalBrickCountCmd::RequestParams::equals(const GetTotalBrickCountCmd::RequestParams& other) const {
-    return true;
+    return m_modality == other.m_modality;
 }
 
 std::string GetTotalBrickCountCmd::RequestParams::toString() const {
     std::stringstream stream;
+    stream << "modality: " << m_modality;
     return stream.str();
+}
+
+uint64_t GetTotalBrickCountCmd::RequestParams::getModality() const {
+    return m_modality;
 }
 
 GetTotalBrickCountCmd::ReplyParams::ReplyParams(uint64_t totalBrickCount)
@@ -1000,20 +1025,32 @@ const std::vector<uint8_t>& GetBrickCmd::ReplyParams::getBrick() const {
 
 VclType GetTypeCmd::Type = VclType::GetType;
 
-void GetTypeCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+GetTypeCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
 
-void GetTypeCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+void GetTypeCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetTypeCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
 
 bool GetTypeCmd::RequestParams::equals(const GetTypeCmd::RequestParams& other) const {
-    return true;
+    return m_modality == other.m_modality;
 }
 
 std::string GetTypeCmd::RequestParams::toString() const {
     std::stringstream stream;
+    stream << "modality: " << m_modality;
     return stream.str();
 }
 
-trinity::GetTypeCmd::ReplyParams::ReplyParams(IIO::ValueType valueType)
+uint64_t GetTypeCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+GetTypeCmd::ReplyParams::ReplyParams(IIO::ValueType valueType)
     : m_valueType(valueType) {}
 
 void GetTypeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
@@ -1085,7 +1122,7 @@ bool GetSemanticCmd::ReplyParams::equals(const GetSemanticCmd::ReplyParams& othe
 
 std::string GetSemanticCmd::ReplyParams::toString() const {
     std::stringstream stream;
-    stream << "semantic: " << m_semantic;
+    stream << "semantic: " << IIO::semanticMapper().getByFirst(m_semantic);
     return stream.str();
 }
 

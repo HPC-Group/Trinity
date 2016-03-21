@@ -40,8 +40,8 @@ MinMaxBlock IOSessionProxy::maxMinForKey(const BrickKey& brickKey) const {
     return reply->getParams().getMinMaxBlock();
 }
 
-int IOSessionProxy::getLODLevelCount() const {
-    GetLODLevelCountCmd::RequestParams params;
+uint64_t IOSessionProxy::getLODLevelCount(uint64_t modality) const {
+    GetLODLevelCountCmd::RequestParams params(modality);
     GetLODLevelCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getLODLevelCount();
@@ -124,8 +124,8 @@ Core::Math::Vec2f IOSessionProxy::getRange(uint64_t modality) const {
     return reply->getParams().getRange();
 }
 
-uint64_t IOSessionProxy::getTotalBrickCount() const {
-    GetTotalBrickCountCmd::RequestParams params;
+uint64_t IOSessionProxy::getTotalBrickCount(uint64_t modality) const {
+    GetTotalBrickCountCmd::RequestParams params(modality);
     GetTotalBrickCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getTotalBrickCount();
@@ -141,8 +141,8 @@ bool IOSessionProxy::getBrick(const BrickKey& brickKey, std::vector<uint8_t>& da
     return replyParams.getSuccess();
 }
 
-IIO::ValueType IOSessionProxy::getType() const {
-    GetTypeCmd::RequestParams params;
+IIO::ValueType IOSessionProxy::getType(uint64_t modality) const {
+    GetTypeCmd::RequestParams params(modality);
     GetTypeRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getValueType();

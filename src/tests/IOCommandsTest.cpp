@@ -47,10 +47,25 @@ TEST_F(IOCommandsTest, InitIOSessionCmd) {
 
 TEST_F(IOCommandsTest, GetLODLevelCountCmd) {
     {
+        GetLODLevelCountCmd::RequestParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    } 
+    {
         GetLODLevelCountCmd::ReplyParams target(4711);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
+}
+
+TEST_F(IOCommandsTest, GetLODLevelCountReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getLODLevelCount(42)).Times(1).WillOnce(Return(4711));
+
+    GetLODLevelCountCmd::RequestParams requestParams(42);
+    GetLODLevelCountRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetLODLevelCountHdl>(request, session.get());
+    ASSERT_EQ(4711, reply.getParams().getLODLevelCount());
 }
 
 TEST_F(IOCommandsTest, IOData) {
@@ -435,7 +450,7 @@ TEST_F(IOCommandsTest, GetRangeReqRep) {
 
 TEST_F(IOCommandsTest, GetTotalBrickCountCmd) {
     {
-        GetTotalBrickCountCmd::RequestParams target;
+        GetTotalBrickCountCmd::RequestParams target(23);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
@@ -448,9 +463,9 @@ TEST_F(IOCommandsTest, GetTotalBrickCountCmd) {
 
 TEST_F(IOCommandsTest, GetTotalBrickCountReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getTotalBrickCount()).Times(1).WillOnce(Return(42));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getTotalBrickCount(23)).Times(1).WillOnce(Return(42));
 
-    GetTotalBrickCountCmd::RequestParams requestParams;
+    GetTotalBrickCountCmd::RequestParams requestParams(23);
     GetTotalBrickCountRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetTotalBrickCountHdl>(request, session.get());
     ASSERT_EQ(42, reply.getParams().getTotalBrickCount());
@@ -483,7 +498,7 @@ TEST_F(IOCommandsTest, GetBrickReqRep) {
 
 TEST_F(IOCommandsTest, GetTypeCmd) {
     {
-        GetTypeCmd::RequestParams target;
+        GetTypeCmd::RequestParams target(23);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
@@ -496,9 +511,9 @@ TEST_F(IOCommandsTest, GetTypeCmd) {
 
 TEST_F(IOCommandsTest, GetTypeReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getType()).Times(1).WillOnce(Return(IIO::ValueType::T_INT32));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getType(23)).Times(1).WillOnce(Return(IIO::ValueType::T_INT32));
 
-    GetTypeCmd::RequestParams requestParams;
+    GetTypeCmd::RequestParams requestParams(23);
     GetTypeRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetTypeHdl>(request, session.get());
     ASSERT_EQ(IIO::ValueType::T_INT32, reply.getParams().getValueType());

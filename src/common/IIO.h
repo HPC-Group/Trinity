@@ -26,7 +26,7 @@ public:
     virtual Core::Math::Vec3ui64 getMaxBrickSize() const = 0;
     virtual Core::Math::Vec3ui64 getMaxUsedBrickSizes() const = 0;
     virtual MinMaxBlock maxMinForKey(const BrickKey&) const = 0;
-    virtual int getLODLevelCount() const = 0;
+    virtual uint64_t getLODLevelCount(uint64_t modality) const = 0;
     virtual uint64_t getNumberOfTimesteps() const = 0;
     virtual Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality) const = 0;
     virtual Core::Math::Mat4d getTransformation(uint64_t modality) const = 0;
@@ -38,9 +38,9 @@ public:
     virtual uint64_t getModalityCount() const = 0;
     virtual uint64_t getComponentCount(uint64_t modality) const = 0;
     virtual Core::Math::Vec2f getRange(uint64_t modality) const = 0;
-    virtual uint64_t getTotalBrickCount() const = 0;
+    virtual uint64_t getTotalBrickCount(uint64_t modality) const = 0;
     virtual bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const = 0;
-    virtual ValueType getType() const = 0;
+    virtual ValueType getType(uint64_t modality) const = 0;
     virtual Semantic getSemantic(uint64_t modality) const = 0;
 
     // not sure if we need that

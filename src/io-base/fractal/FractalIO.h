@@ -17,7 +17,7 @@ namespace trinity {
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
     Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
     MinMaxBlock maxMinForKey(const BrickKey&) const override;
-    int getLODLevelCount() const override;  // HACK: should return uint64_t, add modality
+    uint64_t getLODLevelCount(uint64_t modality) const override;
     uint64_t getNumberOfTimesteps() const override;
     Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality) const override;
     Core::Math::Mat4d getTransformation(uint64_t modality) const override;
@@ -29,9 +29,9 @@ namespace trinity {
     uint64_t getModalityCount() const override;
     uint64_t getComponentCount(uint64_t modality) const override;
     Core::Math::Vec2f getRange(uint64_t modality) const override;
-    uint64_t getTotalBrickCount() const override; // HACK: needs modality as parameter
+    uint64_t getTotalBrickCount(uint64_t modality) const override;
     bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const override;
-    IIO::ValueType getType() const override; // HACK: needs modality as parameter
+    IIO::ValueType getType(uint64_t modality) const override;
     IIO::Semantic getSemantic(uint64_t modality) const override;
     
     // HACK: this function is still missing

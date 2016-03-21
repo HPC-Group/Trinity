@@ -31,7 +31,7 @@ GetLODLevelCountHdl::GetLODLevelCountHdl(const GetLODLevelCountRequest& request,
 
 std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
     const auto& io = m_session->getIO();
-    GetLODLevelCountCmd::ReplyParams replyParams(io.getLODLevelCount());
+    GetLODLevelCountCmd::ReplyParams replyParams(io.getLODLevelCount(m_request.getParams().getModality()));
     return mocca::make_unique<GetLODLevelCountReply>(replyParams, m_request.getRid(), m_request.getSid());
 }
 
@@ -174,7 +174,7 @@ GetTotalBrickCountHdl::GetTotalBrickCountHdl(const GetTotalBrickCountRequest& re
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> GetTotalBrickCountHdl::execute() {
-    GetTotalBrickCountCmd::ReplyParams params(m_session->getIO().getTotalBrickCount());
+    GetTotalBrickCountCmd::ReplyParams params(m_session->getIO().getTotalBrickCount(m_request.getParams().getModality()));
     return mocca::make_unique<GetTotalBrickCountReply>(params, m_request.getRid(), m_session->getSid());
 }
 
@@ -193,7 +193,7 @@ GetTypeHdl::GetTypeHdl(const GetTypeRequest& request, IOSession* session)
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> GetTypeHdl::execute() {
-    GetTypeCmd::ReplyParams params(m_session->getIO().getType());
+    GetTypeCmd::ReplyParams params(m_session->getIO().getType(m_request.getParams().getModality()));
     return mocca::make_unique<GetTypeReply>(params, m_request.getRid(), m_session->getSid());
 }
 
