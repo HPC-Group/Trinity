@@ -17,6 +17,8 @@ using namespace std;
 SimpleRenderer::SimpleRenderer(std::shared_ptr<VisStream> stream,
                        std::unique_ptr<IIO> ioSession) :
 IRenderer(stream, std::move(ioSession)),
+m_texTransferFunc(nullptr),
+m_texVolume(nullptr),
 m_targetBinder(nullptr),
 m_sampleShader(nullptr),
 m_sampleFrameBuffer(nullptr),
@@ -26,6 +28,8 @@ m_context(nullptr)
 }
 
 void SimpleRenderer::deleteContext() {
+  m_texTransferFunc = nullptr;
+  m_texVolume = nullptr;
 	m_targetBinder = nullptr;
 	m_sampleShader = nullptr;
 	m_sampleFrameBuffer = nullptr;
@@ -68,6 +72,8 @@ void SimpleRenderer::initContext() {
   LoadFrameBuffer();
   LoadShader();
   LoadGeometry();
+  LoadVolumeData();
+  LoadTransferFunction();
 
   m_targetBinder = mocca::make_unique<GLTargetBinder>();
   LINFO("(p) grid leaper created. OpenGL Version " << m_context->getVersion());
@@ -89,6 +95,64 @@ bool SimpleRenderer::LoadShader() {
   }
   
   return true;
+}
+
+void SimpleRenderer::LoadVolumeData() {
+  LINFO("(p) creating volume");
+  
+  // this simple renderer can only handle scalar 8bit uints
+  // so check if the volume satisfies these conditions
+  if (m_io->getComponentCount(0) != 1 ||
+      m_io->getType(0) != IIO::ValueType::T_UINT8) {
+    LERROR("(p) invalid volume format");
+    return;
+  }
+  
+  // this simple renderer cannot handle bricks, so we render the
+  // "best" LoD that consists of a single brick
+  uint64_t singleBrickLoD = m_io->getLargestSingleBrickLOD(0);
+
+  std::vector<uint8_t> volume;
+  BrickKey brickKey(0, 0, singleBrickLoD, 0);
+  m_io->getBrick(brickKey, volume);
+  
+  Core::Math::Vec3ui brickSize = m_io->getBrickVoxelCounts(brickKey);
+  
+  if (volume.size() != brickSize.volume()) {
+    LERROR("invalid volume data vector. size should be " <<
+           brickSize.volume() << " but is " << volume.size());
+    return;
+  }
+
+  m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x,
+                                                brickSize.y,
+                                                brickSize.z,
+                                                GL_RED,
+                                                GL_RED,
+                                                GL_UNSIGNED_BYTE,
+                                                volume.data(),
+                                                GL_LINEAR,
+                                                GL_LINEAR);
+  
+  LINFO("(p) volume created");
+}
+
+void SimpleRenderer::LoadTransferFunction() {
+  LINFO("(p) creating transfer function");
+  
+  std::vector<uint8_t> linearRamp(4*256);  // RGBA * 256
+  for (size_t i = 0;i<256;++i) {
+    linearRamp[i*4+0] = uint8_t(i);
+    linearRamp[i*4+1] = uint8_t(i);
+    linearRamp[i*4+2] = uint8_t(i);
+    linearRamp[i*4+3] = uint8_t(i);
+  }
+  m_texTransferFunc = mocca::make_unique<GLTexture1D>(256,
+                                                      GL_RGBA,
+                                                      GL_RGBA,
+                                                      GL_UNSIGNED_BYTE,
+                                                      linearRamp.data());
+  LINFO("(p) transfer function created");
 }
 
 void SimpleRenderer::LoadGeometry() {
