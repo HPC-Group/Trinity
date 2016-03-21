@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "io-base/fractal/Mandelbulb.h"
 #include "io-base/IListData.h"
 #include "common/IIO.h"
@@ -15,7 +17,7 @@ namespace trinity {
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
     Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
     MinMaxBlock maxMinForKey(const BrickKey&) const override;
-    int getLODLevelCount() const override;
+    int getLODLevelCount() const override;  // HACK: should return uint64_t, add modality
     uint64_t getNumberOfTimesteps() const override;
     Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality) const override;
     Core::Math::Mat4d getTransformation(uint64_t modality) const override;
@@ -27,16 +29,51 @@ namespace trinity {
     uint64_t getModalityCount() const override;
     uint64_t getComponentCount(uint64_t modality) const override;
     Core::Math::Vec2f getRange(uint64_t modality) const override;
-    uint64_t getTotalBrickCount() const override;
+    uint64_t getTotalBrickCount() const override; // HACK: needs modality as parameter
     bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const override;
-    IIO::ValueType getType() const override;
+    IIO::ValueType getType() const override; // HACK: needs modality as parameter
     IIO::Semantic getSemantic(uint64_t modality) const override;
-        
+    
+    // HACK: this function is still missing
+    // std::string getUserDefinedSemantic(uint64_t modality) const override;
+    
   private:
     Core::Math::Vec3ui64 m_totalSize;
     Core::Math::Vec3ui64 m_brickSize;
     bool m_bFlat;
-    std::shared_ptr<Mandelbulb<uint8_t>> m_mbGenerator;
+    std::unique_ptr<Mandelbulb<uint8_t>> m_fractalGenerator;
+
+    void genBrickParams(const BrickKey& brickKey,
+                        Core::Math::Vec3ui64& start,
+                        Core::Math::Vec3d& stepping,
+                        Core::Math::Vec3ui64& size) const;
+    
+    Core::Math::Vec3ui64 get3DIndex(const BrickKey& brickKey) const;
+    Core::Math::Vec3ui64 getEffectiveBricksize() const;
+    
+    struct boolVec {
+      boolVec(bool x, bool y, bool z) : m_x(x),m_y(y),m_z(z) {}
+      bool m_x,m_y,m_z;
+    };
+    
+    boolVec isLastBrick(const BrickKey& key) const;
+
+    
+    void computeLODInfo();
+    
+    struct LODInfo {
+      /// the aspect ratio of all bricks in this LoD, does not
+      /// take the overall aspect into account just the aspect
+      /// ratio changes that happen during the downsampling
+      Core::Math::Vec3f m_vAspect;
+      /// size of the entire LoD in voxel, i.e. for LoD 0 this
+      /// is equal to the size of the original dataset
+      Core::Math::Vec3ui64 m_iLODVoxelSize;
+      /// number of bricks in x, y, and z in this LoD
+      Core::Math::Vec3ui64 m_iLODBrickCount;
+    };
+    
+    std::vector<LODInfo> m_vLODTable;
 
   };
 }
