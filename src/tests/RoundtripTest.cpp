@@ -112,7 +112,7 @@ TEST_F(NodeTest, InitWrongRendererTest) {
     ioNode->join();
 }
 
-TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
+TEST_F(NodeTest, SetIsoValueOnSimpleRendererTest) {
     auto processingNode = createProcessingNode("5678");
     processingNode->start();
 
@@ -124,14 +124,14 @@ TEST_F(NodeTest, SetIsoValueOnGridLeaperTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::GridLeaper, "FractalData@3", ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::SimpleRenderer, "FractalData@3", ioEndpoint, params);
     renderer->setIsoValue(123);
 
     processingNode->join();
     ioNode->join();
 }
 
-TEST_F(NodeTest, SetCamZoomValueOnGridLeaperTest) {
+TEST_F(NodeTest, SetCamZoomValueOnSimpleRendererTest) {
     auto processingNode = createProcessingNode("5678");
     processingNode->start();
     
@@ -143,7 +143,7 @@ TEST_F(NodeTest, SetCamZoomValueOnGridLeaperTest) {
     ProcessingNodeProxy proxy(endpoint);
     
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::GridLeaper, "FractalData@3", ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::SimpleRenderer, "FractalData@3", ioEndpoint, params);
     renderer->zoomCamera(12);
     
     processingNode->join();

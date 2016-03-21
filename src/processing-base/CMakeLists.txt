@@ -1,7 +1,7 @@
 FILE(GLOB PROCESSINGBASE_HEADER ${CMAKE_CURRENT_LIST_DIR}/*.h
-								${CMAKE_CURRENT_LIST_DIR}/gridleaper/*.h)
+								${CMAKE_CURRENT_LIST_DIR}/simplerenderer/*.h)
 FILE(GLOB PROCESSINGBASE_SOURCE ${CMAKE_CURRENT_LIST_DIR}/*.cpp
-								${CMAKE_CURRENT_LIST_DIR}/gridleaper/*.cpp)
+								${CMAKE_CURRENT_LIST_DIR}/simplerenderer/*.cpp)
 
 find_package(OpenGL REQUIRED)
 

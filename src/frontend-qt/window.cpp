@@ -38,7 +38,7 @@ Window::~Window() {
  
  // the file id will be available after implementing the listdata command
  int fileId = 0;
- _renderer = _processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
+ _renderer = _processingNode->initRenderer(trinity::VclType::SimpleRenderer, fileId, endpointIO, params);
  
  // sending commands
  _renderer->initContext();
@@ -90,7 +90,7 @@ void Window::initRenderer() {
     // the file id will be available after implementing the listdata command
     std::string fileId = "FractalData@3"; // fixme: should be selectable from the gui
     try {
-        _renderer = _processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
+        _renderer = _processingNode->initRenderer(trinity::VclType::SimpleRenderer, fileId, endpointIO, params);
         _renderer->initContext();
     } catch (const trinity::TrinityError&) {
         LERROR("(qt) no connection to a renderer");

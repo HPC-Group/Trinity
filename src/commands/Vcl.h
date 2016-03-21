@@ -20,7 +20,7 @@ enum class VclType {
     InitRenderer,
     TrinityError,
     DummyRenderer,
-    GridLeaper,
+    SimpleRenderer,
     FractalIO,
     SetIsoValue,
     GetLODLevelCount,
@@ -83,7 +83,7 @@ private:
     Vcl() {
         m_cmdMap.insert("InitRenderer", VclType::InitRenderer);
         m_cmdMap.insert("DummyRenderer", VclType::DummyRenderer);
-        m_cmdMap.insert("GridLeaper", VclType::GridLeaper);
+        m_cmdMap.insert("SimpleRenderer", VclType::SimpleRenderer);
         m_cmdMap.insert("TrinityError", VclType::TrinityError);
         m_cmdMap.insert("StreamingParams", VclType::StreamingParams);
         m_cmdMap.insert("SetIsoValue", VclType::SetIsoValue);

@@ -14,11 +14,11 @@
 
 namespace trinity {
 
-class GridLeaper : public IRenderer {
+class SimpleRenderer : public IRenderer {
 
 public:
-    GridLeaper(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
-    ~GridLeaper();
+    SimpleRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
+    ~SimpleRenderer();
     void setIsoValue(const float) override;
     void initContext() override;
 	void deleteContext() override;

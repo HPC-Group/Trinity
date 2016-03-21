@@ -1,4 +1,4 @@
-#include "GridLeaper.h"
+#include "SimpleRenderer.h"
 #include "mocca/log/LogManager.h"
 
 
@@ -14,7 +14,7 @@ using namespace OpenGL;
 using namespace std;
 
 
-GridLeaper::GridLeaper(std::shared_ptr<VisStream> stream,
+SimpleRenderer::SimpleRenderer(std::shared_ptr<VisStream> stream,
                        std::unique_ptr<IIO> ioSession) :
 IRenderer(stream, std::move(ioSession)),
 m_targetBinder(nullptr),
@@ -25,7 +25,7 @@ m_context(nullptr)
 {
 }
 
-void GridLeaper::deleteContext() {
+void SimpleRenderer::deleteContext() {
 	m_targetBinder = nullptr;
 	m_sampleShader = nullptr;
 	m_sampleFrameBuffer = nullptr;
@@ -33,20 +33,20 @@ void GridLeaper::deleteContext() {
 	m_context = nullptr;
 }
 
-GridLeaper::~GridLeaper() {
+SimpleRenderer::~SimpleRenderer() {
   LINFO("(p) destroying a gridleaper");
 }
 
-void GridLeaper::setIsoValue(const float isoValue) {
+void SimpleRenderer::setIsoValue(const float isoValue) {
   m_isoValue = isoValue;
   paint();
 }
 
-void GridLeaper::zoomCamera(float f) {
+void SimpleRenderer::zoomCamera(float f) {
   LINFO("(p) cam zoom of gridleaper set to " + std::to_string(f));
 }
 
-void GridLeaper::initContext() {
+void SimpleRenderer::initContext() {
 	std::thread::id threadId = std::this_thread::get_id();
 	LINFO("gridleaper performs cotext init from thread " << threadId);
   m_context = mocca::make_unique<OpenGlHeadlessContext>();
@@ -73,7 +73,7 @@ void GridLeaper::initContext() {
   LINFO("(p) grid leaper created. OpenGL Version " << m_context->getVersion());
 }
 
-bool GridLeaper::LoadShader() {
+bool SimpleRenderer::LoadShader() {
   vector<string> fs, vs;
   vs.push_back("SampleVertex.glsl");
   fs.push_back("SampleFragment.glsl");
@@ -91,11 +91,11 @@ bool GridLeaper::LoadShader() {
   return true;
 }
 
-void GridLeaper::LoadGeometry() {
+void SimpleRenderer::LoadGeometry() {
   m_sampleBox = mocca::make_unique<GLVolumeBox>();
 }
 
-void GridLeaper::LoadFrameBuffer() {
+void SimpleRenderer::LoadFrameBuffer() {
   m_sampleFrameBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
                                                    GL_CLAMP_TO_EDGE,
                                                    m_width, m_height,
@@ -103,7 +103,7 @@ void GridLeaper::LoadFrameBuffer() {
                                                    GL_UNSIGNED_BYTE, true, 1);
 }
 
-void GridLeaper::paint() {
+void SimpleRenderer::paint() {
   if (!m_context || !m_sampleShader) return;
   
   m_context->makeCurrent();

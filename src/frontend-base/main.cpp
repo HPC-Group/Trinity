@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
     // the file id will be available after implementing the listdata command
     std::string fileId = "FractalData@3a";
     trinity::StreamingParams params(1024, 768);
-    auto renderer = processingNode->initRenderer(trinity::VclType::GridLeaper, fileId, endpointIO, params);
+    auto renderer = processingNode->initRenderer(trinity::VclType::SimpleRenderer, fileId, endpointIO, params);
 
     renderer->initContext();
     // sending commands
