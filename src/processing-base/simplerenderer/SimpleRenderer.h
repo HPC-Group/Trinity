@@ -27,9 +27,9 @@ namespace trinity {
     void paint();
     void zoomCamera(float f) override;
   private:
-    bool LoadShader();
+    bool LoadShaders();
     void LoadGeometry();
-    void LoadFrameBuffer();
+    void LoadFrameBuffers();
     void LoadVolumeData();
     void LoadTransferFunction();
     
@@ -37,14 +37,17 @@ namespace trinity {
     float       m_isoValue;
     uint32_t    m_width;
     uint32_t    m_height;
+
+    std::vector<Core::Math::Vec4ui8>              m_bufferData;
     
     std::unique_ptr<OpenGL::GLCore::GLTexture1D>  m_texTransferFunc;
     std::unique_ptr<OpenGL::GLCore::GLTexture3D>  m_texVolume;
-    std::vector<Core::Math::Vec4ui8>              m_bufferData;
     std::unique_ptr<OpenGL::GLTargetBinder>       m_targetBinder;
-    std::unique_ptr<OpenGL::GLCore::GLProgram>    m_sampleShader;
-    std::shared_ptr<OpenGL::GLCore::GLFBOTex>     m_sampleFrameBuffer;
-    std::unique_ptr<OpenGL::GLCore::GLVolumeBox>  m_sampleBox;
+    std::unique_ptr<OpenGL::GLCore::GLProgram>    m_backfaceShader;
+    std::unique_ptr<OpenGL::GLCore::GLProgram>    m_raycastShader;
+    std::shared_ptr<OpenGL::GLCore::GLFBOTex>     m_backfaceBuffer;
+    std::shared_ptr<OpenGL::GLCore::GLFBOTex>     m_resultBuffer;
+    std::unique_ptr<OpenGL::GLCore::GLVolumeBox>  m_bbBox;
     std::shared_ptr<OpenGlHeadlessContext>        m_context;
     
   };
