@@ -8,6 +8,8 @@ namespace trinity {
 
 class JsonWriter : public ISerialWriter {
 public:
+    JsonWriter();
+
     void appendFloat(const std::string& key, float value) override;
     void appendDouble(const std::string& key, double value) override;
     void appendInt(const std::string& key, uint8_t value) override;
@@ -31,7 +33,10 @@ public:
     mocca::ByteArray write() const override;
 
 private:
+    JsonWriter(std::shared_ptr<std::vector<uint8_t>> binary);
+
+private:
     JsonCpp::Value m_root;
-    std::vector<uint8_t> m_binary;
+    std::shared_ptr<std::vector<uint8_t>> m_binary;
 };
 }

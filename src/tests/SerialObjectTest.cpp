@@ -159,5 +159,5 @@ TYPED_TEST(SerialObjectTest, BinaryData) {
     auto reader = factory.createReader(serialized);
     ASSERT_EQ("Hello", reader->getString("string1"));
     ASSERT_EQ("World", reader->getString("string2"));
-    ASSERT_EQ(binary, reader->getBinary());
+    ASSERT_EQ(binary, *reader->getBinary());
 }

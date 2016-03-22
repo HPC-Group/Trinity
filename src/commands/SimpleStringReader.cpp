@@ -135,6 +135,6 @@ std::vector<std::unique_ptr<ISerializable>> SimpleStringReader::getSerializableV
     return result;
 }
 
-const std::vector<uint8_t>& SimpleStringReader::getBinary() const {
-    return m_binary;
+std::shared_ptr<const std::vector<uint8_t>> SimpleStringReader::getBinary() const {
+    return nullptr;
 }

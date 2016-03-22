@@ -7,14 +7,16 @@
 
 using namespace trinity;
 
-JsonReader::JsonReader(const std::string& json) {
+JsonReader::JsonReader(const std::string& json)
+    : m_binary(std::make_shared<std::vector<uint8_t>>()) {
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {
         throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
     }
 }
 
-JsonReader::JsonReader(mocca::ByteArray& data) {
+JsonReader::JsonReader(mocca::ByteArray& data)
+    : m_binary(std::make_shared<std::vector<uint8_t>>()) {
     auto jsonSize = data.read<uint32_t>();
     auto json = data.read(jsonSize);
     JsonCpp::Reader reader;
@@ -22,12 +24,13 @@ JsonReader::JsonReader(mocca::ByteArray& data) {
         throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
     }
     uint32_t binarySize = data.size() - jsonSize - sizeof(uint32_t);
-    m_binary.reserve(binarySize);
-    std::copy(data.data() + jsonSize + sizeof(uint32_t), data.data() + data.size(), std::back_inserter(m_binary));
+    m_binary->reserve(binarySize);
+    std::copy(data.data() + jsonSize + sizeof(uint32_t), data.data() + data.size(), std::back_inserter(*m_binary));
 }
 
-JsonReader::JsonReader(const JsonCpp::Value& root)
-    : m_root(root) {}
+JsonReader::JsonReader(const JsonCpp::Value& root, std::shared_ptr<std::vector<uint8_t>> binary)
+    : m_root(root)
+    , m_binary(binary) {}
 
 
 float JsonReader::getFloat(const std::string& key) const {
@@ -67,7 +70,7 @@ std::string JsonReader::getString(const std::string& key) const {
 }
 
 void JsonReader::getSerializableImpl(const std::string& key, ISerializable& prototype) const {
-    JsonReader subObject(m_root[key]);
+    JsonReader subObject(m_root[key], m_binary);
     prototype.deserialize(subObject);
 }
 
@@ -82,7 +85,7 @@ std::vector<float> JsonReader::getFloatVec(const std::string& key) const {
 std::vector<int32_t> JsonReader::getInt32Vec(const std::string& key) const {
     std::vector<int32_t> result;
     for (uint32_t i = 0; i < m_root[key].size(); ++i) {
-        result.push_back(m_root[key][i].asInt()); 
+        result.push_back(m_root[key][i].asInt());
     }
     return result;
 }
@@ -116,13 +119,13 @@ std::vector<std::unique_ptr<ISerializable>> JsonReader::getSerializableVecImpl(c
     std::vector<std::unique_ptr<ISerializable>> result;
     for (uint32_t i = 0; i < m_root[key].size(); ++i) {
         auto obj = prototype.clone();
-        JsonReader subObject(m_root[key][i]);
+        JsonReader subObject(m_root[key][i], m_binary);
         obj->deserialize(subObject);
         result.push_back(std::move(obj));
     }
     return result;
 }
 
-const std::vector<uint8_t>& JsonReader::getBinary() const {
+std::shared_ptr<const std::vector<uint8_t>> JsonReader::getBinary() const {
     return m_binary;
 }

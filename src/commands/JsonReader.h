@@ -29,16 +29,16 @@ public:
     std::vector<bool> getBoolVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 
-    const std::vector<uint8_t>& getBinary() const override;
+    std::shared_ptr<const std::vector<uint8_t>> getBinary() const override;
     
 private:
-    JsonReader(const JsonCpp::Value& root);
+    JsonReader(const JsonCpp::Value& root, std::shared_ptr<std::vector<uint8_t>> binary);
 
     void getSerializableImpl(const std::string& key, ISerializable& prototype) const override;
     std::vector<std::unique_ptr<ISerializable>> getSerializableVecImpl(const std::string& key, const ISerializable& prototype) const override;
 
 private:
     JsonCpp::Value m_root;
-    std::vector<uint8_t> m_binary;
+    std::shared_ptr<std::vector<uint8_t>> m_binary;
 };
 }

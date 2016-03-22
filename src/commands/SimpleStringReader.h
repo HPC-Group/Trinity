@@ -29,7 +29,7 @@ public:
     std::vector<bool> getBoolVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 
-    const std::vector<uint8_t>& getBinary() const override;
+    std::shared_ptr<const std::vector<uint8_t>> getBinary() const override;
 
 private:
     void getSerializableImpl(const std::string& key, ISerializable& obj) const override;
@@ -37,6 +37,5 @@ private:
 
 private:
     mutable std::stringstream m_stream;
-    mutable std::vector<uint8_t> m_binary;
 };
 }
