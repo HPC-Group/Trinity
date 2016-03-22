@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iterator>
 #include <memory.h>
+#include <algorithm>
 #include <sstream>
 
 #include "silverbullet/math/MathTools.h"

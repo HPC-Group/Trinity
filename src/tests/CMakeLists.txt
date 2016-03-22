@@ -25,9 +25,13 @@ add_executable(tests ${TRINITY_TEST_HEADER} ${TRINITY_TEST_SOURCE}
                      $<TARGET_OBJECTS:mocca>
 					 $<TARGET_OBJECTS:silverbullet>
 					 $<TARGET_OBJECTS:jsoncpp>
+					 $<TARGET_OBJECTS:tripeg>
 		     $<TARGET_OBJECTS:opengl-base>
-					 ${CMAKE_CURRENT_LIST_DIR}/main.cpp)					 
+					 ${CMAKE_CURRENT_LIST_DIR}/main.cpp)	
+
 target_link_libraries(tests gmock)
+target_link_libraries(tests turbojpeg-static)
+
 TARGET_LINK_LIBRARIES(tests ${OPENGL_LIBRARIES})
 IF (UNIX AND NOT APPLE)
 	TARGET_LINK_LIBRARIES(tests EGL ${CMAKE_DL_LIBS})
