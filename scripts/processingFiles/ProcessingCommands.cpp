@@ -188,6 +188,82 @@ std::string InitContextCmd::RequestParams::toString() const {
 #define PYTHON_MAGIC_DEFINITION
 
 
+VclType zoomCameraCmd::Type = VclType::ZoomCamera;
+
+void zoomCameraCmd::RequestParams::serialize(ISerialWriter& writer) const {
+	// TODO
+}
+
+void zoomCameraCmd::RequestParams::deserialize(const ISerialReader& reader) {
+	// TODO
+}
+
+bool zoomCameraCmd::RequestParams::equals(const zoomCameraCmd::RequestParams& other) const {
+	// TODO
+    return true;
+}
+
+std::string zoomCameraCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+void zoomCameraCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+	// TODO
+}
+
+void zoomCameraCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+	// TODO
+}
+
+bool zoomCameraCmd::ReplyParams::equals(const zoomCameraCmd::ReplyParams& other) const {
+	// TODO
+    return true;
+}
+
+std::string zoomCameraCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+VclType ZoomCameraCmd::Type = VclType::ZoomCamera;
+
+void ZoomCameraCmd::RequestParams::serialize(ISerialWriter& writer) const {
+	// TODO
+}
+
+void ZoomCameraCmd::RequestParams::deserialize(const ISerialReader& reader) {
+	// TODO
+}
+
+bool ZoomCameraCmd::RequestParams::equals(const ZoomCameraCmd::RequestParams& other) const {
+	// TODO
+    return true;
+}
+
+std::string ZoomCameraCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+void ZoomCameraCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+	// TODO
+}
+
+void ZoomCameraCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+	// TODO
+}
+
+bool ZoomCameraCmd::ReplyParams::equals(const ZoomCameraCmd::ReplyParams& other) const {
+	// TODO
+    return true;
+}
+
+std::string ZoomCameraCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 namespace trinity {
@@ -227,6 +303,32 @@ std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& 
 
 #define PYTHON_MAGIC
 
+
+bool operator==(const zoomCameraCmd::RequestParams& lhs, const zoomCameraCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const zoomCameraCmd::ReplyParams& lhs, const zoomCameraCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const zoomCameraCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const zoomCameraCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const ZoomCameraCmd::RequestParams& lhs, const ZoomCameraCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const ZoomCameraCmd::ReplyParams& lhs, const ZoomCameraCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
 
 #undef PYTHON_MAGIC
 }

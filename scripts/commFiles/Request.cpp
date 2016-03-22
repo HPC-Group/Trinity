@@ -25,6 +25,14 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 #define PYTHON_MAGIC_PROC
 
 
+	else if (type == zoomCameraRequest::Ifc::Type) {
+		return reader->getSerializablePtr<zoomCameraRequest>("req");
+	}
+
+	else if (type == ZoomCameraRequest::Ifc::Type) {
+		return reader->getSerializablePtr<ZoomCameraRequest>("req");
+	}
+
 #undef PYTHON_MAGIC_PROC
 
     // IO commands

@@ -134,6 +134,74 @@ std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& 
 #define PYTHON_MAGIC
 
 
+struct zoomCameraCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+    };
+};
+
+bool operator==(const zoomCameraCmd::RequestParams& lhs, const zoomCameraCmd::RequestParams& rhs);
+bool operator==(const zoomCameraCmd::ReplyParams& lhs, const zoomCameraCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const zoomCameraCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const zoomCameraCmd::ReplyParams& obj);
+
+using zoomCameraRequest = RequestTemplate<zoomCameraCmd>;
+using zoomCameraReply = ReplyTemplate<zoomCameraCmd>;
+
+struct ZoomCameraCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+    };
+};
+
+bool operator==(const ZoomCameraCmd::RequestParams& lhs, const ZoomCameraCmd::RequestParams& rhs);
+bool operator==(const ZoomCameraCmd::ReplyParams& lhs, const ZoomCameraCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::ReplyParams& obj);
+
+using ZoomCameraRequest = RequestTemplate<ZoomCameraCmd>;
+using ZoomCameraReply = ReplyTemplate<ZoomCameraCmd>;
+
 #undef PYTHON_MAGIC
 
 

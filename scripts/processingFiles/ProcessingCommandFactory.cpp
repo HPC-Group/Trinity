@@ -23,6 +23,16 @@ std::unique_ptr<ICommandHandler> ProcessingNodeCommandFactory::createHandler(con
 #define PYTHON_MAGIC
 
 
+	case VclType::ZoomCamera: {
+		return mocca::make_unique<zoomCameraHdl>(static_cast<const zoomCameraRequest&>(request));
+		break;
+	}
+
+	case VclType::ZoomCamera: {
+		return mocca::make_unique<ZoomCameraHdl>(static_cast<const ZoomCameraRequest&>(request));
+		break;
+	}
+
 #undef PYTHON_MAGIC
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

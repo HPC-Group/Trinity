@@ -27,8 +27,10 @@ add_executable(qtfrontend
 			$<TARGET_OBJECTS:silverbullet>
 			$<TARGET_OBJECTS:frontendbaselib>
 		    $<TARGET_OBJECTS:jsoncpp>
+		   	$<TARGET_OBJECTS:tripeg>
 			$<TARGET_OBJECTS:opengl-base>)
 
+TARGET_LINK_LIBRARIES(qtfrontend turbojpeg-static)
 TARGET_LINK_LIBRARIES(qtfrontend Qt5::Widgets)
 TARGET_LINK_LIBRARIES(qtfrontend Qt5::OpenGL)
 TARGET_LINK_LIBRARIES(qtfrontend ${OPENGL_LIBRARIES})

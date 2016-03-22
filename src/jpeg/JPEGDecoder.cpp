@@ -6,8 +6,9 @@
  *
  ****************************************************************/
 
-#include "JPEGDecoder.h"
 #include <turbojpeg.h>
+
+#include "JPEGDecoder.h"
 #include "mocca/log/LogManager.h"
 
 using namespace trinity;

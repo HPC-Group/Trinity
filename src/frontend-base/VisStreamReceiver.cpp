@@ -3,6 +3,7 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
+#include "jpeg/JPEGDecoder.h"
 
 using namespace trinity;
 
@@ -41,6 +42,7 @@ void VisStreamReceiver::run() {
     }
 
     LINFO("(f) vis receiver connected");
+    JPEGDecoder jpeg(JPEGDecoder::Format_RGBA, false);
 
     while (!isInterrupted()) {
         
@@ -55,7 +57,8 @@ void VisStreamReceiver::run() {
                  m_visStream->put(f.decompress)... sth. like this
                  */
                 
-                m_visStream->put(std::move(bytepacket));
+                auto frame = jpeg.decode(bytepacket);
+                m_visStream->put(std::move(frame.release()));
             }
             
         } catch (const mocca::net::NetworkError& err) {

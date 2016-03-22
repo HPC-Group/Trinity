@@ -62,4 +62,16 @@ std::unique_ptr<Reply> InitContextHdl::execute() {
 #define PYTHON_MAGIC
 
 
+zoomCameraHdl::zoomCameraHdl(const zoomCameraRequest& request)
+    : m_request(request) {}
+
+std::unique_ptr<Reply> zoomCameraHdl::execute() {
+}
+
+ZoomCameraHdl::ZoomCameraHdl(const ZoomCameraRequest& request)
+    : m_request(request) {}
+
+std::unique_ptr<Reply> ZoomCameraHdl::execute() {
+}
+
 #undef PYTHON_MAGIC

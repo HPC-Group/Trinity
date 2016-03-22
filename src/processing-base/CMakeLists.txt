@@ -23,11 +23,13 @@ add_executable(processingbase
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>
 				$<TARGET_OBJECTS:jsoncpp>
+				$<TARGET_OBJECTS:tripeg>
 				$<TARGET_OBJECTS:opengl-base>)
 file(GLOB SHADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.glsl)
 file(COPY ${SHADERS} DESTINATION ${CMAKE_BINARY_DIR}/src/processing-base/)
 
 TARGET_LINK_LIBRARIES(processingbase ${OPENGL_LIBRARIES})
+TARGET_LINK_LIBRARIES(processingbase turbojpeg-static)
 IF (UNIX AND NOT APPLE)
 	TARGET_LINK_LIBRARIES(processingbase EGL ${CMAKE_DL_LIBS})
 ENDIF()

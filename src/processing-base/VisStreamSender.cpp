@@ -3,6 +3,7 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
+#include "jpeg/JPEGEncoder.h"
 
 using namespace trinity;
 
@@ -42,6 +43,8 @@ void VisStreamSender::run() {
     }
 
     LINFO("(p) vis sender was bound");
+    JPEGEncoder jpeg(75, JPEGEncoder::Subsample_422);
+    
     while (!isInterrupted()) {
         if(!m_connection->isConnected()) {
             interrupt();
@@ -50,17 +53,11 @@ void VisStreamSender::run() {
 
         auto frameNullable = m_visStream->get();
 
-        /**
-        * THIS IS THE POINT TO INSERT JPEG COMPRESSION
-            Frame newFrame = convert(f);
-            ...
-            m_connection->send(std::move(*newFrame));
-        */
-
-        if(m_connection->isConnected()) {
-        }
-        if (!frameNullable.isNull()) {
+        if (m_connection->isConnected() && !frameNullable.isNull()) {
             try {
+                auto const& params = m_visStream->getStreamingParams();
+                frameNullable = jpeg.encode(frameNullable, params.getResX(), params.getResY());
+                
                 m_connection->send(std::move(frameNullable.release()));
                 // LINFO("(p) frame out");
  	} catch (const mocca::net::NetworkError& err) {

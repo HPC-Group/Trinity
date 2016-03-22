@@ -47,5 +47,25 @@ private:
 #define PYTHON_MAGIC
 
 
+class zoomCameraHdl : public commands::ICommandHandler {
+public:
+    zoomCameraHdl(const commands::zoomCameraRequest& request);
+
+    std::unique_ptr<commands::Reply> execute() override;
+
+private:
+    commands::zoomCameraRequest m_request;
+};
+
+class ZoomCameraHdl : public commands::ICommandHandler {
+public:
+    ZoomCameraHdl(const commands::ZoomCameraRequest& request);
+
+    std::unique_ptr<commands::Reply> execute() override;
+
+private:
+    commands::ZoomCameraRequest m_request;
+};
+
 #undef PYTHON_MAGIC
 }

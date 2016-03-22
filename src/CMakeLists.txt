@@ -3,6 +3,8 @@ include(Macros)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS on)
 
+include_directories(${PROJECT_SOURCE_DIR}/ext/libjpeg-turbo)
+
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
 include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base)
@@ -13,6 +15,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src/silverbullet/include)
 add_subdirectory(mocca)
 add_subdirectory(commands)
 add_subdirectory(common)
+add_subdirectory(jpeg)
 add_subdirectory(silverbullet)
 add_subdirectory(io-base)
 add_subdirectory(frontend-base)
