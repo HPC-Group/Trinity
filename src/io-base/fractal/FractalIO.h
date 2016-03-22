@@ -6,6 +6,8 @@
 #include "io-base/IListData.h"
 #include "common/IIO.h"
 
+#include "commands/TransferFunction1D.h"
+
 #include "mocca/log/LogManager.h"
 
 namespace trinity {
@@ -33,9 +35,22 @@ namespace trinity {
     bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const override;
     IIO::ValueType getType(uint64_t modality) const override;
     IIO::Semantic getSemantic(uint64_t modality) const override;
-    
-    // HACK: this function is still missing
-    // std::string getUserDefinedSemantic(uint64_t modality) const override;
+
+    // HACK: todo function calls
+
+    uint64_t getDefault1DTransferFunctionCount() const; // override;
+    uint64_t getDefault2DTransferFunctionCount() const; // override;
+
+    std::vector<uint64_t> get1DHistogram() const; // override;
+    std::vector<uint64_t> get2DHistogram() const; // override;
+
+    TransferFunction1D getDefault1DTransferFunction(uint64_t index) const; // override;
+//    TransferFunction2D getDefault2DTransferFunction(uint64_t index) const; // override;
+
+    std::string getUserDefinedSemantic(uint64_t modality) const; // override;
+
+    // todo end
+
     
   private:
     Core::Math::Vec3ui64 m_totalSize;

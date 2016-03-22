@@ -1,7 +1,7 @@
 #include "io-base/FractalListData.h"
 #include "io-base/fractal/FractalIO.h"
 
-#include "silverbullet/math/MathTools.h"
+// #include "silverbullet/math/MathTools.h"
 
 #include "common/TrinityError.h"
 #include "mocca/log/LogManager.h"
@@ -15,7 +15,7 @@ FractalIO::FractalIO(const std::string& fileId, const IListData& listData)
 : m_fractalGenerator(nullptr) {
   LINFO("(fractalio) initializing fractal for file id " + fileId);
   const auto fractalListData = dynamic_cast<const FractalListData*>(&listData);
-  
+
   if (fractalListData) {
     LINFO("(fractalio) acquiring total size... ");
     m_totalSize = fractalListData->totalSize(fileId);
@@ -29,12 +29,12 @@ FractalIO::FractalIO(const std::string& fileId, const IListData& listData)
                                                                  m_totalSize.y,
                                                                  m_totalSize.z);
     LINFO("(fractalio) mandelbulb created");
-    
+
     if (!m_bFlat) {
       computeLODInfo();
       LINFO("(fractalio) metadata computed");
     }
-    
+
   } else {
     throw new TrinityError("invalid listData type", __FILE__, __LINE__);
   }
@@ -56,7 +56,7 @@ Vec3ui64 FractalIO::getMaxUsedBrickSizes() const {
 
 MinMaxBlock FractalIO::maxMinForKey(const BrickKey& key) const {
   // TODO: compute gradients and fill 3rd and 4th parameters accordingly
-  
+
   if (!m_bFlat) {
     uint8_t min = 255, max = 0;
     Vec3ui64 start, end, size, pos;
@@ -77,7 +77,7 @@ MinMaxBlock FractalIO::maxMinForKey(const BrickKey& key) const {
         }
       }
     }
-    
+
     return MinMaxBlock(min, max, 0, 1);
   } else {
     return MinMaxBlock(0, 255, 0, 1);
@@ -85,9 +85,9 @@ MinMaxBlock FractalIO::maxMinForKey(const BrickKey& key) const {
 }
 
 uint64_t FractalIO::getLODLevelCount(uint64_t modality) const {
-   if (modality != 0 )
-     throw new TrinityError("invalid modality", __FILE__, __LINE__);
-  
+  if (modality != 0 )
+    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+
   if (!m_bFlat) {
     return m_vLODTable.size();
   } else {
@@ -102,7 +102,7 @@ uint64_t FractalIO::getNumberOfTimesteps() const {
 Vec3ui64 FractalIO::getDomainSize(uint64_t lod, uint64_t modality) const {
   if (modality != 0 )
     throw new TrinityError("invalid modality", __FILE__, __LINE__);
-  
+
   if (!m_bFlat) {
     return m_vLODTable[lod].m_iLODVoxelSize;
   } else {
@@ -123,26 +123,26 @@ Vec3ui FractalIO::getBrickOverlapSize() const {
 }
 
 uint64_t FractalIO::getLargestSingleBrickLOD(uint64_t modality) const {
-    if (modality != 0 )
-        throw new TrinityError("invalid modality", __FILE__, __LINE__);
-    
-    if (!m_bFlat) {
-        for (size_t lod = 0;lod<m_vLODTable.size(); ++lod) {
-            if (m_vLODTable[lod].m_iLODVoxelSize.volume() == 1)
-                return lod;
-        }
-        
-        // this return is never hit by design of the m_vLODTable
-        return m_vLODTable.size()-1;
-    } else {
-        return 0;
+  if (modality != 0 )
+    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+
+  if (!m_bFlat) {
+    for (size_t lod = 0;lod<m_vLODTable.size(); ++lod) {
+      if (m_vLODTable[lod].m_iLODVoxelSize.volume() == 1)
+        return lod;
     }
+
+    // this return is never hit by design of the m_vLODTable
+    return m_vLODTable.size()-1;
+  } else {
+    return 0;
+  }
 }
 
 
 /*
  isLastBrick:
- 
+
  Computes whether a brick is the last brick in a row, column, or slice.
  To do this we simply fetch the brick count of the brick's LoD and
  then check if it's index is equal to the max index.
@@ -150,7 +150,7 @@ uint64_t FractalIO::getLargestSingleBrickLOD(uint64_t modality) const {
 FractalIO::boolVec FractalIO::isLastBrick(const BrickKey& key) const {
   const Vec3ui64 vBrickCoords = get3DIndex(key);
   const Vec3ui vLODSize = getBrickLayout(key.lod, key.modality);
-  
+
   return boolVec(vBrickCoords.x >= vLODSize.x-1,
                  vBrickCoords.y >= vLODSize.y-1,
                  vBrickCoords.z >= vLODSize.z-1);
@@ -158,7 +158,7 @@ FractalIO::boolVec FractalIO::isLastBrick(const BrickKey& key) const {
 
 /*
  ComputeBrickSize:
- 
+
  computes the size of a given brick. The idea is as follows: Any inner brick
  has the maximum size, if it's the last brick it may
  be smaller, so first we determine of the brick is a boundary brick in x, y, and
@@ -176,7 +176,7 @@ Vec3ui FractalIO::getBrickVoxelCounts(const BrickKey& key) const {
     const Vec3ui64 voxelSize = getDomainSize(key.lod, key.modality);
     const Vec3ui   i2Overlap = getBrickOverlapSize()*2;
     const Vec3ui64 effectiveBricksize = getEffectiveBricksize();
-    
+
     return Vec3ui(bIsLast.m_x && (voxelSize.x % effectiveBricksize.x)
                   ? (i2Overlap.x + (voxelSize.x % effectiveBricksize.x))
                   : getMaxUsedBrickSizes().x,
@@ -202,7 +202,7 @@ Vec3f FractalIO::getBrickExtents(const BrickKey& key) const {
 Vec3ui FractalIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
   if (modality != 0 )
     throw new TrinityError("invalid modality", __FILE__, __LINE__);
-  
+
   if (!m_bFlat) {
     return Vec3ui(m_vLODTable[lod].m_iLODBrickCount);
   } else {
@@ -217,26 +217,61 @@ uint64_t FractalIO::getModalityCount() const {
 uint64_t FractalIO::getComponentCount(uint64_t modality) const {
   if (modality != 0 )
     throw new TrinityError("invalid modality", __FILE__, __LINE__);
-  
+
   return 1;
 }
 
+uint64_t FractalIO::getDefault1DTransferFunctionCount() const {
+  return 5;
+}
+
+uint64_t FractalIO::getDefault2DTransferFunctionCount() const {
+  return 1;
+}
+
+
+TransferFunction1D FractalIO::getDefault1DTransferFunction(uint64_t index) const {
+  if (index >= getDefault1DTransferFunctionCount() )
+    throw new TrinityError("invalid 1D TF index", __FILE__, __LINE__);
+
+  float center = float(index)/float(getDefault1DTransferFunctionCount());
+
+  TransferFunction1D tf;
+  tf.setStdFunction(center);
+  return tf;
+}
+
 /*
- 
- HACK: this function is still missing in the header
- 
-  std::string FractalIO::getUserDefinedSemantic(uint64_t modality) const {
-    if (modality != 0 )
-      throw new TrinityError("invalid modality", __FILE__, __LINE__);
-    return "Fractal dataset";
-  }
- 
+ TransferFunction2D FractalIO::getDefault2DTransferFunction(uint64_t index) const {
+ if (index != 0 )
+ throw new TrinityError("invalid 2D TF index", __FILE__, __LINE__);
+
+ return
+ }
  */
+
+std::vector<uint64_t> FractalIO::get1DHistogram() const {
+  // returning an empty vector is well defined an means that this
+  // IO-node is unable to compute a 1D histogram
+  return std::vector<uint64_t>();
+}
+
+std::vector<uint64_t> FractalIO::get2DHistogram() const {
+  // returning an empty vector is well defined an means that this
+  // IO-node is unable to compute a 2D histogram
+  return std::vector<uint64_t>();
+}
+
+std::string FractalIO::getUserDefinedSemantic(uint64_t modality) const {
+  if (modality != 0 )
+    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+  return "Fractal dataset";
+}
 
 Vec2f FractalIO::getRange(uint64_t modality) const {
   if (modality != 0 )
     throw new TrinityError("invalid modality", __FILE__, __LINE__);
-  
+
   return Vec2f(0, 255);
 }
 
@@ -244,7 +279,7 @@ Vec2f FractalIO::getRange(uint64_t modality) const {
 uint64_t FractalIO::getTotalBrickCount(uint64_t modality) const {
   if (!m_bFlat) {
     uint64_t lodLevel = getLODLevelCount(modality);
-    
+
     uint64_t totalBrickCount = 0;
     for (uint64_t lod = 0;lod<lodLevel;++lod)
       totalBrickCount += getBrickLayout(lod, modality).volume();
@@ -255,44 +290,44 @@ uint64_t FractalIO::getTotalBrickCount(uint64_t modality) const {
 }
 
 bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
-    bool created = false;
-    
-    if (data.capacity() < getMaxBrickSize().volume()) {
-        data.reserve(getMaxBrickSize().volume());
-        created = true;
-    }
-    
-    if (!m_bFlat) {
-        Vec3ui64 start, end, size, pos;
-        Vec3d step;
-        genBrickParams(key, start, step, size);
-        pos = start;
-        Vec3d dStart = Vec3d(start);
-        data.resize(size.volume());
+  bool created = false;
+
+  if (data.capacity() < getMaxBrickSize().volume()) {
+    data.reserve(getMaxBrickSize().volume());
+    created = true;
+  }
+
+  if (!m_bFlat) {
+    Vec3ui64 start, end, size, pos;
+    Vec3d step;
+    genBrickParams(key, start, step, size);
+    pos = start;
+    Vec3d dStart = Vec3d(start);
+    data.resize(size.volume());
 #pragma omp parallel for
-        for (int z = 0; z < size.z; ++z) {
-            for (int y = 0; y < size.y; ++y) {
-                for (int x = 0; x < size.x; ++x) {
-                    const size_t i = size_t(x + y * size.x + z * size.x * size.y);
-                    const Vec3ui64 pos = Vec3ui64(dStart + step * Vec3d(x,y,z));
-                    data[i] = m_fractalGenerator->computePoint(pos.x, pos.y, pos.z);
-                }
-            }
+    for (int z = 0; z < size.z; ++z) {
+      for (int y = 0; y < size.y; ++y) {
+        for (int x = 0; x < size.x; ++x) {
+          const size_t i = size_t(x + y * size.x + z * size.x * size.y);
+          const Vec3ui64 pos = Vec3ui64(dStart + step * Vec3d(x,y,z));
+          data[i] = m_fractalGenerator->computePoint(pos.x, pos.y, pos.z);
         }
-    } else {
-        data.resize(m_totalSize.volume());
-#pragma omp parallel for
-        for (int z = 0; z < m_totalSize.z; ++z) {
-            for (int y = 0; y < m_totalSize.y; ++y) {
-                for (int x = 0; x < m_totalSize.x; ++x) {
-                    const size_t i = size_t(x + y * m_totalSize.x + z *
-                                            m_totalSize.x * m_totalSize.y);
-                    data[i] = m_fractalGenerator->computePoint(x, y, z);
-                }
-            }
-        }
+      }
     }
-    return created;
+  } else {
+    data.resize(m_totalSize.volume());
+#pragma omp parallel for
+    for (int z = 0; z < m_totalSize.z; ++z) {
+      for (int y = 0; y < m_totalSize.y; ++y) {
+        for (int x = 0; x < m_totalSize.x; ++x) {
+          const size_t i = size_t(x + y * m_totalSize.x + z *
+                                  m_totalSize.x * m_totalSize.y);
+          data[i] = m_fractalGenerator->computePoint(x, y, z);
+        }
+      }
+    }
+  }
+  return created;
 }
 
 IIO::ValueType FractalIO::getType(uint64_t modality) const {
@@ -302,7 +337,7 @@ IIO::ValueType FractalIO::getType(uint64_t modality) const {
 IIO::Semantic FractalIO::getSemantic(uint64_t modality) const {
   if (modality != 0 )
     throw new TrinityError("invalid modality", __FILE__, __LINE__);
-  
+
   return Semantic::Scalar;
 }
 
@@ -323,29 +358,29 @@ void FractalIO::genBrickParams(const BrickKey& brickKey,
                                Vec3ui64& size) const {
 
   const Vec3ui64 effectiveBricksize = getEffectiveBricksize();
-  
+
   size  = Vec3ui64(getBrickVoxelCounts(brickKey));
   start = get3DIndex(brickKey) * effectiveBricksize - Vec3ui64(getBrickOverlapSize());
   stepping =
-    Vec3d(m_totalSize)/Vec3d(getDomainSize(brickKey.lod, brickKey.modality));
+  Vec3d(m_totalSize)/Vec3d(getDomainSize(brickKey.lod, brickKey.modality));
 }
 
 void FractalIO::computeLODInfo() {
   Vec3ui64 vVolumeSize = m_totalSize;
   Vec3f vAspect(1.0,1.0,1.0);
-  
+
   const Vec3ui64 vUsableBrickSize = getEffectiveBricksize();
   do {
     LODInfo l;
     l.m_iLODVoxelSize = vVolumeSize;
-    
+
     // downsample the volume (except for the first LoD)
     if (!m_vLODTable.empty())  {
       if (vVolumeSize.x > 1) {
         l.m_iLODVoxelSize.x = uint64_t(ceil(vVolumeSize.x/2.0));
         vAspect.x *= (vVolumeSize.x%2) ? float(vVolumeSize.x)/float(l.m_iLODVoxelSize.x) : 2;
       }
-      
+
       if (vVolumeSize.y > 1) {
         l.m_iLODVoxelSize.y = uint64_t(ceil(vVolumeSize.y/2.0));
         vAspect.y *= (vVolumeSize.y%2) ? float(vVolumeSize.y)/float(l.m_iLODVoxelSize.y) : 2;
@@ -355,10 +390,10 @@ void FractalIO::computeLODInfo() {
         vAspect.z *= (vVolumeSize.z%2) ? float(vVolumeSize.z)/float(l.m_iLODVoxelSize.z) : 2;
       }
       vAspect /= vAspect.maxVal();
-      
+
       vVolumeSize = l.m_iLODVoxelSize;
     }
-    
+
     l.m_vAspect = vAspect;
     l.m_iLODBrickCount.x = uint64_t(ceil(vVolumeSize.x /
                                          double(vUsableBrickSize.x)));
@@ -366,7 +401,7 @@ void FractalIO::computeLODInfo() {
                                          double(vUsableBrickSize.y)));
     l.m_iLODBrickCount.z = uint64_t(ceil(vVolumeSize.z /
                                          double(vUsableBrickSize.z)));
-    
+
     m_vLODTable.push_back(l);
   } while (vVolumeSize.x > 1 ||  vVolumeSize.y > 1 || vVolumeSize.z > 1);
 }
