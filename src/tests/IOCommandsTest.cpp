@@ -478,7 +478,9 @@ TEST_F(IOCommandsTest, GetBrickCmd) {
         ASSERT_EQ(target, result);
     }
     {
-        GetBrickCmd::ReplyParams target(std::vector<uint8_t>{ 0x12, 0x34, 0x56, 0x78, 0x9A }, true);
+        std::initializer_list<uint8_t> data = { 0x12, 0x34, 0x56, 0x78, 0x9A };
+        auto binary = std::make_shared<const std::vector<uint8_t>>(data);
+        GetBrickCmd::ReplyParams target(binary, true);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
     }
@@ -493,7 +495,7 @@ TEST_F(IOCommandsTest, GetBrickReqRep) {
     GetBrickRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetBrickHdl>(request, session.get());
     ASSERT_EQ(true, reply.getParams().getSuccess());
-    ASSERT_EQ(brick, reply.getParams().getBrick());
+    ASSERT_EQ(brick, *reply.getParams().getBrick());
 }
 
 TEST_F(IOCommandsTest, GetTypeCmd) {

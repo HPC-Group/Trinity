@@ -136,8 +136,8 @@ bool IOSessionProxy::getBrick(const BrickKey& brickKey, std::vector<uint8_t>& da
     GetBrickRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     const auto& replyParams = reply->getParams();
-    const auto& brick = replyParams.getBrick();
-    std::copy(begin(brick), end(brick), begin(data)); // fixme: avoid copying of brick
+    auto brick = replyParams.getBrick();
+    std::copy(begin(*brick), end(*brick), begin(data)); // fixme: avoid copying of brick
     return replyParams.getSuccess();
 }
 

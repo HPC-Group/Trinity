@@ -833,7 +833,7 @@ struct GetBrickCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        explicit ReplyParams(std::vector<uint8_t> brick, bool success);
+        explicit ReplyParams(std::shared_ptr<const std::vector<uint8_t>> brick, bool success);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -842,11 +842,11 @@ struct GetBrickCmd {
         bool equals(const ReplyParams& other) const;
 
         bool getSuccess() const;
-        const std::vector<uint8_t>& getBrick() const; // returning reference for performance reasons, be careful!
+        std::shared_ptr<const std::vector<uint8_t>> getBrick() const;
 
     private:
         bool m_success;
-        std::vector<uint8_t> m_brick;
+        std::shared_ptr<const std::vector<uint8_t>> m_brick;
     };
 };
 

@@ -985,29 +985,29 @@ BrickKey GetBrickCmd::RequestParams::getBrickKey() const {
     return m_brickKey;
 }
 
-GetBrickCmd::ReplyParams::ReplyParams(std::vector<uint8_t> brick, bool success)
+GetBrickCmd::ReplyParams::ReplyParams(std::shared_ptr<const std::vector<uint8_t>> brick, bool success)
     : m_success(success)
-    , m_brick(std::move(brick)) {}
+    , m_brick(brick) {}
 
 void GetBrickCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     writer.appendBool("success", m_success);
-    writer.appendBinary(m_brick);
+    writer.appendBinary(*m_brick);
 }
 
 void GetBrickCmd::ReplyParams::deserialize(const ISerialReader& reader) {
     m_success = reader.getBool("success");
-    m_brick = *reader.getBinary();
+    m_brick = reader.getBinary();
 }
 
 bool GetBrickCmd::ReplyParams::equals(const GetBrickCmd::ReplyParams& other) const {
-    return m_success == other.m_success && m_brick == other.m_brick;
+    return m_success == other.m_success && *m_brick == *other.m_brick;
 }
 
 std::string GetBrickCmd::ReplyParams::toString() const {
     std::stringstream stream;
     stream << "success: " << m_success;
     stream << "; brick: ";
-    ::operator<<(stream, m_brick); // ugly, but necessary because of namespaces
+    ::operator<<(stream, *m_brick); // ugly, but necessary because of namespaces
     return stream.str();
 }
 
@@ -1015,7 +1015,7 @@ bool GetBrickCmd::ReplyParams::getSuccess() const {
     return m_success;
 }
 
-const std::vector<uint8_t>& GetBrickCmd::ReplyParams::getBrick() const {
+std::shared_ptr<const std::vector<uint8_t>> GetBrickCmd::ReplyParams::getBrick() const {
     return m_brick;
 }
 
