@@ -7,40 +7,38 @@
    *
    */
 class GLModel{
-public:
-    GLModel();
-    virtual ~GLModel();
+    public:
+        GLModel();
+        virtual ~GLModel();
 
-    virtual void Initialize(float vertices[], int indices[], int m_vertexCount, int m_indexCount);
+        virtual void Initialize(float vertices[], int indices[], int m_vertexCount, int m_indexCount);
 
-    void paint(GLenum mode = GL_TRIANGLES);
-
-
-
-	uint64_t GetGPUSize() const;
-
-protected:
-	void updateVertexData(float vertices[], int m_vertexCount);
-
-private:
-    bool  m_bInitialized;
-
-    GLuint m_VertexArrayObjectHandle;
-    GLuint m_VertexBufferObjectHandle;
-    GLuint m_VertexIndexObjectHandle;
-
-    GLuint m_ElementCount;
+        void paint(GLenum mode = GL_TRIANGLES);
 
 
-	uint64_t m_gpuSize;
 
-    Core::Math::Vec3f m_position;
-};
+        uint64_t GetGPUSize() const;
 
-class GLSphere: public GLModel{
-public:
-  GLSphere();
-  virtual ~GLSphere();
+    protected:
+        void updateVertexData(float vertices[], int m_vertexCount);
 
-private:
+    private:
+        bool  m_bInitialized;
+
+        GLuint m_VertexArrayObjectHandle;
+        GLuint m_VertexBufferObjectHandle;
+        GLuint m_VertexIndexObjectHandle;
+
+        GLuint m_ElementCount;
+
+
+        uint64_t m_gpuSize;
+
+        Core::Math::Vec3f m_position;
+    };
+
+    class GLSphere: public GLModel{
+    public:
+      GLSphere();
+      virtual ~GLSphere();
 };
