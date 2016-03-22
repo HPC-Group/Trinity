@@ -255,42 +255,44 @@ uint64_t FractalIO::getTotalBrickCount(uint64_t modality) const {
 }
 
 bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
-  bool created = false;
-  
-  if (data.size() < getMaxBrickSize().volume()) {
-    data.resize(getMaxBrickSize().volume());
-    created = true;
-  }
-  
-  if (!m_bFlat) {
-    Vec3ui64 start, end, size, pos;
-    Vec3d step;
-    genBrickParams(key, start, step, size);
-    pos = start;
-    Vec3d dStart = Vec3d(start);
-#pragma omp parallel for
-    for (int z = 0; z < size.z; ++z) {
-      for (int y = 0; y < size.y; ++y) {
-        for (int x = 0; x < size.x; ++x) {
-          const size_t i = size_t(x + y * size.x + z * size.x * size.y);
-          const Vec3ui64 pos = Vec3ui64(dStart + step * Vec3d(x,y,z));
-          data[i] = m_fractalGenerator->computePoint(pos.x, pos.y, pos.z);
-        }
-      }
+    bool created = false;
+    
+    if (data.capacity() < getMaxBrickSize().volume()) {
+        data.reserve(getMaxBrickSize().volume());
+        created = true;
     }
-  } else {
+    
+    if (!m_bFlat) {
+        Vec3ui64 start, end, size, pos;
+        Vec3d step;
+        genBrickParams(key, start, step, size);
+        pos = start;
+        Vec3d dStart = Vec3d(start);
+        data.resize(size.volume());
 #pragma omp parallel for
-    for (int z = 0; z < m_totalSize.z; ++z) {
-      for (int y = 0; y < m_totalSize.y; ++y) {
-        for (int x = 0; x < m_totalSize.x; ++x) {
-          const size_t i = size_t(x + y * m_totalSize.x + z *
-                                  m_totalSize.x * m_totalSize.y);
-          data[i] = m_fractalGenerator->computePoint(x, y, z);
+        for (int z = 0; z < size.z; ++z) {
+            for (int y = 0; y < size.y; ++y) {
+                for (int x = 0; x < size.x; ++x) {
+                    const size_t i = size_t(x + y * size.x + z * size.x * size.y);
+                    const Vec3ui64 pos = Vec3ui64(dStart + step * Vec3d(x,y,z));
+                    data[i] = m_fractalGenerator->computePoint(pos.x, pos.y, pos.z);
+                }
+            }
         }
-      }
+    } else {
+        data.resize(m_totalSize.volume());
+#pragma omp parallel for
+        for (int z = 0; z < m_totalSize.z; ++z) {
+            for (int y = 0; y < m_totalSize.y; ++y) {
+                for (int x = 0; x < m_totalSize.x; ++x) {
+                    const size_t i = size_t(x + y * m_totalSize.x + z *
+                                            m_totalSize.x * m_totalSize.y);
+                    data[i] = m_fractalGenerator->computePoint(x, y, z);
+                }
+            }
+        }
     }
-  }
-  return created;
+    return created;
 }
 
 IIO::ValueType FractalIO::getType(uint64_t modality) const {
