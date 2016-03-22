@@ -80,6 +80,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<Get2DHistogramReply>("rep");
     } else if (type == GetUserDefinedSemanticReply::Ifc::Type) {
         return reader->getSerializablePtr<GetUserDefinedSemanticReply>("rep");
+    } else if (type == GetDefault1DTransferFunctionReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetDefault1DTransferFunctionReply>("rep");
     }
 
 #undef PYTHON_MAGIC_IO

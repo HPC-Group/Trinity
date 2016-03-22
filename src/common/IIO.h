@@ -1,5 +1,7 @@
 #pragma once
 
+#include "commands/TransferFunction1D.h"
+
 #include "silverbullet/dataio/base/Brick.h"
 #include "silverbullet/math/MinMaxBlock.h"
 #include "silverbullet/math/Vectors.h"
@@ -46,7 +48,7 @@ public:
     virtual uint64_t getDefault2DTransferFunctionCount() const = 0;
     virtual std::vector<uint64_t> get1DHistogram() const = 0;
     virtual std::vector<uint64_t> get2DHistogram() const = 0;
-
+    virtual TransferFunction1D getDefault1DTransferFunction(uint64_t index) const = 0;
     virtual std::string getUserDefinedSemantic(uint64_t modality) const = 0;
 };
 }

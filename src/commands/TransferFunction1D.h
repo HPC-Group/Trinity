@@ -12,8 +12,8 @@ namespace trinity {
 
 class TransferFunction1D : public SerializableTemplate<TransferFunction1D> {
 public:
-    TransferFunction1D(size_t iSize = 0);
-    TransferFunction1D(const std::string& filename);
+    explicit TransferFunction1D(size_t iSize = 0);
+    explicit TransferFunction1D(const std::string& filename);
     ~TransferFunction1D(void);
 
     void setStdFunction(float fCenterPoint = 0.5f, float fInvGradient = 0.5f);
@@ -42,6 +42,9 @@ public:
     void computeNonZeroLimits();
     const Core::Math::Vec2ui64& getNonZeroLimits() { return m_vValueBBox; }
 
+    bool equals(const TransferFunction1D& other) const;
+    std::string toString() const;
+
     // from ISerializable
     void serialize(ISerialWriter& writer) const override;
     void deserialize(const ISerialReader& reader) override;
@@ -52,4 +55,7 @@ private:
 
     float smoothstep(float x) const;
 };
+
+bool operator==(const TransferFunction1D& lhs, const TransferFunction1D& rhs);
+std::ostream& operator<<(std::ostream& os, const TransferFunction1D& obj);
 }

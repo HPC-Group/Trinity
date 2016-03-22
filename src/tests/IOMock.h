@@ -27,6 +27,6 @@ public:
     MOCK_CONST_METHOD0(getDefault2DTransferFunctionCount, uint64_t());
     MOCK_CONST_METHOD0(get1DHistogram, std::vector<uint64_t>());
     MOCK_CONST_METHOD0(get2DHistogram, std::vector<uint64_t>());
-
+    MOCK_CONST_METHOD1(getDefault1DTransferFunction, trinity::TransferFunction1D(uint64_t));
     MOCK_CONST_METHOD1(getUserDefinedSemantic, std::string(uint64_t));
 };

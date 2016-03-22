@@ -245,4 +245,12 @@ std::unique_ptr<Reply> GetUserDefinedSemanticHdl::execute() {
     return mocca::make_unique<GetUserDefinedSemanticReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetDefault1DTransferFunctionHdl::GetDefault1DTransferFunctionHdl(const GetDefault1DTransferFunctionRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetDefault1DTransferFunctionHdl::execute() {
+    GetDefault1DTransferFunctionCmd::ReplyParams params(m_session->getIO().getDefault1DTransferFunction(m_request.getParams().getIndex()));
+    return mocca::make_unique<GetDefault1DTransferFunctionReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

@@ -967,7 +967,7 @@ struct GetDefault1DTransferFunctionCountCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(uint64_t count);
+        explicit ReplyParams(uint64_t count);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -1007,7 +1007,7 @@ struct GetDefault2DTransferFunctionCountCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(uint64_t count);
+        explicit ReplyParams(uint64_t count);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -1047,7 +1047,7 @@ struct Get1DHistogramCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const std::vector<uint64_t>& histogram);
+        explicit ReplyParams(const std::vector<uint64_t>& histogram);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -1087,7 +1087,7 @@ struct Get2DHistogramCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const std::vector<uint64_t>& histogram);
+        explicit ReplyParams(const std::vector<uint64_t>& histogram);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -1133,7 +1133,7 @@ struct GetUserDefinedSemanticCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const std::string& semantic);
+        explicit ReplyParams(const std::string& semantic);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -1155,6 +1155,52 @@ std::ostream& operator<<(std::ostream& os, const GetUserDefinedSemanticCmd::Repl
 
 using GetUserDefinedSemanticRequest = RequestTemplate<GetUserDefinedSemanticCmd>;
 using GetUserDefinedSemanticReply = ReplyTemplate<GetUserDefinedSemanticCmd>;
+
+struct GetDefault1DTransferFunctionCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        explicit RequestParams(uint64_t index);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getIndex() const;
+
+    private:
+        uint64_t m_index;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        explicit ReplyParams(const TransferFunction1D& function);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+    
+        TransferFunction1D getFunction() const;
+
+    private:
+        TransferFunction1D m_function;
+    };
+};
+
+bool operator==(const GetDefault1DTransferFunctionCmd::RequestParams& lhs, const GetDefault1DTransferFunctionCmd::RequestParams& rhs);
+bool operator==(const GetDefault1DTransferFunctionCmd::ReplyParams& lhs, const GetDefault1DTransferFunctionCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCmd::ReplyParams& obj);
+
+using GetDefault1DTransferFunctionRequest = RequestTemplate<GetDefault1DTransferFunctionCmd>;
+using GetDefault1DTransferFunctionReply = ReplyTemplate<GetDefault1DTransferFunctionCmd>;
 
 #undef PYTHON_MAGIC
 

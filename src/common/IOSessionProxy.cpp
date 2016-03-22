@@ -189,3 +189,10 @@ std::string trinity::IOSessionProxy::getUserDefinedSemantic(uint64_t modality) c
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getSemantic();
 }
+
+TransferFunction1D IOSessionProxy::getDefault1DTransferFunction(uint64_t index) const {
+    GetDefault1DTransferFunctionCmd::RequestParams params(index);
+    GetDefault1DTransferFunctionRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getFunction();
+}

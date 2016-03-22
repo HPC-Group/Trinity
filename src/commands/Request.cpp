@@ -84,6 +84,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<Get2DHistogramRequest>("req");
     } else if (type == GetUserDefinedSemanticRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetUserDefinedSemanticRequest>("req");
+    } else if (type == GetDefault1DTransferFunctionRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetDefault1DTransferFunctionRequest>("req");
     }
 
 #undef PYTHON_MAGIC_IO

@@ -673,3 +673,30 @@ TEST_F(IOCommandsTest, TransferFunction1D) {
     ASSERT_EQ(target.getRAWData(), result.getRAWData());
     ASSERT_EQ(target.getNonZeroLimits(), result.getNonZeroLimits());
 }
+
+TEST_F(IOCommandsTest, GetDefault1DTransferFunctionCmd) {
+    {
+        GetDefault1DTransferFunctionCmd::RequestParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        TransferFunction1D function;
+        function.set({ 0x11, 0x22, 0x33, 0xAA, 0xBB, 0xCC });
+        GetDefault1DTransferFunctionCmd::ReplyParams target(function);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetDefault1DTransferFunctionReqRep) {
+    auto session = createMockSession();
+    TransferFunction1D function;
+    function.set({ 0x11, 0x22, 0x33, 0xAA, 0xBB, 0xCC });
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDefault1DTransferFunction(42)).Times(1).WillOnce(Return(function));
+
+    GetDefault1DTransferFunctionCmd::RequestParams requestParams(42);
+    GetDefault1DTransferFunctionRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetDefault1DTransferFunctionHdl>(request, session.get());
+    ASSERT_EQ(function, reply.getParams().getFunction());
+}

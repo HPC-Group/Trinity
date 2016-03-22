@@ -1357,6 +1357,60 @@ std::string GetUserDefinedSemanticCmd::ReplyParams::getSemantic() const {
     return m_semantic;
 }
 
+////////////// GetDefault1DTransferFunctionCmd //////////////
+
+VclType GetDefault1DTransferFunctionCmd::Type = VclType::GetDefault1DTransferFunction;
+
+GetDefault1DTransferFunctionCmd::RequestParams::RequestParams(uint64_t index)
+    : m_index(index) {}
+
+void GetDefault1DTransferFunctionCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("index", m_index);
+}
+
+void GetDefault1DTransferFunctionCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_index = reader.getUInt64("index");
+}
+
+bool GetDefault1DTransferFunctionCmd::RequestParams::equals(const GetDefault1DTransferFunctionCmd::RequestParams& other) const {
+    return m_index == other.m_index;
+}
+
+std::string GetDefault1DTransferFunctionCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "index: " << m_index;
+    return stream.str();
+}
+
+uint64_t GetDefault1DTransferFunctionCmd::RequestParams::getIndex() const {
+    return m_index;
+}
+
+GetDefault1DTransferFunctionCmd::ReplyParams::ReplyParams(const TransferFunction1D& function)
+    : m_function(function) {}
+
+void GetDefault1DTransferFunctionCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("function", m_function);
+}
+
+void GetDefault1DTransferFunctionCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_function = reader.getSerializable<TransferFunction1D>("function");
+}
+
+bool GetDefault1DTransferFunctionCmd::ReplyParams::equals(const GetDefault1DTransferFunctionCmd::ReplyParams& other) const {
+    return m_function == other.m_function;
+}
+
+std::string GetDefault1DTransferFunctionCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "function: " << m_function;
+    return stream.str();
+}
+
+TransferFunction1D GetDefault1DTransferFunctionCmd::ReplyParams::getFunction() const {
+    return m_function;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1710,6 +1764,20 @@ std::ostream& operator<<(std::ostream& os, const GetUserDefinedSemanticCmd::Requ
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetUserDefinedSemanticCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetDefault1DTransferFunctionCmd::RequestParams& lhs, const GetDefault1DTransferFunctionCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetDefault1DTransferFunctionCmd::ReplyParams& lhs, const GetDefault1DTransferFunctionCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

@@ -298,5 +298,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetDefault1DTransferFunctionHdl : public ICommandHandler {
+public:
+    GetDefault1DTransferFunctionHdl(const GetDefault1DTransferFunctionRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetDefault1DTransferFunctionRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }
