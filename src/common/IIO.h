@@ -43,7 +43,7 @@ public:
     virtual ValueType getType(uint64_t modality) const = 0;
     virtual Semantic getSemantic(uint64_t modality) const = 0;
     virtual uint64_t getDefault1DTransferFunctionCount() const = 0;
-
+    virtual uint64_t getDefault2DTransferFunctionCount() const = 0;
 
 
     // not sure if we need that

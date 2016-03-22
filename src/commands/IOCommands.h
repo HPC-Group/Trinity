@@ -990,6 +990,46 @@ std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCou
 using GetDefault1DTransferFunctionCountRequest = RequestTemplate<GetDefault1DTransferFunctionCountCmd>;
 using GetDefault1DTransferFunctionCountReply = ReplyTemplate<GetDefault1DTransferFunctionCountCmd>;
 
+struct GetDefault2DTransferFunctionCountCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t count);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getCount() const;
+
+    private:
+        uint64_t m_count;
+    };
+};
+
+bool operator==(const GetDefault2DTransferFunctionCountCmd::RequestParams& lhs, const GetDefault2DTransferFunctionCountCmd::RequestParams& rhs);
+bool operator==(const GetDefault2DTransferFunctionCountCmd::ReplyParams& lhs, const GetDefault2DTransferFunctionCountCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetDefault2DTransferFunctionCountCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetDefault2DTransferFunctionCountCmd::ReplyParams& obj);
+
+using GetDefault2DTransferFunctionCountRequest = RequestTemplate<GetDefault2DTransferFunctionCountCmd>;
+using GetDefault2DTransferFunctionCountReply = ReplyTemplate<GetDefault2DTransferFunctionCountCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

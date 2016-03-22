@@ -35,6 +35,7 @@ public:
     IIO::ValueType getType(uint64_t modality) const override;
     IIO::Semantic getSemantic(uint64_t modality) const override;
     uint64_t getDefault1DTransferFunctionCount() const override;
+    uint64_t getDefault2DTransferFunctionCount() const override;
 
 private:
     CommandInputChannel m_inputChannel;

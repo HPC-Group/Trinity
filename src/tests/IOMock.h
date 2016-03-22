@@ -24,4 +24,5 @@ public:
     MOCK_CONST_METHOD1(getType, IIO::ValueType(uint64_t));
     MOCK_CONST_METHOD1(getSemantic, IIO::Semantic(uint64_t));
     MOCK_CONST_METHOD0(getDefault1DTransferFunctionCount, uint64_t());
+    MOCK_CONST_METHOD0(getDefault2DTransferFunctionCount, uint64_t());
 };

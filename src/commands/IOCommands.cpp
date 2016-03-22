@@ -1129,6 +1129,9 @@ IIO::Semantic GetSemanticCmd::ReplyParams::getSemantic() const {
     return m_semantic;
 }
 
+
+////////////// GetDefault1DTransferFunctionCountCmd //////////////
+
 VclType GetDefault1DTransferFunctionCountCmd::Type = VclType::GetDefault1DTransferFunctionCount;
 
 void GetDefault1DTransferFunctionCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
@@ -1166,6 +1169,49 @@ std::string GetDefault1DTransferFunctionCountCmd::ReplyParams::toString() const 
 }
 
 uint64_t GetDefault1DTransferFunctionCountCmd::ReplyParams::getCount() const {
+    return m_count;
+}
+
+
+////////////// GetDefault2DTransferFunctionCountCmd //////////////
+
+VclType GetDefault2DTransferFunctionCountCmd::Type = VclType::GetDefault2DTransferFunctionCount;
+
+void GetDefault2DTransferFunctionCountCmd::RequestParams::serialize(ISerialWriter & writer) const {}
+
+void GetDefault2DTransferFunctionCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetDefault2DTransferFunctionCountCmd::RequestParams::equals(const GetDefault2DTransferFunctionCountCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetDefault2DTransferFunctionCountCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetDefault2DTransferFunctionCountCmd::ReplyParams::ReplyParams(uint64_t count)
+    : m_count(count) {}
+
+void GetDefault2DTransferFunctionCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("count", m_count);
+}
+
+void GetDefault2DTransferFunctionCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_count = reader.getUInt64("count");
+}
+
+bool GetDefault2DTransferFunctionCountCmd::ReplyParams::equals(const GetDefault2DTransferFunctionCountCmd::ReplyParams& other) const {
+    return m_count == other.m_count;
+}
+
+std::string GetDefault2DTransferFunctionCountCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "count: " << m_count;
+    return stream.str();
+}
+
+uint64_t GetDefault2DTransferFunctionCountCmd::ReplyParams::getCount() const {
     return m_count;
 }
 
@@ -1470,6 +1516,22 @@ std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCou
 std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
+
+bool operator==(const GetDefault2DTransferFunctionCountCmd::RequestParams& lhs,
+                const GetDefault2DTransferFunctionCountCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetDefault2DTransferFunctionCountCmd::ReplyParams& lhs,
+                const GetDefault2DTransferFunctionCountCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetDefault2DTransferFunctionCountCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetDefault2DTransferFunctionCountCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
 
 #undef PYTHON_MAGIC
 }

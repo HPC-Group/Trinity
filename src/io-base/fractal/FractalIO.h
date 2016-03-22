@@ -36,10 +36,10 @@ namespace trinity {
     IIO::ValueType getType(uint64_t modality) const override;
     IIO::Semantic getSemantic(uint64_t modality) const override;
     uint64_t getDefault1DTransferFunctionCount() const override;
+    uint64_t getDefault2DTransferFunctionCount() const override;
 
     // HACK: todo function calls
 
-    uint64_t getDefault2DTransferFunctionCount() const; // override;
 
     std::vector<uint64_t> get1DHistogram() const; // override;
     std::vector<uint64_t> get2DHistogram() const; // override;

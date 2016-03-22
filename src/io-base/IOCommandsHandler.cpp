@@ -213,4 +213,12 @@ std::unique_ptr<Reply> GetDefault1DTransferFunctionCountHdl::execute() {
     return mocca::make_unique<GetDefault1DTransferFunctionCountReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetDefault2DTransferFunctionCountHdl::GetDefault2DTransferFunctionCountHdl(const GetDefault2DTransferFunctionCountRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetDefault2DTransferFunctionCountHdl::execute() {
+    GetDefault2DTransferFunctionCountCmd::ReplyParams params(m_session->getIO().getDefault2DTransferFunctionCount());
+    return mocca::make_unique<GetDefault2DTransferFunctionCountReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

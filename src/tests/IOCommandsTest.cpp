@@ -566,3 +566,26 @@ TEST_F(IOCommandsTest, GetDefault1DTransferFunctionCountReqRep) {
     auto reply = trinity::testing::handleRequest<GetDefault1DTransferFunctionCountHdl>(request, session.get());
     ASSERT_EQ(4711, reply.getParams().getCount());
 }
+
+TEST_F(IOCommandsTest, GetDefault2DTransferFunctionCountCmd) {
+    {
+        GetDefault2DTransferFunctionCountCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetDefault2DTransferFunctionCountCmd::ReplyParams target(4711);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetDefault2DTransferFunctionCountReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDefault2DTransferFunctionCount()).Times(1).WillOnce(Return(4711));
+
+    GetDefault2DTransferFunctionCountCmd::RequestParams requestParams;
+    GetDefault2DTransferFunctionCountRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetDefault2DTransferFunctionCountHdl>(request, session.get());
+    ASSERT_EQ(4711, reply.getParams().getCount());
+}

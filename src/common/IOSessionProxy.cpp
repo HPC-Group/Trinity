@@ -161,3 +161,10 @@ uint64_t IOSessionProxy::getDefault1DTransferFunctionCount() const {
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getCount();
 }
+
+uint64_t IOSessionProxy::getDefault2DTransferFunctionCount() const {
+    GetDefault2DTransferFunctionCountCmd::RequestParams params;
+    GetDefault2DTransferFunctionCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getCount();
+}
