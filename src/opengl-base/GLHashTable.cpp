@@ -10,9 +10,9 @@
  #include <opengl-base/VolumeCore/nonstd.h>
  #include <opengl-base/VolumeCore/VolumeTools.h>
 
- #include "GLCore/GLProgram.h"
- #include "GLCore/GLTexture1D.h"
- #include "GLCore/GLTexture2D.h"
+ #include "GLProgram.h"
+ #include "GLTexture1D.h"
+ #include "GLTexture2D.h"
 
  #include "ShaderDescriptor.h"
 

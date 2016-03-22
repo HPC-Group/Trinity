@@ -1,5 +1,5 @@
 #include "GLTargetBinder.h"
-#include "opengl-base/GLCore/GLFrameBufferObject.h"
+#include "opengl-base/GLFrameBufferObject.h"
 
 GLTargetBinder::GLTargetBinder()
 {

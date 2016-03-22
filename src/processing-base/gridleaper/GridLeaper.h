@@ -5,10 +5,10 @@
 
 #include <memory>
 
-#include "opengl-base/GLCore/GLProgram.h"
-#include "opengl-base/GLCore/GLFrameBufferObject.h"
+#include "opengl-base/GLProgram.h"
+#include "opengl-base/GLFrameBufferObject.h"
 #include "opengl-base/OpenGlHeadlessContext.h"
-#include "opengl-base/GLCore/GLVolumeBox.h"
+#include "opengl-base/GLVolumeBox.h"
 #include "opengl-base/ShaderDescriptor.h"
 #include "opengl-base/GLTargetBinder.h"
 
