@@ -287,5 +287,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetUserDefinedSemanticHdl : public ICommandHandler {
+public:
+    GetUserDefinedSemanticHdl(const GetUserDefinedSemanticRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetUserDefinedSemanticRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

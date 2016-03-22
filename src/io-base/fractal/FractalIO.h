@@ -40,6 +40,7 @@ namespace trinity {
     std::vector<uint64_t> get1DHistogram() const override;
     std::vector<uint64_t> get2DHistogram() const override;
 
+    std::string getUserDefinedSemantic(uint64_t modality) const override;
     // HACK: todo function calls
 
 
@@ -47,7 +48,6 @@ namespace trinity {
     TransferFunction1D getDefault1DTransferFunction(uint64_t index) const; // override;
 //    TransferFunction2D getDefault2DTransferFunction(uint64_t index) const; // override;
 
-    std::string getUserDefinedSemantic(uint64_t modality) const; // override;
 
     // todo end
 

@@ -237,4 +237,12 @@ std::unique_ptr<Reply> Get2DHistogramHdl::execute() {
     return mocca::make_unique<Get2DHistogramReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetUserDefinedSemanticHdl::GetUserDefinedSemanticHdl(const GetUserDefinedSemanticRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetUserDefinedSemanticHdl::execute() {
+    GetUserDefinedSemanticCmd::ReplyParams params(m_session->getIO().getUserDefinedSemantic(m_request.getParams().getModality()));
+    return mocca::make_unique<GetUserDefinedSemanticReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

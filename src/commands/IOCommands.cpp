@@ -1302,6 +1302,61 @@ std::vector<uint64_t> Get2DHistogramCmd::ReplyParams::getHistogram() const {
     return m_histogram;
 }
 
+
+////////////// GetUserDefinedSemanticCmd //////////////
+
+VclType GetUserDefinedSemanticCmd::Type = VclType::GetUserDefinedSemantic;
+
+GetUserDefinedSemanticCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
+
+void GetUserDefinedSemanticCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetUserDefinedSemanticCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
+
+bool GetUserDefinedSemanticCmd::RequestParams::equals(const GetUserDefinedSemanticCmd::RequestParams& other) const {
+    return m_modality == other.m_modality;
+}
+
+std::string GetUserDefinedSemanticCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
+}
+
+uint64_t GetUserDefinedSemanticCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+GetUserDefinedSemanticCmd::ReplyParams::ReplyParams(const std::string& semantic)
+    : m_semantic(semantic) {}
+
+void GetUserDefinedSemanticCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendString("semantic", m_semantic);
+}
+
+void GetUserDefinedSemanticCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_semantic = reader.getString("semantic");
+}
+
+bool GetUserDefinedSemanticCmd::ReplyParams::equals(const GetUserDefinedSemanticCmd::ReplyParams& other) const {
+    return m_semantic == other.m_semantic;
+}
+
+std::string GetUserDefinedSemanticCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "semantic: " << m_semantic;
+    return stream.str();
+}
+
+std::string GetUserDefinedSemanticCmd::ReplyParams::getSemantic() const {
+    return m_semantic;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1642,6 +1697,19 @@ std::ostream& operator<<(std::ostream& os, const Get2DHistogramCmd::RequestParam
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const Get2DHistogramCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetUserDefinedSemanticCmd::RequestParams& lhs, const GetUserDefinedSemanticCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetUserDefinedSemanticCmd::ReplyParams& lhs, const GetUserDefinedSemanticCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetUserDefinedSemanticCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetUserDefinedSemanticCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

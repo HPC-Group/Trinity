@@ -1110,6 +1110,52 @@ std::ostream& operator<<(std::ostream& os, const Get2DHistogramCmd::ReplyParams&
 using Get2DHistogramRequest = RequestTemplate<Get2DHistogramCmd>;
 using Get2DHistogramReply = ReplyTemplate<Get2DHistogramCmd>;
 
+struct GetUserDefinedSemanticCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        explicit RequestParams(uint64_t modality);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const std::string& semantic);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        std::string getSemantic() const;
+
+    private:
+        std::string m_semantic;
+    };
+};
+
+bool operator==(const GetUserDefinedSemanticCmd::RequestParams& lhs, const GetUserDefinedSemanticCmd::RequestParams& rhs);
+bool operator==(const GetUserDefinedSemanticCmd::ReplyParams& lhs, const GetUserDefinedSemanticCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetUserDefinedSemanticCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetUserDefinedSemanticCmd::ReplyParams& obj);
+
+using GetUserDefinedSemanticRequest = RequestTemplate<GetUserDefinedSemanticCmd>;
+using GetUserDefinedSemanticReply = ReplyTemplate<GetUserDefinedSemanticCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

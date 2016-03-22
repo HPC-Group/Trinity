@@ -52,6 +52,7 @@ enum class VclType {
     GetDefault2DTransferFunctionCount,
     Get1DHistogram,
     Get2DHistogram,
+    GetUserDefinedSemantic,
 
 #undef PYTHON_ENUM
     GetMaxBrickSize,
@@ -126,6 +127,7 @@ private:
         m_cmdMap.insert("GetDefault2DTransferFunctionCount", VclType::GetDefault2DTransferFunctionCount);
         m_cmdMap.insert("Get1DHistogram", VclType::Get1DHistogram);
         m_cmdMap.insert("Get2DHistogram", VclType::Get2DHistogram);
+        m_cmdMap.insert("GetUserDefinedSemantic", VclType::GetUserDefinedSemantic);
 
 #undef PYTHON_MAGIC_STRING
 

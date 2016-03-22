@@ -182,3 +182,10 @@ std::vector<uint64_t> IOSessionProxy::get2DHistogram() const {
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getHistogram();
 }
+
+std::string trinity::IOSessionProxy::getUserDefinedSemantic(uint64_t modality) const {
+    GetUserDefinedSemanticCmd::RequestParams params(modality);
+    GetUserDefinedSemanticRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getSemantic();
+}

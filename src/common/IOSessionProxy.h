@@ -39,6 +39,8 @@ public:
     std::vector<uint64_t> get1DHistogram() const override;
     std::vector<uint64_t> get2DHistogram() const override;
 
+    std::string getUserDefinedSemantic(uint64_t modality) const override;
+
 private:
     CommandInputChannel m_inputChannel;
     const int m_remoteSid;

@@ -99,6 +99,9 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::Get2DHistogram:
         return mocca::make_unique<Get2DHistogramHdl>(static_cast<const Get2DHistogramRequest&>(request), session);
         break;
+    case VclType::GetUserDefinedSemantic:
+        return mocca::make_unique<GetUserDefinedSemanticHdl>(static_cast<const GetUserDefinedSemanticRequest&>(request), session);
+        break;
 
 #undef PYTHON_MAGIC
     default:

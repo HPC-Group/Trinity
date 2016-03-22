@@ -637,3 +637,26 @@ TEST_F(IOCommandsTest, Get2DHistogramReqRep) {
     auto reply = trinity::testing::handleRequest<Get2DHistogramHdl>(request, session.get());
     ASSERT_EQ(histogram, reply.getParams().getHistogram());
 }
+
+TEST_F(IOCommandsTest, GetUserDefinedSemanticCmd) {
+    {
+        GetUserDefinedSemanticCmd::RequestParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetUserDefinedSemanticCmd::ReplyParams target("UserSemantic");
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetUserDefinedSemanticReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getUserDefinedSemantic(42)).Times(1).WillOnce(Return("UserSemantic"));
+
+    GetUserDefinedSemanticCmd::RequestParams requestParams(42);
+    GetUserDefinedSemanticRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetUserDefinedSemanticHdl>(request, session.get());
+    ASSERT_EQ("UserSemantic", reply.getParams().getSemantic());
+}
