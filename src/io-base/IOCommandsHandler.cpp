@@ -229,4 +229,12 @@ std::unique_ptr<Reply> Get1DHistogramHdl::execute() {
     return mocca::make_unique<Get1DHistogramReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+Get2DHistogramHdl::Get2DHistogramHdl(const Get2DHistogramRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> Get2DHistogramHdl::execute() {
+    Get2DHistogramCmd::ReplyParams params(m_session->getIO().get2DHistogram());
+    return mocca::make_unique<Get2DHistogramReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

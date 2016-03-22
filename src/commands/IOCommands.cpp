@@ -1259,6 +1259,49 @@ std::vector<uint64_t> Get1DHistogramCmd::ReplyParams::getHistogram() const {
     return m_histogram;
 }
 
+////////////// Get2DHistogramCmd //////////////
+
+VclType Get2DHistogramCmd::Type = VclType::Get1DHistogram;
+
+void Get2DHistogramCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void Get2DHistogramCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool Get2DHistogramCmd::RequestParams::equals(const Get2DHistogramCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string Get2DHistogramCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+Get2DHistogramCmd::ReplyParams::ReplyParams(const std::vector<uint64_t>& histogram)
+    : m_histogram(histogram) {}
+
+void Get2DHistogramCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendIntVec("histogram", m_histogram);
+}
+
+void Get2DHistogramCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_histogram = reader.getUInt64Vec("histogram");
+}
+
+bool Get2DHistogramCmd::ReplyParams::equals(const Get2DHistogramCmd::ReplyParams& other) const {
+    return m_histogram == other.m_histogram;
+}
+
+std::string Get2DHistogramCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "histogram: ";
+    ::operator<<(stream, m_histogram); // ugly, but necessary because of namespaces
+    return stream.str();
+}
+
+std::vector<uint64_t> Get2DHistogramCmd::ReplyParams::getHistogram() const {
+    return m_histogram;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1586,6 +1629,19 @@ std::ostream& operator<<(std::ostream& os, const Get1DHistogramCmd::RequestParam
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const Get1DHistogramCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const Get2DHistogramCmd::RequestParams& lhs, const Get2DHistogramCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const Get2DHistogramCmd::ReplyParams& lhs, const Get2DHistogramCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const Get2DHistogramCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const Get2DHistogramCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

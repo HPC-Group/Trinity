@@ -80,6 +80,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetDefault1DTransferFunctionCountRequest>("req");
     } else if (type == Get1DHistogramRequest::Ifc::Type) {
         return reader->getSerializablePtr<Get1DHistogramRequest>("req");
+    } else if (type == Get2DHistogramRequest::Ifc::Type) {
+        return reader->getSerializablePtr<Get2DHistogramRequest>("req");
     }
 
 #undef PYTHON_MAGIC_IO

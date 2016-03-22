@@ -1070,6 +1070,46 @@ std::ostream& operator<<(std::ostream& os, const Get1DHistogramCmd::ReplyParams&
 using Get1DHistogramRequest = RequestTemplate<Get1DHistogramCmd>;
 using Get1DHistogramReply = ReplyTemplate<Get1DHistogramCmd>;
 
+struct Get2DHistogramCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const std::vector<uint64_t>& histogram);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        std::vector<uint64_t> getHistogram() const;
+
+    private:
+        std::vector<uint64_t> m_histogram;
+    };
+};
+
+bool operator==(const Get2DHistogramCmd::RequestParams& lhs, const Get2DHistogramCmd::RequestParams& rhs);
+bool operator==(const Get2DHistogramCmd::ReplyParams& lhs, const Get2DHistogramCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const Get2DHistogramCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const Get2DHistogramCmd::ReplyParams& obj);
+
+using Get2DHistogramRequest = RequestTemplate<Get2DHistogramCmd>;
+using Get2DHistogramReply = ReplyTemplate<Get2DHistogramCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

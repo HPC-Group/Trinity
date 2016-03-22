@@ -613,3 +613,27 @@ TEST_F(IOCommandsTest, Get1DHistogramReqRep) {
     auto reply = trinity::testing::handleRequest<Get1DHistogramHdl>(request, session.get());
     ASSERT_EQ(histogram, reply.getParams().getHistogram());
 }
+
+TEST_F(IOCommandsTest, Get2DHistogramCmd) {
+    {
+        Get2DHistogramCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        Get2DHistogramCmd::ReplyParams target(std::vector<uint64_t>{1, 2, 3, 4});
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, Get2DHistogramReqRep) {
+    auto session = createMockSession();
+    std::vector<uint64_t> histogram{ 1, 2, 3, 4 };
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), get2DHistogram()).Times(1).WillOnce(Return(histogram));
+
+    Get2DHistogramCmd::RequestParams requestParams;
+    Get2DHistogramRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<Get2DHistogramHdl>(request, session.get());
+    ASSERT_EQ(histogram, reply.getParams().getHistogram());
+}

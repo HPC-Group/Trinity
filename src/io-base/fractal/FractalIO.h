@@ -38,11 +38,11 @@ namespace trinity {
     uint64_t getDefault1DTransferFunctionCount() const override;
     uint64_t getDefault2DTransferFunctionCount() const override;
     std::vector<uint64_t> get1DHistogram() const override;
+    std::vector<uint64_t> get2DHistogram() const override;
 
     // HACK: todo function calls
 
 
-    std::vector<uint64_t> get2DHistogram() const; // override;
 
     TransferFunction1D getDefault1DTransferFunction(uint64_t index) const; // override;
 //    TransferFunction2D getDefault2DTransferFunction(uint64_t index) const; // override;
