@@ -58,8 +58,8 @@ void VisStreamSender::run() {
                 auto const& params = m_visStream->getStreamingParams();
                 frameNullable = jpeg.encode(frameNullable, params.getResX(), params.getResY());
                 
-                m_connection->send(std::move(frameNullable.release()));
-                // LINFO("(p) frame out");
+                if(!frameNullable.isNull())
+                    m_connection->send(std::move(frameNullable.release()));
  	} catch (const mocca::net::NetworkError& err) {
                 LERROR("(p) cannot send vis: " << err.what());
 		interrupt();

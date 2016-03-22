@@ -51,6 +51,7 @@ TEST_F(ProcessingTest, VisStreamPutGetTest) {
     ASSERT_EQ("456", ff2.read(ff2.size()));
 }
 
+/*deprecated since libjpeg
 TEST_F(ProcessingTest, VisStreamTest) {
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
 
@@ -79,3 +80,4 @@ TEST_F(ProcessingTest, VisStreamTest) {
     rec.join();
     sender.join();
 }
+*/
