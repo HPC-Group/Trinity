@@ -1,18 +1,6 @@
-//
-//  GLRenderPlane.cpp
-//  TNG
-//
-//  Created by Andre Waschk on 18/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
-
 #include "GLRenderPlane.h"
 
-
-using namespace OpenGL::GLCore;
 using namespace Core::Math;
-
-
 
 static float PlaneData[32] =
 {

@@ -1,19 +1,7 @@
-//
-//  GLModel.h
-//  TNG
-//
-//  Created by Andre Waschk on 13/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
-
-#ifndef __TNG__GLModel__
-#define __TNG__GLModel__
+#pragma once
 
 #include "opengl-base/OpenGLincludes.h"
 #include "silverbullet/math/Vectors.h"
-
-namespace OpenGL{
-namespace GLCore{
 
   /*! \brief This class is simply used to render the volume-cube/ boundingbox and nearplane
    *
@@ -56,8 +44,3 @@ public:
 
 private:
 };
-
-};
-};
-
-#endif /* defined(__TNG__GLModel__) */

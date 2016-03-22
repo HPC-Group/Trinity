@@ -38,8 +38,6 @@
 
 #include <cstdio>
 #include <iostream>
-
-using namespace OpenGL::GLCore;
 using namespace Core::Math;
 
 GLTexture3D::GLTexture3D(uint32_t iSizeX, uint32_t iSizeY, uint32_t iSizeZ,

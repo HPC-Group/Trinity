@@ -16,8 +16,6 @@
 
  #include "ShaderDescriptor.h"
 
- using namespace OpenGL;
- using namespace OpenGL::GLCore;
  using namespace Core::Math;
 
  GLHashTable::GLHashTable(const Vec3ui& maxBrickCount, uint32_t iTableSize, uint32_t iRehashCount, bool bUseGLCore, std::string const& strPrefixName) :

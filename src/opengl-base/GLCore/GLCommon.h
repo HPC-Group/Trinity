@@ -1,14 +1,10 @@
 #pragma once
-#ifndef TUVOK_GL_COMMON_H
-#define TUVOK_GL_COMMON_H
 
 #include <opengl-base/OpenGLincludes.h>
 
-namespace GLCommon {
-  size_t gl_internal_bit_size(GLenum internalformat);
-  size_t gl_components(GLenum format);
-  size_t gl_byte_width(GLenum gltype);
-}
+size_t gl_internal_bit_size(GLenum internalformat);
+size_t gl_components(GLenum format);
+size_t gl_byte_width(GLenum gltype);
 
 /*
    For more information, please see: http://software.sci.utah.edu
@@ -37,4 +33,3 @@ namespace GLCommon {
    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    DEALINGS IN THE SOFTWARE.
 */
-#endif // TUVOK_GL_COMMON_H

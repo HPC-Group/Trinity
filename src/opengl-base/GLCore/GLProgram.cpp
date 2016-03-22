@@ -1,11 +1,3 @@
-//
-//  GLProgram.cpp
-//  TNG
-//
-//  Created by Andre Waschk on 10/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
-
 #include "GLProgram.h"
 #include "GLTexture.h"
 
@@ -14,8 +6,7 @@
 #include <iostream>
 #include <cstdio>
 
-using namespace OpenGL::GLCore;
-using std::string;
+using namespace std;
 
 GLProgram::GLProgram():
 m_bInitialized(false)

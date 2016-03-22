@@ -1,41 +1,3 @@
-/*
-   For more information, please see: http://software.sci.utah.edu
-
-   The MIT License
-
-   Copyright (c) 2008 Scientific Computing and Imaging Institute,
-   University of Utah.
-
-
-   Permission is hereby granted, free of charge, to any person obtaining a
-   copy of this software and associated documentation files (the "Software"),
-   to deal in the Software without restriction, including without limitation
-   the rights to use, copy, modify, merge, publish, distribute, sublicense,
-   and/or sell copies of the Software, and to permit persons to whom the
-   Software is furnished to do so, subject to the following conditions:
-
-   The above copyright notice and this permission notice shall be included
-   in all copies or substantial portions of the Software.
-
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-   THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-   DEALINGS IN THE SOFTWARE.
-*/
-
-/**
-  \file    GLFBOTex.cpp
-  \author  Jens Krueger
-           SCI Institute
-           University of Utah
-           Jens Schneider
-           tum.3D, Muenchen
-  \date    August 2008
-*/
-
 #include "GLFrameBufferObject.h"
 #include "GLCommon.h"
 
@@ -46,17 +8,6 @@
     #pragma warning( disable : 4189 ) // disable unused var warning
   #endif
 #endif
-
-using namespace OpenGL::GLCore;
-using namespace OpenGL;
-
-//int    GLFBOTex::m_iCount = 0;
-//bool  GLFBOTex::m_bInitialized = true;
-
-/**
- * Constructor: on first instantiation, generate an FBO.
- * In any case a new dummy texture according to the parameters is generated.
- */
 
 GLFBOTex::GLFBOTex( GLenum minfilter,
                    GLenum magfilter, GLenum wrapmode, GLsizei width,
@@ -382,12 +333,12 @@ void GLFBOTex::ReadBackPixels(int x, int y, int sX, int sY, void* pData, int iBu
 }
 
 uint64_t GLFBOTex::GetCPUSize() const {
-    return EstimateCPUSize(m_iSizeX, m_iSizeY, GLCommon::gl_byte_width(m_type) * GLCommon::gl_components(m_format),
+    return EstimateCPUSize(m_iSizeX, m_iSizeY, gl_byte_width(m_type) * gl_components(m_format),
                            m_hDepthBuffer!=0, m_iNumBuffers);
 }
 
 uint64_t GLFBOTex::GetGPUSize() const {
-    return EstimateGPUSize(m_iSizeX, m_iSizeY, GLCommon::gl_byte_width(m_type) * GLCommon::gl_components(m_format),
+    return EstimateGPUSize(m_iSizeX, m_iSizeY, gl_byte_width(m_type) * gl_components(m_format),
                            m_hDepthBuffer!=0, m_iNumBuffers);
 }
 

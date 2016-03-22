@@ -1,9 +1,7 @@
 #include <stdexcept>
 #include "GLCommon.h"
 
-using namespace GLCommon;
-
-size_t GLCommon::gl_internal_bit_size(GLenum internalformat) {
+size_t gl_internal_bit_size(GLenum internalformat) {
   switch(internalformat) {
     // deprecated formats, assume 8bit per component
     case GL_RGB: return 3*8;
@@ -93,7 +91,7 @@ size_t GLCommon::gl_internal_bit_size(GLenum internalformat) {
   throw std::domain_error("unknown GL format");
 }
 
-size_t GLCommon::gl_components(GLenum format) {
+size_t gl_components(GLenum format) {
   switch(format) {
     case GL_RED_INTEGER:
     case GL_GREEN_INTEGER:
@@ -110,7 +108,7 @@ size_t GLCommon::gl_components(GLenum format) {
   throw std::domain_error("unknown GL format");
 }
 
-size_t GLCommon::gl_byte_width(GLenum gltype) {
+size_t gl_byte_width(GLenum gltype) {
   switch(gltype) {
     case GL_UNSIGNED_BYTE:
     case GL_BYTE:

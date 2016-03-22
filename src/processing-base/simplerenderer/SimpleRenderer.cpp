@@ -8,9 +8,7 @@
 #include "silverbullet/math/Vectors.h"
 
 using namespace trinity;
-using namespace OpenGL::GLCore;
 using namespace Core::Math;
-using namespace OpenGL;
 using namespace std;
 
 

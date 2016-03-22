@@ -1,15 +1,4 @@
-//
-//  GLModel.cpp
-//  TNG
-//
-//  Created by Andre Waschk on 13/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
-
 #include "GLModel.h"
-
-using namespace OpenGL::GLCore;
-
 
 GLModel::GLModel():
 m_bInitialized(false){

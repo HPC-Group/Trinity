@@ -1,13 +1,4 @@
-//
-//  GLProgramm.h
-//  TNG
-//
-//  Created by Andre Waschk on 10/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
-
-#ifndef __TNG__GLProgram__
-#define __TNG__GLProgram__
+#pragma once
 
 #include "opengl-base/OpenGLincludes.h"
 #include "silverbullet/math/Vectors.h"
@@ -17,24 +8,20 @@
 
 class ShaderDescriptor;
 
-namespace OpenGL{
-namespace GLCore{
+class GLTexture;
 
-          class GLTexture;
+typedef std::map<std::string, int> texMap;
 
-          typedef std::map<std::string, int> texMap;
+class GLProgram{
+    public:
+    GLProgram();
+    virtual ~GLProgram();
 
-          class GLProgram{
-          public:
-              GLProgram();
-              virtual ~GLProgram();
+    virtual bool Load(ShaderDescriptor& sd);
 
-
-              virtual bool Load(ShaderDescriptor& sd);
-
-              /// Enables this shader for rendering.
-              void Enable(void);
-              /// Disables all shaders for rendering (use fixed function pipeline again)
+    /// Enables this shader for rendering.
+    void Enable(void);
+    /// Disables all shaders for rendering (use fixed function pipeline again)
               void Disable(void);
 
               /// returns true if this program is valid
@@ -93,10 +80,4 @@ namespace GLCore{
 
               bool CompileShader(GLuint& handle, const char* source, GLenum type);
               bool CheckProgramStatus();
-          };
-
-        };
-    };
-
-
-#endif /* defined(__TNG__GLProgramm__) */
+};

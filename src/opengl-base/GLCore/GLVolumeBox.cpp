@@ -1,17 +1,6 @@
-//
-//  GLVolumeBox.cpp
-//  TNG
-//
-//  Created by Andre Waschk on 12/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
-
 #include "GLVolumeBox.h"
 
-using namespace OpenGL::GLCore;
-
 using namespace Core::Math;
-
 
 
 static int CubeIndicies[36]{

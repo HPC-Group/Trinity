@@ -40,14 +40,14 @@ namespace trinity {
 
     std::vector<Core::Math::Vec4ui8>              m_bufferData;
     
-    std::unique_ptr<OpenGL::GLCore::GLTexture1D>  m_texTransferFunc;
-    std::unique_ptr<OpenGL::GLCore::GLTexture3D>  m_texVolume;
-    std::unique_ptr<OpenGL::GLTargetBinder>       m_targetBinder;
-    std::unique_ptr<OpenGL::GLCore::GLProgram>    m_backfaceShader;
-    std::unique_ptr<OpenGL::GLCore::GLProgram>    m_raycastShader;
-    std::shared_ptr<OpenGL::GLCore::GLFBOTex>     m_backfaceBuffer;
-    std::shared_ptr<OpenGL::GLCore::GLFBOTex>     m_resultBuffer;
-    std::unique_ptr<OpenGL::GLCore::GLVolumeBox>  m_bbBox;
+    std::unique_ptr<GLTexture1D>  m_texTransferFunc;
+    std::unique_ptr<GLTexture3D>  m_texVolume;
+    std::unique_ptr<GLTargetBinder>       m_targetBinder;
+    std::unique_ptr<GLProgram>    m_backfaceShader;
+    std::unique_ptr<GLProgram>    m_raycastShader;
+    std::shared_ptr<GLFBOTex>     m_backfaceBuffer;
+    std::shared_ptr<GLFBOTex>     m_resultBuffer;
+    std::unique_ptr<GLVolumeBox>  m_bbBox;
     std::shared_ptr<OpenGlHeadlessContext>        m_context;
     
   };

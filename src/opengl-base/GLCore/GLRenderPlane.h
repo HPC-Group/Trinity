@@ -1,18 +1,6 @@
-//
-//  GLRenderPlane.h
-//  TNG
-//
-//  Created by Andre Waschk on 18/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
-
-#ifndef __TNG__GLRenderPlane__
-#define __TNG__GLRenderPlane__
-
+#pragma once
 #include "GLModel.h"
 
-namespace OpenGL{
-namespace GLCore{
         
     class GLRenderPlane: public GLModel{
         public:
@@ -27,9 +15,4 @@ namespace GLCore{
           Core::Math::Mat4f m_mView;
           Core::Math::Mat4f m_mProjection;
           Core::Math::Mat4f m_mWorld;
-    };
-        
 };
-};
-
-#endif /* defined(__TNG__GLRenderPlane__) */

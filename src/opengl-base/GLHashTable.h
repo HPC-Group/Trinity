@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef GLHASHTABLE_H
-#define GLHASHTABLE_H
-
 #include "mocca/log/LogManager.h"
 #include <opengl-base/OpenGLincludes.h>
 
@@ -14,13 +11,8 @@
 
 //#define GLHASHTABLE_PROFILE    // adds some glFinish() commands all over the place
 
-namespace OpenGL{
-
-      namespace GLCore{
-        class GLTexture;
-        typedef std::shared_ptr<GLTexture> GLTexturePtr;
-      }
-
+class GLTexture;
+typedef std::shared_ptr<GLTexture> GLTexturePtr;
 
   class GLHashTable {
   public:
@@ -43,7 +35,7 @@ namespace OpenGL{
     Core::Math::Vec3ui        m_maxBrickCount;
     uint32_t                  m_iTableSize;
     uint32_t                  m_iRehashCount;
-    GLCore::GLTexturePtr      m_pHashTableTex;
+    GLTexturePtr      m_pHashTableTex;
     Core::Math::Vec2ui        m_texSize;
     std::shared_ptr<uint32_t> m_pRawData;
     bool                      m_bUseGLCore;
@@ -53,10 +45,7 @@ namespace OpenGL{
     bool Is2DTexture() const;
   };
 
-}
 
-
-#endif // GLHASHTABLE_H
 
 /*
  The MIT License

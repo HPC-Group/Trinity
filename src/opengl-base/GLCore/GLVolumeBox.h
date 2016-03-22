@@ -1,19 +1,7 @@
-//
-//  GLVolumeBox.h
-//  TNG
-//
-//  Created by Andre Waschk on 12/01/15.
-//  Copyright (c) 2015 CoViDaG. All rights reserved.
-//
-
-#ifndef __TNG__GLVolumeBox__
-#define __TNG__GLVolumeBox__
+#pragma once
 
 #include "GLModel.h"
 
-namespace OpenGL{
-namespace GLCore{
-            
     class GLVolumeBox: public GLModel{
     public:
         GLVolumeBox();
@@ -29,8 +17,3 @@ namespace GLCore{
 
     };
           
-
-};
-};
-
-#endif /* defined(__TNG__GLVolumeBox__) */
