@@ -43,6 +43,7 @@ typedef std::shared_ptr<GLTexture> GLTexturePtr;
 
     Core::Math::Vec4ui Int2Vector(uint32_t index) const;
     bool Is2DTexture() const;
+    Core::Math::Vec2ui Fit1DIndexTo2DArray(uint64_t iMax1DIndex, uint32_t iMax2DArraySize); //moved from VolumeTools
   };
 
 

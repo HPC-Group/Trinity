@@ -7,8 +7,6 @@
  #endif
  #include <sstream>
  #include <stdexcept>
- #include <opengl-base/VolumeCore/nonstd.h>
- #include <opengl-base/VolumeCore/VolumeTools.h>
 
  #include "GLProgram.h"
  #include "GLTexture1D.h"
@@ -41,7 +39,7 @@
 
 
  try {
- m_texSize = VolumeTools::Fit1DIndexTo2DArray(m_iTableSize, gpumax);
+ m_texSize = Fit1DIndexTo2DArray(m_iTableSize, gpumax);
   LDEBUGC("GLHashTable", "Hashtable texture size "<< m_texSize);
  } catch (std::runtime_error const& e) {
  // this is very unlikely but not impossible
@@ -60,8 +58,7 @@
  }
 
  m_pRawData = std::shared_ptr<uint32_t>(
- new uint32_t[m_texSize.area()],
- nonstd::DeleteArray<uint32_t>()
+ new uint32_t[m_texSize.area()]
  );
  }
 
@@ -215,4 +212,26 @@
  }
  uint64_t GLHashTable::GetGPUSize() const {
    return m_pHashTableTex->GetGPUSize();
+ }
+
+ Vec2ui GLHashTable::Fit1DIndexTo2DArray(uint64_t iMax1DIndex,
+                                              uint32_t iMax2DArraySize) {
+   // check if 1D index exceeds given 2D array
+   if (iMax1DIndex > uint64_t(iMax2DArraySize) * uint64_t(iMax2DArraySize)) {
+     std::stringstream ss;
+     ss << "element count of " << iMax1DIndex << " exceeds the addressable indices "
+        << "of a " << iMax2DArraySize << "x" << iMax2DArraySize << " array";
+     throw std::runtime_error(ss.str().c_str());
+   }
+
+   // 1D index fits into a row
+   if (iMax1DIndex <= uint64_t(iMax2DArraySize))
+     return Vec2ui(uint32_t(iMax1DIndex), 1);
+
+   // fit 1D index into the smallest possible rectangle
+   Vec2ui v2DArraySize;
+   v2DArraySize.x = uint32_t(std::ceil(std::sqrt(double(iMax1DIndex))));
+   v2DArraySize.y = uint32_t(std::ceil(double(iMax1DIndex)/double(v2DArraySize.x)));
+
+   return v2DArraySize;
  }
