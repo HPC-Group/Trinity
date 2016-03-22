@@ -986,18 +986,17 @@ BrickKey GetBrickCmd::RequestParams::getBrickKey() const {
 }
 
 GetBrickCmd::ReplyParams::ReplyParams(std::vector<uint8_t> brick, bool success)
-    : m_success(success),
-    m_brick(std::move(brick))
-     {}
+    : m_success(success)
+    , m_brick(std::move(brick)) {}
 
 void GetBrickCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     writer.appendBool("success", m_success);
-    writer.appendIntVec("brick", m_brick);
+    writer.appendBinary(m_brick);
 }
 
 void GetBrickCmd::ReplyParams::deserialize(const ISerialReader& reader) {
     m_success = reader.getBool("success");
-    m_brick = reader.getUInt8Vec("brick");
+    m_brick = *reader.getBinary();
 }
 
 bool GetBrickCmd::ReplyParams::equals(const GetBrickCmd::ReplyParams& other) const {

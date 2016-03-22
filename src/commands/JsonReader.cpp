@@ -90,14 +90,6 @@ std::vector<int32_t> JsonReader::getInt32Vec(const std::string& key) const {
     return result;
 }
 
-std::vector<uint8_t> JsonReader::getUInt8Vec(const std::string& key) const {
-    std::vector<uint8_t> result;
-    for (uint32_t i = 0; i < m_root[key].size(); ++i) {
-        result.push_back(m_root[key][i].asUInt()); // uint8 not supported by JSON
-    }
-    return result;
-}
-
 std::vector<bool> JsonReader::getBoolVec(const std::string& key) const {
     std::vector<bool> result;
     for (uint32_t i = 0; i < m_root[key].size(); ++i) {

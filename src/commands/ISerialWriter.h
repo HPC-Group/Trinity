@@ -26,7 +26,6 @@ public:
 
     virtual void appendFloatVec(const std::string& key, const std::vector<float>& vec) = 0;
     virtual void appendIntVec(const std::string& key, const std::vector<int32_t>& vec) = 0;
-    virtual void appendIntVec(const std::string& key, const std::vector<uint8_t>& vec) = 0;
     virtual void appendBoolVec(const std::string& key, const std::vector<bool>& vec) = 0;
     virtual void appendStringVec(const std::string& key, const std::vector<std::string>& vec) = 0;
     virtual void appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) = 0;
