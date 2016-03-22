@@ -1177,7 +1177,7 @@ uint64_t GetDefault1DTransferFunctionCountCmd::ReplyParams::getCount() const {
 
 VclType GetDefault2DTransferFunctionCountCmd::Type = VclType::GetDefault2DTransferFunctionCount;
 
-void GetDefault2DTransferFunctionCountCmd::RequestParams::serialize(ISerialWriter & writer) const {}
+void GetDefault2DTransferFunctionCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
 void GetDefault2DTransferFunctionCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
 
@@ -1213,6 +1213,50 @@ std::string GetDefault2DTransferFunctionCountCmd::ReplyParams::toString() const 
 
 uint64_t GetDefault2DTransferFunctionCountCmd::ReplyParams::getCount() const {
     return m_count;
+}
+
+
+////////////// Get1DHistogramCmd //////////////
+
+VclType Get1DHistogramCmd::Type = VclType::Get1DHistogram;
+
+void Get1DHistogramCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void Get1DHistogramCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool Get1DHistogramCmd::RequestParams::equals(const Get1DHistogramCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string Get1DHistogramCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+Get1DHistogramCmd::ReplyParams::ReplyParams(const std::vector<uint64_t>& histogram)
+    : m_histogram(histogram) {}
+
+void Get1DHistogramCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendIntVec("histogram", m_histogram);
+}
+
+void Get1DHistogramCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_histogram = reader.getUInt64Vec("histogram");
+}
+
+bool Get1DHistogramCmd::ReplyParams::equals(const Get1DHistogramCmd::ReplyParams& other) const {
+    return m_histogram == other.m_histogram;
+}
+
+std::string Get1DHistogramCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "histogram: ";
+    ::operator<<(stream, m_histogram); // ugly, but necessary because of namespaces
+    return stream.str();
+}
+
+std::vector<uint64_t> Get1DHistogramCmd::ReplyParams::getHistogram() const {
+    return m_histogram;
 }
 
 #undef PYTHON_MAGIC_DEFINITION
@@ -1532,6 +1576,18 @@ std::ostream& operator<<(std::ostream& os, const GetDefault2DTransferFunctionCou
     return os << obj.toString();
 }
 
+bool operator==(const Get1DHistogramCmd::RequestParams& lhs, const Get1DHistogramCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const Get1DHistogramCmd::ReplyParams& lhs, const Get1DHistogramCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const Get1DHistogramCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const Get1DHistogramCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
 
 #undef PYTHON_MAGIC
 }

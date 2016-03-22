@@ -50,6 +50,7 @@ enum class VclType {
     GetSemantic,
     GetDefault1DTransferFunctionCount,
     GetDefault2DTransferFunctionCount,
+    Get1DHistogram,
 
 
 #undef PYTHON_ENUM
@@ -123,6 +124,7 @@ private:
         m_cmdMap.insert("GetSemantic", VclType::GetSemantic);
         m_cmdMap.insert("GetDefault1DTransferFunctionCount", VclType::GetDefault1DTransferFunctionCount);
         m_cmdMap.insert("GetDefault2DTransferFunctionCount", VclType::GetDefault2DTransferFunctionCount);
+        m_cmdMap.insert("Get1DHistogram", VclType::Get1DHistogram);
 
 #undef PYTHON_MAGIC_STRING
 

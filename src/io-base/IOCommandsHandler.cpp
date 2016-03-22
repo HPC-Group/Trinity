@@ -221,4 +221,12 @@ std::unique_ptr<Reply> GetDefault2DTransferFunctionCountHdl::execute() {
     return mocca::make_unique<GetDefault2DTransferFunctionCountReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+Get1DHistogramHdl::Get1DHistogramHdl(const Get1DHistogramRequest& request, IOSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> Get1DHistogramHdl::execute() {
+    Get1DHistogramCmd::ReplyParams params(m_session->getIO().get1DHistogram());
+    return mocca::make_unique<Get1DHistogramReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

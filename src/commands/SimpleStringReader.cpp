@@ -90,6 +90,12 @@ std::vector<int32_t> SimpleStringReader::getInt32Vec(const std::string& key) con
     return result;
 }
 
+std::vector<uint64_t> SimpleStringReader::getUInt64Vec(const std::string& key) const {
+    std::vector<uint64_t> result;
+    // fixme
+    return result;
+}
+
 std::vector<bool> SimpleStringReader::getBoolVec(const std::string& key) const {
     int32_t size;
     m_stream >> size;

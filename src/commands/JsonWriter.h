@@ -23,6 +23,7 @@ public:
 
     void appendFloatVec(const std::string& key, const std::vector<float>& vec) override;
     void appendIntVec(const std::string& key, const std::vector<int32_t>& vec) override;
+    void appendIntVec(const std::string& key, const std::vector<uint64_t>& vec) override;
     void appendBoolVec(const std::string& key, const std::vector<bool>& vec) override;
     void appendStringVec(const std::string& key, const std::vector<std::string>& vec) override;
     void appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) override;

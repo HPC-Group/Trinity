@@ -96,7 +96,8 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
     TypeParam factory;
     auto writer = factory.createWriter();
     writer->appendFloatVec("float", std::vector<float>{0.1f, 0.2f, 0.3f});
-    writer->appendIntVec("int", std::vector<int>{1, 2, 3, 4});
+    writer->appendIntVec("int32", std::vector<int>{1, 2, 3, 4});
+    writer->appendIntVec("uint64", std::vector<uint64_t>{5, 6, 7, 8});
     writer->appendBoolVec("bool", std::vector<bool>{true, false, true});
     writer->appendStringVec("string", std::vector<std::string>{"Hello", "World"});
 
@@ -109,12 +110,19 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
     ASSERT_EQ(0.2f, floatRes[1]);
     ASSERT_EQ(0.3f, floatRes[2]);
 
-    auto intRes = reader->getInt32Vec("int");
-    ASSERT_EQ(4, intRes.size());
-    ASSERT_EQ(1, intRes[0]);
-    ASSERT_EQ(2, intRes[1]);
-    ASSERT_EQ(3, intRes[2]);
-    ASSERT_EQ(4, intRes[3]);
+    auto int32Res = reader->getInt32Vec("int32");
+    ASSERT_EQ(4, int32Res.size());
+    ASSERT_EQ(1, int32Res[0]);
+    ASSERT_EQ(2, int32Res[1]);
+    ASSERT_EQ(3, int32Res[2]);
+    ASSERT_EQ(4, int32Res[3]);
+
+    auto uint64Res = reader->getUInt64Vec("uint64");
+    ASSERT_EQ(4, uint64Res.size());
+    ASSERT_EQ(5, uint64Res[0]);
+    ASSERT_EQ(6, uint64Res[1]);
+    ASSERT_EQ(7, uint64Res[2]);
+    ASSERT_EQ(8, uint64Res[3]);
 
     auto boolRes = reader->getBoolVec("bool");
     ASSERT_EQ(3, boolRes.size());

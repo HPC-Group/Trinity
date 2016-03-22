@@ -168,3 +168,10 @@ uint64_t IOSessionProxy::getDefault2DTransferFunctionCount() const {
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getCount();
 }
+
+std::vector<uint64_t> IOSessionProxy::get1DHistogram() const {
+    Get1DHistogramCmd::RequestParams params;
+    Get1DHistogramRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getHistogram();
+}

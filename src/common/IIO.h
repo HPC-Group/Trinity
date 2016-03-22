@@ -44,7 +44,7 @@ public:
     virtual Semantic getSemantic(uint64_t modality) const = 0;
     virtual uint64_t getDefault1DTransferFunctionCount() const = 0;
     virtual uint64_t getDefault2DTransferFunctionCount() const = 0;
-
+    virtual std::vector<uint64_t> get1DHistogram() const = 0;
 
     // not sure if we need that
     // virtual std::string getUserDefinedSemantic(uint64_t modality) const;

@@ -60,7 +60,13 @@ void JsonWriter::appendFloatVec(const std::string& key, const std::vector<float>
 
 void JsonWriter::appendIntVec(const std::string& key, const std::vector<int32_t>& vec) {
     for (uint32_t i = 0; i < vec.size(); ++i) {
-        m_root[key][i] = vec[i];
+        m_root[key][i] = JsonCpp::Int(vec[i]);
+    }
+}
+
+void JsonWriter::appendIntVec(const std::string& key, const std::vector<uint64_t>& vec) {
+    for (uint32_t i = 0; i < vec.size(); ++i) {
+        m_root[key][i] = JsonCpp::UInt64(vec[i]);
     }
 }
 

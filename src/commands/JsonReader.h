@@ -25,6 +25,7 @@ public:
 
     std::vector<float> getFloatVec(const std::string& key) const override;
     std::vector<int32_t> getInt32Vec(const std::string& key) const override;
+    std::vector<uint64_t> getUInt64Vec(const std::string& key) const override;
     std::vector<bool> getBoolVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 

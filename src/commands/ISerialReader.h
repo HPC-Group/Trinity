@@ -45,6 +45,7 @@ public:
 
     virtual std::vector<float> getFloatVec(const std::string& key) const = 0;
     virtual std::vector<int32_t> getInt32Vec(const std::string& key) const = 0;
+    virtual std::vector<uint64_t> getUInt64Vec(const std::string& key) const = 0;
     virtual std::vector<bool> getBoolVec(const std::string& key) const = 0;
     virtual std::vector<std::string> getStringVec(const std::string& key) const = 0;
 

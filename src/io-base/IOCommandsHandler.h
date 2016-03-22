@@ -265,5 +265,16 @@ private:
     IOSession* m_session;
 };
 
+class Get1DHistogramHdl : public ICommandHandler {
+public:
+    Get1DHistogramHdl(const Get1DHistogramRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    Get1DHistogramRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

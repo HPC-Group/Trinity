@@ -93,6 +93,9 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
         return mocca::make_unique<GetDefault1DTransferFunctionCountHdl>(
             static_cast<const GetDefault1DTransferFunctionCountRequest&>(request), session);
         break;
+    case VclType::Get1DHistogram:
+        return mocca::make_unique<Get1DHistogramHdl>(static_cast<const Get1DHistogramRequest&>(request), session);
+        break;
 
 #undef PYTHON_MAGIC
     default:
