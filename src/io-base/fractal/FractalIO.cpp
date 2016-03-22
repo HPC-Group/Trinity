@@ -123,16 +123,20 @@ Vec3ui FractalIO::getBrickOverlapSize() const {
 }
 
 uint64_t FractalIO::getLargestSingleBrickLOD(uint64_t modality) const {
-  if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
-  
-  for (size_t lod = 0;lod<m_vLODTable.size(); ++lod) {
-    if (m_vLODTable[lod].m_iLODVoxelSize.volume() == 1)
-      return lod;
-  }
-  
-  // this return is never hit by design of the m_vLODTable
-  return m_vLODTable.size()-1;
+    if (modality != 0 )
+        throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    
+    if (!m_bFlat) {
+        for (size_t lod = 0;lod<m_vLODTable.size(); ++lod) {
+            if (m_vLODTable[lod].m_iLODVoxelSize.volume() == 1)
+                return lod;
+        }
+        
+        // this return is never hit by design of the m_vLODTable
+        return m_vLODTable.size()-1;
+    } else {
+        return 0;
+    }
 }
 
 
@@ -254,7 +258,7 @@ bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
   bool created = false;
   
   if (data.size() < getMaxBrickSize().volume()) {
-    data.reserve(getMaxBrickSize().volume());
+    data.resize(getMaxBrickSize().volume());
     created = true;
   }
   

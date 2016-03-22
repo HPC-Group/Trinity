@@ -183,7 +183,7 @@ GetBrickHdl::GetBrickHdl(const GetBrickRequest& request, IOSession* session)
 
 std::unique_ptr<Reply> GetBrickHdl::execute() {
     auto brickKey = m_request.getParams().getBrickKey();
-    std::vector<uint8_t> brick(1024 * 1024); // fixme: buffer size?
+    std::vector<uint8_t> brick; // fixme: buffer size? // todo not alloc
     auto success = m_session->getIO().getBrick(brickKey, brick);
     GetBrickCmd::ReplyParams params(std::move(brick), success);
     return mocca::make_unique<GetBrickReply>(params, m_request.getRid(), m_session->getSid());
