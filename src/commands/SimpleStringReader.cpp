@@ -7,6 +7,11 @@ using namespace trinity;
 SimpleStringReader::SimpleStringReader(const std::string& str)
     : m_stream(str) {}
 
+SimpleStringReader::SimpleStringReader(mocca::ByteArray& data)
+    : m_stream(data.read(data.size())) {
+    // fixme dmc
+}
+
 float SimpleStringReader::getFloat(const std::string& key) const {
     float x;
     m_stream >> x;
@@ -128,4 +133,8 @@ std::vector<std::unique_ptr<ISerializable>> SimpleStringReader::getSerializableV
         result.push_back(std::move(obj));
     }
     return result;
+}
+
+const std::vector<uint8_t>& SimpleStringReader::getBinary() const {
+    return m_binary;
 }

@@ -84,8 +84,16 @@ void JsonWriter::appendObjectVec(const std::string& key, const std::vector<ISeri
     }
 }
 
+void JsonWriter::appendBinary(const std::vector<uint8_t>& vec) {
+    m_binary.insert(end(m_binary), begin(vec), end(vec));
+}
+
 mocca::ByteArray JsonWriter::write() const {
     JsonCpp::FastWriter writer;
     std::string str = writer.write(m_root);
-    return mocca::ByteArray::createFromRaw(str.data(), str.size());
+    mocca::ByteArray result(sizeof(uint32_t) + str.size() + m_binary.size());
+    result << static_cast<uint32_t>(str.size());
+    result.append(str.data(), str.size());
+    result.append(m_binary.data(), m_binary.size());
+    return result;
 }

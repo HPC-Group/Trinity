@@ -4,11 +4,14 @@
 
 #include "thirdparty/jsoncpp/json.h"
 
+#include "mocca/base/ByteArray.h"
+
 namespace trinity {
 
 class JsonReader : public ISerialReader {
 public:
-    JsonReader(const std::string& str);
+    JsonReader(const std::string& json);
+    JsonReader(mocca::ByteArray& data);
 
     float getFloat(const std::string& key) const override;
     double getDouble(const std::string& key) const override;
@@ -26,6 +29,8 @@ public:
     std::vector<bool> getBoolVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 
+    const std::vector<uint8_t>& getBinary() const override;
+    
 private:
     JsonReader(const JsonCpp::Value& root);
 
@@ -34,5 +39,6 @@ private:
 
 private:
     JsonCpp::Value m_root;
+    std::vector<uint8_t> m_binary;
 };
 }

@@ -49,6 +49,8 @@ public:
     virtual std::vector<bool> getBoolVec(const std::string& key) const = 0;
     virtual std::vector<std::string> getStringVec(const std::string& key) const = 0;
 
+    virtual const std::vector<uint8_t>& getBinary() const = 0;
+
 private:
     virtual void getSerializableImpl(const std::string& key, ISerializable& prototype) const = 0;
     virtual std::vector<std::unique_ptr<ISerializable>> getSerializableVecImpl(const std::string& key, const ISerializable& prototype) const = 0;

@@ -3,14 +3,27 @@
 #include "commands/ISerializable.h"
 #include "common/TrinityError.h"
 
+#include <iterator>
+
 using namespace trinity;
 
-
-JsonReader::JsonReader(const std::string& str) {
+JsonReader::JsonReader(const std::string& json) {
     JsonCpp::Reader reader;
-    if (!reader.parse(str, m_root)) {
+    if (!reader.parse(json, m_root)) {
         throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
     }
+}
+
+JsonReader::JsonReader(mocca::ByteArray& data) {
+    auto jsonSize = data.read<uint32_t>();
+    auto json = data.read(jsonSize);
+    JsonCpp::Reader reader;
+    if (!reader.parse(json, m_root)) {
+        throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
+    }
+    uint32_t binarySize = data.size() - jsonSize - sizeof(uint32_t);
+    m_binary.reserve(binarySize);
+    std::copy(data.data() + jsonSize + sizeof(uint32_t), data.data() + data.size(), std::back_inserter(m_binary));
 }
 
 JsonReader::JsonReader(const JsonCpp::Value& root)
@@ -108,4 +121,8 @@ std::vector<std::unique_ptr<ISerializable>> JsonReader::getSerializableVecImpl(c
         result.push_back(std::move(obj));
     }
     return result;
+}
+
+const std::vector<uint8_t>& JsonReader::getBinary() const {
+    return m_binary;
 }

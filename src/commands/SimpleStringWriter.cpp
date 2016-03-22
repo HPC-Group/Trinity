@@ -86,6 +86,11 @@ void SimpleStringWriter::appendObjectVec(const std::string& key, const std::vect
     }
 }
 
+void SimpleStringWriter::appendBinary(const std::vector<uint8_t>& vec)
+{
+    // fixme dmc
+}
+
 mocca::ByteArray SimpleStringWriter::write() const {
     std::string str = m_stream.str();
     return mocca::ByteArray::createFromRaw(str.data(), str.size());

@@ -20,8 +20,7 @@ std::unique_ptr<ISerialWriter> JsonSerializerFactory::createWriter() const {
 
 std::unique_ptr<ISerialReader> JsonSerializerFactory::createReader(mocca::ByteArray& data) const {
     data.resetReadPos(); // fixme: not nice
-    std::string jsonStr = data.read(data.size());
-    return mocca::make_unique<JsonReader>(jsonStr);
+    return mocca::make_unique<JsonReader>(data);
 }
 
 std::unique_ptr<ISerialWriter> SimpleStringSerializerFactory::createWriter() const {
@@ -30,6 +29,5 @@ std::unique_ptr<ISerialWriter> SimpleStringSerializerFactory::createWriter() con
 
 std::unique_ptr<ISerialReader> SimpleStringSerializerFactory::createReader(mocca::ByteArray& data) const {
     data.resetReadPos(); // fixme: not nice
-    std::string str = data.read(data.size());
-    return mocca::make_unique<SimpleStringReader>(str);
+    return mocca::make_unique<SimpleStringReader>(data);
 }
