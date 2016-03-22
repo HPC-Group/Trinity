@@ -1129,6 +1129,46 @@ IIO::Semantic GetSemanticCmd::ReplyParams::getSemantic() const {
     return m_semantic;
 }
 
+VclType GetDefault1DTransferFunctionCountCmd::Type = VclType::GetDefault1DTransferFunctionCount;
+
+void GetDefault1DTransferFunctionCountCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetDefault1DTransferFunctionCountCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetDefault1DTransferFunctionCountCmd::RequestParams::equals(const GetDefault1DTransferFunctionCountCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetDefault1DTransferFunctionCountCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetDefault1DTransferFunctionCountCmd::ReplyParams::ReplyParams(uint64_t count)
+    : m_count(count) {}
+
+void GetDefault1DTransferFunctionCountCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("count", m_count);
+}
+
+void GetDefault1DTransferFunctionCountCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_count = reader.getUInt64("count");
+}
+
+bool GetDefault1DTransferFunctionCountCmd::ReplyParams::equals(const GetDefault1DTransferFunctionCountCmd::ReplyParams& other) const {
+    return m_count == other.m_count;
+}
+
+std::string GetDefault1DTransferFunctionCountCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "count: " << m_count;
+    return stream.str();
+}
+
+uint64_t GetDefault1DTransferFunctionCountCmd::ReplyParams::getCount() const {
+    return m_count;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 
@@ -1413,6 +1453,21 @@ std::ostream& operator<<(std::ostream& os, const GetSemanticCmd::RequestParams& 
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetSemanticCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetDefault1DTransferFunctionCountCmd::RequestParams& lhs,
+                const GetDefault1DTransferFunctionCountCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetDefault1DTransferFunctionCountCmd::ReplyParams& lhs,
+                const GetDefault1DTransferFunctionCountCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

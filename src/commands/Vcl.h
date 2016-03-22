@@ -48,6 +48,8 @@ enum class VclType {
     GetBrick,
     GetType,
     GetSemantic,
+    GetDefault1DTransferFunctionCount,
+
 
 #undef PYTHON_ENUM
     GetMaxBrickSize,
@@ -118,6 +120,7 @@ private:
         m_cmdMap.insert("GetBrick", VclType::GetBrick);
         m_cmdMap.insert("GetType", VclType::GetType);
         m_cmdMap.insert("GetSemantic", VclType::GetSemantic);
+        m_cmdMap.insert("GetDefault1DTransferFunctionCount", VclType::GetDefault1DTransferFunctionCount);
 
 #undef PYTHON_MAGIC_STRING
 

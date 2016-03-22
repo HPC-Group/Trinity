@@ -19,7 +19,7 @@ IOSessionProxy::IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& 
     }
 }
 
-Core::Math::Vec3ui64 IOSessionProxy::getMaxBrickSize() const  {
+Core::Math::Vec3ui64 IOSessionProxy::getMaxBrickSize() const {
     GetMaxBrickSizeCmd::RequestParams params;
     GetMaxBrickSizeRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
@@ -89,7 +89,7 @@ Core::Math::Vec3ui IOSessionProxy::getBrickVoxelCounts(const BrickKey& brickKey)
     return reply->getParams().getBrickVoxelCounts();
 }
 
-Core::Math::Vec3f IOSessionProxy::getBrickExtents(const BrickKey & brickKey) const {
+Core::Math::Vec3f IOSessionProxy::getBrickExtents(const BrickKey& brickKey) const {
     GetBrickExtentsCmd::RequestParams params(brickKey);
     GetBrickExtentsRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
@@ -153,4 +153,11 @@ IIO::Semantic IOSessionProxy::getSemantic(uint64_t modality) const {
     GetSemanticRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getSemantic();
+}
+
+uint64_t IOSessionProxy::getDefault1DTransferFunctionCount() const {
+    GetDefault1DTransferFunctionCountCmd::RequestParams params;
+    GetDefault1DTransferFunctionCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getCount();
 }

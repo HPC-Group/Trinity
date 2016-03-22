@@ -950,6 +950,46 @@ std::ostream& operator<<(std::ostream& os, const GetSemanticCmd::ReplyParams& ob
 using GetSemanticRequest = RequestTemplate<GetSemanticCmd>;
 using GetSemanticReply = ReplyTemplate<GetSemanticCmd>;
 
+struct GetDefault1DTransferFunctionCountCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t count);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getCount() const;
+
+    private:
+        uint64_t m_count;
+    };
+};
+
+bool operator==(const GetDefault1DTransferFunctionCountCmd::RequestParams& lhs, const GetDefault1DTransferFunctionCountCmd::RequestParams& rhs);
+bool operator==(const GetDefault1DTransferFunctionCountCmd::ReplyParams& lhs, const GetDefault1DTransferFunctionCountCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountCmd::ReplyParams& obj);
+
+using GetDefault1DTransferFunctionCountRequest = RequestTemplate<GetDefault1DTransferFunctionCountCmd>;
+using GetDefault1DTransferFunctionCountReply = ReplyTemplate<GetDefault1DTransferFunctionCountCmd>;
+
 #undef PYTHON_MAGIC
 
 using ListFilesRequest = RequestTemplate<ListFilesCmd>;

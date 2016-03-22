@@ -543,3 +543,26 @@ TEST_F(IOCommandsTest, GetSemanticReqRep) {
     auto reply = trinity::testing::handleRequest<GetSemanticHdl>(request, session.get());
     ASSERT_EQ(IIO::Semantic::Color, reply.getParams().getSemantic());
 }
+
+TEST_F(IOCommandsTest, GetDefault1DTransferFunctionCountCmd) {
+    {
+        GetDefault1DTransferFunctionCountCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetDefault1DTransferFunctionCountCmd::ReplyParams target(4711);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(IOCommandsTest, GetDefault1DTransferFunctionCountReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDefault1DTransferFunctionCount()).Times(1).WillOnce(Return(4711));
+
+    GetDefault1DTransferFunctionCountCmd::RequestParams requestParams;
+    GetDefault1DTransferFunctionCountRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetDefault1DTransferFunctionCountHdl>(request, session.get());
+    ASSERT_EQ(4711, reply.getParams().getCount());
+}

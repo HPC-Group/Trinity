@@ -243,5 +243,16 @@ private:
 	IOSession* m_session;
 };
 
+class GetDefault1DTransferFunctionCountHdl : public ICommandHandler {
+public:
+    GetDefault1DTransferFunctionCountHdl(const GetDefault1DTransferFunctionCountRequest&request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetDefault1DTransferFunctionCountRequest m_request;
+	IOSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

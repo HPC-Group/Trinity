@@ -34,6 +34,7 @@ public:
     bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const override;
     IIO::ValueType getType(uint64_t modality) const override;
     IIO::Semantic getSemantic(uint64_t modality) const override;
+    uint64_t getDefault1DTransferFunctionCount() const override;
 
 private:
     CommandInputChannel m_inputChannel;
