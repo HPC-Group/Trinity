@@ -8,6 +8,8 @@
 #include "silverbullet/math/MathTools.h"
 #include "TransferFunction1D.h"
 
+using namespace trinity;
+
 TransferFunction1D::TransferFunction1D(size_t iSize) :
   m_vValueBBox(0,0)
 {
@@ -232,4 +234,14 @@ void TransferFunction1D::setColor(size_t index, Core::Math::Vec4ui8 color) {
   m_colorData[index*4+1] = color[1];
   m_colorData[index*4+2] = color[2];
   m_colorData[index*4+3] = color[3];
+}
+
+void TransferFunction1D::serialize(ISerialWriter& writer) const {
+    writer.appendObject("vValueBBox", m_vValueBBox);
+    writer.appendIntVec("colorData", m_colorData);
+}
+
+void TransferFunction1D::deserialize(const ISerialReader& reader) {
+    m_vValueBBox = reader.getSerializable<Core::Math::Vec2ui64>("vValueBBox");
+    m_colorData = reader.getUInt8Vec("colorData");
 }

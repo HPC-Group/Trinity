@@ -80,6 +80,12 @@ std::vector<float> SimpleStringReader::getFloatVec(const std::string& key) const
     return result;
 }
 
+std::vector<uint8_t> SimpleStringReader::getUInt8Vec(const std::string& key) const {
+    std::vector<uint8_t> result;
+    // fixme
+    return result;
+}
+
 std::vector<int32_t> SimpleStringReader::getInt32Vec(const std::string& key) const {
     int32_t size;
     m_stream >> size;

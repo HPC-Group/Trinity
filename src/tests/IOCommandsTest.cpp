@@ -1,15 +1,16 @@
 #include "gtest/gtest.h"
 
-#include "common/TrinityError.h"
 #include "commands/ErrorCommands.h"
 #include "commands/IOCommands.h"
 #include "commands/ProcessingCommands.h"
+#include "commands/TransferFunction1D.h"
 #include "commands/Vcl.h"
+#include "common/TrinityError.h"
 #include "io-base/IOCommandFactory.h"
 #include "io-base/IOCommandsHandler.h"
 
-#include "tests/TestUtils.h"
 #include "tests/IOMock.h"
+#include "tests/TestUtils.h"
 
 #include "mocca/net/ConnectionFactorySelector.h"
 
@@ -19,17 +20,11 @@ using namespace ::testing;
 
 class IOCommandsTest : public ::testing::Test {
 protected:
-    IOCommandsTest() {
-        mocca::net::ConnectionFactorySelector::addDefaultFactories();
-    }
+    IOCommandsTest() { mocca::net::ConnectionFactorySelector::addDefaultFactories(); }
 
-    virtual ~IOCommandsTest() {
-        mocca::net::ConnectionFactorySelector::removeAll();
-    }
+    virtual ~IOCommandsTest() { mocca::net::ConnectionFactorySelector::removeAll(); }
 
-    std::unique_ptr<IOSession> createMockSession() {
-        return mocca::make_unique<IOSession>("loopback", mocca::make_unique<IOMock>());
-    }
+    std::unique_ptr<IOSession> createMockSession() { return mocca::make_unique<IOSession>("loopback", mocca::make_unique<IOMock>()); }
 };
 
 TEST_F(IOCommandsTest, InitIOSessionCmd) {
@@ -50,7 +45,7 @@ TEST_F(IOCommandsTest, GetLODLevelCountCmd) {
         GetLODLevelCountCmd::RequestParams target(42);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
-    } 
+    }
     {
         GetLODLevelCountCmd::ReplyParams target(4711);
         auto result = trinity::testing::writeAndRead(target);
@@ -85,7 +80,7 @@ TEST_F(IOCommandsTest, ListFilesCmd) {
     {
         IOData data1("name1", "FractalData@3", IOData::DataType::Dataset);
         IOData data2("name2", "FractalData@2", IOData::DataType::Directory);
-        std::vector<IOData> dataVec{ data1, data2 };
+        std::vector<IOData> dataVec{data1, data2};
         ListFilesCmd::ReplyParams target(dataVec);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);
@@ -147,7 +142,9 @@ TEST_F(IOCommandsTest, GetMaxUsedBrickSizesCmd) {
 
 TEST_F(IOCommandsTest, GetMaxUsedBrickSizesReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getMaxUsedBrickSizes()).Times(1).WillOnce(Return(Core::Math::Vec3ui64(1, 2, 3)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getMaxUsedBrickSizes())
+        .Times(1)
+        .WillOnce(Return(Core::Math::Vec3ui64(1, 2, 3)));
 
     GetMaxUsedBrickSizesCmd::RequestParams requestParams;
     GetMaxUsedBrickSizesRequest request(requestParams, 1, 2);
@@ -156,13 +153,13 @@ TEST_F(IOCommandsTest, GetMaxUsedBrickSizesReqRep) {
 }
 
 TEST_F(IOCommandsTest, BrickKey) {
-    BrickKey target{ 1, 2, 3, 4 };
+    BrickKey target{1, 2, 3, 4};
     auto result = trinity::testing::writeAndRead(target);
     ASSERT_EQ(target, result);
 }
 
 TEST_F(IOCommandsTest, MinMaxBlock) {
-    MinMaxBlock target{ 1.0, 2.0, 3.0, 4.0 };
+    MinMaxBlock target{1.0, 2.0, 3.0, 4.0};
     auto result = trinity::testing::writeAndRead(target);
     ASSERT_EQ(target, result);
 }
@@ -184,7 +181,9 @@ TEST_F(IOCommandsTest, MaxMinForKeyCmd) {
 
 TEST_F(IOCommandsTest, MaxMinForKeyReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), maxMinForKey(BrickKey(1, 2, 3, 4))).Times(1).WillOnce(Return(MinMaxBlock(1.0, 2.0, 3.0, 4.0)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), maxMinForKey(BrickKey(1, 2, 3, 4)))
+        .Times(1)
+        .WillOnce(Return(MinMaxBlock(1.0, 2.0, 3.0, 4.0)));
 
     MaxMinForKeyCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
     MaxMinForKeyRequest request(requestParams, 1, 2);
@@ -231,7 +230,7 @@ TEST_F(IOCommandsTest, GetDomainSizeCmd) {
 
 TEST_F(IOCommandsTest, GetDomainSizeReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDomainSize(1,2)).Times(1).WillOnce(Return(Core::Math::Vec3ui64(4, 5, 6)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getDomainSize(1, 2)).Times(1).WillOnce(Return(Core::Math::Vec3ui64(4, 5, 6)));
 
     GetDomainSizeCmd::RequestParams requestParams(1, 2);
     GetDomainSizeRequest request(requestParams, 1, 2);
@@ -325,7 +324,9 @@ TEST_F(IOCommandsTest, GetBrickVoxelCountsCmd) {
 
 TEST_F(IOCommandsTest, GetBrickVoxelCountsReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickVoxelCounts(BrickKey(1, 2, 3, 4))).Times(1).WillOnce(Return(Core::Math::Vec3ui(5, 6, 7)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickVoxelCounts(BrickKey(1, 2, 3, 4)))
+        .Times(1)
+        .WillOnce(Return(Core::Math::Vec3ui(5, 6, 7)));
 
     GetBrickVoxelCountsCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
     GetBrickVoxelCountsRequest request(requestParams, 1, 2);
@@ -348,7 +349,9 @@ TEST_F(IOCommandsTest, GetBrickExtentsCmd) {
 
 TEST_F(IOCommandsTest, GetBrickExtentsReqRep) {
     auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickExtents(BrickKey(1, 2, 3, 4))).Times(1).WillOnce(Return(Core::Math::Vec3f(5.0, 6.0, 7.0)));
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrickExtents(BrickKey(1, 2, 3, 4)))
+        .Times(1)
+        .WillOnce(Return(Core::Math::Vec3f(5.0, 6.0, 7.0)));
 
     GetBrickExtentsCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
     GetBrickExtentsRequest request(requestParams, 1, 2);
@@ -478,7 +481,7 @@ TEST_F(IOCommandsTest, GetBrickCmd) {
         ASSERT_EQ(target, result);
     }
     {
-        std::initializer_list<uint8_t> data = { 0x12, 0x34, 0x56, 0x78, 0x9A };
+        std::initializer_list<uint8_t> data = {0x12, 0x34, 0x56, 0x78, 0x9A};
         auto binary = std::make_shared<const std::vector<uint8_t>>(data);
         GetBrickCmd::ReplyParams target(binary, true);
         auto result = trinity::testing::writeAndRead(target);
@@ -488,8 +491,10 @@ TEST_F(IOCommandsTest, GetBrickCmd) {
 
 TEST_F(IOCommandsTest, GetBrickReqRep) {
     auto session = createMockSession();
-    std::vector<uint8_t> brick{ 0x12, 0x34, 0x56, 0x78, 0x9A };
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrick(BrickKey(1, 2, 3, 4), _)).Times(1).WillOnce(DoAll(SetArgReferee<1>(brick), Return(true)));
+    std::vector<uint8_t> brick{0x12, 0x34, 0x56, 0x78, 0x9A};
+    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrick(BrickKey(1, 2, 3, 4), _))
+        .Times(1)
+        .WillOnce(DoAll(SetArgReferee<1>(brick), Return(true)));
 
     GetBrickCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
     GetBrickRequest request(requestParams, 1, 2);
@@ -605,7 +610,7 @@ TEST_F(IOCommandsTest, Get1DHistogramCmd) {
 
 TEST_F(IOCommandsTest, Get1DHistogramReqRep) {
     auto session = createMockSession();
-    std::vector<uint64_t> histogram{ 1, 2, 3, 4 };
+    std::vector<uint64_t> histogram{1, 2, 3, 4};
     EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), get1DHistogram()).Times(1).WillOnce(Return(histogram));
 
     Get1DHistogramCmd::RequestParams requestParams;
@@ -629,7 +634,7 @@ TEST_F(IOCommandsTest, Get2DHistogramCmd) {
 
 TEST_F(IOCommandsTest, Get2DHistogramReqRep) {
     auto session = createMockSession();
-    std::vector<uint64_t> histogram{ 1, 2, 3, 4 };
+    std::vector<uint64_t> histogram{1, 2, 3, 4};
     EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), get2DHistogram()).Times(1).WillOnce(Return(histogram));
 
     Get2DHistogramCmd::RequestParams requestParams;
@@ -659,4 +664,12 @@ TEST_F(IOCommandsTest, GetUserDefinedSemanticReqRep) {
     GetUserDefinedSemanticRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetUserDefinedSemanticHdl>(request, session.get());
     ASSERT_EQ("UserSemantic", reply.getParams().getSemantic());
+}
+
+TEST_F(IOCommandsTest, TransferFunction1D) {
+    TransferFunction1D target;
+    target.set({0x11, 0x22, 0x33, 0xAA, 0xBB, 0xCC});
+    auto result = trinity::testing::writeAndRead(target);
+    ASSERT_EQ(target.getRAWData(), result.getRAWData());
+    ASSERT_EQ(target.getNonZeroLimits(), result.getNonZeroLimits());
 }

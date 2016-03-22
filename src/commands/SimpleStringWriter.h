@@ -20,6 +20,7 @@ public:
     void appendObject(const std::string& key, const ISerializable& obj) override;
 
     void appendFloatVec(const std::string& key, const std::vector<float>& vec) override;
+    void appendIntVec(const std::string& key, const std::vector<uint8_t>& vec) override;
     void appendIntVec(const std::string& key, const std::vector<int32_t>& vec) override;
     void appendIntVec(const std::string& key, const std::vector<uint64_t>& vec) override;
     void appendBoolVec(const std::string& key, const std::vector<bool>& vec) override;
