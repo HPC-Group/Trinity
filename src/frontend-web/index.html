@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Trinity - Frontend</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Loading Bootstrap -->
+    <link href="dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Loading Flat UI -->
+    <link href="dist/css/flat-ui.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <style>
+        .navbar-inverse .navbar-brand.disabled,
+        .navbar-inverse .navbar-brand.disabled:hover,
+        .navbar-inverse .navbar-brand.disabled:focus {
+            color: #ffffff;
+            background-color: transparent;
+            pointer-events: none;
+            cursor: default;
+        }    
+        label{max-width: 83%}
+    </style>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+    <!--[if lt IE 9]>
+      <script src="js/vendor/html5shiv.js"></script>
+      <script src="js/vendor/respond.min.js"></script>
+    <![endif]-->
+    
+  </head>
+  <body onload="MUI_MasterUI.init()">
+	
+	<nav class="navbar navbar-inverse navbar-embossed" role="navigation">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+			<span class="sr-only">Toggle navigation</span>
+		  </button>
+		  <a class="navbar-brand disabled" href="#"><img alt="Brand" style="margin-top:-7px; margin-right:10px; max-height:150%;" src="img/mui/muilogo.png">Trinity</a>
+		</div>
+		<div class="collapse navbar-collapse" id="navbar-collapse-01">
+		  <ul class="nav navbar-nav navbar-left">
+		  	<li><a href="../utilities/index.html">Home</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#uisModal" onclick="MUI_MasterUI.Connector.sendRequest('queryUIs')"><span class="fui-arrow-right"></span>Running UIs</a></li>
+		  </ul>
+          <ul class="nav navbar-nav navbar-right">
+			<li><a href="#" data-toggle="modal" data-target="#aboutModal">About</a></li>
+		  </ul>
+		</div><!-- /.navbar-collapse -->
+	</nav><!-- /navbar -->
+	
+	
+	
+
+	
+	<div class="container">
+		<!--<div class="progress">
+			<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 10%;"> UI Progress </div>
+		</div>-->
+  
+		  <!-- connect to server -->
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			  <h3 class="panel-title">Nodes</h3>
+			</div>
+			<div class="panel-body">
+			  <div class="input-group"> 
+			  	<span class="input-group-addon" id="basic-addon1">IO IP:</span>
+				<input id="io_ip" type="text" class="form-control" placeholder="127.0.0.1" aria-describedby="basic-addon1">
+				<span class="input-group-addon" id="port">IO Port:</span>
+				<input id="io_port" type="text" class="form-control" placeholder="8080" aria-describedby="basic-addon1">
+			  </div>
+			<div class="panel-body">
+			  <div class="input-group"> 
+			  	<span class="input-group-addon" id="basic-addon1">Processing IP:</span>
+				<input id="proc_ip" type="text" class="form-control" placeholder="127.0.0.1" aria-describedby="basic-addon1">
+				<span class="input-group-addon" id="port">Processing Port:</span>
+				<input id="proc_port" type="text" class="form-control" placeholder="8080" aria-describedby="basic-addon1">
+			  </div>
+
+			  <!-- <div class="panel-body">
+				<div class="input-group"> <span class="input-group-addon" id="user">User:</span>
+				  <input id="connect_user" type="text" class="form-control" placeholder="Bello" aria-describedby="basic-addon1">
+				</div>
+			  </div> -->
+			</div>
+			<div align="center">
+			  <button id="btn_connect" type="submit" class="btn btn-primary btn-medium" onclick="MUI_MasterUI.connect()"> <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> connect </button>
+			</div>
+			<p>
+			<div id ="div_connect_success" class="alert alert-success" role="alert" align="center"> Connection established! </div>
+			<div id ="div_connect_failure" class="alert alert-danger" role="alert" align="center"> Cannot connect to the server :( </div>
+		  </div>
+  
+		  <!-- use  style="display:none" to hide sth -->
+		  <div id="apps" class="panel panel-default">
+			<div class="panel-heading">
+			  <h3 class="panel-title">Applications</h3>
+			</div>
+			<div class="panel-body">
+			  <div id="applicationCarousel" class="carousel slide" data-ride="carousel" data-interval="false"> 
+				<!-- Indicators -->
+				<ol id="carousel_indicators" class="carousel-indicators">
+				  <li data-target="#applicationCarousel" data-slide-to="0" class="active"></li>
+				</ol>
+		
+				<!-- Wrapper for slides -->
+				<div id="carousel_slides" class="carousel-inner" role="listbox">
+				  <div class="item active"> 
+				  	<img src="" alt="Chania">
+					
+					  <div class="carousel-caption">
+						<h1>ImageVis.</h1>
+						<p>An example application for doctors.</p>
+						<p><a class="btn btn-lg btn-primary" role="button" onclick="MUI_MasterUI.applicationSelected()">Select</a></p>
+					  </div>
+					
+				  </div>
+				</div>
+				<!-- Left and right controls --> 
+				<a class="left carousel-control" href="#applicationCarousel" role="button" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a> <a class="right carousel-control" href="#applicationCarousel" role="button" data-slide="next"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <span class="sr-only">Next</span> </a> </div>
+			</div>
+		  </div>
+  
+		  <!-- build uis -->
+		  <div id="panel_requirements" class="panel panel-default">
+			<div class="panel-heading">
+			  <h3 class="panel-title">UI</h3>
+			  <div class="btn-group btn-group-justified" role="group" aria-label="...">
+				<div class="btn-group" role="group">
+				  <button type="button" class="btn btn-default">Custom</button>
+				</div>
+				<div class="btn-group" role="group">
+				  <button type="button" class="btn btn-default disabled">Proposed</button>
+				</div>
+			  </div>
+			</div>
+			<div id="container_requirements" class="panel-body">
+			  
+			</div>
+			<div align="center">
+				  <button type="button" id="btnStartUI" class="btn btn-primary" onmouseup="MUI_MasterUI.startUI()" disabled>Start UI</button>
+			</div>
+            <p></p>
+		  </div>
+	</div>
+	
+	<!-- Modal with about dialogue -->
+	<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+					<h5 class="modal-title" id="aboutModalLabel">MorphableUI Web MasterUI</h5>
+				</div>
+				<div class="modal-body">
+					<p>Version: 0.1</p>
+					<p>&copy; 2016 Andrey Krekhov, David McCann (and others)</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Schließen</button>
+				</div>				
+			</div>	
+		</div>
+	</div>
+    
+    <!-- Modal with running uis dialogue -->
+	<div class="modal fade" id="uisModal" tabindex="-1" role="dialog" aria-labelledby="uisModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+					<h5 class="modal-title" id="uisModalLabel">Running UIs</h5>
+				</div>
+				<div class="modal-body">
+					<ul id="uiModalList" class="list-group">
+                        
+                    </ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Schließen</button>
+				</div>				
+			</div>	
+		</div>
+	</div>
+
+    <!-- Modal showing error messages -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+					<h5 class="modal-title" id="errorModalLabel">ERROR</h5>
+				</div>
+				<div class="modal-body">
+					<p id="errorBody"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Schließen</button>
+				</div>				
+			</div>	
+		</div>
+	</div>
+
+
+    <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
+    <script src="dist/js/vendor/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="dist/js/vendor/video.js"></script>
+    <script src="dist/js/flat-ui.min.js"></script>
+	<script src="js/masterui.js"></script>
+	<script src="js/validator.js"></script>
+  </body>
+</html>

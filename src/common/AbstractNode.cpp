@@ -14,6 +14,8 @@ AbstractNode::~AbstractNode() {
     join();
 }
 
+#include <iostream>
+
 void AbstractNode::run() {
     LINFO("(node) listening... ");
     while (!isInterrupted()) {
@@ -22,6 +24,8 @@ void AbstractNode::run() {
             auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_REPLY);
             if (!msgEnvelope.isNull()) {
                 auto env = msgEnvelope.release();
+                //LINFO("raw: " + env.message);
+                
                 auto request = Request::createFromByteArray(env.message);
                 LINFO("request: " << *request);
                 // handle request

@@ -11,6 +11,7 @@
 using namespace trinity;
 
 std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArray) {
+    
     auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
     VclType type = Vcl::instance().toType(reader->getString("type"));
 
