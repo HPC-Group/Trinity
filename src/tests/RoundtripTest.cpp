@@ -124,7 +124,7 @@ TEST_F(NodeTest, SetIsoValueOnSimpleRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
 
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::SimpleRenderer, "FractalData@3", ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, "FractalData@3", ioEndpoint, params);
     renderer->setIsoValue(123);
 
     processingNode->join();
@@ -143,7 +143,7 @@ TEST_F(NodeTest, SetCamZoomValueOnSimpleRendererTest) {
     ProcessingNodeProxy proxy(endpoint);
     
     StreamingParams params(2048, 1000);
-    auto renderer = proxy.initRenderer(VclType::SimpleRenderer, "FractalData@3", ioEndpoint, params);
+    auto renderer = proxy.initRenderer(VclType::DummyRenderer, "FractalData@3", ioEndpoint, params);
     renderer->zoomCamera(12);
     
     processingNode->join();
