@@ -103,9 +103,16 @@ void JsonWriter::appendBinary(const std::vector<uint8_t>& vec) {
 mocca::ByteArray JsonWriter::write() const {
     JsonCpp::FastWriter writer;
     std::string str = writer.write(m_root);
-    mocca::ByteArray result(sizeof(uint32_t) + str.size() + m_binary->size());
-    result << static_cast<uint32_t>(str.size());
+    int resultSize = str.size();
+    if (!m_binary->empty()) {
+        resultSize += 4 + m_binary->size();
+    }
+    mocca::ByteArray result(resultSize);
     result.append(str.data(), str.size());
-    result.append(m_binary->data(), m_binary->size());
+    if (!m_binary->empty()) {
+        // delimiter sequence; octets are invalid in a utf-8 string
+        result << '\xc0' << '\xc1' << '\xf5' << '\xff';
+        result.append(m_binary->data(), m_binary->size());
+    }
     return result;
 }

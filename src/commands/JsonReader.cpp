@@ -4,6 +4,7 @@
 #include "common/TrinityError.h"
 
 #include <iterator>
+#include <algorithm>
 
 using namespace trinity;
 
@@ -17,15 +18,32 @@ JsonReader::JsonReader(const std::string& json)
 
 JsonReader::JsonReader(mocca::ByteArray& data)
     : m_binary(std::make_shared<std::vector<uint8_t>>()) {
-    auto jsonSize = data.read<uint32_t>();
+    
+    // determine position of delimiter
+    const std::string delimiter{ '\xc0', '\xc1', '\xf5', '\xff' }; // octets are invalid in a utf-8 string
+    auto dataBegin = reinterpret_cast<char*>(data.data());
+    auto dataEnd = reinterpret_cast<char*>(data.data()) + data.size();
+    auto delimitPos = std::find_first_of(dataBegin, dataEnd, begin(delimiter), end(delimiter));
+
+    // split off json part before delimiter
+    auto jsonSize = data.size();
+    if (delimitPos != dataEnd) {
+        jsonSize = std::distance(dataBegin, delimitPos);
+    }
     auto json = data.read(jsonSize);
+
+    // parse json
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {
         throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
     }
-    uint32_t binarySize = data.size() - jsonSize - sizeof(uint32_t);
-    m_binary->reserve(binarySize);
-    std::copy(data.data() + jsonSize + sizeof(uint32_t), data.data() + data.size(), std::back_inserter(*m_binary));
+
+    // read optional binary data
+    if (delimitPos != dataEnd) {
+        uint32_t binarySize = data.size() - jsonSize - delimiter.size();
+        m_binary->reserve(binarySize);
+        std::copy(dataBegin + jsonSize + delimiter.size(), dataEnd, std::back_inserter(*m_binary));
+    }
 }
 
 JsonReader::JsonReader(const JsonCpp::Value& root, std::shared_ptr<std::vector<uint8_t>> binary)
