@@ -29,17 +29,17 @@
  }
 
  GLHashTable::~GLHashTable() {
- FreeGL();
+ freeGL();
  }
 
- void GLHashTable::InitGL() {
+ void GLHashTable::initGL() {
 
  int gpumax;
  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &gpumax);
 
 
  try {
- m_texSize = Fit1DIndexTo2DArray(m_iTableSize, gpumax);
+ m_texSize = fit1DIndexTo2DArray(m_iTableSize, gpumax);
   LDEBUGC("GLHashTable", "Hashtable texture size "<< m_texSize);
  } catch (std::runtime_error const& e) {
  // this is very unlikely but not impossible
@@ -48,7 +48,7 @@
  }
 
  // try to use 1D texture if possible because it appears to be slightly faster than a 2D texture
- if (Is2DTexture()) {
+ if (is2DTexture()) {
  m_pHashTableTex = std::make_shared<GLTexture2D>(m_texSize.x, m_texSize.y, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
  LDEBUGC("GLHashTable", "using a 2D hashtable : textureID" << m_pHashTableTex->GetGLID());
  } else {
@@ -62,7 +62,7 @@
  );
  }
 
- Vec4ui GLHashTable::Int2Vector(uint32_t index) const {
+ Vec4ui GLHashTable::int2Vector(uint32_t index) const {
  Vec4ui coords;
 
  coords.w = index / m_maxBrickCount.volume();
@@ -77,19 +77,19 @@
  }
 
 
- bool GLHashTable::Is2DTexture() const {
+ bool GLHashTable::is2DTexture() const {
  return m_texSize.y > 1;
  }
 
 
- void GLHashTable::Enable() {
+ void GLHashTable::enable() {
 #ifndef DETECTED_OS_APPLE
  glBindImageTexture(m_iMountPoint, m_pHashTableTex->GetGLID(), 0, false, 0, GL_READ_WRITE, GL_R32UI);
 #endif
  }
 
 
- std::vector<UINTVECTOR4> GLHashTable::GetData() {
+ std::vector<UINTVECTOR4> GLHashTable::getData() {
 #ifndef DETECTED_OS_APPLE
  glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 #endif
@@ -103,18 +103,18 @@
  //StackTimer condense(PERF_CONDENSE_HTABLE);
  for (size_t i = 0;i<m_iTableSize;++i) {
 	uint32_t elem = m_pRawData.get()[i];
-	if (elem != 0) requests.push_back(Int2Vector(elem-1));
+	if (elem != 0) requests.push_back(int2Vector(elem-1));
  }
 
  return requests;
  }
 
- void GLHashTable::ClearData() {
+ void GLHashTable::clearData() {
  std::fill(m_pRawData.get(), m_pRawData.get()+m_iTableSize, 0);
  m_pHashTableTex->SetData(m_pRawData.get());
  }
 
- std::string GLHashTable::GetShaderFragment(uint32_t iMountPoint) {
+ std::string GLHashTable::getShaderFragment(uint32_t iMountPoint) {
  m_iMountPoint = iMountPoint;
  std::stringstream ss;
 
@@ -140,7 +140,7 @@
 
  ss << "\n"
  << "layout(binding = " << iMountPoint << ", size1x32) coherent uniform "
- << (Is2DTexture() ? "uimage2D " : "uimage1D ") << m_strPrefixName << "hashTable;\n"
+ << (is2DTexture() ? "uimage2D " : "uimage1D ") << m_strPrefixName << "hashTable;\n"
  << "\n"
  << "uint " << m_strPrefixName << "Serialize(uvec4 bd) {\n"
  << "  return 1 + bd.x + bd.y * " << m_maxBrickCount.x << " + bd.z * "
@@ -153,7 +153,7 @@
  << "}\n"
  << "\n";
 
- if (Is2DTexture()) {
+ if (is2DTexture()) {
  // we are using a 2D texture
  ss << "uint " << m_strPrefixName << "AccessHashTable(uint hashValue, uint serializedValue) {\n"
  << "  ivec2 hashPosition = ivec2(hashValue % " << m_texSize.x << ", "
@@ -199,7 +199,7 @@
  return ss.str();
  }
 
- void GLHashTable::FreeGL() {
+ void GLHashTable::freeGL() {
  if (m_pHashTableTex) {
  m_pHashTableTex->Delete();
  m_pHashTableTex.reset();
@@ -207,14 +207,14 @@
  }
  }
 
- uint64_t GLHashTable::GetCPUSize() const {
+ uint64_t GLHashTable::getCPUSize() const {
    return m_pHashTableTex->GetCPUSize() + m_iTableSize*4;
  }
- uint64_t GLHashTable::GetGPUSize() const {
+ uint64_t GLHashTable::getGPUSize() const {
    return m_pHashTableTex->GetGPUSize();
  }
 
- Vec2ui GLHashTable::Fit1DIndexTo2DArray(uint64_t iMax1DIndex,
+ Vec2ui GLHashTable::fit1DIndexTo2DArray(uint64_t iMax1DIndex,
                                               uint32_t iMax2DArraySize) {
    // check if 1D index exceeds given 2D array
    if (iMax1DIndex > uint64_t(iMax2DArraySize) * uint64_t(iMax2DArraySize)) {

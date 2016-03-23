@@ -1,9 +1,10 @@
 #include "VisibilityState.h"
 
-VisibilityState::VisibilityState() : m_eRenderMode(RM_INVALID)
+VisibilityState::VisibilityState() :
+m_eRenderMode(RM_INVALID)
 {}
 
-bool VisibilityState::NeedsUpdate(double fMin, double fMax)
+bool VisibilityState::needsUpdate(double fMin, double fMax)
 {
   bool const bNeedsUpdate = (m_eRenderMode != RM_1DTRANS) ||
     (m_rm1DTrans.fMin != fMin) ||
@@ -14,7 +15,8 @@ bool VisibilityState::NeedsUpdate(double fMin, double fMax)
   return bNeedsUpdate;
 }
 
-bool VisibilityState::NeedsUpdate(double fMin, double fMax, double fMinGradient, double fMaxGradient)
+bool VisibilityState::needsUpdate(double fMin, double fMax, double fMinGradient,
+                                  double fMaxGradient)
 {
   bool const bNeedsUpdate = (m_eRenderMode != RM_2DTRANS) ||
     (m_rm2DTrans.fMin != fMin) ||
@@ -29,7 +31,7 @@ bool VisibilityState::NeedsUpdate(double fMin, double fMax, double fMinGradient,
   return bNeedsUpdate;
 }
 
-bool VisibilityState::NeedsUpdate(double fIsoValue)
+bool VisibilityState::needsUpdate(double fIsoValue)
 {
   bool const bNeedsUpdate = (m_eRenderMode != RM_ISOSURFACE) ||
     (m_rmIsoSurf.fIsoValue != fIsoValue);
