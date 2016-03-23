@@ -7,6 +7,7 @@
 #include "mocca/base/ByteArray.h"
 #include "mocca/base/ContainerTools.h"
 #include "mocca/log/ConsoleLog.h"
+#include "mocca/log/HTMLLog.h"
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
@@ -32,7 +33,9 @@ void init() {
     using mocca::LogManager;
     LogManager::initialize(LogManager::LogLevel::Debug, true);
     auto console = new mocca::ConsoleLog();
+    auto web = new mocca::HTMLLog("processinglog.html");
     LogMgr.addLog(console);
+    LogMgr.addLog(web);
     signal(SIGINT, exitHandler);
     ConnectionFactorySelector::addDefaultFactories();
 }
