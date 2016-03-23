@@ -166,13 +166,11 @@ void SimpleRenderer::LoadVolumeData() {
 void SimpleRenderer::LoadTransferFunction() {
   LINFO("(p) creating transfer function");
   
-  // start with the "middle" transfer function
-  // (whatever that means :-) )
-  uint64_t index = m_io->getDefault1DTransferFunctionCount() / 2;
+  uint64_t maxIndex = m_io->getDefault1DTransferFunctionCount()-1;
   
-  LINFO("(p) using default function " << index);
+  LINFO("(p) using default function " << maxIndex);
   
-  TransferFunction1D tf = m_io->getDefault1DTransferFunction(index);
+  TransferFunction1D tf = m_io->getDefault1DTransferFunction(maxIndex);
 
   LINFO("(p) filling openGL resource");
   

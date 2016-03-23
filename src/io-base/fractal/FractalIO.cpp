@@ -237,7 +237,10 @@ TransferFunction1D FractalIO::getDefault1DTransferFunction(uint64_t index) const
   float center = float(index)/float(getDefault1DTransferFunctionCount());
 
   TransferFunction1D tf(256);
-  tf.setStdFunction(center);
+  tf.setStdFunction(center, 0.3, 0, false);
+  tf.setStdFunction(center, 0.1, 1, true);
+  tf.setStdFunction(center, 0.8, 2, true);
+  tf.setStdFunction(center, 0.9, 3, false);
   return tf;
 }
 
