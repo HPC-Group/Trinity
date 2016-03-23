@@ -166,18 +166,21 @@ void SimpleRenderer::LoadVolumeData() {
 void SimpleRenderer::LoadTransferFunction() {
   LINFO("(p) creating transfer function");
   
-  std::vector<uint8_t> linearRamp(4*256);  // RGBA * 256
-  for (size_t i = 0;i<256;++i) {
-    linearRamp[i*4+0] = uint8_t(i);
-    linearRamp[i*4+1] = uint8_t(i);
-    linearRamp[i*4+2] = uint8_t(i);
-    linearRamp[i*4+3] = uint8_t(i);
-  }
-  m_texTransferFunc = mocca::make_unique<GLTexture1D>(256,
+  // start with the "middle" transfer function
+  // (whatever that means :-) )
+  uint64_t index = m_io->getDefault1DTransferFunctionCount() / 2;
+  
+  LINFO("(p) using default function " << index);
+  
+  TransferFunction1D tf = m_io->getDefault1DTransferFunction(index);
+
+  LINFO("(p) filling openGL resource");
+  
+  m_texTransferFunc = mocca::make_unique<GLTexture1D>(tf.getSize(),
                                                       GL_RGBA,
                                                       GL_RGBA,
                                                       GL_UNSIGNED_BYTE,
-                                                      linearRamp.data());
+                                                      tf.getRAWData().data());
   LINFO("(p) transfer function created");
 }
 
