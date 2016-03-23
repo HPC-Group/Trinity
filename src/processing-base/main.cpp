@@ -14,6 +14,8 @@
 
 #include "processing-base/ProcessingNode.h"
 
+#include <silverbullet/base/DetectEnv.h>
+
 
 using namespace trinity;
 using namespace mocca::net;
@@ -33,9 +35,11 @@ void init() {
     using mocca::LogManager;
     LogManager::initialize(LogManager::LogLevel::Debug, true);
     auto console = new mocca::ConsoleLog();
-    auto web = new mocca::HTMLLog("processinglog.html");
     LogMgr.addLog(console);
+#ifdef DETECTED_OS_LINUX
+    auto web = new mocca::HTMLLog("processinglog.html");
     LogMgr.addLog(web);
+#endif
     signal(SIGINT, exitHandler);
     ConnectionFactorySelector::addDefaultFactories();
 }

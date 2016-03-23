@@ -7,12 +7,15 @@
 #include "mocca/base/ByteArray.h"
 #include "mocca/base/ContainerTools.h"
 #include "mocca/log/ConsoleLog.h"
+#include "mocca/log/HTMLLog.h"
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 
 #include "io-base/IONode.h"
 
+#include <silverbullet/base/DetectEnv.h>
+    
 using namespace trinity;
 using namespace mocca::net;
 
@@ -32,6 +35,10 @@ void init() {
     LogManager::initialize(LogManager::LogLevel::Debug, true);
     auto console = new mocca::ConsoleLog();
     LogMgr.addLog(console);
+#ifdef DETECTED_OS_LINUX
+    auto web = new mocca::HTMLLog("iolog.html");
+    LogMgr.addLog(web);
+#endif
     signal(SIGINT, exitHandler);
     ConnectionFactorySelector::addDefaultFactories();
 }
