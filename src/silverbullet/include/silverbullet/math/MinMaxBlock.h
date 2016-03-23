@@ -33,10 +33,10 @@ public:
   {}
 
   void Merge(const MinMaxBlock& other) {
-    minScalar = std::min(minScalar, other.minScalar);
+    /*minScalar = std::min(minScalar, other.minScalar);
     maxScalar = std::max(maxScalar, other.maxScalar);
     minGradient = std::min(minGradient, other.minGradient);
-    maxGradient = std::max(maxGradient, other.maxGradient);
+    maxGradient = std::max(maxGradient, other.maxGradient);*/
   }
 
   void serialize(ISerialWriter& writer) const;
