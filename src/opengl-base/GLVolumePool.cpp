@@ -1,5 +1,4 @@
 #include "mocca/log/LogManager.h"
-#include <GL/glew.h>
 
 #include <algorithm>
 #include <cstdio>
@@ -884,8 +883,9 @@ void GLVolumePool::CreateGLResources() {
 //#endif
 
   int gpumax;
+#ifndef DETECTED_OS_APPLE
   glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE_EXT, &gpumax);
-
+#endif
   // last element in the offset table contains all bricks until the
   // last level + that last level itself contains one brick
   m_iTotalBrickCount = *(m_vLoDOffsetTable.end()-1)+1;
