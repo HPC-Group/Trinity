@@ -3,7 +3,7 @@
 #include "commands/ISerializable.h"
 
 #include <algorithm>
-#include <cfloat>
+#include <limits>
 
 /// Stores minimum and maximum data for a block of data.
 class MinMaxBlock : public trinity::SerializableTemplate<MinMaxBlock> {
@@ -14,10 +14,10 @@ public:
     double maxGradient;
 
   MinMaxBlock() :
-   minScalar(DBL_MAX),
-   maxScalar(-FLT_MAX),
-   minGradient(DBL_MAX),
-   maxGradient(-FLT_MAX)
+   minScalar(std::numeric_limits<float>::max()),
+   maxScalar(-std::numeric_limits<float>::max()),
+   minGradient(std::numeric_limits<float>::max()),
+   maxGradient(-std::numeric_limits<float>::max())
   {}
 
   MinMaxBlock(double _minScalar, double _maxScalar,
