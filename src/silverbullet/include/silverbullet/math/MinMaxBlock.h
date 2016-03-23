@@ -1,16 +1,12 @@
-#ifndef TUVOK_MAX_MIN_BLOCK_H
-#define TUVOK_MAX_MIN_BLOCK_H
+#pragma once
 
 #include "commands/ISerializable.h"
 
 #include <algorithm>
 #include <cfloat>
 
-// renamed from Tuvok (@andrey)
-namespace trinity {
-
 /// Stores minimum and maximum data for a block of data.
-class MinMaxBlock : public SerializableTemplate<MinMaxBlock> {
+class MinMaxBlock : public trinity::SerializableTemplate<MinMaxBlock> {
 public:
     double minScalar;
     double maxScalar;
@@ -32,15 +28,15 @@ public:
    maxGradient(_maxGradient)
   {}
 
-  void Merge(const MinMaxBlock& other) {
-    /*minScalar = std::min(minScalar, other.minScalar);
+  void merge(const MinMaxBlock& other) {
+    minScalar = std::min(minScalar, other.minScalar);
     maxScalar = std::max(maxScalar, other.maxScalar);
     minGradient = std::min(minGradient, other.minGradient);
-    maxGradient = std::max(maxGradient, other.maxGradient);*/
+    maxGradient = std::max(maxGradient, other.maxGradient);
   }
 
-  void serialize(ISerialWriter& writer) const;
-  void deserialize(const ISerialReader& reader);
+  void serialize(trinity::ISerialWriter& writer) const;
+  void deserialize(const trinity::ISerialReader& reader);
 
   bool equals(const MinMaxBlock& other) const;
   std::string toString() const;
@@ -48,31 +44,3 @@ public:
 
 bool operator==(const MinMaxBlock& lhs, const MinMaxBlock& rhs);
 std::ostream& operator<<(std::ostream& os, const MinMaxBlock& obj);
-
-}
-#endif
-/*
-   For more information, please see: http://software.sci.utah.edu
-
-   The MIT License
-
-   Copyright (c) 2013 Interactive Visualization and Data Analysis Group
-
-   Permission is hereby granted, free of charge, to any person obtaining a
-   copy of this software and associated documentation files (the "Software"),
-   to deal in the Software without restriction, including without limitation
-   the rights to use, copy, modify, merge, publish, distribute, sublicense,
-   and/or sell copies of the Software, and to permit persons to whom the
-   Software is furnished to do so, subject to the following conditions:
-
-   The above copyright notice and this permission notice shall be included
-   in all copies or substantial portions of the Software.
-
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-   THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-   DEALINGS IN THE SOFTWARE.
-*/

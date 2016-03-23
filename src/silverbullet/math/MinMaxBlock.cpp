@@ -28,10 +28,10 @@ std::string MinMaxBlock::toString() const {
     return stream.str();
 }
 
-bool trinity::operator==(const MinMaxBlock& lhs, const MinMaxBlock& rhs) {
+bool operator==(const MinMaxBlock& lhs, const MinMaxBlock& rhs) {
     return lhs.equals(rhs);
 }
 
-std::ostream& trinity::operator<<(std::ostream& os, const MinMaxBlock& obj) {
+std::ostream& operator<<(std::ostream& os, const MinMaxBlock& obj) {
     return os << obj.toString();
 }
