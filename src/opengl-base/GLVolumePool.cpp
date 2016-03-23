@@ -1,5 +1,6 @@
 #include "mocca/log/LogManager.h"
 
+
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
