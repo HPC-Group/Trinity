@@ -17,7 +17,8 @@ public:
     ~TransferFunction1D(void);
 
     void setStdFunction(float fCenterPoint = 0.5f, float fInvGradient = 0.5f);
-    void setStdFunction(float fCenterPoint, float fInvGradient, int iComponent, bool bInvertedStep);
+    void setStdFunction(float fCenterPoint, float fInvGradient, int iComponent,
+                        bool bInvertedStep);
     void set(const std::vector<uint8_t>& data);
 
     size_t getSize() const { return m_colorData.size() / 4; }
