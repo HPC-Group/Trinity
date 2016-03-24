@@ -12,6 +12,7 @@
 #endif
 
 #ifdef DETECTED_OS_WINDOWS
+#define NOMINMAX
 #include <iosfwd>
 #include <windows.h>
 #include <GL/glew.h>
