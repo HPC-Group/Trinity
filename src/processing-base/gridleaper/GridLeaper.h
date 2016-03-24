@@ -3,7 +3,6 @@
 
 #include "../AbstractRenderer.h"
 
-#include "opengl-base/OpenGLincludes.h"
 #include "opengl-base/GLProgram.h"
 #include "opengl-base/GLTexture1D.h"
 #include "opengl-base/GLTexture3D.h"
