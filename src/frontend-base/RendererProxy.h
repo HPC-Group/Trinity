@@ -17,6 +17,9 @@ public:
     void setRenderMode(ERenderMode mode) override;
     bool supportsRenderMode(ERenderMode mode) override;
 
+    virtual void setActiveModality(uint64_t modality) override;
+    virtual uint64_t getActiveModality() const override;
+
     void setIsoValue(float) override;
     void initContext() override;
 	void deleteContext() override {};  // that does not to go over network... bad design, however

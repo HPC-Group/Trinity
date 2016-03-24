@@ -57,6 +57,10 @@ public:
     virtual void setRenderMode(ERenderMode mode) = 0;
     virtual bool supportsRenderMode(ERenderMode mode) = 0;
 
+    virtual void setActiveModality(uint64_t modality) = 0;
+    virtual uint64_t getActiveModality() const = 0;
+
+
     virtual void setIsoValue(float) = 0;
     virtual void zoomCamera(float f) = 0;
 

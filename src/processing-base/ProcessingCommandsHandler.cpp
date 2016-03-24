@@ -88,4 +88,20 @@ std::unique_ptr<Reply> SupportsRenderModeHdl::execute() {
     return mocca::make_unique<SupportsRenderModeReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+SetActiveModalityHdl::SetActiveModalityHdl(const SetActiveModalityRequest& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> SetActiveModalityHdl::execute() {
+    m_session->getRenderer().setActiveModality(m_request.getParams().getModality());
+    return nullptr;
+}
+
+GetActiveModalityHdl::GetActiveModalityHdl(const GetActiveModalityRequest& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetActiveModalityHdl::execute() {
+    GetActiveModalityCmd::ReplyParams params(m_session->getRenderer().getActiveModality());
+    return mocca::make_unique<GetActiveModalityReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

@@ -32,6 +32,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetRenderModeRequest>("req");
     } else if (type == SupportsRenderModeRequest::Ifc::Type) {
         return reader->getSerializablePtr<SupportsRenderModeRequest>("req");
+    } else if (type == SetActiveModalityRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetActiveModalityRequest>("req");
+    } else if (type == GetActiveModalityRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetActiveModalityRequest>("req");
     }
 
 #undef PYTHON_MAGIC_PROC

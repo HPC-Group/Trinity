@@ -59,3 +59,16 @@ bool RendererProxy::supportsRenderMode(ERenderMode mode) {
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getResult();
 }
+
+void RendererProxy::setActiveModality(uint64_t modality) {
+    SetActiveModalityCmd::RequestParams requestParams(modality);
+    SetActiveModalityRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
+    m_inputChannel.sendRequest(request);
+}
+
+uint64_t RendererProxy::getActiveModality() const {
+    GetActiveModalityCmd::RequestParams params;
+    GetActiveModalityRequest request(params, IDGenerator::nextID(), m_remoteSessionId);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getModality();
+}

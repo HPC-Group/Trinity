@@ -82,5 +82,27 @@ private:
     RenderSession* m_session;
 };
 
+class SetActiveModalityHdl : public ICommandHandler {
+public:
+    SetActiveModalityHdl(const SetActiveModalityRequest&request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetActiveModalityRequest m_request;
+	RenderSession* m_session;
+};
+
+class GetActiveModalityHdl : public ICommandHandler {
+public:
+    GetActiveModalityHdl(const GetActiveModalityRequest&request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetActiveModalityRequest m_request;
+	RenderSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

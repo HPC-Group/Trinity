@@ -43,11 +43,8 @@ bool StreamingParams::equals(const StreamingParams& other) const {
 
 VclType InitProcessingSessionCmd::Type = VclType::InitRenderer;
 
-InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protocol,
-                                                       const VclType& renderType,
-                                                       const std::string& fileId,
-                                                       const mocca::net::Endpoint& ioEndpoint,
-                                                       const StreamingParams& p)
+InitProcessingSessionCmd::RequestParams::RequestParams(const std::string& protocol, const VclType& renderType, const std::string& fileId,
+                                                       const mocca::net::Endpoint& ioEndpoint, const StreamingParams& p)
     : m_protocol(protocol)
     , m_renderType(renderType)
     , m_fileId(fileId)
@@ -198,15 +195,15 @@ float ZoomCameraCmd::RequestParams::getZoom() const {
 }
 
 ZoomCameraCmd::RequestParams::RequestParams(float value)
-: m_zoom(value) {}
+    : m_zoom(value) {}
 
 
 void ZoomCameraCmd::RequestParams::serialize(ISerialWriter& writer) const {
-	writer.appendFloat("zoom", m_zoom);
+    writer.appendFloat("zoom", m_zoom);
 }
 
 void ZoomCameraCmd::RequestParams::deserialize(const ISerialReader& reader) {
-	m_zoom = reader.getFloat("zoom");
+    m_zoom = reader.getFloat("zoom");
 }
 
 bool ZoomCameraCmd::RequestParams::equals(const ZoomCameraCmd::RequestParams& other) const {
@@ -219,15 +216,15 @@ std::string ZoomCameraCmd::RequestParams::toString() const {
 }
 
 void ZoomCameraCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-	// TODO
+    // TODO
 }
 
 void ZoomCameraCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-	// TODO
+    // TODO
 }
 
 bool ZoomCameraCmd::ReplyParams::equals(const ZoomCameraCmd::ReplyParams& other) const {
-	// TODO
+    // TODO
     return true;
 }
 
@@ -297,8 +294,7 @@ IRenderer::ERenderMode SupportsRenderModeCmd::RequestParams::getRenderMode() con
 }
 
 SupportsRenderModeCmd::ReplyParams::ReplyParams(bool result)
-    : m_result(result)
-{}
+    : m_result(result) {}
 
 void SupportsRenderModeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     writer.appendBool("result", m_result);
@@ -320,6 +316,79 @@ std::string SupportsRenderModeCmd::ReplyParams::toString() const {
 
 bool SupportsRenderModeCmd::ReplyParams::getResult() const {
     return m_result;
+}
+
+
+////////////// SetActiveModalityCmd //////////////
+
+VclType SetActiveModalityCmd::Type = VclType::SetActiveModality;
+
+SetActiveModalityCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
+
+void SetActiveModalityCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void SetActiveModalityCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
+
+bool SetActiveModalityCmd::RequestParams::equals(const SetActiveModalityCmd::RequestParams& other) const {
+    return m_modality == other.m_modality;
+}
+
+std::string SetActiveModalityCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
+}
+
+uint64_t SetActiveModalityCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+////////////// GetActiveModalityCmd //////////////
+
+VclType GetActiveModalityCmd::Type = VclType::SetActiveModality;
+
+void GetActiveModalityCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetActiveModalityCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetActiveModalityCmd::RequestParams::equals(const GetActiveModalityCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetActiveModalityCmd::RequestParams::toString() const {
+
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetActiveModalityCmd::ReplyParams::ReplyParams(uint64_t modality)
+    : m_modality(modality) {}
+
+void GetActiveModalityCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetActiveModalityCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
+
+bool GetActiveModalityCmd::ReplyParams::equals(const GetActiveModalityCmd::ReplyParams& other) const {
+    return m_modality == other.m_modality;
+}
+
+std::string GetActiveModalityCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
+}
+
+uint64_t GetActiveModalityCmd::ReplyParams::getModality() const {
+    return m_modality;
 }
 
 #undef PYTHON_MAGIC_DEFINITION
@@ -362,7 +431,6 @@ std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& 
 #define PYTHON_MAGIC
 
 
-
 bool operator==(const ZoomCameraCmd::RequestParams& lhs, const ZoomCameraCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
 }
@@ -393,6 +461,26 @@ std::ostream& operator<<(std::ostream& os, const SupportsRenderModeCmd::RequestP
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const SupportsRenderModeCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetActiveModalityCmd::RequestParams& lhs, const SetActiveModalityCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetActiveModalityCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetActiveModalityCmd::RequestParams& lhs, const GetActiveModalityCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetActiveModalityCmd::ReplyParams& lhs, const GetActiveModalityCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetActiveModalityCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetActiveModalityCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

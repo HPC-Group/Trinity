@@ -9,12 +9,15 @@ class DummyRenderer : public IRenderer {
 public:
     DummyRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
 
-    void setRenderMode(ERenderMode mode) {}
-    bool supportsRenderMode(ERenderMode mode) { return true; }
+    void setRenderMode(ERenderMode mode) override {}
+    bool supportsRenderMode(ERenderMode mode) override { return true; }
+
+    void setActiveModality(uint64_t modality) override {}
+    uint64_t getActiveModality() const override { return 0; }
 
     void setIsoValue(float) override;
-    void initContext() override {};
-	void deleteContext() override {};
+    void initContext() override{};
+    void deleteContext() override{};
 
     // unit test purposes
     float getIsoValue() const { return m_isoValue; };

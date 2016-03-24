@@ -82,3 +82,34 @@ TEST_F(ProcessingCommandsTest, SupportsRenderModeReqRep) {
     auto reply = trinity::testing::handleRequest<SupportsRenderModeHdl>(request, session.get());
     ASSERT_EQ(true, reply.getParams().getResult());
 }
+
+TEST_F(ProcessingCommandsTest, SetActiveModalityCmd) {
+    {
+        SetActiveModalityCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(ProcessingCommandsTest, GetActiveModalityCmd) {
+    {
+        GetActiveModalityCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetActiveModalityCmd::ReplyParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(ProcessingCommandsTest, GetActiveModalityReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<RendererMock&>(session->getRenderer()), getActiveModality()).Times(1).WillOnce(Return(42));
+
+    GetActiveModalityCmd::RequestParams requestParams;
+    GetActiveModalityRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetActiveModalityHdl>(request, session.get());
+    ASSERT_EQ(42, reply.getParams().getModality());
+}

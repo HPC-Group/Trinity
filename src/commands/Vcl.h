@@ -56,6 +56,8 @@ enum class VclType {
     GetDefault1DTransferFunction,
     SetRenderMode,
     SupportsRenderMode,
+    SetActiveModality,
+    GetActiveModality,
 
 #undef PYTHON_ENUM
     GetMaxBrickSize,
@@ -134,7 +136,8 @@ private:
         m_cmdMap.insert("GetDefault1DTransferFunction", VclType::GetDefault1DTransferFunction);
         m_cmdMap.insert("SetRenderMode", VclType::SetRenderMode);
         m_cmdMap.insert("SupportsRenderMode", VclType::SupportsRenderMode);
-
+        m_cmdMap.insert("SetActiveModality", VclType::SetActiveModality);
+        m_cmdMap.insert("GetActiveModality", VclType::GetActiveModality);
 #undef PYTHON_MAGIC_STRING
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

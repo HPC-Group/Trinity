@@ -48,7 +48,12 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::SupportsRenderMode:
         return mocca::make_unique<SupportsRenderModeHdl>(static_cast<const SupportsRenderModeRequest&>(request), session);
         break;
-
+	case VclType::SetActiveModality:
+		return mocca::make_unique<SetActiveModalityHdl>(static_cast<const SetActiveModalityRequest&>(request), session);
+		break;
+	case VclType::GetActiveModality:
+		return mocca::make_unique<GetActiveModalityHdl>(static_cast<const GetActiveModalityRequest&>(request), session);
+		break;
 #undef PYTHON_MAGIC
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

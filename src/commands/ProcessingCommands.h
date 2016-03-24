@@ -246,6 +246,72 @@ std::ostream& operator<<(std::ostream& os, const SupportsRenderModeCmd::ReplyPar
 using SupportsRenderModeRequest = RequestTemplate<SupportsRenderModeCmd>;
 using SupportsRenderModeReply = ReplyTemplate<SupportsRenderModeCmd>;
 
+struct SetActiveModalityCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t modality);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
+    };
+};
+
+bool operator==(const SetActiveModalityCmd::RequestParams& lhs, const SetActiveModalityCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetActiveModalityCmd::RequestParams& obj);
+
+using SetActiveModalityRequest = RequestTemplate<SetActiveModalityCmd>;
+
+struct GetActiveModalityCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t modality);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
+    };
+};
+
+bool operator==(const GetActiveModalityCmd::RequestParams& lhs, const GetActiveModalityCmd::RequestParams& rhs);
+bool operator==(const GetActiveModalityCmd::ReplyParams& lhs, const GetActiveModalityCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetActiveModalityCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetActiveModalityCmd::ReplyParams& obj);
+
+using GetActiveModalityRequest = RequestTemplate<GetActiveModalityCmd>;
+using GetActiveModalityReply = ReplyTemplate<GetActiveModalityCmd>;
+
 #undef PYTHON_MAGIC
 
 
