@@ -46,7 +46,7 @@ var MUI_MasterUI = {
 	
 	connect : function ()
 	{
-		MUI_MasterUI.Connector.initWS();
+		MUI_MasterUI.NodeConnector.initWS();
         MUI_MasterUI.password = $("#connect_password").val()
 	},
 	
@@ -103,7 +103,7 @@ var MUI_MasterUI = {
     {
         MUI_MasterUI.applicationTypes = queryTypesResult.types;
         
-        MUI_MasterUI.Connector.sendRequest("queryApplications");
+        MUI_MasterUI.NodeConnector.sendRequest("queryApplications");
     },
     
     setDevices : function (queryTypesResult) 
@@ -209,7 +209,7 @@ var MUI_MasterUI = {
                 //get devices matching the requirements
                 var applicationRequirement = { applicationID : appName, requirementID : appRequirements[i].id };
                 
-                MUI_MasterUI.Connector.sendRequest('generateProposals', '{ "applicationRequirement" : ' + JSON.stringify(applicationRequirement) + ' }');
+                MUI_MasterUI.NodeConnector.sendRequest('generateProposals', '{ "applicationRequirement" : ' + JSON.stringify(applicationRequirement) + ' }');
             }
         }
     },
@@ -425,7 +425,7 @@ var MUI_MasterUI = {
                 }
             }
 
-            MUI_MasterUI.Connector.sendRequest('startUI', JSON.stringify(uiObject));
+            MUI_MasterUI.NodeConnector.sendRequest('startUI', JSON.stringify(uiObject));
     },
     
     buildUiList : function(uisQueryResult) 
@@ -455,7 +455,7 @@ var MUI_MasterUI = {
     {
         //TODO: Correct UI-id handling and stopping
         var paramObj = {id: uiId, password: MUI_MasterUI.password};
-        MUI_MasterUI.Connector.sendRequest("stopUI", JSON.stringify(paramObj));
+        MUI_MasterUI.NodeConnector.sendRequest("stopUI", JSON.stringify(paramObj));
     },
     
     formatDropdown : function (o) {
@@ -493,8 +493,8 @@ var MUI_MasterUI = {
 }
 
 
-// Connector handles the WS connection and defines the behaviour
-MUI_MasterUI.Connector = (function (){
+// NodeConnector handles the WS connection and defines the behaviour
+MUI_MasterUI.NodeConnector = (function (){
 	
 	var messageDict = undefined;
     var parameterDict = undefined;
@@ -521,29 +521,29 @@ MUI_MasterUI.Connector = (function (){
 	}
 
 	return {
-		wsUri : "", 
+		wsUri : "",
 
 		initWS : function() 
 		{ 
             console.log("Initializing Websocket Connection");
 			//messageDict = new MUI_MasterUI.Dictionary();
             //parameterDict = new MUI_MasterUI.Dictionary();
-			MUI_MasterUI.Connector.wsUri = "ws://"+$("#proc_ip")[0].value+":"+$("#proc_port")[0].value+"/";
+			MUI_MasterUI.NodeConnector.wsUri = "ws://"+$("#proc_ip")[0].value+":"+$("#proc_port")[0].value+"/";
 
-			websocket = new WebSocket(MUI_MasterUI.Connector.wsUri);
-			websocket.onopen = function(evt) { MUI_MasterUI.Connector.onOpen(evt) };
-			websocket.onclose = function(evt) { MUI_MasterUI.Connector.onClose(evt) };
-			websocket.onmessage = function(evt) { MUI_MasterUI.Connector.onMessage(evt) };
-			websocket.onerror = function(evt) { MUI_MasterUI.Connector.onError(evt) };
+			websocket = new WebSocket(MUI_MasterUI.NodeConnector.wsUri);
+			websocket.onopen = function(evt) { MUI_MasterUI.NodeConnector.onOpen(evt) };
+			websocket.onclose = function(evt) { MUI_MasterUI.NodeConnector.onClose(evt) };
+			websocket.onmessage = function(evt) { MUI_MasterUI.NodeConnector.onMessage(evt) };
+			websocket.onerror = function(evt) { MUI_MasterUI.NodeConnector.onError(evt) };
 		
 		},
 
 		onOpen : function(evt) 
 		{
-			console.log("Websocket CONNECTED to " + MUI_MasterUI.Connector.wsUri);
+			console.log("Websocket CONNECTED to " + MUI_MasterUI.NodeConnector.wsUri);
 			$("#div_connect_success").fadeIn('slow', MUI_MasterUI.hideConnectMessage);
             console.log("sending init renderer request");
-            MUI_MasterUI.Connector.sendRequest("InitRenderer");
+            MUI_MasterUI.NodeConnector.sendRequest("InitRenderer");
             console.log("done sending init renderer request");
 		},
 
@@ -561,15 +561,26 @@ MUI_MasterUI.Connector = (function (){
 
             try {
                 messageResult = JSON.parse(evt.data);
+                console.log(messageResult);
             } catch (error) {
                 console.log("ERROR: Error while parsing Message response to JSON")
             }
+            console.log("result:");
+            console.log(messageResult);
+            console.log(messageResult.rep.params);
 
 
+            if (messageResult.rep.params !== undefined) {
+                MUI_MasterUI.StreamConnector.initWS(messageResult.rep.params.visport);
+
+                MUI_MasterUI.VisControlConnector.initWS(messageResult.rep.params.controlport);
+            }
+            /*
 			if (messageResult.result !== undefined)
             {
 				//do a lookup to find out, to which type of request this id belongs to
 				var responseType = messageDict.getValue(messageResult.id);
+
 			
 				switch (responseType) 
 				{
@@ -596,7 +607,7 @@ MUI_MasterUI.Connector = (function (){
                     case "startUI":
 						break;
 					case "stopUI":
-                        MUI_MasterUI.Connector.sendRequest('queryUIs');
+                        MUI_MasterUI.NodeConnector.sendRequest('queryUIs');
 						MUI_MasterUI.applicationSelected(MUI_MasterUI.selectedApplicationName,MUI_MasterUI.selectedApplicationDescription);
 						break;
 					case "queryUIs":
@@ -619,6 +630,7 @@ MUI_MasterUI.Connector = (function (){
                 $('#errorBody').text(messageResult.error.code + ", " + messageResult.error.message);
                 $('#errorModal').modal('show');
 			}
+            */
 		},
 
 		onError : function(evt)
@@ -636,28 +648,166 @@ MUI_MasterUI.Connector = (function (){
 		sendRequest : function(requestType, parameter) 
 		{
 			var requestTypes = ["InitRenderer"];
-			var parameteredTypes = ["generateProposals", "startUI", "stopUI"];
 			if (requestTypes.indexOf(requestType) != -1 )
             {
-
-                    console.log("Sending---: ");
-					if (parameteredTypes.indexOf(requestType) == -1)
-                    {
                         // look like type: InitRenderer; rid: 1; sid: 0; params: { protocol: tcp.prefixed; rendertype: SimpleRenderer; fileid: FractalData@3; ioendpoint: tcp.prefixed:127.0.0.1:6678; streamingparams: { xres: 800; yres: 600 } }
-                        console.log("Sending---: " + requestType);
-						//MUI_MasterUI.Connector.doSend('{"type": "InitRenderer", "rid": "1", "sid": "0", "params": "'{ "protocol": "tcp.prefixed", "rendertype": "SimpleRenderer", "fileid": "FractalData@3", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": "'{ "xres": "800", "yres": "600" }'" }'" }');
-                        MUI_MasterUI.Connector.doSend('{"jsonrpc": "2.0"}');
-					} else {
-                        parameterDict.add(randId, parameter)
-						MUI_MasterUI.Connector.doSend('{"jsonrpc": "2.0", "method": "'+requestType+'", "params": '+parameter+', "id": "'+randId+'"}');
-					}
-			
+                        console.log("Sending: " + requestType);
+                        MUI_MasterUI.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "FractalData@3", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": 800, "yres": 600 } } } }');
+            
 			}
 
 		}
 	};
 	
 })();
+
+
+
+// NodeConnector handles the WS connection and defines the behaviour
+MUI_MasterUI.VisControlConnector = (function (){
+    
+    var websocketControl = undefined;
+    var port = undefined;
+    
+    
+
+    return {
+
+        controlConnectionUri: "", 
+
+        initWS : function(controlport) 
+        { 
+            port = controlport;
+            console.log("Initializing Vis Control Connection to port " + port);
+            //messageDict = new MUI_MasterUI.Dictionary();
+            //parameterDict = new MUI_MasterUI.Dictionary();
+            MUI_MasterUI.VisControlConnector.controlConnectionUri = "ws://" + $("#proc_ip")[0].value+":" + port + "/";
+
+            websocketControl = new WebSocket(MUI_MasterUI.VisControlConnector.controlConnectionUri);
+            websocketControl.onopen = function(evt) { MUI_MasterUI.VisControlConnector.onOpen(evt) };
+            websocketControl.onclose = function(evt) { MUI_MasterUI.VisControlConnector.onClose(evt) };
+            websocketControl.onmessage = function(evt) { MUI_MasterUI.VisControlConnector.onMessage(evt) };
+            websocketControl.onerror = function(evt) { MUI_MasterUI.VisControlConnector.onError(evt) };
+        
+        },
+
+        onOpen : function(evt) 
+        {
+            console.log("Websocket CONNECTED to " + MUI_MasterUI.VisControlConnector.controlConnectionUri);
+            $("#div_connect_success").fadeIn('slow', MUI_MasterUI.hideConnectMessage);
+            console.log("doing... nothing");
+            //MUI_MasterUI.NodeConnector.sendRequest("InitRenderer");
+            //console.log("done sending init renderer request");
+            console.log("sending init context");
+            MUI_MasterUI.VisControlConnector.doSend('{"type": "InitContext", "rid": 1, "sid": 1, "params": { "dummy": 1} }');
+            MUI_MasterUI.VisControlConnector.doSend('{"type": "SetIsoValue", "rid": 1, "sid": 1, "params": { "isoValue": 0 } }');
+
+            console.log("done sending init context request");
+        },
+
+        onClose : function(evt) 
+        {
+            console.log("Websocket DISCONNECTED");
+        },
+
+        onMessage : function(evt)
+        {
+            //console.log("message");
+            //console.log(evt.data);
+            
+            var messageResult = {};
+
+            try {
+                messageResult = JSON.parse(evt.data);
+                console.log(messageResult);
+            } catch (error) {
+                console.log("ERROR: Error while parsing Message response to JSON")
+            }
+            console.log("got sth in control channel:");
+        },
+
+        onError : function(evt)
+        {
+            console.log("Websocket Error: " + evt.data);
+            $("#div_connect_failure").fadeIn('slow', MUI_MasterUI.hideConnectMessage);
+        },
+
+        doSend : function(message)
+        {
+            console.log("Sent: " + message);
+            websocketControl.send(message);
+        }
+    };
+})();
+
+
+
+// NodeConnector handles the WS connection and defines the behaviour
+MUI_MasterUI.StreamConnector = (function (){
+
+    var websocketStream = undefined;
+    var port = undefined;
+    
+
+
+    return {
+        visConnectionUri: "",
+
+        initWS : function(visport) 
+        { 
+            port = visport;
+            
+            //messageDict = new MUI_MasterUI.Dictionary();
+            //parameterDict = new MUI_MasterUI.Dictionary();
+            MUI_MasterUI.StreamConnector.visConnectionUri = "ws://"+$("#proc_ip")[0].value+":"+ port +"/";
+            console.log("Initializing Stream Connection to " + MUI_MasterUI.StreamConnector.visConnectionUri);
+            websocketStream = new WebSocket(MUI_MasterUI.StreamConnector.visConnectionUri);
+            websocketStream.binaryType = "blob";
+            websocketStream.onopen = function(evt) { MUI_MasterUI.StreamConnector.onOpen(evt) };
+            websocketStream.onclose = function(evt) { MUI_MasterUI.StreamConnector.onClose(evt) };
+            websocketStream.ondata = function(src,start,end) { MUI_MasterUI.StreamConnector.onData(src,start,end) };
+            websocketStream.onerror = function(evt) { MUI_MasterUI.StreamConnector.onError(evt) };
+        
+        },
+
+        onOpen : function(evt) 
+        {
+            console.log("Websocket CONNECTED to " + MUI_MasterUI.StreamConnector.visConnectionUri);
+            $("#div_connect_success").fadeIn('slow', MUI_MasterUI.hideConnectMessage);
+            console.log("not doing enything with vis stream");
+        },
+
+        onClose : function(evt) 
+        {
+            console.log("Websocket DISCONNECTED");
+        },
+
+        onData : function(src,start,end)
+        {
+            console.log("gim in!");
+            //console.log("message");
+            //console.log(evt.data);
+            
+            src = src.slice(start,end);
+            console.log("got img");
+        },
+
+        onError : function(evt)
+        {
+            console.log("Websocket Error: " + evt.data);
+            $("#div_connect_failure").fadeIn('slow', MUI_MasterUI.hideConnectMessage);
+        },
+
+        doSend : function(message)
+        {
+            console.log("Sent: " + message);
+            websocketStream.send(message);
+        }
+    };
+})();
+
+
+
 
 // A dictionary with basic functionality
 // !!Caution!! Not typed so it allows different key and value type combinations in the same dictionary
