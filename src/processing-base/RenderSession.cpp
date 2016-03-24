@@ -1,7 +1,9 @@
 #include "processing-base/RenderSession.h"
 
 #include "common/TrinityError.h"
+#ifndef __APPLE__
 #include "gridleaper/GridLeaper.h"
+#endif
 #include "processing-base/DummyRenderer.h"
 #include "simplerenderer/SimpleRenderer.h"
 
@@ -46,9 +48,11 @@ std::unique_ptr<IRenderer> RenderSession::createRenderer(const VclType& renderer
     case VclType::SimpleRenderer:
         return std::unique_ptr<IRenderer>(new SimpleRenderer(m_visSender->getStream(), std::move(ioSession)));
         break;
+#ifndef __APPLE__
     case VclType::GridLeapingRenderer:
         return std::unique_ptr<IRenderer>(new GridLeaper(m_visSender->getStream(), std::move(ioSession)));
         break;
+#endif
     default:
         throw TrinityError("can't create renderer: no such type", __FILE__, __LINE__);
         break;
