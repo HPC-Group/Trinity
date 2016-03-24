@@ -14,7 +14,6 @@ IRenderer(stream, std::move(ioSession))
 }
 
 void AbstractRenderer::initValueDefaults(){
-  m_bPaitingActive = true;  // TODO change this to false after inital testing
   
   m_renderMode = ERenderMode::RM_1DTRANS;
   m_activeModality = 0;
@@ -49,6 +48,9 @@ void AbstractRenderer::initValueDefaults(){
   recomputeProjectionMatrix();
   resetCamera();
   resetObject();
+  
+  m_bPaitingActive = true;  // TODO change this to false after inital testing
+
 }
 
 void AbstractRenderer::setRenderMode(ERenderMode mode){
