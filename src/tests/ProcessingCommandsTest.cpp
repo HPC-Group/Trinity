@@ -4,17 +4,25 @@
 #include "commands/IOCommands.h"
 #include "commands/ProcessingCommands.h"
 #include "commands/Vcl.h"
+#include "processing-base/ProcessingCommandFactory.h"
+#include "processing-base/ProcessingCommandsHandler.h"
 
+#include "tests/RendererMock.h"
 #include "tests/TestUtils.h"
 
+#include "mocca/net/ConnectionFactorySelector.h"
+
 using namespace trinity;
+using namespace ::testing;
 
 
 class ProcessingCommandsTest : public ::testing::Test {
 protected:
-    ProcessingCommandsTest() {}
+    ProcessingCommandsTest() { mocca::net::ConnectionFactorySelector::addDefaultFactories(); }
 
-    virtual ~ProcessingCommandsTest() {}
+    virtual ~ProcessingCommandsTest() { mocca::net::ConnectionFactorySelector::removeAll(); }
+
+    std::unique_ptr<RenderSession> createMockSession() { return mocca::make_unique<RenderSession>("loopback", mocca::make_unique<RendererMock>()); }
 };
 
 
@@ -66,5 +74,11 @@ TEST_F(ProcessingCommandsTest, SupportsRenderModeCmd) {
 }
 
 TEST_F(ProcessingCommandsTest, SupportsRenderModeReqRep) {
-    // TODO: write mock
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<RendererMock&>(session->getRenderer()), supportsRenderMode(IRenderer::ERenderMode::RM_CLEARVIEW)).Times(1).WillOnce(Return(true));
+
+    SupportsRenderModeCmd::RequestParams requestParams(IRenderer::ERenderMode::RM_CLEARVIEW);
+    SupportsRenderModeRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<SupportsRenderModeHdl>(request, session.get());
+    ASSERT_EQ(true, reply.getParams().getResult());
 }

@@ -17,7 +17,7 @@ public:
     void setRenderMode(ERenderMode mode) override;
     bool supportsRenderMode(ERenderMode mode) override;
 
-    void setIsoValue(const float) override;
+    void setIsoValue(float) override;
     void initContext() override;
 	void deleteContext() override {};  // that does not to go over network... bad design, however
     void zoomCamera(float f) override;

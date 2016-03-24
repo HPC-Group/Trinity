@@ -20,8 +20,9 @@ class RenderSession : public AbstractSession {
 public:
     RenderSession(const VclType& rendererType, const StreamingParams& params,
                   const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession);
-
+    RenderSession(const std::string& protocol, std::unique_ptr<IRenderer> renderer);
     ~RenderSession();
+
     std::string getVisPort() const;
     IRenderer& getRenderer();
 
@@ -36,6 +37,6 @@ private:
     ProcessingSessionCommandFactory m_factory;
     std::string m_visPort;
     std::unique_ptr<IRenderer> m_renderer;
-    VisStreamSender m_visSender;
+    std::unique_ptr<VisStreamSender> m_visSender;
 };
 }

@@ -12,7 +12,7 @@ public:
     void setRenderMode(ERenderMode mode) {}
     bool supportsRenderMode(ERenderMode mode) { return true; }
 
-    void setIsoValue(const float) override;
+    void setIsoValue(float) override;
     void initContext() override {};
 	void deleteContext() override {};
 

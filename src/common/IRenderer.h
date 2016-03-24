@@ -40,6 +40,7 @@ public:
     using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;
     static const RenderModeMapper& renderModeMapper();
     
+    IRenderer() = default;
 
     // all renderers need a vis stream
     IRenderer(std::shared_ptr<VisStream> s);
@@ -56,7 +57,7 @@ public:
     virtual void setRenderMode(ERenderMode mode) = 0;
     virtual bool supportsRenderMode(ERenderMode mode) = 0;
 
-    virtual void setIsoValue(const float) = 0;
+    virtual void setIsoValue(float) = 0;
     virtual void zoomCamera(float f) = 0;
 
 	// postponed init and delete due to opengl specific things
