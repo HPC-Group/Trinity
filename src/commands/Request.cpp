@@ -11,7 +11,7 @@
 using namespace trinity;
 
 std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArray) {
-    
+
     auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
     VclType type = Vcl::instance().toType(reader->getString("type"));
 
@@ -28,6 +28,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
 
     else if (type == ZoomCameraRequest::Ifc::Type) {
         return reader->getSerializablePtr<ZoomCameraRequest>("req");
+    } else if (type == SetRenderModeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetRenderModeRequest>("req");
+    } else if (type == SupportsRenderModeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SupportsRenderModeRequest>("req");
     }
 
 #undef PYTHON_MAGIC_PROC

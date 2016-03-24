@@ -12,8 +12,10 @@ public:
     RendererProxy(std::shared_ptr<VisStream> stream, mocca::net::Endpoint controlEndpoint, mocca::net::Endpoint visEndpoint,
                   unsigned int sessionId);
 
-
     virtual ~RendererProxy();
+
+    void setRenderMode(ERenderMode mode) override;
+    bool supportsRenderMode(ERenderMode mode) override;
 
     void setIsoValue(const float) override;
     void initContext() override;

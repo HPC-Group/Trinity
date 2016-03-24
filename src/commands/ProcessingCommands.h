@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/IRenderer.h"
 #include "commands/ISerializable.h"
 #include "commands/Reply.h"
 #include "commands/Request.h"
@@ -171,6 +172,79 @@ std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::ReplyParams& obj
 
 using ZoomCameraRequest = RequestTemplate<ZoomCameraCmd>;
 using ZoomCameraReply = ReplyTemplate<ZoomCameraCmd>;
+
+struct SetRenderModeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(IRenderer::ERenderMode renderMode);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        IRenderer::ERenderMode getRenderMode() const;
+
+    private:
+        IRenderer::ERenderMode m_renderMode;
+    };
+};
+
+bool operator==(const SetRenderModeCmd::RequestParams& lhs, const SetRenderModeCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetRenderModeCmd::RequestParams& obj);
+
+using SetRenderModeRequest = RequestTemplate<SetRenderModeCmd>;
+
+
+struct SupportsRenderModeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(IRenderer::ERenderMode renderMode);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        IRenderer::ERenderMode getRenderMode() const;
+
+    private:
+        IRenderer::ERenderMode m_renderMode;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(bool result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        bool getResult() const;
+
+    private:
+        bool m_result;
+    };
+};
+
+bool operator==(const SupportsRenderModeCmd::RequestParams& lhs, const SupportsRenderModeCmd::RequestParams& rhs);
+bool operator==(const SupportsRenderModeCmd::ReplyParams& lhs, const SupportsRenderModeCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SupportsRenderModeCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const SupportsRenderModeCmd::ReplyParams& obj);
+
+using SupportsRenderModeRequest = RequestTemplate<SupportsRenderModeCmd>;
+using SupportsRenderModeReply = ReplyTemplate<SupportsRenderModeCmd>;
 
 #undef PYTHON_MAGIC
 

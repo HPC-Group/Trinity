@@ -1,4 +1,5 @@
 #include "AbstractRenderer.h"
+
 #include "common/TrinityError.h"
 
 using namespace trinity;
@@ -117,7 +118,7 @@ void AbstractRenderer::setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math
   }
 
   m_isoValueColor[surfaceIndex] = vColor;
-  paint(PL_RECOMPOSE);
+  paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
 Core::Math::Vec3ui8 AbstractRenderer::getIsosurfaceColor(uint8_t surfaceIndex) const{
@@ -135,12 +136,12 @@ Core::Math::Vec2f AbstractRenderer::getRange(uint64_t modality) const {
 // CLEARVIEW FUNCTIONS
 void AbstractRenderer::setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos){
   m_clearViewNormalizedWindowPos = vNormalizedWindowPos;
-  paint(PL_RECOMPOSE);
+  paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
 void AbstractRenderer::setClearViewRadius(float f){
   m_clearViewRadius = f;
-  paint(PL_RECOMPOSE);
+  paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
 // LIGTHING FUNCTIONS
@@ -154,7 +155,7 @@ void AbstractRenderer::setLightingColors(const PhongColorTriple& colors) {
   paint();
 }
 
-PhongColorTriple AbstractRenderer::getLightingColors() const {
+IRenderer::PhongColorTriple AbstractRenderer::getLightingColors() const {
   return m_lightingColors;
 }
 
@@ -183,7 +184,7 @@ void AbstractRenderer::setBoundingBoxMode(BBoxMode mode){
   paint();
 }
 
-BBoxMode AbstractRenderer::getBoundingBoxMode() const{
+IRenderer::BBoxMode AbstractRenderer::getBoundingBoxMode() const{
   return m_BBoxMode;
 }
 
@@ -290,7 +291,7 @@ void AbstractRenderer::resetObject() {
 
 void AbstractRenderer::startRendering() {
   m_bPaitingActive = true;
-  paintInternal(PL_REDRAW);
+  paintInternal(IRenderer::PaintLevel::PL_REDRAW);
 }
 
 void AbstractRenderer::stopRendering() {

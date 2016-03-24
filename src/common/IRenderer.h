@@ -1,31 +1,61 @@
 #pragma once
+
+#include "common/IIO.h"
+
+#include "mocca/base/BidirectionalMap.h"
+
 #include <memory>
 #include <vector>
 
-#include "IIO.h"
-#include "VisStream.h"
-
-
 namespace trinity {
-
+class VisStream;
 class IRenderer {
 
 public:
+    enum class ERenderMode {
+        RM_1DTRANS = 0,
+        RM_2DTRANS,
+        RM_ISOSURFACE,
+        RM_CLEARVIEW,
+        RM_INVALID
+    };
+
+    enum class BBoxMode {
+        BBM_NONE = 0,
+        BBM_DATASET,
+        BBM_BRICKS
+    };
+
+    enum class PaintLevel {
+        PL_REDRAW = 0,
+        PL_RECOMPOSE
+    };
+
+    struct PhongColorTriple {
+        Core::Math::Vec4ui8 ambient;
+        Core::Math::Vec4ui8 diffuse;
+        Core::Math::Vec4ui8 specular;
+    };
+
+    using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;
+    static const RenderModeMapper& renderModeMapper();
+    
+
     // all renderers need a vis stream
-    IRenderer(std::shared_ptr<VisStream> s)
-        : m_visStream(s){};
+    IRenderer(std::shared_ptr<VisStream> s);
 
     // "real" renderers, in addition, need an I/O interface
-    IRenderer(std::shared_ptr<VisStream> s, std::unique_ptr<IIO> io)
-        : m_visStream(s)
-        , m_io(std::move(io)){};
+    IRenderer(std::shared_ptr<VisStream> s, std::unique_ptr<IIO> io);
 
     virtual ~IRenderer(){};
 
-    std::shared_ptr<VisStream> getVisStream() { return m_visStream; };
+    std::shared_ptr<VisStream> getVisStream();
 
 
-    // base rendering api begin
+    // base rendering api begin   
+    virtual void setRenderMode(ERenderMode mode) = 0;
+    virtual bool supportsRenderMode(ERenderMode mode) = 0;
+
     virtual void setIsoValue(const float) = 0;
     virtual void zoomCamera(float f) = 0;
 

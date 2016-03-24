@@ -72,4 +72,20 @@ std::unique_ptr<Reply> ZoomCameraHdl::execute() {
     return nullptr;
 }
 
+SetRenderModeHdl::SetRenderModeHdl(const SetRenderModeRequest& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> SetRenderModeHdl::execute() {
+    m_session->getRenderer().setRenderMode(m_request.getParams().getRenderMode());
+    return nullptr;
+}
+
+SupportsRenderModeHdl::SupportsRenderModeHdl(const SupportsRenderModeRequest& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> SupportsRenderModeHdl::execute() {
+    SupportsRenderModeCmd::ReplyParams params(m_session->getRenderer().supportsRenderMode(m_request.getParams().getRenderMode()));
+    return mocca::make_unique<SupportsRenderModeReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

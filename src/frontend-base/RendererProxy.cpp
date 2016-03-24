@@ -28,12 +28,9 @@ int RendererProxy::getRemoteSessionId() const {
     return m_remoteSessionId;
 }
 
-#include <iostream>
-
 void RendererProxy::setIsoValue(const float value) {
     SetIsoValueCmd::RequestParams requestParams(value);
     SetIsoValueRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
-
     m_inputChannel.sendRequest(request);
 }
 
@@ -41,14 +38,24 @@ void RendererProxy::zoomCamera(float f) {
     // todo
     ZoomCameraCmd::RequestParams requestParams(f);
     ZoomCameraRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
-    
     m_inputChannel.sendRequest(request);
 }
-
 
 void RendererProxy::initContext() {
     InitContextCmd::RequestParams requestParams(1);
     InitContextRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
-
     m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::setRenderMode(ERenderMode mode) {
+    SetRenderModeCmd::RequestParams requestParams(mode);
+    SetRenderModeRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
+    m_inputChannel.sendRequest(request);
+}
+
+bool RendererProxy::supportsRenderMode(ERenderMode mode) {
+    SupportsRenderModeCmd::RequestParams params;
+    SupportsRenderModeRequest request(params, IDGenerator::nextID(), m_remoteSessionId);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
 }

@@ -236,6 +236,92 @@ std::string ZoomCameraCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+
+////////////// SetRenderModeCmd //////////////
+
+VclType SetRenderModeCmd::Type = VclType::SetRenderMode;
+
+SetRenderModeCmd::RequestParams::RequestParams(IRenderer::ERenderMode renderMode)
+    : m_renderMode(renderMode) {}
+
+void SetRenderModeCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendString("renderMode", IRenderer::renderModeMapper().getByFirst(m_renderMode));
+}
+
+void SetRenderModeCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_renderMode = IRenderer::renderModeMapper().getBySecond(reader.getString("renderMode"));
+}
+
+bool SetRenderModeCmd::RequestParams::equals(const SetRenderModeCmd::RequestParams& other) const {
+    return m_renderMode == other.m_renderMode;
+}
+
+std::string SetRenderModeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "renderMode: " << IRenderer::renderModeMapper().getByFirst(m_renderMode);
+    return stream.str();
+}
+
+IRenderer::ERenderMode SetRenderModeCmd::RequestParams::getRenderMode() const {
+    return m_renderMode;
+}
+
+
+////////////// SupportsRenderModeCmd //////////////
+
+VclType SupportsRenderModeCmd::Type = VclType::SupportsRenderMode;
+
+SupportsRenderModeCmd::RequestParams::RequestParams(IRenderer::ERenderMode renderMode)
+    : m_renderMode(renderMode) {}
+
+void SupportsRenderModeCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendString("renderMode", IRenderer::renderModeMapper().getByFirst(m_renderMode));
+}
+
+void SupportsRenderModeCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_renderMode = IRenderer::renderModeMapper().getBySecond(reader.getString("renderMode"));
+}
+
+bool SupportsRenderModeCmd::RequestParams::equals(const SupportsRenderModeCmd::RequestParams& other) const {
+    return m_renderMode == other.m_renderMode;
+}
+
+std::string SupportsRenderModeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "renderMode: " << IRenderer::renderModeMapper().getByFirst(m_renderMode);
+    return stream.str();
+}
+
+IRenderer::ERenderMode SupportsRenderModeCmd::RequestParams::getRenderMode() const {
+    return m_renderMode;
+}
+
+SupportsRenderModeCmd::ReplyParams::ReplyParams(bool result)
+    : m_result(result)
+{}
+
+void SupportsRenderModeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendBool("result", m_result);
+}
+
+void SupportsRenderModeCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getBool("result");
+}
+
+bool SupportsRenderModeCmd::ReplyParams::equals(const SupportsRenderModeCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+std::string SupportsRenderModeCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
+bool SupportsRenderModeCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
 #undef PYTHON_MAGIC_DEFINITION
 
 namespace trinity {
@@ -287,6 +373,26 @@ std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::RequestParams& o
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const ZoomCameraCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetRenderModeCmd::RequestParams& lhs, const SetRenderModeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetRenderModeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SupportsRenderModeCmd::RequestParams& lhs, const SupportsRenderModeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const SupportsRenderModeCmd::ReplyParams& lhs, const SupportsRenderModeCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SupportsRenderModeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const SupportsRenderModeCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

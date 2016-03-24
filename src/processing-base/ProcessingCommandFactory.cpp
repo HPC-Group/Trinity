@@ -1,10 +1,10 @@
 #include "processing-base/ProcessingCommandFactory.h"
 
+#include "commands/ProcessingCommands.h"
+#include "common/TrinityError.h"
 #include "processing-base/ProcessingCommandsHandler.h"
 #include "processing-base/ProcessingNode.h"
 #include "processing-base/RenderSession.h"
-#include "commands/ProcessingCommands.h"
-#include "common/TrinityError.h"
 
 #include "mocca/base/Error.h"
 #include "mocca/base/Memory.h"
@@ -36,12 +36,19 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::InitContext:
         return mocca::make_unique<InitContextHdl>(static_cast<const InitContextRequest&>(request), session);
         break;
-            
+
 #define PYTHON_MAGIC
-            
+
     case VclType::ZoomCamera:
         return mocca::make_unique<ZoomCameraHdl>(static_cast<const ZoomCameraRequest&>(request), session);
         break;
+    case VclType::SetRenderMode:
+        return mocca::make_unique<SetRenderModeHdl>(static_cast<const SetRenderModeRequest&>(request), session);
+        break;
+    case VclType::SupportsRenderMode:
+        return mocca::make_unique<SupportsRenderModeHdl>(static_cast<const SupportsRenderModeRequest&>(request), session);
+        break;
+
 #undef PYTHON_MAGIC
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

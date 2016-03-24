@@ -43,3 +43,28 @@ TEST_F(ProcessingCommandsTest, SetIsoValueCmd) {
     auto result = trinity::testing::writeAndRead(target);
     ASSERT_EQ(target, result);
 }
+
+TEST_F(ProcessingCommandsTest, SetRenderModeCmd) {
+    {
+        SetRenderModeCmd::RequestParams target(IRenderer::ERenderMode::RM_CLEARVIEW);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(ProcessingCommandsTest, SupportsRenderModeCmd) {
+    {
+        SupportsRenderModeCmd::RequestParams target(IRenderer::ERenderMode::RM_CLEARVIEW);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        SupportsRenderModeCmd::ReplyParams target(true);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(ProcessingCommandsTest, SupportsRenderModeReqRep) {
+    // TODO: write mock
+}

@@ -7,46 +7,18 @@
 
 namespace trinity {
 
-
-  enum ERenderMode {
-    RM_1DTRANS = 0,
-    RM_2DTRANS,
-    RM_ISOSURFACE,
-    RM_CLEARVIEW,
-    RM_INVALID
-  };
-
-  enum BBoxMode {
-    BBM_NONE = 0,
-    BBM_DATASET,
-    BBM_BRICKS
-  };
-
-  enum PaintLevel {
-    PL_REDRAW = 0,
-    PL_RECOMPOSE
-  };
-
-  struct PhongColorTriple {
-    Core::Math::Vec4ui8 ambient;
-    Core::Math::Vec4ui8 diffuse;
-    Core::Math::Vec4ui8 specular;
-  };
-
-
-
   class AbstractRenderer : public IRenderer {
 
   public:
     AbstractRenderer(std::shared_ptr<VisStream> stream,
                      std::unique_ptr<IIO> ioSession);
-    AbstractRenderer();
+    AbstractRenderer() = default;
 
     /*******  IRenderer Interface **********/
 
     // GLOBAL RENDERMODE SETTINGS
-    virtual void setRenderMode(ERenderMode mode);
-    virtual bool supportsRenderMode(ERenderMode mode);
+    void setRenderMode(ERenderMode mode) override;
+    bool supportsRenderMode(ERenderMode mode) override;
 
     virtual void setActiveModality(uint64_t modality);
     virtual uint64_t getActiveModality() const;
@@ -133,7 +105,7 @@ namespace trinity {
 
     virtual void initContext() override = 0;
     virtual void deleteContext() override = 0;
-    virtual void paint(PaintLevel paintlevel = PL_REDRAW) {
+    virtual void paint(PaintLevel paintlevel = IRenderer::PaintLevel::PL_REDRAW) {
       if (m_bPaitingActive) paintInternal(paintlevel);
     }
 

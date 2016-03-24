@@ -23,6 +23,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
 
     else if (type == ZoomCameraReply::Ifc::Type) {
         return reader->getSerializablePtr<ZoomCameraReply>("rep");
+    } else if (type == SupportsRenderModeReply::Ifc::Type) {
+        return reader->getSerializablePtr<SupportsRenderModeReply>("rep");
     }
 
 #undef PYTHON_MAGIC_PROC

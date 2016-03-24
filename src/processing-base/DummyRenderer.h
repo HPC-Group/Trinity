@@ -9,6 +9,9 @@ class DummyRenderer : public IRenderer {
 public:
     DummyRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
 
+    void setRenderMode(ERenderMode mode) {}
+    bool supportsRenderMode(ERenderMode mode) { return true; }
+
     void setIsoValue(const float) override;
     void initContext() override {};
 	void deleteContext() override {};

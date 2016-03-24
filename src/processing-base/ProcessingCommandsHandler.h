@@ -3,6 +3,8 @@
 #include "commands/ErrorCommands.h"
 #include "commands/ICommandHandler.h"
 #include "commands/ProcessingCommands.h"
+#include "commands/Request.h"
+#include "commands/Reply.h"
 #include "common/IONodeProxy.h"
 #include "processing-base/ProcessingNode.h"
 #include "processing-base/RenderSession.h"
@@ -55,6 +57,28 @@ public:
 
 private:
     ZoomCameraRequest m_request;
+    RenderSession* m_session;
+};
+
+class SetRenderModeHdl : public ICommandHandler {
+public:
+    SetRenderModeHdl(const SetRenderModeRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetRenderModeRequest m_request;
+    RenderSession* m_session;
+};
+
+class SupportsRenderModeHdl : public ICommandHandler {
+public:
+    SupportsRenderModeHdl(const SupportsRenderModeRequest& request, RenderSession*);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SupportsRenderModeRequest m_request;
     RenderSession* m_session;
 };
 
