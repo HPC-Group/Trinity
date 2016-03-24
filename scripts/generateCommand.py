@@ -176,7 +176,7 @@ def main():
 	parser.add_argument('--type', help="type of the command to generate ('proc' or 'io'" )
 	parser.add_argument('--name', help="name of the command to generate")
 	parser.add_argument('--hasReply', help="shows if the command has a reply ('true' or 'false'")
-	parser.add_argument('--vclType', help="VclType of the command")
+	#parser.add_argument('--vclType', help="VclType of the command")
 	
 	args = parser.parse_args()
 	if (args.type == "proc"):
@@ -192,12 +192,12 @@ def main():
 	if (args.hasReply != "true" and args.hasReply != "false"):
 		raise("Invalid reply: must be 'true' or 'false'")
 	      
-	if not args.vclType:
-		raise("Invalid VclType: specify something!")
+	#if not args.vclType:
+	#	raise("Invalid VclType: specify something!")
 		
 	name = args.name
 	hasReply = args.hasReply
-	vclType = args.vclType
+	vclType = args.name
 	
 	generateCommandsHdr()
 	
