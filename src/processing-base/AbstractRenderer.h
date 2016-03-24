@@ -108,17 +108,14 @@ namespace trinity {
     virtual void paint(PaintLevel paintlevel = IRenderer::PaintLevel::PL_REDRAW) {
       if (m_bPaitingActive) paintInternal(paintlevel);
     }
+    virtual void resizeFramebuffer();
 
     /*******  IRenderer Interface end **********/
 
   protected:
     virtual void paintInternal(PaintLevel paintlevel) = 0;
-    virtual void recomputeViewMatrix();
-    virtual void recomputeWorldMatrix();
-
-    uint32_t    m_width;
-    uint32_t    m_height;
-
+    virtual void recomputeProjectionMatrix();
+    
     ERenderMode m_renderMode;
     uint64_t m_activeModality;
     uint64_t  m_activeTimestep;
@@ -141,13 +138,11 @@ namespace trinity {
     float m_angle;
     float m_znear;
     float m_zfar;
-    Core::Math::Vec3f m_camPosition;
-    Core::Math::Vec3f m_camRotation;
-    float m_camZoom;
-    Core::Math::Vec3f m_scenePosition;
-    Core::Math::Vec3f m_sceneRotation;
-    float m_sceneScale;
 
+    Core::Math::Mat4f m_projection;
+    Core::Math::Mat4f m_view;
+    Core::Math::Mat4f m_model;
+        
   private:
     bool    m_bPaitingActive;
 

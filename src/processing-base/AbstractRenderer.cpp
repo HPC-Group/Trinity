@@ -1,8 +1,10 @@
 #include "AbstractRenderer.h"
 
 #include "common/TrinityError.h"
+#include "common/VisStream.h"
 
 using namespace trinity;
+using namespace Core::Math;
 
 AbstractRenderer::AbstractRenderer(std::shared_ptr<VisStream> stream,
                                    std::unique_ptr<IIO> ioSession)  :
@@ -12,8 +14,39 @@ IRenderer(stream, std::move(ioSession))
 }
 
 void AbstractRenderer::initValueDefaults(){
-  // TODO
-  m_bPaitingActive = true;
+  m_bPaitingActive = true;  // TODO change this to false after inital testing
+  
+  // TODO: set valid rendermode
+  m_renderMode = ERenderMode::RM_1DTRANS;
+  m_activeModality = 0;
+  m_activeTimestep = 0;
+  m_1Dtf = m_io->getDefault1DTransferFunction(0);
+  m_isoValue[0] = 0.0f;
+  m_isoValue[1] = 0.0f;
+  m_isoValueColor[0] = Vec3ui8(255,0,0);
+  m_isoValueColor[1] = Vec3ui8(0,255,0);
+  m_clearViewNormalizedWindowPos = Vec2f(0.5f,0.5f);
+  m_clearViewRadius = 0.25f;
+  m_enableLighting = true;
+  m_lightingColors = {
+    Vec4ui8(25,25,25,255),
+    Vec4ui8(128,128,128,255),
+    Vec4ui8(255,255,255,255)
+  };
+  m_lightDirection = Vec3f(0.0f,0.0f,1.0f);
+  m_fSampleRateModifier = 1.0f;
+  m_BBoxMode = BBoxMode::BBM_NONE;
+  m_RendererSpecials = std::vector<uint64_t>();
+  m_backgroundColors = std::make_pair(Vec3ui8(0,0,0),Vec3ui8(0,0,0));
+  m_enableClipping = false;
+  m_clipVolumeMin = Vec3f(0.0f,0.0f,0.0f);
+  m_clipVolumeMax = Vec3f(1.0f,1.0f,1.0f);
+  m_angle = 45;
+  m_znear = 0.01f;
+  m_zfar = 1000.0f;
+
+  resetCamera();
+  resetObject();
 }
 
 void AbstractRenderer::setRenderMode(ERenderMode mode){
@@ -24,7 +57,7 @@ void AbstractRenderer::setRenderMode(ERenderMode mode){
   paint();
 }
 
-// by default we support nothing (needs to be overriden by the actual renderer
+// by default we support nothing (needs to be overriden by the actual renderer)
 bool AbstractRenderer::supportsRenderMode(ERenderMode mode){
   return false;
 }
@@ -112,7 +145,7 @@ float AbstractRenderer::getIsoValue(uint8_t surfaceIndex) const {
   return m_isoValue[surfaceIndex];
 }
 
-void AbstractRenderer::setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor){
+void AbstractRenderer::setIsosurfaceColor(uint8_t surfaceIndex, const Vec3ui8& vColor){
   if (surfaceIndex >= m_isoValue.size()) {
     throw TrinityError("invalid surfaceIndex", __FILE__, __LINE__);
   }
@@ -121,7 +154,7 @@ void AbstractRenderer::setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
-Core::Math::Vec3ui8 AbstractRenderer::getIsosurfaceColor(uint8_t surfaceIndex) const{
+Vec3ui8 AbstractRenderer::getIsosurfaceColor(uint8_t surfaceIndex) const{
   if (surfaceIndex >= m_isoValue.size()) {
     throw TrinityError("invalid surfaceIndex", __FILE__, __LINE__);
   }
@@ -129,12 +162,12 @@ Core::Math::Vec3ui8 AbstractRenderer::getIsosurfaceColor(uint8_t surfaceIndex) c
   return m_isoValueColor[surfaceIndex];
 }
 
-Core::Math::Vec2f AbstractRenderer::getRange(uint64_t modality) const {
+Vec2f AbstractRenderer::getRange(uint64_t modality) const {
   return m_io->getRange(modality);
 }
 
 // CLEARVIEW FUNCTIONS
-void AbstractRenderer::setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos){
+void AbstractRenderer::setClearViewPosition(const Vec2f& vNormalizedWindowPos){
   m_clearViewNormalizedWindowPos = vNormalizedWindowPos;
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
@@ -159,12 +192,12 @@ IRenderer::PhongColorTriple AbstractRenderer::getLightingColors() const {
   return m_lightingColors;
 }
 
-void AbstractRenderer::setLightDirection(const Core::Math::Vec3f& direction){
+void AbstractRenderer::setLightDirection(const Vec3f& direction){
   m_lightDirection = direction;
   paint();
 }
 
-Core::Math::Vec3f AbstractRenderer::getLightDirection() const {
+Vec3f AbstractRenderer::getLightDirection() const {
   return m_lightDirection;
 }
 
@@ -197,12 +230,12 @@ std::vector<uint64_t> AbstractRenderer::getRendererSpecials() const {
   return m_RendererSpecials;
 }
 
-void AbstractRenderer::setBackgroundColors(std::pair<Core::Math::Vec3ui8, Core::Math::Vec3ui8> colors){
+void AbstractRenderer::setBackgroundColors(std::pair<Vec3ui8, Vec3ui8> colors){
   m_backgroundColors = colors;
   paint();
 }
 
-std::pair<Core::Math::Vec3ui8, Core::Math::Vec3ui8> AbstractRenderer::getBackgroundColors() const {
+std::pair<Vec3ui8, Vec3ui8> AbstractRenderer::getBackgroundColors() const {
   return m_backgroundColors;
 }
 
@@ -213,8 +246,8 @@ void AbstractRenderer::enableClipping(bool enable) {
   paint();
 }
 
-void AbstractRenderer::setClipVolume(const Core::Math::Vec3f& minValues,
-                                     const Core::Math::Vec3f& maxValues) {
+void AbstractRenderer::setClipVolume(const Vec3f& minValues,
+                                     const Vec3f& maxValues) {
   m_clipVolumeMin = minValues;
   m_clipVolumeMax = maxValues;
   paint();
@@ -225,67 +258,81 @@ void AbstractRenderer::setViewParameters(float angle, float znear, float zfar) {
   m_angle = angle;
   m_znear = znear;
   m_zfar = zfar;
-  recomputeViewMatrix();
+  
+  recomputeProjectionMatrix();
   paint();
 }
 
-void AbstractRenderer::rotateCamera(Core::Math::Vec3f rotation) {
-  m_camRotation = m_camRotation * rotation;
-  recomputeViewMatrix();
+void AbstractRenderer::recomputeProjectionMatrix() {
+  const uint32_t width = m_visStream->getStreamingParams().getResX();
+  const uint32_t height = m_visStream->getStreamingParams().getResY();
+  
+  m_projection.Perspective(m_angle, (float)width/(float)height, m_znear, m_zfar);
+}
+
+void AbstractRenderer::rotateCamera(Vec3f rotation) {
+  Mat4f rotX, rotY, rotZ;
+  rotX.RotationX(rotation.x);
+  rotY.RotationY(rotation.y);
+  rotZ.RotationZ(rotation.z);
+  m_view = m_view * rotX * rotY * rotZ;
   paint();
 }
 
-void AbstractRenderer::moveCamera(Core::Math::Vec3f direction) {
-  m_camPosition = m_camPosition * direction;
-  recomputeViewMatrix();
+void AbstractRenderer::moveCamera(Vec3f direction) {
+  Mat4f trans;
+  trans.Translation(direction);
+  m_view = m_view * trans;
   paint();
 }
 
 void AbstractRenderer::zoomCamera(float f) {
-  m_camZoom = m_camZoom * f;
-  recomputeViewMatrix();
+  Mat4f scale;
+  scale.Scaling(f,f,f);
+  m_view = m_view * scale;
   paint();
 }
 
-void AbstractRenderer::rotateScene(Core::Math::Vec3f rotation) {
-  m_sceneRotation = m_sceneRotation * rotation;
-  recomputeWorldMatrix();
+void AbstractRenderer::rotateScene(Vec3f rotation) {
+  Mat4f rotX, rotY, rotZ;
+  rotX.RotationX(rotation.x);
+  rotY.RotationY(rotation.y);
+  rotZ.RotationZ(rotation.z);
+  m_model = m_model * rotX * rotY * rotZ;
   paint();
 }
 
-void AbstractRenderer::moveScene(Core::Math::Vec3f direction) {
-  m_scenePosition = m_scenePosition * direction;
-  recomputeWorldMatrix();
+void AbstractRenderer::moveScene(Vec3f direction) {
+  Mat4f trans;
+  trans.Translation(direction);
+  m_model = m_model * trans;
   paint();
 }
 
 void AbstractRenderer::rescaleScene(float f) {
-  m_sceneScale = m_sceneScale * f;
-  recomputeWorldMatrix();
+  Mat4f scale;
+  scale.Scaling(f,f,f);
+  m_model = m_model * scale;
   paint();
 }
 
-void AbstractRenderer::recomputeViewMatrix() {
-  // TODO
-}
 
-void AbstractRenderer::recomputeWorldMatrix() {
-  // TODO
+void AbstractRenderer::resizeFramebuffer() {
+  recomputeProjectionMatrix();
 }
 
 void AbstractRenderer::resetCamera() {
-  m_camPosition = Core::Math::Vec3f();
-  m_camRotation = Core::Math::Vec3f();
-  m_camZoom = 1;
-  recomputeViewMatrix();
+  /*
+   // TODO
+   GL_CHECK(glViewport(0, 0, width, height));
+   */
+  
+  m_view.BuildLookAt(Vec3f(0, 0, 3), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
   paint();
 }
 
 void AbstractRenderer::resetObject() {
-  m_scenePosition = Core::Math::Vec3f();
-  m_sceneRotation = Core::Math::Vec3f();
-  m_sceneScale = 1;
-  recomputeWorldMatrix();
+  m_model = Mat4f();
   paint();
 }
 

@@ -38,6 +38,10 @@ namespace trinity {
     void loadTransferFunction();
     void initHashTable();
     void initVolumePool(uint64_t gpuMemorySizeInByte);
+    
+    
+    uint32_t m_width, m_height; // TODO: remove these
+    
 
     //help functions move to new GridLeaperTools class?
     Core::Math::Vec3ui CalculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,const uint64_t usedMemory);

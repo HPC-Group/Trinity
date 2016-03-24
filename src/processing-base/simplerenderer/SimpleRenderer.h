@@ -22,16 +22,18 @@ namespace trinity {
 
     virtual void initContext() override;
     virtual void deleteContext() override;
+    virtual void resizeFramebuffer() override;
 
   protected:
     virtual void paintInternal(PaintLevel paintlevel) override;
 
   private:
-    bool LoadShaders();
-    void LoadGeometry();
-    void LoadFrameBuffers();
-    void LoadVolumeData();
-    void LoadTransferFunction();
+    
+    bool loadShaders();
+    void loadGeometry();
+    void loadVolumeData();
+    void loadTransferFunction();
+    void initFrameBuffers();
 
     std::vector<Core::Math::Vec4ui8>  m_bufferData;
     
