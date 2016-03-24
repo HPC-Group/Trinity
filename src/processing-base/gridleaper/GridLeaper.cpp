@@ -546,7 +546,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
 
     // render mode dictates how we look at data ...
     switch (m_renderMode) {
-    case RM_1DTRANS: {
+    case IRenderer::ERenderMode::RM_1DTRANS: {
                          double const fMin = double(m_1Dtf.getNonZeroLimits().x) * fRescaleFactor;
                          double const fMax = double(m_1Dtf.getNonZeroLimits().y) * fRescaleFactor;
                          if (m_VisibilityState.needsUpdate(fMin, fMax) ||
@@ -554,7 +554,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
                              vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_VisibilityState,*m_io, m_activeTimestep, bForceSynchronousUpdate);
                          }
                          break; }
-    case RM_2DTRANS: {
+    case IRenderer::ERenderMode::RM_2DTRANS: {
                          /* double const fMin = double(m_p2DTrans->GetNonZeroLimits().x) * fRescaleFactor;
                          double const fMax = double(m_p2DTrans->GetNonZeroLimits().y) * fRescaleFactor;
                          double const fMinGradient = double(m_p2DTrans->GetNonZeroLimits().z);
@@ -564,7 +564,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
                          vEmptyBrickCount = m_pVolumePool->RecomputeVisibility(*(m_VisibilityState.get()), m_iTimestep, bForceSynchronousUpdate);
                          }*/
                          break; }
-    case RM_ISOSURFACE: {
+    case IRenderer::ERenderMode::RM_ISOSURFACE: {
                             double const fIsoValue = m_isoValue[0];
                             if (m_VisibilityState.needsUpdate(fIsoValue) ||
                                 bForceSynchronousUpdate) {

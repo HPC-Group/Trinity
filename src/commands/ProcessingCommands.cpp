@@ -160,7 +160,7 @@ std::string SetIsoValueCmd::RequestParams::toString() const {
     return stream.str();
 }
 
-////////////// SetIsoValueCmd //////////////
+////////////// InitContextCmd //////////////
 
 VclType InitContextCmd::Type = VclType::InitContext;
 
