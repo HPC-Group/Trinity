@@ -52,6 +52,7 @@ namespace trinity {
     // CLEARVIEW FUNCTIONS
     virtual void setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos);
     virtual void setClearViewRadius(float f);
+    virtual void setClearBorderSize(float f);
     // isovalues and colors are set using the iso functions with surface index 1
 
     // LIGTHING FUNCTIONS
@@ -121,28 +122,29 @@ namespace trinity {
     uint64_t  m_activeTimestep;
     TransferFunction1D m_1Dtf;
 //    TransferFunction2D m_2Dtf;
-    std::array<float, 2> m_isoValue;
-    std::array<Core::Math::Vec3ui8, 2> m_isoValueColor;
-    Core::Math::Vec2f m_clearViewNormalizedWindowPos;
-    float m_clearViewRadius;
-    bool m_enableLighting;
+    std::array<float, 2>                                m_isoValue;
+    std::array<Core::Math::Vec3ui8, 2>                  m_isoValueColor;
+    Core::Math::Vec2f                                   m_clearViewWindowPos;
+    float                                               m_clearViewRadius;
+    float                                               m_clearBorderSize;
+    bool                                                m_enableLighting;
     PhongColorTriple m_lightingColors;
     Core::Math::Vec3f m_lightDirection;
-    float m_fSampleRateModifier;
-    BBoxMode m_BBoxMode;
-    std::vector<uint64_t> m_RendererSpecials;
+    float                                               m_fSampleRateModifier;
+    BBoxMode                                            m_BBoxMode;
+    std::vector<uint64_t>                               m_RendererSpecials;
     std::pair<Core::Math::Vec3ui8, Core::Math::Vec3ui8> m_backgroundColors;
-    bool m_enableClipping;
-    Core::Math::Vec3f m_clipVolumeMin;
-    Core::Math::Vec3f m_clipVolumeMax;
-    float m_angle;
-    float m_znear;
-    float m_zfar;
+    bool                                                m_enableClipping;
+    Core::Math::Vec3f                                   m_clipVolumeMin;
+    Core::Math::Vec3f                                   m_clipVolumeMax;
+    float                                               m_viewAngle;
+    float                                               m_zNear;
+    float                                               m_zFar;
 
-    Core::Math::Mat4f m_projection;
-    Core::Math::Mat4f m_view;
-    Core::Math::Mat4f m_model;
-        
+    Core::Math::Mat4f                                   m_projection;
+    Core::Math::Mat4f                                   m_view;
+    Core::Math::Mat4f                                   m_model;
+    
   private:
     bool    m_bPaitingActive;
 

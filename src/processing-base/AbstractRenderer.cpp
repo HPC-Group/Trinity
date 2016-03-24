@@ -25,8 +25,9 @@ void AbstractRenderer::initValueDefaults(){
   m_isoValue[1] = 0.0f;
   m_isoValueColor[0] = Vec3ui8(255,0,0);
   m_isoValueColor[1] = Vec3ui8(0,255,0);
-  m_clearViewNormalizedWindowPos = Vec2f(0.5f,0.5f);
+  m_clearViewWindowPos = Vec2f(0.5f,0.5f);
   m_clearViewRadius = 0.25f;
+  m_clearBorderSize = 0.05f;
   m_enableLighting = true;
   m_lightingColors = {
     Vec4ui8(25,25,25,255),
@@ -41,9 +42,9 @@ void AbstractRenderer::initValueDefaults(){
   m_enableClipping = false;
   m_clipVolumeMin = Vec3f(0.0f,0.0f,0.0f);
   m_clipVolumeMax = Vec3f(1.0f,1.0f,1.0f);
-  m_angle = 45;
-  m_znear = 0.01f;
-  m_zfar = 1000.0f;
+  m_viewAngle = 45;
+  m_zNear = 0.01f;
+  m_zFar = 1000.0f;
 
   resetCamera();
   resetObject();
@@ -168,12 +169,17 @@ Vec2f AbstractRenderer::getRange(uint64_t modality) const {
 
 // CLEARVIEW FUNCTIONS
 void AbstractRenderer::setClearViewPosition(const Vec2f& vNormalizedWindowPos){
-  m_clearViewNormalizedWindowPos = vNormalizedWindowPos;
+  m_clearViewWindowPos = vNormalizedWindowPos;
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
 void AbstractRenderer::setClearViewRadius(float f){
   m_clearViewRadius = f;
+  paint(IRenderer::PaintLevel::PL_RECOMPOSE);
+}
+
+void AbstractRenderer::setClearBorderSize(float f){
+  m_clearBorderSize = f;
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
@@ -255,9 +261,9 @@ void AbstractRenderer::setClipVolume(const Vec3f& minValues,
 
 // TRANSFORMATION
 void AbstractRenderer::setViewParameters(float angle, float znear, float zfar) {
-  m_angle = angle;
-  m_znear = znear;
-  m_zfar = zfar;
+  m_viewAngle = angle;
+  m_zNear = znear;
+  m_zFar = zfar;
   
   recomputeProjectionMatrix();
   paint();
@@ -267,7 +273,7 @@ void AbstractRenderer::recomputeProjectionMatrix() {
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
   
-  m_projection.Perspective(m_angle, (float)width/(float)height, m_znear, m_zfar);
+  m_projection.Perspective(m_viewAngle, (float)width/(float)height, m_zNear, m_zFar);
 }
 
 void AbstractRenderer::rotateCamera(Vec3f rotation) {
