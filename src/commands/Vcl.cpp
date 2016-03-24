@@ -63,5 +63,5 @@ std::string Vcl::toString(const int errorCode) const {
 
 uint32_t IDGenerator::nextID() {
     static uint32_t id = 0;
-    return (id + 1) % std::numeric_limits<uint32_t>::max();
+    return id++;
 }
