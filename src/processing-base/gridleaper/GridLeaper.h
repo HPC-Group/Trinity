@@ -29,19 +29,17 @@ namespace trinity {
 
   protected:
     virtual void paintInternal(PaintLevel paintlevel) override;
-
+    virtual void resizeFramebuffer() override;
+    
   private:
     bool loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy);
     void loadGeometry();
-    void loadFrameBuffers();
+    void initFrameBuffers();
     void loadVolumeData();
     void loadTransferFunction();
     void initHashTable();
     void initVolumePool(uint64_t gpuMemorySizeInByte);
-    
-    
-    uint32_t m_width, m_height; // TODO: remove these
-    
+        
 
     //help functions move to new GridLeaperTools class?
     Core::Math::Vec3ui CalculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,const uint64_t usedMemory);

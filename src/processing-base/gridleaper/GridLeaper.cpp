@@ -84,16 +84,9 @@ void GridLeaper::initContext() {
     return;
   }
   
-  m_width = m_visStream->getStreamingParams().getResX();
-  m_height = m_visStream->getStreamingParams().getResY();
-  m_bufferData.resize(m_width * m_height);
-  
-  
-  LINFO("(p) grid leaper: resolution: " + std::to_string(m_width) + " x " + std::to_string(m_height));
-  
   initHashTable();
   
-  loadFrameBuffers();
+  resizeFramebuffer();
   loadShaders(GLVolumePool::MissingBrickStrategy::RequestAll); // guess we could use the "renderspecials" here
   loadGeometry();
   loadVolumeData();
@@ -101,6 +94,25 @@ void GridLeaper::initContext() {
   
   m_targetBinder = mocca::make_unique<GLTargetBinder>();
   LINFO("(p) grid leaper created. OpenGL Version " << m_context->getVersion());
+}
+
+void GridLeaper::resizeFramebuffer() {
+  AbstractRenderer::resizeFramebuffer();
+  
+  const uint32_t width = m_visStream->getStreamingParams().getResX();
+  const uint32_t height = m_visStream->getStreamingParams().getResY();
+  m_bufferData.resize(width * height);
+
+  if (!m_context) {
+    LWARNING("(p) resizeFramebuffer called without a valid context");
+    return;
+  }
+  
+  m_nearPlane = mocca::make_unique<GLRenderPlane>(Vec2ui(width,height));
+
+  initFrameBuffers();
+
+  LINFO("(p) resolution: " << width << " x " << height);
 }
 
 bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
@@ -372,20 +384,22 @@ void GridLeaper::loadTransferFunction() {
 
 void GridLeaper::loadGeometry() {
   m_bbBox = mocca::make_unique<GLVolumeBox>();
-  m_nearPlane = mocca::make_unique<GLRenderPlane>(Vec2ui(m_width,m_height));
 }
 
-void GridLeaper::loadFrameBuffers() {
+void GridLeaper::initFrameBuffers() {
+  const uint32_t width = m_visStream->getStreamingParams().getResX();
+  const uint32_t height = m_visStream->getStreamingParams().getResY();
+
   m_resultBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
                                               GL_CLAMP_TO_EDGE,
-                                              m_width, m_height,
+                                              width, height,
                                               GL_RGBA, GL_RGBA,
                                               GL_UNSIGNED_BYTE, true, 1);
   
   // TODO: check if we need depth (the true below)
   m_backfaceBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE,
-                                                m_width, m_height,
+                                                width, height,
                                                 GL_RGBA, GL_RGBA,
                                                 GL_FLOAT, true, 1);
 }

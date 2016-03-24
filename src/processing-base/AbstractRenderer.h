@@ -51,8 +51,8 @@ namespace trinity {
 
     // CLEARVIEW FUNCTIONS
     virtual void setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos);
-    virtual void setClearViewRadius(float f);
-    virtual void setClearBorderSize(float f);
+    virtual void setClearViewRadius(float radius);
+    virtual void setClearBorderSize(float borderSize);
     // isovalues and colors are set using the iso functions with surface index 1
 
     // LIGTHING FUNCTIONS
@@ -87,11 +87,11 @@ namespace trinity {
 
     virtual void rotateCamera(Core::Math::Vec3f rotation);
     virtual void moveCamera(Core::Math::Vec3f direction);
-    virtual void zoomCamera(float f) override;
+    virtual void zoomCamera(float zoom) override;
 
     virtual void rotateScene(Core::Math::Vec3f rotation);
     virtual void moveScene(Core::Math::Vec3f direction);
-    virtual void rescaleScene(float f);
+    virtual void rescaleScene(float scale);
 
     virtual void resetCamera();
     virtual void resetObject();

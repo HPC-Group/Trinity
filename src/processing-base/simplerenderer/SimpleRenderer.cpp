@@ -64,8 +64,10 @@ void SimpleRenderer::initContext() {
 }
 
 void SimpleRenderer::resizeFramebuffer() {
+  AbstractRenderer::resizeFramebuffer();
+  
   if (!m_context) {
-    LWARNING("(p) resizeFramebuffer without a valid context");
+    LWARNING("(p) resizeFramebuffer called without a valid context");
     return;
   }
   
@@ -197,17 +199,12 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   
   m_context->makeCurrent();
   
-  Mat4f projection;
-  Mat4f view;
   Mat4f world;
-  Mat4f rotx, roty;
-  
-  projection.Perspective(45.0f, (float)width / (float)height, 0.01f, 1000.0f);
-  view.BuildLookAt(Vec3f(0, 0, 3), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
-  
+  Mat4f rotx, roty;  
   rotx.RotationX(m_isoValue[0]);
   roty.RotationY(m_isoValue[0] * 1.14f);
   world = rotx * roty;
+   
   GL_CHECK(glViewport(0, 0, width, height));
   
   glEnable(GL_CULL_FACE);
@@ -224,9 +221,9 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   m_backfaceBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
   
   m_backfaceShader->Enable();
-  m_backfaceShader->Set("projectionMatrix", projection);
-  m_backfaceShader->Set("viewMatrix", view);
-  m_backfaceShader->Set("worldMatrix", world);
+  m_backfaceShader->Set("projectionMatrix", m_projection);
+  m_backfaceShader->Set("viewMatrix", m_view);
+  m_backfaceShader->Set("worldMatrix", m_model*world);
   m_bbBox->paint();
   m_backfaceShader->Disable();
   
@@ -240,9 +237,9 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   m_resultBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
   
   m_raycastShader->Enable();
-  m_raycastShader->Set("projectionMatrix", projection);
-  m_raycastShader->Set("viewMatrix", view);
-  m_raycastShader->Set("worldMatrix", world);
+  m_raycastShader->Set("projectionMatrix", m_projection);
+  m_raycastShader->Set("viewMatrix", m_view);
+  m_raycastShader->Set("worldMatrix", m_model);
   
   m_raycastShader->ConnectTextureID("transferfunc", 0);
   m_raycastShader->ConnectTextureID("volume", 1);

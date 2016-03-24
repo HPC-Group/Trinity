@@ -179,13 +179,13 @@ void AbstractRenderer::setClearViewPosition(const Vec2f& vNormalizedWindowPos) {
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
-void AbstractRenderer::setClearViewRadius(float f) {
-  m_clearViewRadius = f;
+void AbstractRenderer::setClearViewRadius(float radius) {
+  m_clearViewRadius = radius;
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
-void AbstractRenderer::setClearBorderSize(float f) {
-  m_clearBorderSize = f;
+void AbstractRenderer::setClearBorderSize(float borderSize) {
+  m_clearBorderSize = borderSize;
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
@@ -299,9 +299,9 @@ void AbstractRenderer::moveCamera(Vec3f direction) {
   paint();
 }
 
-void AbstractRenderer::zoomCamera(float f) {
+void AbstractRenderer::zoomCamera(float zoom) {
   Mat4f scale;
-  scale.Scaling(f,f,f);
+  scale.Scaling(zoom,zoom,zoom);
   m_view = m_view * scale;
   paint();
 }
@@ -322,10 +322,10 @@ void AbstractRenderer::moveScene(Vec3f direction) {
   paint();
 }
 
-void AbstractRenderer::rescaleScene(float f) {
-  Mat4f scale;
-  scale.Scaling(f,f,f);
-  m_model = m_model * scale;
+void AbstractRenderer::rescaleScene(float scale) {
+  Mat4f matScale;
+  matScale.Scaling(scale,scale,scale);
+  m_model = m_model * matScale;
   paint();
 }
 
