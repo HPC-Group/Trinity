@@ -83,7 +83,7 @@ def generateCommandsHdr():
         openFile(procDir + processingFiles[i], templateDir + processingTemplates[i], "#undef PYTHON_MAGIC")
 
     generateRequest("#undef PYTHON_MAGIC_PROC")
-    if hasReply != "false":
+    if hasReply == "true":
       generateReply("#undef PYTHON_MAGIC_PROC")
     
     copyFiles(Types.proc)
@@ -95,7 +95,7 @@ def generateCommandsHdr():
         openFile(ioDir + ioFiles[i], templateDir + ioTemplates[i], "#undef PYTHON_MAGIC")
 
     generateRequest("#undef PYTHON_MAGIC_IO")
-    if hasReply != "false":
+    if hasReply == "true":
       generateReply("#undef PYTHON_MAGIC_IO")
         
     copyFiles(Types.io)
