@@ -12,4 +12,6 @@ public:
     MOCK_METHOD0(deleteContext, void());
     MOCK_METHOD1(setActiveModality, void(uint64_t));
     MOCK_CONST_METHOD0(getActiveModality, uint64_t());
+    MOCK_METHOD1(setActiveTimestep, void(uint64_t));
+    MOCK_CONST_METHOD0(getActiveTimestep, uint64_t());
 };

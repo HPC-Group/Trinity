@@ -104,5 +104,27 @@ private:
 	RenderSession* m_session;
 };
 
+class SetActiveTimestepHdl : public ICommandHandler {
+public:
+    SetActiveTimestepHdl(const SetActiveTimestepRequest&request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetActiveTimestepRequest m_request;
+	RenderSession* m_session;
+};
+
+class GetActiveTimestepHdl : public ICommandHandler {
+public:
+    GetActiveTimestepHdl(const GetActiveTimestepRequest&request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetActiveTimestepRequest m_request;
+	RenderSession* m_session;
+};
+
 #undef PYTHON_MAGIC
 }

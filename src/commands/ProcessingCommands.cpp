@@ -350,7 +350,7 @@ uint64_t SetActiveModalityCmd::RequestParams::getModality() const {
 
 ////////////// GetActiveModalityCmd //////////////
 
-VclType GetActiveModalityCmd::Type = VclType::SetActiveModality;
+VclType GetActiveModalityCmd::Type = VclType::GetActiveModality;
 
 void GetActiveModalityCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
@@ -389,6 +389,78 @@ std::string GetActiveModalityCmd::ReplyParams::toString() const {
 
 uint64_t GetActiveModalityCmd::ReplyParams::getModality() const {
     return m_modality;
+}
+
+////////////// SetActiveTimestepCmd //////////////
+
+VclType SetActiveTimestepCmd::Type = VclType::SetActiveTimestep;
+
+SetActiveTimestepCmd::RequestParams::RequestParams(uint64_t timestep)
+    : m_timestep(timestep) {}
+
+void SetActiveTimestepCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("timestep", m_timestep);
+}
+
+void SetActiveTimestepCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_timestep = reader.getUInt64("timestep");
+}
+
+bool SetActiveTimestepCmd::RequestParams::equals(const SetActiveTimestepCmd::RequestParams& other) const {
+    return m_timestep == other.m_timestep;
+}
+
+std::string SetActiveTimestepCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "timestep: " << m_timestep;
+    return stream.str();
+}
+
+uint64_t SetActiveTimestepCmd::RequestParams::getTimestep() const {
+    return m_timestep;
+}
+
+
+////////////// GetActiveTimestepCmd //////////////
+
+VclType GetActiveTimestepCmd::Type = VclType::GetActiveTimestep;
+
+void GetActiveTimestepCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetActiveTimestepCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetActiveTimestepCmd::RequestParams::equals(const GetActiveTimestepCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetActiveTimestepCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetActiveTimestepCmd::ReplyParams::ReplyParams(uint64_t timestep)
+    : m_timestep(timestep) {}
+
+void GetActiveTimestepCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("timestep", m_timestep);
+}
+
+void GetActiveTimestepCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_timestep = reader.getUInt64("timestep");
+}
+
+bool GetActiveTimestepCmd::ReplyParams::equals(const GetActiveTimestepCmd::ReplyParams& other) const {
+    return m_timestep == other.m_timestep;
+}
+
+std::string GetActiveTimestepCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "timestep: " << m_timestep;
+    return stream.str();
+}
+
+uint64_t GetActiveTimestepCmd::ReplyParams::getTimestep() const {
+    return m_timestep;
 }
 
 #undef PYTHON_MAGIC_DEFINITION
@@ -481,6 +553,26 @@ std::ostream& operator<<(std::ostream& os, const GetActiveModalityCmd::RequestPa
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetActiveModalityCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetActiveTimestepCmd::RequestParams& lhs, const SetActiveTimestepCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetActiveTimestepCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetActiveTimestepCmd::RequestParams& lhs, const GetActiveTimestepCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+bool operator==(const GetActiveTimestepCmd::ReplyParams& lhs, const GetActiveTimestepCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetActiveTimestepCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+std::ostream& operator<<(std::ostream& os, const GetActiveTimestepCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

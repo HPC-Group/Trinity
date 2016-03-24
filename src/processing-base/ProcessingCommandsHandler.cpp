@@ -104,4 +104,20 @@ std::unique_ptr<Reply> GetActiveModalityHdl::execute() {
     return mocca::make_unique<GetActiveModalityReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+SetActiveTimestepHdl::SetActiveTimestepHdl(const SetActiveTimestepRequest& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> SetActiveTimestepHdl::execute() {
+    m_session->getRenderer().setActiveTimestep(m_request.getParams().getTimestep());
+    return nullptr;
+}
+
+GetActiveTimestepHdl::GetActiveTimestepHdl(const GetActiveTimestepRequest& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> GetActiveTimestepHdl::execute() {
+    GetActiveTimestepCmd::ReplyParams params(m_session->getRenderer().getActiveTimestep());
+    return mocca::make_unique<GetActiveTimestepReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 #undef PYTHON_MAGIC

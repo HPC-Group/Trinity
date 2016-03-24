@@ -17,8 +17,10 @@ public:
     void setRenderMode(ERenderMode mode) override;
     bool supportsRenderMode(ERenderMode mode) override;
 
-    virtual void setActiveModality(uint64_t modality) override;
-    virtual uint64_t getActiveModality() const override;
+    void setActiveModality(uint64_t modality) override;
+    uint64_t getActiveModality() const override;
+    void setActiveTimestep(uint64_t timestep) override;
+    uint64_t getActiveTimestep() const override;
 
     void setIsoValue(float) override;
     void initContext() override;

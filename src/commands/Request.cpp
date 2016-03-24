@@ -36,6 +36,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetActiveModalityRequest>("req");
     } else if (type == GetActiveModalityRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetActiveModalityRequest>("req");
+    } else if (type == SetActiveTimestepRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetActiveTimestepRequest>("req");
+    } else if (type == GetActiveTimestepRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetActiveTimestepRequest>("req");
     }
 
 #undef PYTHON_MAGIC_PROC

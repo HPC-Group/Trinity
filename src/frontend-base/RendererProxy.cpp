@@ -72,3 +72,16 @@ uint64_t RendererProxy::getActiveModality() const {
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getModality();
 }
+
+void RendererProxy::setActiveTimestep(uint64_t timestep) {
+    SetActiveTimestepCmd::RequestParams requestParams(timestep);
+    SetActiveTimestepRequest request(requestParams, IDGenerator::nextID(), m_remoteSessionId);
+    m_inputChannel.sendRequest(request);
+}
+
+uint64_t RendererProxy::getActiveTimestep() const {
+    GetActiveTimestepCmd::RequestParams params;
+    GetActiveTimestepRequest request(params, IDGenerator::nextID(), m_remoteSessionId);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getTimestep();
+}

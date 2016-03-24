@@ -113,3 +113,34 @@ TEST_F(ProcessingCommandsTest, GetActiveModalityReqRep) {
     auto reply = trinity::testing::handleRequest<GetActiveModalityHdl>(request, session.get());
     ASSERT_EQ(42, reply.getParams().getModality());
 }
+
+TEST_F(ProcessingCommandsTest, SetActiveTimestepCmd) {
+    {
+        SetActiveTimestepCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(ProcessingCommandsTest, GetActiveTimestepCmd) {
+    {
+        GetActiveTimestepCmd::RequestParams target;
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+    {
+        GetActiveTimestepCmd::ReplyParams target(42);
+        auto result = trinity::testing::writeAndRead(target);
+        ASSERT_EQ(target, result);
+    }
+}
+
+TEST_F(ProcessingCommandsTest, GetActiveTimestepReqRep) {
+    auto session = createMockSession();
+    EXPECT_CALL(static_cast<RendererMock&>(session->getRenderer()), getActiveTimestep()).Times(1).WillOnce(Return(42));
+
+    GetActiveTimestepCmd::RequestParams requestParams;
+    GetActiveTimestepRequest request(requestParams, 1, 2);
+    auto reply = trinity::testing::handleRequest<GetActiveTimestepHdl>(request, session.get());
+    ASSERT_EQ(42, reply.getParams().getTimestep());
+}

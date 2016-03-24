@@ -58,7 +58,8 @@ enum class VclType {
     SupportsRenderMode,
     SetActiveModality,
     GetActiveModality,
-
+    SetActiveTimestep,
+    GetActiveTimestep,
 #undef PYTHON_ENUM
     GetMaxBrickSize,
     GetMaxUsedBrickSizes,
@@ -138,6 +139,8 @@ private:
         m_cmdMap.insert("SupportsRenderMode", VclType::SupportsRenderMode);
         m_cmdMap.insert("SetActiveModality", VclType::SetActiveModality);
         m_cmdMap.insert("GetActiveModality", VclType::GetActiveModality);
+        m_cmdMap.insert("SetActiveTimestep", VclType::SetActiveTimestep);
+        m_cmdMap.insert("GetActiveTimestep", VclType::GetActiveTimestep);
 #undef PYTHON_MAGIC_STRING
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

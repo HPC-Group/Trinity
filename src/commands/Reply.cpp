@@ -27,6 +27,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<SupportsRenderModeReply>("rep");
     } else if (type == GetActiveModalityReply::Ifc::Type) {
         return reader->getSerializablePtr<GetActiveModalityReply>("rep");
+    } else if (type == GetActiveTimestepReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetActiveTimestepReply>("rep");
     }
 
 #undef PYTHON_MAGIC_PROC
