@@ -1,7 +1,6 @@
 #include "GridLeaper.h"
 #include "mocca/log/LogManager.h"
 
-
 #include <opengl-base/OpenGLError.h>
 
 #include <vector>
@@ -14,34 +13,33 @@ using namespace std;
 
 GridLeaper::GridLeaper(std::shared_ptr<VisStream> stream,
                        std::unique_ptr<IIO> ioSession) :
-IRenderer(stream, std::move(ioSession)),
+AbstractRenderer(stream, std::move(ioSession)),
+m_texTransferFunc(nullptr),
+m_texVolume(nullptr),
 m_targetBinder(nullptr),
-m_sampleShader(nullptr),
-m_sampleFrameBuffer(nullptr),
-m_sampleBox(nullptr),
+m_backfaceShader(nullptr),
+m_raycastShader(nullptr),
+m_backfaceBuffer(nullptr),
+m_resultBuffer(nullptr),
+m_bbBox(nullptr),
 m_context(nullptr)
 {
 }
 
 void GridLeaper::deleteContext() {
+  m_texTransferFunc = nullptr;
+  m_texVolume = nullptr;
 	m_targetBinder = nullptr;
-	m_sampleShader = nullptr;
-	m_sampleFrameBuffer = nullptr;
-	m_sampleBox = nullptr;
+	m_backfaceShader = nullptr;
+  m_raycastShader = nullptr;
+  m_backfaceBuffer = nullptr;
+	m_resultBuffer = nullptr;
+	m_bbBox = nullptr;
 	m_context = nullptr;
 }
 
 GridLeaper::~GridLeaper() {
   LINFO("(p) destroying a gridleaper");
-}
-
-void GridLeaper::setIsoValue(const float isoValue) {
-  m_isoValue = isoValue;
-  paint();
-}
-
-void GridLeaper::zoomCamera(float f) {
-  LINFO("(p) cam zoom of gridleaper set to " + std::to_string(f));
 }
 
 void GridLeaper::initContext() {
@@ -63,84 +61,205 @@ void GridLeaper::initContext() {
   LINFO("(p) grid leaper: resolution: " +
         std::to_string(m_width) + " x " + std::to_string(m_height));
 
-  LoadFrameBuffer();
-  LoadShader();
+  LoadFrameBuffers();
+  LoadShaders();
   LoadGeometry();
+  LoadVolumeData();
+  LoadTransferFunction();
 
   m_targetBinder = mocca::make_unique<GLTargetBinder>();
   LINFO("(p) grid leaper created. OpenGL Version " << m_context->getVersion());
 }
 
-bool GridLeaper::LoadShader() {
+bool GridLeaper::LoadShaders() {
   vector<string> fs, vs;
-  vs.push_back("SampleVertex.glsl");
-  fs.push_back("SampleFragment.glsl");
+  vs.push_back("vertex.glsl");
+  fs.push_back("backfaceFragment.glsl");
   ShaderDescriptor sd(vs, fs);
   
-  m_sampleShader = mocca::make_unique<GLProgram>();
-  m_sampleShader->Load(sd);
+  m_backfaceShader = mocca::make_unique<GLProgram>();
+  m_backfaceShader->Load(sd);
   
-  if (!m_sampleShader->IsValid()) {
-    LERROR("(p) invalid shader program");
-    m_sampleShader = nullptr;
+  if (!m_backfaceShader->IsValid()) {
+    LERROR("(p) invalid backface shader program");
+    m_backfaceShader = nullptr;
+    return false;
+  }
+
+  fs.clear();
+  fs.push_back("raycastFragment.glsl");
+  sd = ShaderDescriptor(vs, fs);
+  
+  m_raycastShader = mocca::make_unique<GLProgram>();
+  m_raycastShader->Load(sd);
+  
+  if (!m_raycastShader->IsValid()) {
+    LERROR("(p) invalid raycast shader program");
+    m_raycastShader = nullptr;
     return false;
   }
   
   return true;
 }
 
-void GridLeaper::LoadGeometry() {
-  m_sampleBox = mocca::make_unique<GLVolumeBox>();
+void GridLeaper::LoadVolumeData() {
+  LINFO("(p) creating volume");
+  
+  // this simple renderer can only handle scalar 8bit uints
+  // so check if the volume satisfies these conditions
+  if (m_io->getComponentCount(0) != 1 ||
+      m_io->getType(0) != IIO::ValueType::T_UINT8) {
+    LERROR("(p) invalid volume format");
+    return;
+  }
+  
+  // this simple renderer cannot handle bricks, so we render the
+  // "best" LoD that consists of a single brick
+  uint64_t singleBrickLoD = m_io->getLargestSingleBrickLOD(0);
+
+  BrickKey brickKey(0, 0, singleBrickLoD, 0);
+  
+  Core::Math::Vec3ui brickSize = m_io->getBrickVoxelCounts(brickKey);
+
+  LINFO("(p) found suitable volume with single brick of size " << brickSize);
+  
+  
+  std::vector<uint8_t> volume;
+  
+  // HACK:
+  // getBrick should resize the vector, but for now we have to do this manually
+  volume.resize(brickSize.volume());
+  
+  m_io->getBrick(brickKey, volume);
+  
+  if (volume.size() != brickSize.volume()) {
+    LERROR("invalid volume data vector. size should be " <<
+           brickSize.volume() << " but is " << volume.size());
+    return;
+  } else {
+    LINFO("(p) volume size data ok");
+  }
+
+  m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x,
+                                                brickSize.y,
+                                                brickSize.z,
+                                                GL_RED,
+                                                GL_RED,
+                                                GL_UNSIGNED_BYTE,
+                                                volume.data(),
+                                                GL_LINEAR,
+                                                GL_LINEAR);
+  
+  LINFO("(p) volume created");
 }
 
-void GridLeaper::LoadFrameBuffer() {
-  m_sampleFrameBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+void GridLeaper::LoadTransferFunction() {
+  LINFO("(p) creating transfer function");
+  
+  uint64_t maxIndex = m_io->getDefault1DTransferFunctionCount()-1;
+  
+  LINFO("(p) using default function " << maxIndex);
+  
+  TransferFunction1D tf = m_io->getDefault1DTransferFunction(maxIndex);
+
+  LINFO("(p) filling openGL resource");
+  
+  m_texTransferFunc = mocca::make_unique<GLTexture1D>(tf.getSize(),
+                                                      GL_RGBA,
+                                                      GL_RGBA,
+                                                      GL_UNSIGNED_BYTE,
+                                                      tf.getRAWData().data());
+  LINFO("(p) transfer function created");
+}
+
+void GridLeaper::LoadGeometry() {
+  m_bbBox = mocca::make_unique<GLVolumeBox>();
+}
+
+void GridLeaper::LoadFrameBuffers() {
+  m_resultBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
                                                    GL_CLAMP_TO_EDGE,
                                                    m_width, m_height,
                                                    GL_RGBA, GL_RGBA,
                                                    GL_UNSIGNED_BYTE, true, 1);
+
+  // TODO: check if we need depth (the true below)
+  m_backfaceBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+                                              GL_CLAMP_TO_EDGE,
+                                              m_width, m_height,
+                                              GL_RGBA, GL_RGBA,
+                                              GL_FLOAT, true, 1);
+
 }
 
-void GridLeaper::paint() {
-  if (!m_context || !m_sampleShader) return;
+void GridLeaper::paintInternal(PaintLevel paintlevel) {
+
+  
+  if (!m_context || !m_backfaceShader || !m_texVolume || !m_texTransferFunc) {
+    LERROR("(p) incomplete OpenGL initialization");
+    return;
+  }
   
   m_context->makeCurrent();
-
-  m_targetBinder->Bind(m_sampleFrameBuffer);
-  GL_CHECK(glViewport(0, 0, m_width, m_height));
-
-
-  m_sampleFrameBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
 
   Mat4f projection;
   Mat4f view;
   Mat4f world;
   Mat4f rotx, roty;
-
+  
   projection.Perspective(45.0f, (float)m_width / (float)m_height,
                          0.01f, 1000.0f);
-  view.BuildLookAt(Vec3f(0, 0, 10), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
-
-  rotx.RotationX(m_isoValue);
-  roty.RotationY(m_isoValue * 1.14f);
+  view.BuildLookAt(Vec3f(0, 0, 3), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
+  
+  rotx.RotationX(m_isoValue[0]);
+  roty.RotationY(m_isoValue[0] * 1.14f);
   world = rotx * roty;
+  GL_CHECK(glViewport(0, 0, m_width, m_height));
 
   glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
+  glCullFace(GL_FRONT);
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
-
-  m_sampleShader->Enable();
-  m_sampleShader->Set("projectionMatrix", projection);
-  m_sampleShader->Set("viewMatrix", view);
-  m_sampleShader->Set("worldMatrix", world);
-
-  m_sampleBox->paint();
-
-  m_sampleShader->Disable();
-
   
-  m_sampleFrameBuffer->ReadBackPixels(0, 0, m_width, m_height,
+  m_texTransferFunc->Bind(0);
+  m_texVolume->Bind(1);
+
+  // pass 1: backface (i.e. ray exit coordinates)
+  
+  m_targetBinder->Bind(m_backfaceBuffer);
+  m_backfaceBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
+
+  m_backfaceShader->Enable();
+  m_backfaceShader->Set("projectionMatrix", projection);
+  m_backfaceShader->Set("viewMatrix", view);
+  m_backfaceShader->Set("worldMatrix", world);
+  m_bbBox->paint();
+  m_backfaceShader->Disable();
+  
+  
+  // pass 2: raycasting
+  
+  m_backfaceBuffer->Read(2);
+  
+  m_targetBinder->Bind(m_resultBuffer);
+  glCullFace(GL_BACK);
+  m_resultBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
+
+  m_raycastShader->Enable();
+  m_raycastShader->Set("projectionMatrix", projection);
+  m_raycastShader->Set("viewMatrix", view);
+  m_raycastShader->Set("worldMatrix", world);
+  
+  m_raycastShader->ConnectTextureID("transferfunc", 0);
+  m_raycastShader->ConnectTextureID("volume", 1);
+  m_raycastShader->ConnectTextureID("rayExit", 2);
+  
+  m_bbBox->paint();
+  m_raycastShader->Disable();
+  
+  m_backfaceBuffer->FinishRead();
+  
+  m_resultBuffer->ReadBackPixels(0, 0, m_width, m_height,
                                       m_bufferData.data());
 
   m_targetBinder->Unbind();
