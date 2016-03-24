@@ -61,13 +61,13 @@ static FLOATVECTOR3 GetFloatBrickLayout(const Vec3ui& volumeSize,
   return baseBrickCount;
 }
 
-BrickKey IndexFrom4D(   std::shared_ptr<IIO> dataset,
+BrickKey IndexFrom4D(   IIO& dataset,
                         uint64_t modality,
                         const Vec4ui& four,
                         size_t timestep) {
   // the fourth component represents the LOD.
   const size_t lod = static_cast<size_t>(four.w);
-  Vec3ui layout = dataset->getBrickLayout(lod, modality);
+  Vec3ui layout = dataset.getBrickLayout(lod, modality);
 
   const BrickKey k = BrickKey(modality, timestep, lod, four.x +
                                              four.y*layout.x +
@@ -86,7 +86,7 @@ static Vec3ui GetBrickLayout(const Vec3ui& volumeSize,
 }
 
 GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
-                           std::shared_ptr<trinity::IIO> pDataset,
+                           trinity::IIO& pDataset,
                            uint64_t modality,
                            GLenum filter,
                            bool bUseGLCore,
@@ -95,18 +95,17 @@ GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
     m_pPoolDataTexture(NULL),
     m_vPoolCapacity(0,0,0),
     m_poolSize(poolSize),
-    m_maxInnerBrickSize(Vec3ui(pDataset->getMaxUsedBrickSizes()) -
-                        Vec3ui(pDataset->getBrickOverlapSize()) * 2),
-    m_maxTotalBrickSize(pDataset->getMaxUsedBrickSizes()),
-    m_volumeSize(pDataset->getDomainSize(0,modality)),
-    m_iLoDCount(uint32_t(pDataset->getLargestSingleBrickLOD(0)+1)),
+    m_maxInnerBrickSize(Vec3ui(pDataset.getMaxUsedBrickSizes()) -
+                        Vec3ui(pDataset.getBrickOverlapSize()) * 2),
+    m_maxTotalBrickSize(pDataset.getMaxUsedBrickSizes()),
+    m_volumeSize(pDataset.getDomainSize(0,modality)),
+    m_iLoDCount(uint32_t(pDataset.getLargestSingleBrickLOD(0)+1)),
     m_filter(filter),
     m_iTimeOfCreation(2),
     m_iMetaTextureUnit(0),
     m_iDataTextureUnit(1),
     m_bUseGLCore(bUseGLCore),
     m_iInsertPos(0),
-    m_pDataset(pDataset),
     m_bVisibilityUpdated(false)
 #ifdef GLVOLUMEPOOL_PROFILE
     , m_Timer()
@@ -122,7 +121,7 @@ GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
     , m_iMaxUsedBrickBytes(0)
     , m_eDebugMode(dm)
 {
-    trinity::IIO::ValueType type = m_pDataset->getType(modality);
+    trinity::IIO::ValueType type = pDataset.getType(modality);
 
     switch(type){
     case IIO::ValueType::T_FLOAT :  m_sDataSetCache.m_iBitWidth = 32;
@@ -167,9 +166,9 @@ GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
                                     break;
     }
 
-    m_sDataSetCache.m_vRange = m_pDataset->getRange(modality);
+    m_sDataSetCache.m_vRange = pDataset.getRange(modality);
 
-    IIO::Semantic semantic = m_pDataset->getSemantic(modality);
+    IIO::Semantic semantic = pDataset.getSemantic(modality);
     switch(semantic) {
         case IIO::Semantic::Scalar  : m_sDataSetCache.m_iCompCount = 1;break;
         case IIO::Semantic::Vector  : m_sDataSetCache.m_iCompCount = 3;break;
@@ -201,8 +200,8 @@ GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
     case 16 :  {
         m_type = GL_UNSIGNED_SHORT;
         switch (m_sDataSetCache.m_iCompCount) {
-		  case 1: m_internalformat = GL_R16; break;
-		  //case 1: m_internalformat = GL_LUMINANCE16; break; // \todo REMOVE
+          case 1: m_internalformat = GL_R16; break;
+          //case 1: m_internalformat = GL_LUMINANCE16; break; // \todo REMOVE
           case 3 : m_internalformat = GL_RGB16; break;
           case 4 : m_internalformat = GL_RGBA16; break;
           default : throw TrinityError("Invalid Component Count", __FILE__, __LINE__);
@@ -252,8 +251,8 @@ GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
   for (uint32_t i = 0; i < m_vMinMaxScalar.size(); i++) {
     Vec4ui const vBrickID = getVectorBrickID(i);
 
-    BrickKey const key = IndexFrom4D(m_pDataset,modality,vBrickID, m_iMinMaxScalarTimestep);
-    MinMaxBlock imme = m_pDataset->maxMinForKey(key);
+    BrickKey const key = IndexFrom4D(pDataset,modality,vBrickID, m_iMinMaxScalarTimestep);
+    MinMaxBlock imme = pDataset.maxMinForKey(key);
     m_vMinMaxScalar[i].min = imme.minScalar;
     m_vMinMaxScalar[i].max = imme.maxScalar;
   }
@@ -262,7 +261,7 @@ GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
   default:
   case DM_NONE:
     {
-      uint32_t const iAsyncUpdaterThreshold = 7500 * 5; // we can process 7500 bricks/ms (1500 running debug build) 
+      uint32_t const iAsyncUpdaterThreshold = 7500 * 5; // we can process 7500 bricks/ms (1500 running debug build)
     }
     break;
   case DM_BUSY:
@@ -278,28 +277,6 @@ GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
   }
 }
 
-void GLVolumePool::PH_Reset(const VisibilityState& visibility, size_t iTimestep) {
-  // remember largest single brick parameters
-  uint32_t const iLastBrickIndex = *(m_vLoDOffsetTable.end()-1);
-  uint32_t const iLastBrickFlag = m_vBrickMetadata[iLastBrickIndex];
-
-  // clear pool slot data
-  for (auto slot = m_vPoolSlotData.begin(); slot != m_vPoolSlotData.end(); slot++) {
-   if (slot->m_iBrickID != int32_t(iLastBrickIndex)) {
-     slot->m_iBrickID = -1;
-     slot->m_iTimeOfCreation = 0;
-     slot->m_iOrigTimeOfCreation = 0;
-   }
-  }
-
-  // clear metadata
-  std::fill(m_vBrickMetadata.begin(), m_vBrickMetadata.end(), BI_MISSING);
-
-  // restore largest single brick flag
-  m_vBrickMetadata[iLastBrickIndex] = iLastBrickFlag;
-
-  RecomputeVisibility(visibility, iTimestep, true);
-}
 
 uint32_t GLVolumePool::getLoDCount() const {
   return m_iLoDCount;
@@ -459,7 +436,7 @@ std::string GLVolumePool::getShaderFragment(uint32_t iMetaTextureUnit,
     ss << ");\n"
        << "uniform vec3 vLODLayout[" << m_iLoDCount << "] = vec3[](\n";
     for (uint32_t i = 0;i<m_vLoDOffsetTable.size();++i) {
-		Vec3f vLoDSize = GetFloatBrickLayout(m_volumeSize,
+        Vec3f vLoDSize = GetFloatBrickLayout(m_volumeSize,
                                                   m_maxInnerBrickSize, i);
       ss << "  vec3(" << vLoDSize.x << ", " << vLoDSize.y << ", "
          << vLoDSize.z << ")";
@@ -737,15 +714,15 @@ namespace {
   void UploadFirstBrickT(
     const BrickKey& bkey,
     GLVolumePool& pool,
-    const std::shared_ptr<IIO> pDataset,
+    IIO& pDataset,
     uint8_t byteCount
   ) {
-      const Vec3ui vVoxelCount = pDataset->getBrickVoxelCounts(bkey);
+      const Vec3ui vVoxelCount = pDataset.getBrickVoxelCounts(bkey);
     std::vector<uint8_t> vUploadMem(vVoxelCount.volume()*byteCount);
 
     {
       //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
-      pDataset->getBrick(bkey, vUploadMem);
+      pDataset.getBrick(bkey, vUploadMem);
     }
 
     pool.uploadFirstBrick(vVoxelCount, &vUploadMem[0]);
@@ -753,26 +730,26 @@ namespace {
 
 }
 
-void GLVolumePool::uploadFirstBrick(const BrickKey& bkey) {
-	unsigned int const iBitWidth = m_sDataSetCache.m_iBitWidth;
-	if (!m_sDataSetCache.m_iIsSigned) {
+void GLVolumePool::uploadFirstBrick(const BrickKey& bkey, trinity::IIO& pDataset) {
+    unsigned int const iBitWidth = m_sDataSetCache.m_iBitWidth;
+    if (!m_sDataSetCache.m_iIsSigned) {
     switch (iBitWidth) {
-    case 8  : return UploadFirstBrickT (bkey, *this, m_pDataset,1);
-    case 16 : return UploadFirstBrickT (bkey, *this, m_pDataset,2);
-    case 32 : return UploadFirstBrickT (bkey, *this, m_pDataset,4);
+    case 8  : return UploadFirstBrickT (bkey, *this, pDataset,1);
+    case 16 : return UploadFirstBrickT (bkey, *this, pDataset,2);
+    case 32 : return UploadFirstBrickT (bkey, *this, pDataset,4);
     default : throw  TrinityError("Invalid bit width for an unsigned dataset", __FILE__, __LINE__);
     }
   } else if (m_sDataSetCache.m_iIsFloat) {
     switch (iBitWidth) {
-    case 32 : return UploadFirstBrickT (bkey, *this, m_pDataset,4);
-    case 64 : return UploadFirstBrickT (bkey, *this, m_pDataset,8);
+    case 32 : return UploadFirstBrickT (bkey, *this, pDataset,4);
+    case 64 : return UploadFirstBrickT (bkey, *this, pDataset,8);
     default : throw TrinityError("Invalid bit width for an float dataset", __FILE__, __LINE__);
     }
   } else {
     switch (iBitWidth) {
-    case 8  : return UploadFirstBrickT (bkey, *this, m_pDataset,1);
-    case 16 : return UploadFirstBrickT (bkey, *this, m_pDataset,2);
-    case 32 : return UploadFirstBrickT (bkey, *this, m_pDataset,4);
+    case 8  : return UploadFirstBrickT (bkey, *this, pDataset,1);
+    case 16 : return UploadFirstBrickT (bkey, *this, pDataset,2);
+    case 32 : return UploadFirstBrickT (bkey, *this, pDataset,4);
     default : throw TrinityError("Invalid bit width for an signed dataset", __FILE__, __LINE__);
     }
   }
@@ -866,12 +843,12 @@ static Vec3ui Fit1DIndexTo3DArray(uint64_t maxIdx, uint32_t maxArraySize) {
 }
 
 void GLVolumePool::createGLResources() {
-	GLvoid *pixels = 0;
+    GLvoid *pixels = 0;
   m_pPoolDataTexture = std::make_shared<GLTexture3D>(m_poolSize.x, m_poolSize.y, m_poolSize.z,
-													 m_internalformat, m_format, m_type,
-													 pixels,
-													 m_filter,
-													 m_filter);
+                                                     m_internalformat, m_format, m_type,
+                                                     pixels,
+                                                     m_filter,
+                                                     m_filter);
 
   m_vPoolCapacity = Vec3ui(m_pPoolDataTexture->GetSize().x/m_maxTotalBrickSize.x,
                                 m_pPoolDataTexture->GetSize().y/m_maxTotalBrickSize.y,
@@ -931,11 +908,11 @@ void GLVolumePool::uploadMetadataTexture() {
 #ifdef DEBUG_OUTS
   printf("Brickpool Metadata entries:\n");
   for (size_t i = 0; i<m_iTotalBrickCount;++i) {
-	  switch (m_vBrickMetadata[i]) {
+      switch (m_vBrickMetadata[i]) {
       case BI_MISSING		: break;
-	  case BI_EMPTY:			printf("  %i is empty\n", i); break;
-	  case BI_CHILD_EMPTY:		printf("  %i is empty (including all children)\n", i); break;
-	  default:					printf("  %i loaded at position %i\n", i, int(m_vBrickMetadata[i] - BI_FLAG_COUNT)); break;
+      case BI_EMPTY:			printf("  %i is empty\n", i); break;
+      case BI_CHILD_EMPTY:		printf("  %i is empty (including all children)\n", i); break;
+      default:					printf("  %i loaded at position %i\n", i, int(m_vBrickMetadata[i] - BI_FLAG_COUNT)); break;
     }
   }
 #endif
@@ -988,7 +965,7 @@ namespace {
                   eRenderMode == RM_ISOSURFACE, "render mode not supported");
     switch (eRenderMode) {
     case RM_1DTRANS:
-	    return (visibility.get1DTransfer().fMax >= vMinMaxScalar[iBrickID].min &&
+        return (visibility.get1DTransfer().fMax >= vMinMaxScalar[iBrickID].min &&
               visibility.get1DTransfer().fMin <= vMinMaxScalar[iBrickID].max);
       break;
     case RM_2DTRANS:
@@ -1027,7 +1004,7 @@ namespace {
         } else {
           if (bContainedData)
             slot->flagEmpty();
-		  vBrickMetadata[slot->m_iBrickID] = BI_EMPTY; //! \todo remove again
+          vBrickMetadata[slot->m_iBrickID] = BI_EMPTY; //! \todo remove again
         }
       }
     } // for all slots in brick pool
@@ -1358,33 +1335,33 @@ namespace {
   uint32_t UploadBricksToBrickPoolT(
     GLVolumePool& pool,
     std::vector<Vec4ui> const& vBrickIDs,
-    const std::shared_ptr<IIO> pDataset,
+    IIO& pDataset,
     uint64_t modality,
     size_t iTimestep,
-    const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset->GetMaxUsedBrickSize() loop over all bricks
+    const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
     uint32_t iPagedBricks = 0;
     std::vector<uint8_t> vUploadMem(maxUsedBrickVoxelCount);
 
     for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
 
-	  Vec4ui const& vBrickID = *missingBrick;
+      Vec4ui const& vBrickID = *missingBrick;
 
       BrickKey const key = IndexFrom4D(pDataset,modality,vBrickID, iTimestep);
-      Vec3ui const vVoxelSize = pDataset->getBrickVoxelCounts(key);
+      Vec3ui const vVoxelSize = pDataset.getBrickVoxelCounts(key);
       // upload brick core
-		  {
-              pDataset->getBrick(key, vUploadMem);
-		  }
+          {
+              pDataset.getBrick(key, vUploadMem);
+          }
 
-		  if (brickDebug) {
-			  //writeBrick(key, vUploadMem); //! \todo fix writeBrick
-		  }
-		  if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), &vUploadMem[0]))
-			  break;
-		  else
-			  iPagedBricks++;
-		  vUploadMem.clear();
+          if (brickDebug) {
+              //writeBrick(key, vUploadMem); //! \todo fix writeBrick
+          }
+          if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), &vUploadMem[0]))
+              break;
+          else
+              iPagedBricks++;
+          vUploadMem.clear();
 
     }
     return iPagedBricks;
@@ -1392,12 +1369,12 @@ namespace {
 
   uint32_t UploadBricksToBrickPool(
     GLVolumePool& pool,
-	const std::vector<Vec4ui>& vBrickIDs,
-    const std::shared_ptr<IIO> pDataset,
+    const std::vector<Vec4ui>& vBrickIDs,
+    IIO& pDataset,
     uint64_t modality,
     const GLVolumePool::DataSetCache& metaData,
     size_t iTimestep,
-    const size_t maxUsedBrickVoxelCount, // we pass it in here to avoid the pDataset->GetMaxUsedBrickSize() loop over all bricks
+    const size_t maxUsedBrickVoxelCount, // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
     bool brickDebug
   ) {
     if (brickDebug) {
@@ -1453,7 +1430,7 @@ namespace {
   template<ERenderMode eRenderMode, typename T, bool brickDebug>
   uint32_t PotentiallyUploadBricksToBrickPoolT(
     const VisibilityState& visibility,
-    const std::shared_ptr<IIO> pDataset,
+    IIO& pDataset,
     uint64_t modality,
     size_t iTimestep,
     GLVolumePool& pool,
@@ -1461,7 +1438,7 @@ namespace {
     const std::vector<Vec4ui>& vBrickIDs,
     const std::vector<GLVolumePool::MinMax>& vMinMaxScalar,
     const std::vector<GLVolumePool::MinMax>& vMinMaxGradient,
-    const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset->GetMaxUsedBrickSize() loop over all bricks
+    const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
     uint32_t iPagedBricks = 0;
     std::vector<uint8_t> vUploadMem(maxUsedBrickVoxelCount);
@@ -1473,7 +1450,7 @@ namespace {
     for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
       Vec4ui const& vBrickID = *missingBrick;
       BrickKey const key = IndexFrom4D(pDataset,modality,vBrickID, iTimestep);
-      Vec3ui const vVoxelSize = pDataset->getBrickVoxelCounts(key);
+      Vec3ui const vVoxelSize = pDataset.getBrickVoxelCounts(key);
 
       uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
       // the brick could be flagged as empty by now if the async updater tested the brick after we ran the last render pass
@@ -1485,7 +1462,7 @@ namespace {
           // upload brick core
           {
             //Tuvok::StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
-            pDataset->getBrick(key, vUploadMem);
+            pDataset.getBrick(key, vUploadMem);
           }
           if(brickDebug) {
            // writeBrick(key, vUploadMem);
@@ -1511,7 +1488,7 @@ namespace {
   template<ERenderMode eRenderMode>
   uint32_t PotentiallyUploadBricksToBrickPool(
     const VisibilityState& visibility,
-    const std::shared_ptr<IIO> pDataset,
+    IIO& pDataset,
     const GLVolumePool::DataSetCache meta,
     uint64_t modality,
     size_t iTimestep,
@@ -1520,7 +1497,7 @@ namespace {
     const std::vector<Vec4ui>& vBrickIDs,
     const std::vector<GLVolumePool::MinMax>& vMinMaxScalar,
     const std::vector<GLVolumePool::MinMax>& vMinMaxGradient,
-    const size_t maxUsedBrickVoxelCount, // we pass it in here to avoid the pDataset->GetMaxUsedBrickSize() loop over all bricks
+    const size_t maxUsedBrickVoxelCount, // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
     bool brickDebug
     ) {
       unsigned int const iBitWidth = meta.m_iBitWidth;
@@ -1576,7 +1553,7 @@ namespace {
 
 } // anonymous namespace
 
-Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility,uint64_t modality, size_t iTimestep, bool bForceSynchronousUpdate)
+Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, trinity::IIO& pDataset, uint64_t modality, size_t iTimestep, bool bForceSynchronousUpdate)
 {
   // (totalProcessedBrickCount, emptyBrickCount, childEmptyBrickCount)
   Vec4ui vEmptyBrickCount(0, 0, 0, 0);
@@ -1594,9 +1571,9 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility,uint6
     m_iMinMaxScalarTimestep = iTimestep;
     for (uint32_t iBrickID = 0; iBrickID < m_vMinMaxScalar.size(); iBrickID++) {
       Vec4ui const vBrickID = getVectorBrickID(iBrickID);
-      BrickKey const key = IndexFrom4D(m_pDataset,modality,vBrickID, m_iMinMaxScalarTimestep);
+      BrickKey const key = IndexFrom4D(pDataset,modality,vBrickID, m_iMinMaxScalarTimestep);
 
-      MinMaxBlock imme = m_pDataset->maxMinForKey(key);
+      MinMaxBlock imme = pDataset.maxMinForKey(key);
       m_vMinMaxScalar[iBrickID].min = imme.minScalar;
       m_vMinMaxScalar[iBrickID].max = imme.maxScalar;
     }
@@ -1610,8 +1587,8 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility,uint6
       for (uint32_t iBrickID = 0; iBrickID < m_vMinMaxScalar.size(); iBrickID++) {
         Vec4ui const vBrickID = getVectorBrickID(iBrickID);
 
-        BrickKey const key = IndexFrom4D(m_pDataset,modality,vBrickID, m_iMinMaxGradientTimestep);
-        MinMaxBlock imme = m_pDataset->maxMinForKey(key);
+        BrickKey const key = IndexFrom4D(pDataset,modality,vBrickID, m_iMinMaxGradientTimestep);
+        MinMaxBlock imme = pDataset.maxMinForKey(key);
 
         m_vMinMaxGradient[iBrickID].min = imme.minGradient;
         m_vMinMaxGradient[iBrickID].max = imme.maxGradient;
@@ -1666,7 +1643,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility,uint6
     if (vEmptyBrickCount.x != m_iTotalBrickCount) {
       //WARNING("%u of %u bricks were processed during synchronous visibility recomputation!");
     }
-    uint32_t const iLeafBrickCount = m_pDataset->getBrickLayout(0, 0).volume();
+    uint32_t const iLeafBrickCount = pDataset.getBrickLayout(0, 0).volume();
     uint32_t const iInternalBrickCount = m_iTotalBrickCount - iLeafBrickCount;
 
 
@@ -1711,6 +1688,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility,uint6
 
 uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
                                     VisibilityState const& visibility,
+                                    trinity::IIO& pDataset,
                                     uint64_t modality,
                                     bool brickDebug)
 {
@@ -1728,7 +1706,7 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
       case RM_1DTRANS:
         iPagedBricks =
           PotentiallyUploadBricksToBrickPool<RM_1DTRANS>(
-            visibility, m_pDataset, m_sDataSetCache, modality, m_iMinMaxScalarTimestep, *this,
+            visibility, pDataset, m_sDataSetCache, modality, m_iMinMaxScalarTimestep, *this,
             m_vBrickMetadata, vBrickIDs, m_vMinMaxScalar, m_vMinMaxGradient,
             m_iMaxUsedBrickVoxelCount, brickDebug
           );
@@ -1736,7 +1714,7 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
       case RM_2DTRANS:
         iPagedBricks =
           PotentiallyUploadBricksToBrickPool<RM_2DTRANS>(
-            visibility, m_pDataset, m_sDataSetCache, modality, m_iMinMaxScalarTimestep, *this,
+            visibility, pDataset, m_sDataSetCache, modality, m_iMinMaxScalarTimestep, *this,
             m_vBrickMetadata, vBrickIDs, m_vMinMaxScalar, m_vMinMaxGradient,
             m_iMaxUsedBrickVoxelCount, brickDebug
           );
@@ -1744,7 +1722,7 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
       case RM_ISOSURFACE:
         iPagedBricks =
           PotentiallyUploadBricksToBrickPool<RM_ISOSURFACE>(
-            visibility, m_pDataset, m_sDataSetCache, modality, m_iMinMaxScalarTimestep, *this,
+            visibility, pDataset, m_sDataSetCache, modality, m_iMinMaxScalarTimestep, *this,
             m_vBrickMetadata, vBrickIDs, m_vMinMaxScalar, m_vMinMaxGradient,
             m_iMaxUsedBrickVoxelCount, brickDebug
           );
@@ -1756,7 +1734,7 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
     } else {
       // visibility is updated guaranteeing that requested bricks do contain data
       iPagedBricks = UploadBricksToBrickPool(
-        *this, vBrickIDs, m_pDataset,modality, m_sDataSetCache, m_iMinMaxScalarTimestep,
+        *this, vBrickIDs, pDataset,modality, m_sDataSetCache, m_iMinMaxScalarTimestep,
         m_iMaxUsedBrickVoxelCount, brickDebug);
     }
   }
@@ -1779,11 +1757,11 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
 void GLVolumePool::freeGLResources() {
   if (m_pPoolMetadataTexture) {
     m_pPoolMetadataTexture->Delete();
-	m_pPoolMetadataTexture.reset();
+    m_pPoolMetadataTexture.reset();
   }
   if (m_pPoolDataTexture) {
     m_pPoolDataTexture->Delete();
-	m_pPoolDataTexture.reset();
+    m_pPoolDataTexture.reset();
   }
 }
 
