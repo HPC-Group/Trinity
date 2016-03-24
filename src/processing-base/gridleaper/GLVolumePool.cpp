@@ -16,7 +16,7 @@
 #include <silverbullet/math/MathTools.h>
 #include <common/TrinityError.h>
 #include "VisibilityState.h"
-#include "GLProgram.h"
+#include <opengl-base/GLProgram.h>
 #include "GLVolumePool.h"
 #include <silverbullet/math/MinMaxBlock.h>
 
