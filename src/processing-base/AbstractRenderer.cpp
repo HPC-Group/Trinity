@@ -16,11 +16,11 @@ IRenderer(stream, std::move(ioSession))
 void AbstractRenderer::initValueDefaults(){
   m_bPaitingActive = true;  // TODO change this to false after inital testing
   
-  // TODO: set valid rendermode
   m_renderMode = ERenderMode::RM_1DTRANS;
   m_activeModality = 0;
   m_activeTimestep = 0;
   m_1Dtf = m_io->getDefault1DTransferFunction(0);
+  //m_2Dtf = m_io->getDefault2DTransferFunction(0);   // TODO: 2D TF
   m_isoValue[0] = 0.0f;
   m_isoValue[1] = 0.0f;
   m_isoValueColor[0] = Vec3ui8(255,0,0);
@@ -46,6 +46,7 @@ void AbstractRenderer::initValueDefaults(){
   m_zNear = 0.01f;
   m_zFar = 1000.0f;
 
+  recomputeProjectionMatrix();
   resetCamera();
   resetObject();
 }
@@ -58,9 +59,10 @@ void AbstractRenderer::setRenderMode(ERenderMode mode){
   paint();
 }
 
-// by default we support nothing (needs to be overriden by the actual renderer)
+// by default we support only 1D TF
+// this method should be overriden by the actual renderer
 bool AbstractRenderer::supportsRenderMode(ERenderMode mode){
-  return false;
+  return mode == ERenderMode::RM_1DTRANS;
 }
 
 uint64_t AbstractRenderer::getModalityCount() const {
@@ -109,7 +111,8 @@ std::vector<uint64_t> AbstractRenderer::get1DHistogram() const {
 }
 
 /*
- // 2D TF
+ // TODO: 2D TF
+ 
  void AbstractRenderer::set2DTransferFunction(const TransferFunction2D& tf){
    m_2Dtf = tf;
    paint();

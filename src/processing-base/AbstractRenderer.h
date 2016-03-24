@@ -32,7 +32,7 @@ namespace trinity {
     virtual std::vector<uint64_t> get1DHistogram() const;
 
     /*
-     // 2D TF
+     // TODO: 2D TF
      virtual void set2DTransferFunction(const TransferFunction2D& tf);
      virtual TransferFunction2D getDefaul2DTransferFunction(uint64_t index) const;
      virtual uint64_t getDefault2DTransferFunctionCount() const;
@@ -121,7 +121,7 @@ namespace trinity {
     uint64_t                                            m_activeModality;
     uint64_t                                            m_activeTimestep;
     TransferFunction1D                                  m_1Dtf;
-    //TransferFunction2D                                  m_2Dtf;
+    //TransferFunction2D                                  m_2Dtf; // TODO: 2D TF
     std::array<float, 2>                                m_isoValue;
     std::array<Core::Math::Vec3ui8, 2>                  m_isoValueColor;
     Core::Math::Vec2f                                   m_clearViewWindowPos;
