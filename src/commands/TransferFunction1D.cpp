@@ -10,8 +10,6 @@
 
 #include "mocca/base/StringTools.h"
 
-using namespace trinity;
-
 TransferFunction1D::TransferFunction1D(size_t iSize)
 : m_vValueBBox(0, 0) {
   resize(iSize);
@@ -248,20 +246,20 @@ std::string TransferFunction1D::toString() const {
   return stream.str();
 }
 
-void TransferFunction1D::serialize(ISerialWriter& writer) const {
+void TransferFunction1D::serialize(trinity::ISerialWriter& writer) const {
   writer.appendObject("vValueBBox", m_vValueBBox);
   writer.appendIntVec("colorData", m_colorData);
 }
 
-void TransferFunction1D::deserialize(const ISerialReader& reader) {
+void TransferFunction1D::deserialize(const trinity::ISerialReader& reader) {
   m_vValueBBox = reader.getSerializable<Core::Math::Vec2ui64>("vValueBBox");
   m_colorData = reader.getUInt8Vec("colorData");
 }
 
-bool trinity::operator==(const TransferFunction1D& lhs, const TransferFunction1D& rhs) {
+bool operator==(const TransferFunction1D& lhs, const TransferFunction1D& rhs) {
   return lhs.equals(rhs);
 }
 
-std::ostream& trinity::operator<<(std::ostream& os, const TransferFunction1D& obj) {
+std::ostream& operator<<(std::ostream& os, const TransferFunction1D& obj) {
   return os << obj.toString();
 }

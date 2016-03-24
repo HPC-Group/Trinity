@@ -8,9 +8,7 @@
 
 #include "silverbullet/math/Vectors.h"
 
-namespace trinity {
-
-class TransferFunction1D : public SerializableTemplate<TransferFunction1D> {
+class TransferFunction1D : public trinity::SerializableTemplate<TransferFunction1D> {
 public:
     explicit TransferFunction1D(size_t iSize = 0);
     explicit TransferFunction1D(const std::string& filename);
@@ -47,8 +45,8 @@ public:
     std::string toString() const;
 
     // from ISerializable
-    void serialize(ISerialWriter& writer) const override;
-    void deserialize(const ISerialReader& reader) override;
+    void serialize(trinity::ISerialWriter& writer) const override;
+    void deserialize(const trinity::ISerialReader& reader) override;
 
 private:
     Core::Math::Vec2ui64 m_vValueBBox;
@@ -59,4 +57,3 @@ private:
 
 bool operator==(const TransferFunction1D& lhs, const TransferFunction1D& rhs);
 std::ostream& operator<<(std::ostream& os, const TransferFunction1D& obj);
-}
