@@ -45,11 +45,11 @@ struct BrickMD {
   Vec3ui  n_voxels; ///< number of voxels, per dimension.
 };
 struct BKeyHash : std::unary_function<BrickKey, std::size_t> {
-  std::size_t operator()(const BrickKey& bk) const {
-    size_t ts    = std::hash<size_t>()(bk.timestep);
-    size_t h_lod = std::hash<size_t>()(bk.lod);
-    size_t brick = std::hash<size_t>()(bk.index);
-    size_t seed = h_lod;
+  uint64_t operator()(const BrickKey& bk) const {
+    uint64_t ts    = std::hash<uint64_t>()(bk.timestep);
+    uint64_t h_lod = std::hash<uint64_t>()(bk.lod);
+    uint64_t brick = std::hash<uint64_t>()(bk.index);
+    uint64_t seed = h_lod;
     seed ^= brick + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     seed ^= ts + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     return seed;
