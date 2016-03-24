@@ -239,7 +239,7 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   m_raycastShader->Enable();
   m_raycastShader->Set("projectionMatrix", m_projection);
   m_raycastShader->Set("viewMatrix", m_view);
-  m_raycastShader->Set("worldMatrix", m_model);
+  m_raycastShader->Set("worldMatrix", m_model*world);
   
   m_raycastShader->ConnectTextureID("transferfunc", 0);
   m_raycastShader->ConnectTextureID("volume", 1);
