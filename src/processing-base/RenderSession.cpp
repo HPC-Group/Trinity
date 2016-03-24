@@ -67,6 +67,12 @@ std::unique_ptr<ICommandHandler> RenderSession::createHandler(const Request& req
     return m_factory.createHandler(request, this);
 }
 
+void RenderSession::performThreadSpecificInit() {
+    std::thread::id threadId = std::this_thread::get_id();
+    LINFO("rendersession performs specific rendering init from thread " << threadId);
+    m_renderer->initContext();
+}
+
 void RenderSession::performThreadSpecificTeardown() {
     std::thread::id threadId = std::this_thread::get_id();
     LINFO("rendersession performs specific rendering teardown from thread " << threadId);

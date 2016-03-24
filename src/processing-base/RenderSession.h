@@ -26,10 +26,9 @@ public:
     std::string getVisPort() const;
     IRenderer& getRenderer();
 
-protected:
-	void performThreadSpecificTeardown() override;
-
 private:
+    void performThreadSpecificTeardown() override;
+    void performThreadSpecificInit() override;
     std::unique_ptr<IRenderer> createRenderer(const VclType&, std::unique_ptr<IOSessionProxy>);
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
 
