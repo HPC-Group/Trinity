@@ -14,7 +14,7 @@ using namespace std;
 
 SimpleRenderer::SimpleRenderer(std::shared_ptr<VisStream> stream,
                        std::unique_ptr<IIO> ioSession) :
-IRenderer(stream, std::move(ioSession)),
+AbstractRenderer(stream, std::move(ioSession)),
 m_texTransferFunc(nullptr),
 m_texVolume(nullptr),
 m_targetBinder(nullptr),
@@ -41,15 +41,6 @@ void SimpleRenderer::deleteContext() {
 
 SimpleRenderer::~SimpleRenderer() {
   LINFO("(p) destroying a gridleaper");
-}
-
-void SimpleRenderer::setIsoValue(const float isoValue) {
-  m_isoValue = isoValue;
-  paint();
-}
-
-void SimpleRenderer::zoomCamera(float f) {
-  LINFO("(p) cam zoom of gridleaper set to " + std::to_string(f));
 }
 
 void SimpleRenderer::initContext() {
@@ -202,7 +193,9 @@ void SimpleRenderer::LoadFrameBuffers() {
 
 }
 
-void SimpleRenderer::paint() {
+void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
+
+  
   if (!m_context || !m_backfaceShader || !m_texVolume || !m_texTransferFunc) {
     LERROR("(p) incomplete OpenGL initialization");
     return;
@@ -219,8 +212,8 @@ void SimpleRenderer::paint() {
                          0.01f, 1000.0f);
   view.BuildLookAt(Vec3f(0, 0, 3), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
   
-  rotx.RotationX(m_isoValue);
-  roty.RotationY(m_isoValue * 1.14f);
+  rotx.RotationX(m_isoValue[0]);
+  roty.RotationY(m_isoValue[0] * 1.14f);
   world = rotx * roty;
   GL_CHECK(glViewport(0, 0, m_width, m_height));
 

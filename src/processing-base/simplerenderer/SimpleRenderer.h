@@ -1,9 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "common/IRenderer.h"
-
-#include <memory>
+#include "../AbstractRenderer.h"
 
 #include "opengl-base/GLProgram.h"
 #include "opengl-base/GLTexture1D.h"
@@ -15,29 +13,26 @@
 #include "opengl-base/GLTargetBinder.h"
 
 namespace trinity {
-  
-  class SimpleRenderer : public IRenderer {
+
+  class SimpleRenderer : public AbstractRenderer {
     
   public:
     SimpleRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
     ~SimpleRenderer();
-    void setIsoValue(const float) override;
-    void initContext() override;
-    void deleteContext() override;
-    void paint();
-    void zoomCamera(float f) override;
+
+    virtual void initContext() override;
+    virtual void deleteContext() override;
+
+  protected:
+    virtual void paintInternal(PaintLevel paintlevel) override;
+
   private:
     bool LoadShaders();
     void LoadGeometry();
     void LoadFrameBuffers();
     void LoadVolumeData();
     void LoadTransferFunction();
-    
-  private:
-    float       m_isoValue;
-    uint32_t    m_width;
-    uint32_t    m_height;
-    
+
     std::vector<Core::Math::Vec4ui8>  m_bufferData;
     
     std::unique_ptr<GLTexture1D>      m_texTransferFunc;
