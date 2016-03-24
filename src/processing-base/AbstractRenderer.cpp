@@ -95,7 +95,8 @@ void AbstractRenderer::set1DTransferFunction(const TransferFunction1D& tf){
   paint();
 }
 
-TransferFunction1D AbstractRenderer::getDefault1DTransferFunction(uint64_t index) const {
+TransferFunction1D
+AbstractRenderer::getDefault1DTransferFunction(uint64_t index) const {
   return m_io->getDefault1DTransferFunction(index);
 }
 
@@ -114,7 +115,8 @@ std::vector<uint64_t> AbstractRenderer::get1DHistogram() const {
    paint();
  }
 
- TransferFunction2D AbstractRenderer::getDefaul2DTransferFunction(uint64_t index) const{
+ TransferFunction2D 
+ AbstractRenderer::getDefaul2DTransferFunction(uint64_t index) const{
    return m_io->getDefaul21DTransferFunction(index);
  }
 
@@ -146,7 +148,8 @@ float AbstractRenderer::getIsoValue(uint8_t surfaceIndex) const {
   return m_isoValue[surfaceIndex];
 }
 
-void AbstractRenderer::setIsosurfaceColor(uint8_t surfaceIndex, const Vec3ui8& vColor){
+void AbstractRenderer::setIsosurfaceColor(uint8_t surfaceIndex,
+                                          const Vec3ui8& vColor){
   if (surfaceIndex >= m_isoValue.size()) {
     throw TrinityError("invalid surfaceIndex", __FILE__, __LINE__);
   }
@@ -168,17 +171,17 @@ Vec2f AbstractRenderer::getRange(uint64_t modality) const {
 }
 
 // CLEARVIEW FUNCTIONS
-void AbstractRenderer::setClearViewPosition(const Vec2f& vNormalizedWindowPos){
+void AbstractRenderer::setClearViewPosition(const Vec2f& vNormalizedWindowPos) {
   m_clearViewWindowPos = vNormalizedWindowPos;
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
-void AbstractRenderer::setClearViewRadius(float f){
+void AbstractRenderer::setClearViewRadius(float f) {
   m_clearViewRadius = f;
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
 
-void AbstractRenderer::setClearBorderSize(float f){
+void AbstractRenderer::setClearBorderSize(float f) {
   m_clearBorderSize = f;
   paint(IRenderer::PaintLevel::PL_RECOMPOSE);
 }
@@ -208,22 +211,22 @@ Vec3f AbstractRenderer::getLightDirection() const {
 }
 
 // SAMPLE RATE FUNCTIONS
-void AbstractRenderer::setSampleRateModifier(float fSampleRateModifier){
+void AbstractRenderer::setSampleRateModifier(float fSampleRateModifier) {
   m_fSampleRateModifier = fSampleRateModifier;
   paint();
 }
 
-float AbstractRenderer::getSampleRateModifier(){
+float AbstractRenderer::getSampleRateModifier() {
   return m_fSampleRateModifier;
 }
 
 // render parameters
-void AbstractRenderer::setBoundingBoxMode(BBoxMode mode){
+void AbstractRenderer::setBoundingBoxMode(BBoxMode mode) {
   m_BBoxMode = mode;
   paint();
 }
 
-IRenderer::BBoxMode AbstractRenderer::getBoundingBoxMode() const{
+IRenderer::BBoxMode AbstractRenderer::getBoundingBoxMode() const {
   return m_BBoxMode;
 }
 
@@ -236,7 +239,7 @@ std::vector<uint64_t> AbstractRenderer::getRendererSpecials() const {
   return m_RendererSpecials;
 }
 
-void AbstractRenderer::setBackgroundColors(std::pair<Vec3ui8, Vec3ui8> colors){
+void AbstractRenderer::setBackgroundColors(std::pair<Vec3ui8, Vec3ui8> colors) {
   m_backgroundColors = colors;
   paint();
 }
@@ -273,7 +276,8 @@ void AbstractRenderer::recomputeProjectionMatrix() {
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
   
-  m_projection.Perspective(m_viewAngle, (float)width/(float)height, m_zNear, m_zFar);
+  m_projection.Perspective(m_viewAngle, (float)width/(float)height,
+                           m_zNear, m_zFar);
 }
 
 void AbstractRenderer::rotateCamera(Vec3f rotation) {

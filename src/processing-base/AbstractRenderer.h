@@ -117,19 +117,19 @@ namespace trinity {
     virtual void paintInternal(PaintLevel paintlevel) = 0;
     virtual void recomputeProjectionMatrix();
     
-    ERenderMode m_renderMode;
-    uint64_t m_activeModality;
-    uint64_t  m_activeTimestep;
-    TransferFunction1D m_1Dtf;
-//    TransferFunction2D m_2Dtf;
+    ERenderMode                                         m_renderMode;
+    uint64_t                                            m_activeModality;
+    uint64_t                                            m_activeTimestep;
+    TransferFunction1D                                  m_1Dtf;
+    //TransferFunction2D                                  m_2Dtf;
     std::array<float, 2>                                m_isoValue;
     std::array<Core::Math::Vec3ui8, 2>                  m_isoValueColor;
     Core::Math::Vec2f                                   m_clearViewWindowPos;
     float                                               m_clearViewRadius;
     float                                               m_clearBorderSize;
     bool                                                m_enableLighting;
-    PhongColorTriple m_lightingColors;
-    Core::Math::Vec3f m_lightDirection;
+    PhongColorTriple                                    m_lightingColors;
+    Core::Math::Vec3f                                   m_lightDirection;
     float                                               m_fSampleRateModifier;
     BBoxMode                                            m_BBoxMode;
     std::vector<uint64_t>                               m_RendererSpecials;
@@ -140,7 +140,6 @@ namespace trinity {
     float                                               m_viewAngle;
     float                                               m_zNear;
     float                                               m_zFar;
-
     Core::Math::Mat4f                                   m_projection;
     Core::Math::Mat4f                                   m_view;
     Core::Math::Mat4f                                   m_model;
