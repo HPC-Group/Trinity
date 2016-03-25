@@ -180,12 +180,16 @@ def copyFiles(type):
       copyfile(procDir + processingFiles[3], "../src/processing-base/" + processingFiles[3])
       copyfile(procDir + processingFiles[4], "../src/processing-base/" + processingFiles[4])
       copyfile(procDir + processingFiles[5], "../src/processing-base/" + processingFiles[5])
+      copyfile(frontendDir + frontendFiles[0], "/src/frotend-base/" + frontendFiles[0])
+      copyfile(frontendDir + frontendFiles[1], "/src/frotend-base/" + frontendFiles[1])
     else:
       copyfile(ioDir + ioFiles[0], "../src/commands/" + ioFiles[0])
       copyfile(ioDir + ioFiles[1], "../src/commands/" + ioFiles[1])
       copyfile(ioDir + ioFiles[3], "../src/io-base/" + ioFiles[3])
       copyfile(ioDir + ioFiles[4], "../src/io-base/" + ioFiles[4])
       copyfile(ioDir + ioFiles[5], "../src/io-base/" + ioFiles[5])
+      copyfile(commonDir + commonFiles[0], "../src/common/" + commonFiles[0])
+      copyfile(commonDir + commonFiles[1], "../src/common/" + commonFiles[1])
       
     copyfile(commDir + commFiles[0], "../src/commands/" + commFiles[0])
     copyfile(commDir + commFiles[1], "../src/commands/" + commFiles[1])
