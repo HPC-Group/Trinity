@@ -36,7 +36,7 @@ FractalIO::FractalIO(const std::string& fileId, const IListData& listData)
     }
 
   } else {
-    throw new TrinityError("invalid listData type", __FILE__, __LINE__);
+    throw TrinityError("invalid listData type", __FILE__, __LINE__);
   }
 }
 
@@ -86,7 +86,7 @@ MinMaxBlock FractalIO::maxMinForKey(const BrickKey& key) const {
 
 uint64_t FractalIO::getLODLevelCount(uint64_t modality) const {
   if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    throw TrinityError("invalid modality", __FILE__, __LINE__);
 
   if (!m_bFlat) {
     return m_vLODTable.size();
@@ -101,7 +101,7 @@ uint64_t FractalIO::getNumberOfTimesteps() const {
 
 Vec3ui64 FractalIO::getDomainSize(uint64_t lod, uint64_t modality) const {
   if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    throw TrinityError("invalid modality", __FILE__, __LINE__);
 
   if (!m_bFlat) {
     return m_vLODTable[lod].m_iLODVoxelSize;
@@ -124,7 +124,7 @@ Vec3ui FractalIO::getBrickOverlapSize() const {
 
 uint64_t FractalIO::getLargestSingleBrickLOD(uint64_t modality) const {
   if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    throw TrinityError("invalid modality", __FILE__, __LINE__);
 
   if (!m_bFlat) {
     for (size_t lod = 0;lod<m_vLODTable.size(); ++lod) {
@@ -201,7 +201,7 @@ Vec3f FractalIO::getBrickExtents(const BrickKey& key) const {
 
 Vec3ui FractalIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
   if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    throw TrinityError("invalid modality", __FILE__, __LINE__);
 
   if (!m_bFlat) {
     return Vec3ui(m_vLODTable[lod].m_iLODBrickCount);
@@ -216,7 +216,7 @@ uint64_t FractalIO::getModalityCount() const {
 
 uint64_t FractalIO::getComponentCount(uint64_t modality) const {
   if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    throw TrinityError("invalid modality", __FILE__, __LINE__);
 
   return 1;
 }
@@ -232,7 +232,7 @@ uint64_t FractalIO::getDefault2DTransferFunctionCount() const {
 
 TransferFunction1D FractalIO::getDefault1DTransferFunction(uint64_t index) const {
   if (index >= getDefault1DTransferFunctionCount() )
-    throw new TrinityError("invalid 1D TF index", __FILE__, __LINE__);
+    throw TrinityError("invalid 1D TF index", __FILE__, __LINE__);
 
   float center = float(index)/float(getDefault1DTransferFunctionCount());
 
@@ -249,7 +249,7 @@ TransferFunction1D FractalIO::getDefault1DTransferFunction(uint64_t index) const
 /*
  TransferFunction2D FractalIO::getDefault2DTransferFunction(uint64_t index) const {
  if (index != 0 )
- throw new TrinityError("invalid 2D TF index", __FILE__, __LINE__);
+ throw TrinityError("invalid 2D TF index", __FILE__, __LINE__);
 
  return
  }
@@ -269,13 +269,13 @@ std::vector<uint64_t> FractalIO::get2DHistogram() const {
 
 std::string FractalIO::getUserDefinedSemantic(uint64_t modality) const {
   if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    throw TrinityError("invalid modality", __FILE__, __LINE__);
   return "Fractal dataset";
 }
 
 Vec2f FractalIO::getRange(uint64_t modality) const {
   if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    throw TrinityError("invalid modality", __FILE__, __LINE__);
 
   return Vec2f(0, 255);
 }
@@ -341,7 +341,7 @@ IIO::ValueType FractalIO::getType(uint64_t modality) const {
 
 IIO::Semantic FractalIO::getSemantic(uint64_t modality) const {
   if (modality != 0 )
-    throw new TrinityError("invalid modality", __FILE__, __LINE__);
+    throw TrinityError("invalid modality", __FILE__, __LINE__);
 
   return Semantic::Scalar;
 }

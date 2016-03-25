@@ -121,7 +121,7 @@ Vec3ui64 FractalListData::totalSize(const std::string& fileID) const {
         s.m_ioData.getDataType() == IOData::DataType::Dataset)
       return s.m_size;
   }
-  throw new TrinityError("invalid file ID", __FILE__, __LINE__);
+  throw TrinityError("invalid file ID", __FILE__, __LINE__);
 }
 
 
@@ -131,5 +131,5 @@ Vec3ui64 FractalListData::brickSize(const std::string& fileID) const {
         s.m_ioData.getDataType() == IOData::DataType::Dataset)
       return s.m_brick;
   }
-  throw new TrinityError("invalid file ID", __FILE__, __LINE__);
+  throw TrinityError("invalid file ID", __FILE__, __LINE__);
 }
