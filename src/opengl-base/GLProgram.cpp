@@ -329,7 +329,7 @@ GLProgram* GLProgram::FromFiles(const std::vector<std::string> strDirs,
     // latter terminates the fragment shader list.
     
     while(NULL != (filename = va_arg(args, const char*)) ) {
-      std::string shader = Core::IO::FileTools::FindFileInDirs(std::string(filename), strDirs);
+      std::string shader = Core::IO::FileTools::findFileInDirs(std::string(filename), strDirs);
       if (shader.empty()) {
         LERROR("Vertex shader file " << filename << " not found.");
         return nullptr;
@@ -338,7 +338,7 @@ GLProgram* GLProgram::FromFiles(const std::vector<std::string> strDirs,
     }
     
     while(NULL != (filename = va_arg(args, const char*)) ) {
-      std::string shader = Core::IO::FileTools::FindFileInDirs(std::string(filename), strDirs);
+      std::string shader = Core::IO::FileTools::findFileInDirs(std::string(filename), strDirs);
       if (shader.empty()) {
         LERROR("Fragment shader file " << filename << " not found.");
         return nullptr;
@@ -358,14 +358,14 @@ GLProgram* GLProgram::FromFiles(const std::vector<std::string>& vert,
   
   for(auto v = vert.begin(); v != vert.end(); ++v)
   {
-    if (!Core::IO::FileTools::FileExists(*v)) {
+    if (!Core::IO::FileTools::fileExists(*v)) {
       LERROR("Vertex shader file " << *v << " not found.");
       return nullptr;
     }
   }
   
   for(auto f = frag.begin(); f != frag.end(); ++f) {
-    if (!Core::IO::FileTools::FileExists(*f)) {
+    if (!Core::IO::FileTools::fileExists(*f)) {
       LERROR("Fragment shader file " << *f << " not found.");
       return nullptr;
     }

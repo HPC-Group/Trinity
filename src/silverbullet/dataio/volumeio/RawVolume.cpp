@@ -27,7 +27,7 @@ namespace DataIO {
     
     void RawVolume::create() {
       
-      if (Core::IO::FileTools::FileExists(m_filename)) {
+      if (Core::IO::FileTools::fileExists(m_filename)) {
         remove(m_filename.c_str());
       }
       

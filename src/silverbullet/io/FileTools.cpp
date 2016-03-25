@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #pragma warning (disable : 4996)
 #define LARGE_STAT(name,buffer) _stat64(name,buffer)
+#define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)
 #endif
 
 #ifdef DETECTED_OS_APPLE
@@ -29,27 +30,27 @@ namespace Core {
   namespace IO {
     namespace FileTools {
       
-      std::string FindFileInDirs(const std::string& file,
+      std::string findFileInDirs(const std::string& file,
                                  const std::vector<std::string> strDirs) {
-        if (FileExists(file)) return file;
+        if (fileExists(file)) return file;
         
         // not in the current dir!
         // iterate through all directories, looking for the file in them.
         for (size_t i = 0;i<strDirs.size();i++) {
-          if(!FileExists(strDirs[i])) {
+          if(!fileExists(strDirs[i])) {
             // skip nonexistend directories
             continue;
           }
           
           string searchFile = strDirs[i] + "/" + file ;
-          if(FileExists(searchFile)) {
+          if(fileExists(searchFile)) {
             return searchFile;
           }
         }
         return "";
       }
       
-      bool HasAbsPath(const std::string& path) {
+      bool hasAbsPath(const std::string& path) {
 #ifdef DETECTED_OS_WINDOWS
         return (path.size() > 2  && path[1] == ':');
 #else
@@ -57,12 +58,12 @@ namespace Core {
 #endif
       }
       
-      string Abs2RelPath(const std::string& sourcePath,
+      string abs2RelPath(const std::string& sourcePath,
                          const std::string& targetFile) {
-        string source = GetPath(CanonicalizePath(sourcePath));
-        string target = GetPath(CanonicalizePath(targetFile));
+        string source = getPath(canonicalizePath(sourcePath));
+        string target = getPath(canonicalizePath(targetFile));
         
-        if (!HasAbsPath(target) || !HasAbsPath(source)) return targetFile;
+        if (!hasAbsPath(target) || !hasAbsPath(source)) return targetFile;
         
         // do the computation with linux-style slashes
         ReplaceAll(source, "\\", "/");
@@ -102,7 +103,7 @@ namespace Core {
         for (size_t j = i; j < target_list.size();j++) {
           result += target_list[j] + "/";
         }
-        result += GetFilename(targetFile);
+        result += getFilename(targetFile);
 
 #ifdef DETECTED_OS_WINDOWS
         ReplaceAll(result, "/", "\\");
@@ -112,26 +113,26 @@ namespace Core {
       }
 
       
-      bool GetFileStats(const string& strFileName, LARGE_STAT_BUFFER& stat_buf) {
+      bool getFileStats(const string& strFileName, LARGE_STAT_BUFFER& stat_buf) {
         return (LARGE_STAT( strFileName.c_str(), &stat_buf) >= 0);
       }
       
-      bool GetFileStats(const wstring& wstrFileName, LARGE_STAT_BUFFER& stat_buf) {
+      bool getFileStats(const wstring& wstrFileName, LARGE_STAT_BUFFER& stat_buf) {
         string strFileName(wstrFileName.begin(), wstrFileName.end());
         return (LARGE_STAT( strFileName.c_str(), &stat_buf) >= 0);
       }
       
-      bool FileExists(const wstring& wstrFileName) {
+      bool fileExists(const wstring& wstrFileName) {
         LARGE_STAT_BUFFER stat_buf;
-        return GetFileStats(wstrFileName, stat_buf);
+        return getFileStats(wstrFileName, stat_buf);
       }
       
-      bool FileExists(const string& strFileName) {
+      bool fileExists(const string& strFileName) {
         LARGE_STAT_BUFFER stat_buf;
-        return GetFileStats(strFileName, stat_buf);
+        return getFileStats(strFileName, stat_buf);
       }
       
-      string GetExt(const string& fileName) {
+      string getExt(const string& fileName) {
         size_t indexDot = fileName.find_last_of(".");
         size_t indexSlash = std::max<int>(int(fileName.find_last_of("\\")),int(fileName.find_last_of("/")));
         if (indexDot == string::npos || (indexSlash != string::npos && indexDot < indexSlash)) return "";
@@ -140,7 +141,7 @@ namespace Core {
         return ext;
       }
       
-      wstring GetExt(const wstring& fileName) {
+      wstring getExt(const wstring& fileName) {
         size_t indexDot = fileName.find_last_of(L".");
         size_t indexSlash = std::max<int>(int(fileName.find_last_of(L"\\")),int(fileName.find_last_of(L"/")));
         if (indexDot == wstring::npos || (indexSlash != wstring::npos && indexDot < indexSlash)) return L"";
@@ -149,31 +150,31 @@ namespace Core {
         return ext;
       }
       
-      string GetPath(const string& fileName) {
+      string getPath(const string& fileName) {
         string path = fileName.substr(0,std::max<int>(int(fileName.find_last_of("\\")),int(fileName.find_last_of("/")))+1);
         if(path.empty()) { path = "./"; }
         return path;
       }
       
-      wstring GetPath(const wstring& fileName) {
+      wstring getPath(const wstring& fileName) {
         wstring path = fileName.substr(0,std::max<int>(int(fileName.find_last_of(L"\\")),int(fileName.find_last_of(L"/")))+1);
         if(path.empty()) { path = L"./"; }
         return path;
       }
       
-      std::string GetFilename(const std::string& fileName) {
+      std::string getFilename(const std::string& fileName) {
         size_t index = std::max<int>(int(fileName.find_last_of("\\")),int(fileName.find_last_of("/")))+1;
         string name = fileName.substr(index,fileName.length()-index);
         return name;
       }
       
-      std::wstring GetFilename(const std::wstring& fileName) {
+      std::wstring getFilename(const std::wstring& fileName) {
         size_t index = std::max<int>(int(fileName.find_last_of(L"\\")),int(fileName.find_last_of(L"/")))+1;
         wstring name = fileName.substr(index,fileName.length()-index);
         return name;
       }
       
-      std::string AssembleFullFilename(const std::string& dir, const std::string& name) {
+      std::string assembleFullFilename(const std::string& dir, const std::string& name) {
         if (dir.empty()) return name;
         std::string result = dir;
 #ifdef DETECTED_OS_WINDOWS
@@ -191,7 +192,7 @@ namespace Core {
 #endif
       }
 
-      std::wstring AssembleFullFilename(const std::wstring& dir, const std::wstring& name) {
+      std::wstring assembleFullFilename(const std::wstring& dir, const std::wstring& name) {
         if (dir.empty()) return name;
         std::wstring result = dir;
 #ifdef DETECTED_OS_WINDOWS
@@ -215,7 +216,7 @@ namespace Core {
 # define MAX_PATH_LENGTH PATH_MAX
 #endif
       
-      std::string CanonicalizePath(const std::string& _path) {
+      std::string canonicalizePath(const std::string& _path) {
         std::string path = _path;
 #ifdef DETECTED_OS_WINDOWS
         ReplaceAll(path, "/", "\\"); // make sure all slashes are of the same type
@@ -245,7 +246,7 @@ namespace Core {
 #endif
       }
       
-      string FindPath(const string& fileName, const string& path) {
+      string findPath(const string& fileName, const string& path) {
         string searchFile;
         string slash = "";
         
@@ -259,20 +260,20 @@ namespace Core {
         
         // search in the given path
         searchFile = path + fileName;
-        if (FileExists(searchFile))  return searchFile;
+        if (fileExists(searchFile))  return searchFile;
         
         // search in the current directory
         searchFile = "./" + fileName;
-        if (FileExists(searchFile)) return searchFile;
+        if (fileExists(searchFile)) return searchFile;
         
         // search in the parent directory
         searchFile = "../" + fileName;
-        if (FileExists(searchFile)) return searchFile;
+        if (fileExists(searchFile)) return searchFile;
         
         return "";
       }
       
-      wstring FindPath(const wstring& fileName, const wstring& path) {
+      wstring findPath(const wstring& fileName, const wstring& path) {
         wstring searchFile;
         wstring slash = L"";
         
@@ -285,21 +286,21 @@ namespace Core {
         
         // search in the given path
         searchFile = path + slash + fileName;
-        if (FileExists(searchFile))  return searchFile;
+        if (fileExists(searchFile))  return searchFile;
         
         // search in the current directory
         searchFile = L".\\" + fileName;
-        if (FileExists(searchFile)) return searchFile;
+        if (fileExists(searchFile)) return searchFile;
         
         // search in the parent directory
         searchFile = L"..\\" + fileName;
-        if (FileExists(searchFile)) return searchFile;
+        if (fileExists(searchFile)) return searchFile;
         
         return L"";
       }
       
       
-      std::string  RemoveExt(const std::string& fileName) {
+      std::string  removeExt(const std::string& fileName) {
         size_t indexDot = fileName.find_last_of(".");
         size_t indexSlash = std::max<int>(int(fileName.find_last_of("\\")),int(fileName.find_last_of("/")));
         if (indexDot == string::npos || (indexSlash != string::npos && indexDot < indexSlash)) return fileName;
@@ -307,7 +308,7 @@ namespace Core {
         return fileName.substr(0,indexDot);
       }
       
-      std::wstring  RemoveExt(const std::wstring& fileName) {
+      std::wstring  removeExt(const std::wstring& fileName) {
         size_t indexDot = fileName.find_last_of(L".");
         size_t indexSlash = std::max<int>(int(fileName.find_last_of(L"\\")),int(fileName.find_last_of(L"/")));
         if (indexDot == wstring::npos || (indexSlash != wstring::npos && indexDot < indexSlash)) return fileName;
@@ -316,16 +317,16 @@ namespace Core {
       }
       
       
-      string  ChangeExt(const string& fileName, const std::string& newext) {
-        return RemoveExt(fileName)+ "." + newext;
+      string  changeExt(const string& fileName, const std::string& newext) {
+        return removeExt(fileName)+ "." + newext;
       }
       
-      wstring ChangeExt(const std::wstring& fileName, const std::wstring& newext) {
-        return RemoveExt(fileName)+ L"." + newext;
+      wstring changeExt(const std::wstring& fileName, const std::wstring& newext) {
+        return removeExt(fileName)+ L"." + newext;
       }
       
-      string  CheckExt(const string& fileName, const std::string& newext) {
-        string currentExt = GetExt(fileName);
+      string  checkExt(const string& fileName, const std::string& newext) {
+        string currentExt = getExt(fileName);
 #ifdef DETECTED_OS_WINDOWS  // do a case insensitive check on windows systems
         if (ToLowerCase(currentExt) != ToLowerCase(newext))
 #else
@@ -336,8 +337,8 @@ namespace Core {
             return fileName;
       }
       
-      wstring CheckExt(const std::wstring& fileName, const std::wstring& newext) {
-        wstring currentExt = GetExt(fileName);
+      wstring checkExt(const std::wstring& fileName, const std::wstring& newext) {
+        wstring currentExt = getExt(fileName);
 #ifdef DETECTED_OS_WINDOWS  // do a case insensitive check on windows systems
         if (ToLowerCase(currentExt) != ToLowerCase(newext))
 #else
@@ -348,23 +349,23 @@ namespace Core {
             return fileName;
       }
       
-      string  AppendFilename(const string& fileName, const string& tag) {
-        return RemoveExt(fileName) + tag + "." + GetExt(fileName);
+      string  appendFilename(const string& fileName, const string& tag) {
+        return removeExt(fileName) + tag + "." + getExt(fileName);
       }
       
-      wstring AppendFilename(const wstring& fileName, const wstring& tag) {
-        return RemoveExt(fileName) + tag + L"." + GetExt(fileName);
+      wstring appendFilename(const wstring& fileName, const wstring& tag) {
+        return removeExt(fileName) + tag + L"." + getExt(fileName);
       }
       
-      string  AppendFilename(const string& fileName, const int iTag) {
-        return AppendFilename(fileName, ToString(iTag));
+      string  appendFilename(const string& fileName, const int iTag) {
+        return appendFilename(fileName, ToString(iTag));
       }
       
-      wstring AppendFilename(const wstring& fileName, const int iTag) {
-        return AppendFilename(fileName, ToWString(iTag));
+      wstring appendFilename(const wstring& fileName, const int iTag) {
+        return appendFilename(fileName, ToWString(iTag));
       }
       
-      vector<wstring> GetSubDirList(const wstring& dir) {
+      vector<wstring> getSubDirList(const wstring& dir) {
         vector<wstring> subDirs;
         wstring rootdir;
         
@@ -433,7 +434,7 @@ namespace Core {
       }
       
       
-      vector<string> GetSubDirList(const string& dir) {
+      vector<string> getSubDirList(const string& dir) {
         vector<string> subDirs;
         string rootdir;
         
@@ -497,7 +498,7 @@ namespace Core {
         return completeSubDirs;
       }
       
-      vector<wstring> GetDirContents(const wstring& dir,
+      vector<wstring> getDirContents(const wstring& dir,
                                      const wstring& fileName,
                                      const wstring& ext) {
         vector<wstring> files;
@@ -588,7 +589,7 @@ namespace Core {
         return files;
       }
       
-      vector<string> GetDirContents(const string& dir,
+      vector<string> getDirContents(const string& dir,
                                     const string& fileName,
                                     const string& ext) {
         vector<string> files;
@@ -677,27 +678,27 @@ namespace Core {
         return files;
       }
       
-      std::string  FindNextSequenceName(const std::string& strFilename) {
-        std::string dir = GetPath(strFilename);
-        std::string fileName = RemoveExt(GetFilename(strFilename));
-        std::string ext = GetExt(strFilename);
+      std::string  findNextSequenceName(const std::string& strFilename) {
+        std::string dir = getPath(strFilename);
+        std::string fileName = removeExt(getFilename(strFilename));
+        std::string ext = getExt(strFilename);
         
-        return FindNextSequenceName(fileName, ext, dir);
+        return findNextSequenceName(fileName, ext, dir);
       }
       
-      std::wstring FindNextSequenceName(const std::wstring& wStrFilename) {
-        std::wstring dir = GetPath(wStrFilename);
-        std::wstring fileName = RemoveExt(GetFilename(wStrFilename));
-        std::wstring ext = GetExt(wStrFilename);
+      std::wstring findNextSequenceName(const std::wstring& wStrFilename) {
+        std::wstring dir = getPath(wStrFilename);
+        std::wstring fileName = removeExt(getFilename(wStrFilename));
+        std::wstring ext = getExt(wStrFilename);
         
-        return FindNextSequenceName(fileName, ext, dir);
+        return findNextSequenceName(fileName, ext, dir);
       }
       
       // Functor to identify the numeric ID appended to a given filename.
       template <typename T> struct fileNumber : public std::unary_function<T, size_t> {
         size_t operator()(const T& filename) const {
           // get just the filename itself, without extension or path information.
-          T fn = RemoveExt(GetFilename(filename));
+          T fn = removeExt(getFilename(filename));
           
           if (fn.length() == 0) return 0;
           
@@ -726,14 +727,14 @@ namespace Core {
       
       // Given a filename model and a directory, identify the next filename in the
       // sequence.  Sequences start at 0 and increment.
-      string FindNextSequenceName(const string& fileName, const string& ext,
+      string findNextSequenceName(const string& fileName, const string& ext,
                                   const string& dir) {
         stringstream out;
-        vector<string> files = GetDirContents(dir, fileName+"*", ext);
+        vector<string> files = getDirContents(dir, fileName+"*", ext);
         
         // chop of original filename (in case it also ends with numbers)
         for (auto i=files.begin(); i < files.end(); ++i) {
-          std::string tmp = GetFilename(*i);
+          std::string tmp = getFilename(*i);
           (*i) = tmp.substr(fileName.length(), tmp.length()-fileName.length());
         }
         
@@ -755,9 +756,9 @@ namespace Core {
         return out.str();
       }
       
-      wstring  FindNextSequenceName(const wstring& fileName, const wstring& ext, const wstring& dir) {
+      wstring  findNextSequenceName(const wstring& fileName, const wstring& ext, const wstring& dir) {
         wstringstream out;
-        vector<wstring> files = GetDirContents(dir, fileName+L"*", ext);
+        vector<wstring> files = getDirContents(dir, fileName+L"*", ext);
         
         // Get a list of all the trailing numeric values.
         std::vector<size_t> values;
@@ -778,12 +779,12 @@ namespace Core {
       }
       
       
-      uint32_t FindNextSequenceIndex(const string& fileName, const string& ext, const string& dir) {
-        vector<string> files = GetDirContents(dir, fileName+"*", ext);
+      uint32_t findNextSequenceIndex(const string& fileName, const string& ext, const string& dir) {
+        vector<string> files = getDirContents(dir, fileName+"*", ext);
         
         uint32_t iMaxIndex = 0;
         for (size_t i = 0; i<files.size();i++) {
-          string curFilename = RemoveExt(files[i]);
+          string curFilename = removeExt(files[i]);
           uint32_t iCurrIndex = uint32_t(atoi(curFilename.substr(fileName.length()).c_str()));
           iMaxIndex = (iMaxIndex <= iCurrIndex) ? iCurrIndex+1 : iMaxIndex;
         }
@@ -791,12 +792,12 @@ namespace Core {
         return iMaxIndex;
       }
       
-      uint32_t FindNextSequenceIndex(const wstring& fileName, const wstring& ext, const wstring& dir) {
-        vector<wstring> files = GetDirContents(dir, fileName+L"*", ext);
+      uint32_t findNextSequenceIndex(const wstring& fileName, const wstring& ext, const wstring& dir) {
+        vector<wstring> files = getDirContents(dir, fileName+L"*", ext);
         
         uint32_t iMaxIndex = 0;
         for (size_t i = 0; i<files.size();i++) {
-          wstring wcurFilename = RemoveExt(files[i]);
+          wstring wcurFilename = removeExt(files[i]);
           string curFilename(wcurFilename.begin(), wcurFilename.end());
           uint32_t iCurrIndex = uint32_t(atoi(curFilename.substr(fileName.length()).c_str()));
           iMaxIndex = (iMaxIndex <= iCurrIndex) ? iCurrIndex+1 : iMaxIndex;
@@ -806,7 +807,8 @@ namespace Core {
       }
       
 #define INFO_BUFFER_SIZE 32767
-      bool GetHomeDirectory(std::string& path) {
+      
+      bool getHomeDirectory(std::string& path) {
 #ifdef DETECTED_OS_WINDOWS
         char infoBuf[INFO_BUFFER_SIZE];
         DWORD dwRet = GetEnvironmentVariableA("HOMEDRIVE", infoBuf, INFO_BUFFER_SIZE);
@@ -840,7 +842,7 @@ namespace Core {
 #endif
       }
       
-      bool GetHomeDirectory(std::wstring& path) {
+      bool getHomeDirectory(std::wstring& path) {
 #ifdef DETECTED_OS_WINDOWS
         WCHAR infoBuf[INFO_BUFFER_SIZE];
         DWORD dwRet = GetEnvironmentVariableW(L"HOMEDRIVE", infoBuf, INFO_BUFFER_SIZE);
@@ -859,11 +861,24 @@ namespace Core {
 #else
         // too lazy to find the unicode version for linux and mac
         std::string astrPath;
-        if (!GetHomeDirectory(astrPath)) return false;
+        if (!getHomeDirectory(astrPath)) return false;
         path = std::wstring( astrPath.begin(), astrPath.end());
         return true;
 #endif
       }
+      
+      bool isDirectory(const std::string& name) {
+        LARGE_STAT_BUFFER stat_buf;
+        getFileStats(name, stat_buf);
+        return S_ISDIR(stat_buf.st_mode);
+      }
+      
+      bool isDirectory(const std::wstring& name) {
+        LARGE_STAT_BUFFER stat_buf;
+        getFileStats(name, stat_buf);
+        return S_ISDIR(stat_buf.st_mode);
+      }
+      
     }
   }
 }

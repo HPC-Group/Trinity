@@ -140,7 +140,7 @@ namespace DataIO {
       }
       
       m_usedbits = m_dataType.m_bytes*8;  // QVis does not contain any information about how many bits are actually used
-      m_rawFilename = FileTools::GetPath(datFilename) + m_rawFilename;
+      m_rawFilename = FileTools::getPath(datFilename) + m_rawFilename;
     }
     
     void QVisVolumeMetadata::save(const std::string& datFilename) {
@@ -152,7 +152,7 @@ namespace DataIO {
         throw VolumeError(error.str());
       }
       
-      std::string relName = Core::IO::FileTools::Abs2RelPath(datFilename, m_rawFilename);
+      std::string relName = Core::IO::FileTools::abs2RelPath(datFilename, m_rawFilename);
       Core::StringTools::ReplaceAll(relName, "\\", "/"); // be nice to linux :-)
       
       

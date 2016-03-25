@@ -40,7 +40,7 @@ namespace DataIO {
       
       if (oDT.getTypeID() != DataType::TN_DOUBLE || iSize != oSize) {
         // types don't match, create intermediate volume and transform later
-        std::string tmpFile = FindNextSequenceName(AssembleFullFilename(m_tmpDir, "tmp.raw"));
+        std::string tmpFile = findNextSequenceName(assembleFullFilename(m_tmpDir, "tmp.raw"));
         {
           VolumeMetadataPtr md = std::make_shared<VolumeMetadata>(iSize,
                                                                   DataType(true, true, 8),
@@ -107,7 +107,7 @@ namespace DataIO {
         VolumePtr i1c = i1;
         std::string tmpFile1 = "";
         if (i1DT != commonDT || iSize1 != commonSize) {
-          tmpFile1 = FindNextSequenceName(AssembleFullFilename(m_tmpDir, "tmp.raw"));
+          tmpFile1 = findNextSequenceName(assembleFullFilename(m_tmpDir, "tmp.raw"));
           RawVolumePtr tempVol = std::make_shared<RawVolume>(tmpFile1, std::make_shared<VolumeMetadata>(i1->getMetadata()));
           tempVol->create();
           m_transformer.transform(i1, tempVol, rp);
@@ -116,7 +116,7 @@ namespace DataIO {
         VolumePtr i2c = i2;
         std::string tmpFile2 = "";
         if (i2DT != commonDT || iSize2 != commonSize) {
-          tmpFile2 = FindNextSequenceName(AssembleFullFilename(m_tmpDir, "tmp.raw"));
+          tmpFile2 = findNextSequenceName(assembleFullFilename(m_tmpDir, "tmp.raw"));
           RawVolumePtr tempVol = std::make_shared<RawVolume>(tmpFile2, std::make_shared<VolumeMetadata>(i1->getMetadata()));
           tempVol->create();
           m_transformer.transform(i2, tempVol, rp);
@@ -135,7 +135,7 @@ namespace DataIO {
       
       if (i1DT != oDT || iSize1 != oSize) {
         // types don't match, create intermediate volume and transform later
-        std::string tmpFile = FindNextSequenceName(AssembleFullFilename(m_tmpDir, "tmp.raw"));
+        std::string tmpFile = findNextSequenceName(assembleFullFilename(m_tmpDir, "tmp.raw"));
         {
           RawVolumePtr tempVol = std::make_shared<RawVolume>(tmpFile, std::make_shared<VolumeMetadata>(i1->getMetadata()));
           tempVol->create();
@@ -336,7 +336,7 @@ namespace DataIO {
       
       if (iDT != oDT || iSize != oSize) {
         // types don't match, create intermediate volume and transform later
-        std::string tmpFile = FindNextSequenceName(AssembleFullFilename(m_tmpDir, "tmp.raw"));
+        std::string tmpFile = findNextSequenceName(assembleFullFilename(m_tmpDir, "tmp.raw"));
         {
           RawVolumePtr tempVol = std::make_shared<RawVolume>(tmpFile, std::make_shared<VolumeMetadata>(i->getMetadata()));
           tempVol->create();

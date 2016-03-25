@@ -156,10 +156,10 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   
   std::vector<std::string> vs, fs;
   
-  vs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-1D.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("Compositing.glsl", searchDirs));
+  vs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("Compositing.glsl", searchDirs));
   ShaderDescriptor sd(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -174,9 +174,9 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-1D-color.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("Compositing.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D-color.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -191,11 +191,11 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-1D-L.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("lighting.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("Compositing.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D-L.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("lighting.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -210,9 +210,9 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -227,9 +227,9 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-iso-color.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso-color.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -244,9 +244,9 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-iso-lighting.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso-lighting.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);

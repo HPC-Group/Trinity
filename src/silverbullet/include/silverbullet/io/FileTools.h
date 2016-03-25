@@ -20,100 +20,103 @@ namespace Core {
   namespace IO {
     namespace FileTools {
       
-      bool HasAbsPath(const std::string& path);
-      std::string Abs2RelPath(const std::string& source,
+      bool hasAbsPath(const std::string& path);
+      std::string abs2RelPath(const std::string& source,
                               const std::string& target);
       
-      bool FileExists(const std::string& fileName);
-      bool FileExists(const std::wstring& fileName);
+      bool fileExists(const std::string& fileName);
+      bool fileExists(const std::wstring& fileName);
       
-      std::string GetExt(const std::string& fileName);
-      std::wstring GetExt(const std::wstring& fileName);
+      std::string getExt(const std::string& fileName);
+      std::wstring getExt(const std::wstring& fileName);
       
-      std::string GetPath(const std::string& fileName);
-      std::wstring GetPath(const std::wstring& fileName);
+      std::string getPath(const std::string& fileName);
+      std::wstring getPath(const std::wstring& fileName);
       
-      std::string GetFilename(const std::string& fileName);
-      std::wstring GetFilename(const std::wstring& fileName);
+      std::string getFilename(const std::string& fileName);
+      std::wstring getFilename(const std::wstring& fileName);
             
-      std::string CanonicalizePath(const std::string& path);
+      std::string canonicalizePath(const std::string& path);
       
-      std::string FindPath(const std::string& fileName, const std::string& path);
-      std::wstring FindPath(const std::wstring& fileName,
+      std::string findPath(const std::string& fileName, const std::string& path);
+      std::wstring findPath(const std::wstring& fileName,
                             const std::wstring& path);
       
-      std::string  RemoveExt(const std::string& fileName);
-      std::wstring RemoveExt(const std::wstring& fileName);
+      std::string  removeExt(const std::string& fileName);
+      std::wstring removeExt(const std::wstring& fileName);
       
-      std::string  CheckExt(const std::string& fileName,
+      std::string  checkExt(const std::string& fileName,
                             const std::string& newext);
-      std::wstring CheckExt(const std::wstring& fileName,
+      std::wstring checkExt(const std::wstring& fileName,
                             const std::wstring& newext);
       
-      std::string  ChangeExt(const std::string& fileName,
+      std::string  changeExt(const std::string& fileName,
                              const std::string& newext);
-      std::wstring ChangeExt(const std::wstring& fileName,
+      std::wstring changeExt(const std::wstring& fileName,
                              const std::wstring& newext);
       
-      std::string  AppendFilename(const std::string& fileName,
+      std::string  appendFilename(const std::string& fileName,
                                   const int iTag);
-      std::wstring AppendFilename(const std::wstring& fileName,
+      std::wstring appendFilename(const std::wstring& fileName,
                                   const int iTag);
-      std::string  AppendFilename(const std::string& fileName,
+      std::string  appendFilename(const std::string& fileName,
                                   const std::string& tag);
-      std::wstring AppendFilename(const std::wstring& fileName,
+      std::wstring appendFilename(const std::wstring& fileName,
                                   const std::wstring& tag);
 
-      std::string AssembleFullFilename(const std::string& dir,
+      std::string assembleFullFilename(const std::string& dir,
                                        const std::string& name);
-      std::wstring AssembleFullFilename(const std::wstring& dir,
+      std::wstring assembleFullFilename(const std::wstring& dir,
                                         const std::wstring& name);
       
-      std::string  FindNextSequenceName(const std::string& strFilename);
-      std::wstring FindNextSequenceName(const std::wstring& wStrFilename);
+      std::string  findNextSequenceName(const std::string& strFilename);
+      std::wstring findNextSequenceName(const std::wstring& wStrFilename);
       
-      std::string  FindNextSequenceName(const std::string& fileName,
+      std::string  findNextSequenceName(const std::string& fileName,
                                         const std::string& ext,
                                         const std::string& dir="");
-      std::wstring FindNextSequenceName(const std::wstring& fileName,
+      std::wstring findNextSequenceName(const std::wstring& fileName,
                                         const std::wstring& ext,
                                         const std::wstring& dir=L"");
       
-      uint32_t FindNextSequenceIndex(const std::string& fileName,
+      uint32_t findNextSequenceIndex(const std::string& fileName,
                                      const std::string& ext,
                                      const std::string& dir="");
-      uint32_t FindNextSequenceIndex(const std::wstring& fileName,
+      uint32_t findNextSequenceIndex(const std::wstring& fileName,
                                      const std::wstring& ext,
                                      const std::wstring& dir=L"");
       
-      bool GetHomeDirectory(std::string& path);
-      bool GetHomeDirectory(std::wstring& path);
+      bool getHomeDirectory(std::string& path);
+      bool getHomeDirectory(std::wstring& path);
       
-      std::string FindFileInDirs(const std::string& file,
+      std::string findFileInDirs(const std::string& file,
                                  const std::vector<std::string> strDirs);
 
       
 #ifdef DETECTED_OS_WINDOWS
-      std::vector<std::wstring> GetDirContents(const std::wstring& dir,
+      std::vector<std::wstring> getDirContents(const std::wstring& dir,
                                                const std::wstring& fileName=L"*",
                                                const std::wstring& ext=L"*");
-      std::vector<std::string> GetDirContents(const std::string& dir,
+      std::vector<std::string> getDirContents(const std::string& dir,
                                               const std::string& fileName="*",
                                               const std::string& ext="*");
 #else
-      std::vector<std::wstring> GetDirContents(const std::wstring& dir,
+      std::vector<std::wstring> getDirContents(const std::wstring& dir,
                                                const std::wstring& fileName=L"*",
                                                const std::wstring& ext=L"");
-      std::vector<std::string> GetDirContents(const std::string& dir,
+      std::vector<std::string> getDirContents(const std::string& dir,
                                               const std::string& fileName="*",
                                               const std::string& ext="");
 #endif
       
-      std::vector<std::wstring> GetSubDirList(const std::wstring& dir);
-      std::vector<std::string> GetSubDirList(const std::string& dir);
+      std::vector<std::wstring> getSubDirList(const std::wstring& dir);
+      std::vector<std::string> getSubDirList(const std::string& dir);
       
-      bool GetFileStats(const std::string& strFileName, LARGE_STAT_BUFFER& stat_buf);
-      bool GetFileStats(const std::wstring& wstrFileName, LARGE_STAT_BUFFER& stat_buf);
+      bool getFileStats(const std::string& strFileName, LARGE_STAT_BUFFER& stat_buf);
+      bool getFileStats(const std::wstring& wstrFileName, LARGE_STAT_BUFFER& stat_buf);
+      
+      bool isDirectory(const std::string& name);
+      bool isDirectory(const std::wstring& name);
     }
   }
 }
