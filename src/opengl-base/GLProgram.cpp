@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cstdio>
+#include <cstdarg>
 
 using namespace std;
 
