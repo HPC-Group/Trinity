@@ -4,7 +4,7 @@ struct {{CommandNameCmd}} {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-		{{RequestCtor}}
+		{{RequestCtorDeclaration}}
 		
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -12,7 +12,7 @@ struct {{CommandNameCmd}} {
         std::string toString() const;
         bool equals(const RequestParams& other) const;
 
-{{RequestGetters}}
+{{RequestGetterDeclarations}}
 
 {{RequestMembers}}
 	};
@@ -20,7 +20,7 @@ struct {{CommandNameCmd}} {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-		{{ReplyCtor}}
+		{{ReplyCtorDeclaration}}
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -28,7 +28,7 @@ struct {{CommandNameCmd}} {
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
-{{ReplyGetters}}
+{{ReplyGetterDeclarations}}
 
 {{ReplyMembers}}
 	};

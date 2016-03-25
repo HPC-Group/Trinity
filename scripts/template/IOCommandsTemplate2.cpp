@@ -1,41 +1,45 @@
-VclType {CommandName}Cmd::Type = VclType::{VclType};
+VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
 
-{CommandName}Cmd::RequestParams::RequestParams({Parameters})
-    : m_index({Parameter_Variables}) {}
+{{CommandNameCmd}}::RequestParams::{{RequestCtorDeclaration}}
+    : {{RequestInitializerList}} {}
 
-void {CommandName}Cmd::RequestParams::serialize(ISerialWriter& writer) const {
+void {{CommandNameCmd}}::RequestParams::serialize(ISerialWriter& writer) const {
 	// TODO
 }
 
-void {CommandName}Cmd::RequestParams::deserialize(const ISerialReader& reader) {
+void {{CommandNameCmd}}::RequestParams::deserialize(const ISerialReader& reader) {
 	// TODO
 }
 
-bool {CommandName}Cmd::RequestParams::equals(const {CommandName}Cmd::RequestParams& other) const {
+bool {{CommandNameCmd}}::RequestParams::equals(const {{CommandNameCmd}}::RequestParams& other) const {
 	// TODO
 	return true;
 }
 
-std::string {CommandName}Cmd::RequestParams::toString() const {
+{{RequestGetterDefinitions}}
+
+std::string {{CommandNameCmd}}::RequestParams::toString() const {
     std::stringstream stream;
 	// TODO
     return stream.str();
 }
 
-void {CommandName}Cmd::ReplyParams::serialize(ISerialWriter& writer) const {
+void {{CommandNameCmd}}::ReplyParams::serialize(ISerialWriter& writer) const {
 	// TODO
 }
 
-void {CommandName}Cmd::ReplyParams::deserialize(const ISerialReader& reader) {
+void {{CommandNameCmd}}::ReplyParams::deserialize(const ISerialReader& reader) {
 	// TODO
 }
 
-bool {CommandName}Cmd::ReplyParams::equals(const {CommandName}Cmd::ReplyParams& other) const {
+bool {{CommandNameCmd}}::ReplyParams::equals(const {{CommandNameCmd}}::ReplyParams& other) const {
 	// TODO
     return true;
 }
 
-std::string {CommandName}Cmd::ReplyParams::toString() const {
+{{ReplyGetterDefinitions}}
+
+std::string {{CommandNameCmd}}::ReplyParams::toString() const {
     std::stringstream stream;
     return stream.str();
 }

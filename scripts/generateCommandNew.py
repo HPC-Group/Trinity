@@ -31,6 +31,16 @@ templateInfosProc = [
 		"source":"../src/commands/ProcessingCommands.h",
 		"template":"ProcessingCommandsTemplate.h",
 		"marker":"#undef PYTHON_MAGIC"
+	},
+	{
+		"source":"../src/commands/ProcessingCommands.cpp",
+		"template":"ProcessingCommandsTemplate.cpp",
+		"marker":"#undef PYTHON_MAGIC"
+	},
+	{
+		"source":"../src/commands/ProcessingCommands.cpp",
+		"template":"ProcessingCommandsTemplate2.cpp",
+		"marker":"#undef PYTHON_MAGIC_DEFINITION"
 	}
 ]
 
@@ -49,6 +59,16 @@ templateInfosIO = [
 		"source":"../src/commands/IOCommands.h",
 		"template":"IOCommandsTemplate.h",
 		"marker":"#undef PYTHON_MAGIC"
+	},
+	{
+		"source":"../src/commands/IOCommands.cpp",
+		"template":"IOCommandsTemplate.cpp",
+		"marker":"#undef PYTHON_MAGIC"
+	},
+	{
+		"source":"../src/commands/IOCommands.cpp",
+		"template":"IOCommandsTemplate2.cpp",
+		"marker":"#undef PYTHON_MAGIC_DEFINITION"
 	}
 ]
 
@@ -65,7 +85,7 @@ def determineInsertPosition(code, marker):
 	pos = 0
 	for line in code:
 		pos = pos + 1
-		if marker in line:
+		if line.strip() == marker:
 			return pos - 1
 			
 def readTemplateFile(filename):
@@ -116,13 +136,29 @@ def makeMemberList(params):
 		items.append("\t\t" + type + " m_" + name + ";")
 	return "\tprivate:\n" + "\n".join(items)
 
-def makeGetters(params):
+def makeGetterDeclarations(params):
 	items = []
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
 		items.append("\t\t" + type + " get" + name.title() + "() const;")
 	return "\n".join(items)
+	
+def makeGetterDefinitions(commandName, params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append(type + " " + commandName + "Cmd" + "::get" + name.title() + "() const {\n\t return " + "m_" + name + ";\n}")
+	return "\n\n".join(items)
+	
+def makeInitializerList(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append("m_" + name + "(" + name + ")")
+	return ", ".join(items)
 	
 def expandVariable(variable, input):
 	if variable == "VclType":
@@ -135,18 +171,24 @@ def expandVariable(variable, input):
 		return input.commandName + "Request"	
 	elif variable == "CommandNameReply":
 		return input.commandName + "Reply"
-	elif variable == "RequestCtor":
+	elif variable == "RequestCtorDeclaration":
 		return "Request(" + makeArgumentList(input.params) + ");"
-	elif variable == "ReplyCtor":
+	elif variable == "ReplyCtorDeclaration":
 		return "Request(" + makeArgumentList(input.ret) + ");"
 	elif variable == "RequestMembers":
 		return makeMemberList(input.params)
 	elif variable == "ReplyMembers":
 		return makeMemberList(input.ret)
-	elif variable == "RequestGetters":
-		return makeGetters(input.params)
-	elif variable == "ReplyGetters":
-		return makeGetters(input.ret)
+	elif variable == "RequestGetterDeclarations":
+		return makeGetterDeclarations(input.params)
+	elif variable == "ReplyGetterDeclarations":
+		return makeGetterDeclarations(input.ret)
+	elif variable == "RequestInitializerList":
+		return makeInitializerList(input.params)
+	elif variable == "RequestGetterDefinitions":
+		return makeGetterDefinitions(input.commandName, input.params)
+	elif variable == "ReplyGetterDefinitions":
+		return makeGetterDefinitions(input.commandName, input.ret)
 	else:
 		raise Exception("Unknown variable " + variable)
 		
