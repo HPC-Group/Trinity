@@ -17,6 +17,8 @@ templateDir = "./template/"
 procDir = "./processingFiles/"
 ioDir = "./ioFiles/"
 commDir = "./commFiles/"
+commonDir = "./commonFiles/"
+frontendDir = "./frontendFiles/"
 
 processingFiles = {0 : "ProcessingCommands.h",
 		   1 : "ProcessingCommands.cpp",
@@ -36,6 +38,12 @@ commFiles = {0 : "Request.cpp",
 	     1 : "Reply.cpp",
 	     2 : "Vcl.h"}
 
+commonFiles = {0 : "IOSessionProxy.h",
+							 1 : "IOSessionProxy.cpp"}
+
+frontendFiles = {0 : "RendererProxy.h",
+								 1 : "RendererProxy.cpp"}
+
 processingTemplates = {0 : "ProcessingCommandsTemplate.h",
 		       1 : "ProcessingCommandsTemplate.cpp",
 		       2 : "ProcessingCommandsTemplate2.cpp",
@@ -49,6 +57,12 @@ ioTemplates = {0 : "IOCommandsTemplate.h",
 	       3 : "IOCommandsHandlerTemplate.h",
 	       4 : "IOCommandsHandlerTemplate.cpp",
 	       5 : "IOCommandFactoryTemplate.cpp"}
+
+commonTemplates = {0 : "IOSessionProxyTemplate.h",
+									 1 : "IOSessionProxyTemplate.cpp"}
+
+frontendTemplates = {0 : "RendererProxyTemplate.h",
+										 1 : "RendererProxyTemplate.cpp"}
 
 
 def openFile(filename, templateName, lookup):
@@ -67,7 +81,21 @@ def openFile(filename, templateName, lookup):
 def openTemplate(templateName):
   with open(templateName, "r+") as templateFile:
     template = templateFile.read()
-    template = template.replace("{CommandName}", name).replace("{VclType}", vclType)
+    template = template.replace("{CommandName}", name).replace("{VclType}", vclType).replace("{return}", returnType).replace("{CommandName_small}", nameSmall)
+
+    for i in range(len(parameterVariables)):
+      if i == len(parameterVariables) - 1:
+        template = template.replace("{Parameter_Variables}", parameterVariables[i])
+      template = template.replace("{Parameter_Variables}", parameterVariables[i] + " " + ",{Parameter_Variables}")
+    for i in range(len(parameters)):
+      if i % 2 == 1:
+        continue
+      if i == len(parameters) - 2:
+        template = template.replace("{Parameters}", parameters[i] + " " + parameters[i + 1])
+        return template
+      template = template.replace("{Parameters}", parameters[i] + " " + parameters[i + 1] + ",{Parameters}")
+    if len(parameters) == 0:
+      template.replace("{Parameters}", "")
     return template
 
 
@@ -82,6 +110,9 @@ def generateCommandsHdr():
       else:
         openFile(procDir + processingFiles[i], templateDir + processingTemplates[i], "#undef PYTHON_MAGIC")
 
+    for i in frontendFiles:
+      openFile(frontendDir + frontendFiles[i], templateDir + frontendTemplates[i], "#undef PYTHON_MAGIC")
+    
     generateRequest("#undef PYTHON_MAGIC_PROC")
     if hasReply == "true":
       generateReply("#undef PYTHON_MAGIC_PROC")
@@ -94,6 +125,9 @@ def generateCommandsHdr():
       else:
         openFile(ioDir + ioFiles[i], templateDir + ioTemplates[i], "#undef PYTHON_MAGIC")
 
+    for i in commonFiles:
+      openFile(commonDir + commonFiles[i], templateDir + commonTemplates[i], "#undef PYTHON_MAGIC")
+    
     generateRequest("#undef PYTHON_MAGIC_IO")
     if hasReply == "true":
       generateReply("#undef PYTHON_MAGIC_IO")
@@ -130,6 +164,13 @@ def refreshSrc():
   copyfile("../src/commands/" + commFiles[0], commDir + commFiles[0])
   copyfile("../src/commands/" + commFiles[1], commDir + commFiles[1])
   copyfile("../src/commands/" + commFiles[2], commDir + commFiles[2])
+  
+  copyfile("../src/common/" + commonFiles[0], commonDir + commonFiles[0])
+  copyfile("../src/common/" + commonFiles[1], commonDir + commonFiles[1])
+  #copyfile("../src/common/" + commonFiles[2], commonDir + commonFiles[2])
+  
+  copyfile("../src/frontend-base/" + frontendFiles[0], frontendDir + frontendFiles[0])
+  copyfile("../src/frontend-base/" + frontendFiles[1], frontendDir + frontendFiles[1])
 
 
 def copyFiles(type):
@@ -170,13 +211,19 @@ def determineStartStop(content, lookup):
 def main():
 	global type
 	global name
+	global nameSmall
 	global hasReply
 	global vclType
+	global returnType
+	global parameters
+	global parameterVariables
 	parser = argparse.ArgumentParser(description="Generate Trinity Command.")
 	parser.add_argument('--type', help="type of the command to generate ('proc' or 'io'" )
 	parser.add_argument('--name', help="name of the command to generate")
 	parser.add_argument('--hasReply', help="shows if the command has a reply ('true' or 'false'")
 	#parser.add_argument('--vclType', help="VclType of the command")
+	parser.add_argument('--returnType', help="return value of the command")
+	parser.add_argument('--parameters', nargs='*', help="all parameters of the command ('please specify all parameters successive, e.g., int x float y double z')")
 	
 	args = parser.parse_args()
 	if (args.type == "proc"):
@@ -192,12 +239,22 @@ def main():
 	if (args.hasReply != "true" and args.hasReply != "false"):
 		raise("Invalid reply: must be 'true' or 'false'")
 	      
+	if not args.returnType:
+		raise("Invalid return type: specify something!")
+	
+	if not args.parameters or not isinstance(args.parameters, list) or len(args.parameters) % 2 != 0:
+		raise("There's something wrong with the specified parameters!")
+	
 	#if not args.vclType:
 	#	raise("Invalid VclType: specify something!")
 		
 	name = args.name
+	nameSmall = str(name[0].lower() + name[1:])
 	hasReply = args.hasReply
 	vclType = args.name
+	returnType = args.returnType
+	parameters = args.parameters
+	parameterVariables = parameters[1::2]
 	
 	generateCommandsHdr()
 	
