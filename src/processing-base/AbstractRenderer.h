@@ -20,11 +20,15 @@ namespace trinity {
     void setRenderMode(ERenderMode mode) override;
     bool supportsRenderMode(ERenderMode mode) override;
 
+    // MODALITIES AND TIMESTEPS
     virtual void setActiveModality(uint64_t modality) override;
     virtual uint64_t getActiveModality() const override;
     virtual void setActiveTimestep(uint64_t timestep) override;
     virtual uint64_t getActiveTimestep() const override;
 
+    virtual uint64_t getModalityCount() const;
+    virtual uint64_t getTimestepCount() const;
+    
     // 1D TF
     virtual void set1DTransferFunction(const TransferFunction1D& tf);
     virtual TransferFunction1D getDefault1DTransferFunction(uint64_t index) const;
@@ -99,8 +103,6 @@ namespace trinity {
     virtual void startRendering();
     virtual void stopRendering();
 
-    virtual uint64_t getModalityCount() const;
-    virtual uint64_t getNumberOfTimesteps() const;
 
     /*******  Non RPC IRenderer Interface **********/
 

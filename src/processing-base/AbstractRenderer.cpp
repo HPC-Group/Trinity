@@ -81,7 +81,7 @@ uint64_t AbstractRenderer::getActiveModality() const {
   return m_activeModality;
 }
 
-uint64_t AbstractRenderer::getNumberOfTimesteps() const {
+uint64_t AbstractRenderer::getTimestepCount() const {
   return m_io->getNumberOfTimesteps();
 }
 
