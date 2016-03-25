@@ -20,7 +20,7 @@ using namespace trinity;
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 
-bool stripListerID(std::string& id) {
+bool UVFListData::stripListerID(std::string& id) const {
   if (id.find(UVFDataRoot+"@") != 0) {
 
     if (id.find(UVFDataRoot) != 0)
@@ -34,7 +34,6 @@ bool stripListerID(std::string& id) {
     id = id.substr(UVFDataRoot.length());
     return true;
   }
-
 }
 
 bool UVFListData::containsIOData(const std::string& fileOrDirID) const {

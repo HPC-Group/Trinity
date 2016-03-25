@@ -10,5 +10,6 @@ namespace trinity {
     bool containsIOData(const std::string& dirOrFileID) const override;
     std::vector<IOData> listData(const std::string& dirID) const override;
 
+    bool stripListerID(std::string& id) const;
   };
 }
