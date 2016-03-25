@@ -1,5 +1,8 @@
 VclType {CommandName}Cmd::Type = VclType::{VclType};
 
+{CommandName}Cmd::RequestParams::RequestParams({Parameters})
+    : m_index({Parameter_Variables}) {}
+
 void {CommandName}Cmd::RequestParams::serialize(ISerialWriter& writer) const {
 	// TODO
 }
@@ -10,11 +13,12 @@ void {CommandName}Cmd::RequestParams::deserialize(const ISerialReader& reader) {
 
 bool {CommandName}Cmd::RequestParams::equals(const {CommandName}Cmd::RequestParams& other) const {
 	// TODO
-    return true;
+	return true;
 }
 
 std::string {CommandName}Cmd::RequestParams::toString() const {
     std::stringstream stream;
+	// TODO
     return stream.str();
 }
 
