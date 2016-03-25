@@ -115,6 +115,14 @@ def makeMemberList(params):
 		name = params[i + 1]
 		items.append("\t\t" + type + " m_" + name + ";")
 	return "\tprivate:\n" + "\n".join(items)
+
+def makeGetters(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append("\t\t" + type + " get" + name.title() + "() const;")
+	return "\n".join(items)
 	
 def expandVariable(variable, input):
 	if variable == "VclType":
@@ -125,16 +133,20 @@ def expandVariable(variable, input):
 		return input.commandName + "Hdl"
 	elif variable == "CommandNameRequest":
 		return input.commandName + "Request"	
-	elif variable == "RequestCtor":
-		return "Request(" + makeArgumentList(input.params) + ");"
-	elif variable == "RequestMembers":
-		return makeMemberList(input.params)
-	elif variable == "ReplyCtor":
-		return "Request(" + makeArgumentList(input.ret) + ");"
-	elif variable == "ReplyMembers":
-		return makeMemberList(input.ret)
 	elif variable == "CommandNameReply":
 		return input.commandName + "Reply"
+	elif variable == "RequestCtor":
+		return "Request(" + makeArgumentList(input.params) + ");"
+	elif variable == "ReplyCtor":
+		return "Request(" + makeArgumentList(input.ret) + ");"
+	elif variable == "RequestMembers":
+		return makeMemberList(input.params)
+	elif variable == "ReplyMembers":
+		return makeMemberList(input.ret)
+	elif variable == "RequestGetters":
+		return makeGetters(input.params)
+	elif variable == "ReplyGetters":
+		return makeGetters(input.ret)
 	else:
 		raise Exception("Unknown variable " + variable)
 		

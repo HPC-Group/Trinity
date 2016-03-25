@@ -11,6 +11,9 @@ struct {{CommandNameCmd}} {
 
         std::string toString() const;
         bool equals(const RequestParams& other) const;
+
+{{RequestGetters}}
+
 {{RequestMembers}}
 	};
 
@@ -24,6 +27,9 @@ struct {{CommandNameCmd}} {
 
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
+
+{{ReplyGetters}}
+
 {{ReplyMembers}}
 	};
 };
