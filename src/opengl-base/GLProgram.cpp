@@ -314,7 +314,7 @@ bool GLProgram::WriteInfoLog(const char* shaderdesc, GLuint hObject,
     return !bool(bAtMostWarnings==GL_TRUE); // error occured?
 }
 
-GLProgram* GLProgram::LoadAndVerifyShader(const std::vector<std::string> strDirs,
+GLProgram* GLProgram::FromFiles(const std::vector<std::string> strDirs,
                                           ...)
 {
   // first build list of fragment shaders
@@ -349,10 +349,10 @@ GLProgram* GLProgram::LoadAndVerifyShader(const std::vector<std::string> strDirs
   
   va_end(args);
   
-  return LoadAndVerifyShader(vertex, frag);
+  return FromFiles(vertex, frag);
 }
 
-GLProgram* GLProgram::LoadAndVerifyShader(const std::vector<std::string>& vert,
+GLProgram* GLProgram::FromFiles(const std::vector<std::string>& vert,
                                           const std::vector<std::string>& frag)
 {
   

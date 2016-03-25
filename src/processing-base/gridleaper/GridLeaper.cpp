@@ -118,77 +118,34 @@ void GridLeaper::resizeFramebuffer() {
   LINFO("(p) resolution: " << width << " x " << height);
 }
 
+#define LOADSHADER(p, ...)  \
+do { \
+p = std::unique_ptr<GLProgram>(GLProgram::FromFiles(searchDirs,__VA_ARGS__));\
+if (!p) { \
+  LINFO("(p) invalid shader program " << #p); \
+  p = nullptr; \
+  return false; \
+} \
+} while (0)
+
 bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   std::vector<std::string> searchDirs;
   searchDirs.push_back(".");
-  searchDirs.push_back("../../../src/processing-base/gridleaper");
+  searchDirs.push_back("shader");
+  searchDirs.push_back("../../../src/processing-base/gridleaper/shader");
   
-  m_programCompose = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
-                                                                               "ComposeVS.glsl",
-                                                                               NULL,
-                                                                               "ComposeFS.glsl",
-                                                                               NULL));
-  if (!m_programCompose) {
-    LERROR("(p) invalid compose shader program");
-    m_programCompose = nullptr;
-    return false;
-  }
-  
-  m_programComposeColorDebugMix = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
-                                                                               "ComposeVS.glsl",
-                                                                               NULL,
-                                                                               "ComposeFSColorDebug.glsl",
-                                                                               NULL));
-  if (!m_programComposeColorDebugMix) {
-    LERROR("(p) invalid compose color debug shader program");
-    m_programComposeColorDebugMix = nullptr;
-    return false;
-  }
-
-  m_programComposeColorDebugMixAlpha = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
-                                                                                            "ComposeVS.glsl",
-                                                                                            NULL,
-                                                                                            "ComposeFSColorDebugAlpha.glsl",
-                                                                                            NULL));
-  if (!m_programComposeColorDebugMixAlpha) {
-    LERROR("(p) invalid compose color debug alpha shader program");
-    m_programComposeColorDebugMixAlpha = nullptr;
-    return false;
-  }
-
-  m_programComposeClearViewIso = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
-                                                                                                 "ComposeVS.glsl",
-                                                                                                 NULL,
-                                                                                                 "ComposeFS_CViso.glsl",
-                                                                                                 NULL));
-  if (!m_programComposeClearViewIso) {
-    LERROR("(p) invalid compose clear view shader program");
-    m_programComposeClearViewIso = nullptr;
-    return false;
-  }
-
-  m_programRenderFrontFaces = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
-                                                                                           "CubeVertex.glsl",
-                                                                                           NULL,
-                                                                                           "CubeFragment.glsl",
-                                                                                           NULL));
-  if (!m_programRenderFrontFaces) {
-    LERROR("(p) invalid cube shader program");
-    m_programRenderFrontFaces = nullptr;
-    return false;
-  }
-  
-  m_programRenderFrontFacesNearPlane = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
-                                                                                        "NearPlaneVS.glsl",
-                                                                                        NULL,
-                                                                                        "NearPlaneFS.glsl",
-                                                                                        NULL));
-  if (!m_programRenderFrontFacesNearPlane) {
-    LERROR("(p) invalid cube shader program");
-    m_programRenderFrontFacesNearPlane = nullptr;
-    return false;
-  }
-  
+  LOADSHADER(m_programCompose,
+             "ComposeVS.glsl",NULL,"ComposeFS.glsl",NULL);
+  LOADSHADER(m_programComposeColorDebugMix,
+             "ComposeVS.glsl",NULL,"ComposeVS.glsl",NULL);
+  LOADSHADER(m_programComposeColorDebugMixAlpha,
+             "ComposeVS.glsl",NULL,"ComposeFSColorDebugAlpha.glsl",NULL);
+  LOADSHADER(m_programComposeClearViewIso,
+             "ComposeVS.glsl",NULL,"ComposeFS_CViso.glsl",NULL);
+  LOADSHADER(m_programRenderFrontFaces,
+             "CubeVertex.glsl",NULL,"CubeFragment.glsl",NULL);
+  LOADSHADER(m_programRenderFrontFacesNearPlane,
+             "NearPlaneVS.glsl",NULL,"NearPlaneFS.glsl",NULL);
   
   // Load the traversal shaders
   const std::string poolFragment = m_volumePool->getShaderFragment(

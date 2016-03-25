@@ -80,36 +80,29 @@ void SimpleRenderer::resizeFramebuffer() {
 }
 
 
+#define LOADSHADER(p, ...)  \
+do { \
+p = std::unique_ptr<GLProgram>(GLProgram::FromFiles(searchDirs,__VA_ARGS__));\
+if (!p) { \
+LINFO("(p) invalid shader program " << #p); \
+p = nullptr; \
+return false; \
+} \
+} while (0)
+
 bool SimpleRenderer::loadShaders() {
   std::vector<std::string> searchDirs;
   searchDirs.push_back(".");
+  searchDirs.push_back("shader");
   searchDirs.push_back("../../../src/processing-base/simplerenderer");
-  
-  m_backfaceShader = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
-                                                                               "vertex.glsl",
-                                                                               NULL,
-                                                                               "backfaceFragment.glsl",
-                                                                               NULL));
+  searchDirs.push_back("../../../src/processing-base/simplerenderer/shader");
   
   
-  m_raycastShader = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
-                                                                               "vertex.glsl",
-                                                                               NULL,
-                                                                               "raycastFragment.glsl",
-                                                                               NULL));
-  
-  if (!m_backfaceShader) {
-    LERROR("(p) invalid backface shader program");
-    m_backfaceShader = nullptr;
-    return false;
-  }
-  
-  if (!m_raycastShader) {
-    LERROR("(p) invalid raycast shader program");
-    m_raycastShader = nullptr;
-    return false;
-  }
-  
+  LOADSHADER(m_backfaceShader,
+             "vertex.glsl",NULL,"backfaceFragment.glsl",NULL);
+  LOADSHADER(m_raycastShader,
+             "vertex.glsl",NULL,"raycastFragment.glsl",NULL);
+    
   return true;
 }
 

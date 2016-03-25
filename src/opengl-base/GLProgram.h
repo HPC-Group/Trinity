@@ -17,11 +17,11 @@ public:
   GLProgram();
   virtual ~GLProgram();
   
-  static GLProgram* LoadAndVerifyShader(const std::vector<std::string> strDirs,
-                                  ...);
-
-  static GLProgram* LoadAndVerifyShader(const std::vector<std::string>& vert,
-                                  const std::vector<std::string>& frag);
+  static GLProgram* FromFiles(const std::vector<std::string> strDirs,
+                              ...);
+  
+  static GLProgram* FromFiles(const std::vector<std::string>& vert,
+                              const std::vector<std::string>& frag);
   
   virtual bool Load(ShaderDescriptor& sd);
   
