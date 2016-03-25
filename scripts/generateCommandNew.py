@@ -241,6 +241,17 @@ def makeEquals(params):
 		items.append(member(name) + " == other." + member(name))
 	return "\treturn " + " && ".join(items) + ";"
 	
+def makeStreaming(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		if i == 0:
+			items.append('"' + name + ': " << ' + member(name))
+		else:
+			items.append('"; ' + name + ': " << ' + member(name))
+	return "\tstream << " + " << ".join(items) + ";"
+	
 def expandVariable(variable, input):
 	if variable == "VclType":
 		return input.commandName
@@ -282,6 +293,10 @@ def expandVariable(variable, input):
 		return makeEquals(input.params)
 	elif variable == "ReplyParamEquals":
 		return makeEquals(input.ret)
+	elif variable == "RequestParamStreaming":
+		return makeStreaming(input.params)
+	elif variable == "ReplyParamStreaming":
+		return makeStreaming(input.ret)
 	else:
 		raise Exception("Unknown variable " + variable)
 		
