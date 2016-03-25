@@ -81,28 +81,30 @@ void SimpleRenderer::resizeFramebuffer() {
 
 
 bool SimpleRenderer::loadShaders() {
-  vector<string> fs, vs;
-  vs.push_back("vertex.glsl");
-  fs.push_back("backfaceFragment.glsl");
-  ShaderDescriptor sd(vs, fs);
+  std::vector<std::string> searchDirs;
+  searchDirs.push_back(".");
+  searchDirs.push_back("../../../src/processing-base/simplerenderer");
   
-  m_backfaceShader = mocca::make_unique<GLProgram>();
-  m_backfaceShader->Load(sd);
+  m_backfaceShader = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
+                                                                               "vertex.glsl",
+                                                                               NULL,
+                                                                               "backfaceFragment.glsl",
+                                                                               NULL));
   
-  if (!m_backfaceShader->IsValid()) {
+  
+  m_raycastShader = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
+                                                                               "vertex.glsl",
+                                                                               NULL,
+                                                                               "raycastFragment.glsl",
+                                                                               NULL));
+  
+  if (!m_backfaceShader) {
     LERROR("(p) invalid backface shader program");
     m_backfaceShader = nullptr;
     return false;
   }
   
-  fs.clear();
-  fs.push_back("raycastFragment.glsl");
-  sd = ShaderDescriptor(vs, fs);
-  
-  m_raycastShader = mocca::make_unique<GLProgram>();
-  m_raycastShader->Load(sd);
-  
-  if (!m_raycastShader->IsValid()) {
+  if (!m_raycastShader) {
     LERROR("(p) invalid raycast shader program");
     m_raycastShader = nullptr;
     return false;
@@ -189,8 +191,6 @@ void SimpleRenderer::initFrameBuffers() {
 }
 
 void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
-  const uint32_t width = m_visStream->getStreamingParams().getResX();
-  const uint32_t height = m_visStream->getStreamingParams().getResY();
   
   if (!m_context || !m_backfaceShader || !m_texVolume || !m_texTransferFunc) {
     LERROR("(p) incomplete OpenGL initialization");
@@ -198,6 +198,11 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   }
   
   m_context->makeCurrent();
+
+  
+  const uint32_t width = m_visStream->getStreamingParams().getResX();
+  const uint32_t height = m_visStream->getStreamingParams().getResY();  
+  GL_CHECK(glViewport(0, 0, width, height));
   
   Mat4f world;
   Mat4f rotx, roty;  
@@ -205,7 +210,6 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   roty.RotationY(m_isoValue[0] * 1.14f);
   world = rotx * roty;
    
-  GL_CHECK(glViewport(0, 0, width, height));
   
   glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);

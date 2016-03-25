@@ -3,6 +3,9 @@
 #include "common/VisStream.h"
 #include "opengl-base/OpenGLError.h"
 #include "silverbullet/math/Vectors.h"
+#include "silverbullet/io/FileTools.h"
+
+
 
 #include "mocca/log/LogManager.h"
 
@@ -116,82 +119,71 @@ void GridLeaper::resizeFramebuffer() {
 }
 
 bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
-  vector<string> fs, vs;
-  vs.push_back("ComposeVS.glsl");
-  fs.push_back("ComposeFS.glsl");
-  ShaderDescriptor sd(vs, fs);
+  std::vector<std::string> searchDirs;
+  searchDirs.push_back(".");
+  searchDirs.push_back("../../../src/processing-base/gridleaper");
   
-  m_programCompose = mocca::make_unique<GLProgram>();
-  m_programCompose->Load(sd);
-  
-  if (!m_programCompose->IsValid()) {
+  m_programCompose = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
+                                                                               "ComposeVS.glsl",
+                                                                               NULL,
+                                                                               "ComposeFS.glsl",
+                                                                               NULL));
+  if (!m_programCompose) {
     LERROR("(p) invalid compose shader program");
     m_programCompose = nullptr;
     return false;
   }
   
-  fs.clear();
-  fs.push_back("ComposeFSColorDebug.glsl");
-  sd = ShaderDescriptor(vs, fs);
-  
-  m_programComposeColorDebugMix = mocca::make_unique<GLProgram>();
-  m_programComposeColorDebugMix->Load(sd);
-  
-  if (!m_programComposeColorDebugMix->IsValid()) {
+  m_programComposeColorDebugMix = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
+                                                                               "ComposeVS.glsl",
+                                                                               NULL,
+                                                                               "ComposeFSColorDebug.glsl",
+                                                                               NULL));
+  if (!m_programComposeColorDebugMix) {
     LERROR("(p) invalid compose color debug shader program");
     m_programComposeColorDebugMix = nullptr;
     return false;
   }
-  
-  fs.clear();
-  fs.push_back("ComposeFSColorDebugAlpha.glsl");
-  sd = ShaderDescriptor(vs, fs);
-  
-  m_programComposeColorDebugMixAlpha = mocca::make_unique<GLProgram>();
-  m_programComposeColorDebugMixAlpha->Load(sd);
-  
-  if (!m_programComposeColorDebugMixAlpha->IsValid()) {
+
+  m_programComposeColorDebugMixAlpha = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
+                                                                                            "ComposeVS.glsl",
+                                                                                            NULL,
+                                                                                            "ComposeFSColorDebugAlpha.glsl",
+                                                                                            NULL));
+  if (!m_programComposeColorDebugMixAlpha) {
     LERROR("(p) invalid compose color debug alpha shader program");
     m_programComposeColorDebugMixAlpha = nullptr;
     return false;
   }
-  
-  fs.clear();
-  fs.push_back("ComposeFS_CViso.glsl");
-  sd = ShaderDescriptor(vs, fs);
-  
-  m_programComposeClearViewIso = mocca::make_unique<GLProgram>();
-  m_programComposeClearViewIso->Load(sd);
-  
-  if (!m_programComposeClearViewIso->IsValid()) {
+
+  m_programComposeClearViewIso = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
+                                                                                                 "ComposeVS.glsl",
+                                                                                                 NULL,
+                                                                                                 "ComposeFS_CViso.glsl",
+                                                                                                 NULL));
+  if (!m_programComposeClearViewIso) {
     LERROR("(p) invalid compose clear view shader program");
     m_programComposeClearViewIso = nullptr;
     return false;
   }
-  
-  fs.clear(); vs.clear();
-  vs.push_back("CubeVertex.glsl");
-  fs.push_back("CubeFragment.glsl");
-  sd = ShaderDescriptor(vs, fs);
-  
-  m_programRenderFrontFaces = mocca::make_unique<GLProgram>();
-  m_programRenderFrontFaces->Load(sd);
-  
-  if (!m_programRenderFrontFaces->IsValid()) {
+
+  m_programRenderFrontFaces = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
+                                                                                           "CubeVertex.glsl",
+                                                                                           NULL,
+                                                                                           "CubeFragment.glsl",
+                                                                                           NULL));
+  if (!m_programRenderFrontFaces) {
     LERROR("(p) invalid cube shader program");
     m_programRenderFrontFaces = nullptr;
     return false;
   }
   
-  fs.clear(); vs.clear();
-  vs.push_back("NearPlaneVS.glsl");
-  fs.push_back("NearPlaneFS.glsl");
-  sd = ShaderDescriptor(vs, fs);
-  
-  m_programRenderFrontFacesNearPlane = mocca::make_unique<GLProgram>();
-  m_programRenderFrontFacesNearPlane->Load(sd);
-  
-  if (!m_programRenderFrontFacesNearPlane->IsValid()) {
+  m_programRenderFrontFacesNearPlane = std::unique_ptr<GLProgram>(GLProgram::LoadAndVerifyShader(searchDirs,
+                                                                                        "NearPlaneVS.glsl",
+                                                                                        NULL,
+                                                                                        "NearPlaneFS.glsl",
+                                                                                        NULL));
+  if (!m_programRenderFrontFacesNearPlane) {
     LERROR("(p) invalid cube shader program");
     m_programRenderFrontFacesNearPlane = nullptr;
     return false;
@@ -205,11 +197,13 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
                                                                    );
   const std::string hashFragment = m_hashTable->getShaderFragment(5);
   
-  vs.push_back("GLGridLeaper-entry-VS.glsl");
-  fs.push_back("GLGridLeaper-blend.glsl");
-  fs.push_back("GLGridLeaper-Method-1D.glsl");
-  fs.push_back("Compositing.glsl");
-  sd = ShaderDescriptor(vs, fs);
+  std::vector<std::string> vs, fs;
+  
+  vs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-1D.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("Compositing.glsl", searchDirs));
+  ShaderDescriptor sd(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
   
@@ -223,9 +217,9 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back("GLGridLeaper-blend.glsl");
-  fs.push_back("GLGridLeaper-Method-1D-color.glsl");
-  fs.push_back("Compositing.glsl");
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-1D-color.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -240,11 +234,11 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back("GLGridLeaper-blend.glsl");
-  fs.push_back("GLGridLeaper-Method-1D-L.glsl");
-  fs.push_back("GLGridLeaper-GradientTools.glsl");
-  fs.push_back("lighting.glsl");
-  fs.push_back("Compositing.glsl");
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-1D-L.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("lighting.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -259,9 +253,9 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back("GLGridLeaper-iso.glsl");
-  fs.push_back("GLGridLeaper-Method-iso.glsl");
-  fs.push_back("GLGridLeaper-GradientTools.glsl");
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -276,9 +270,9 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back("GLGridLeaper-iso.glsl");
-  fs.push_back("GLGridLeaper-Method-iso-color.glsl");
-  fs.push_back("GLGridLeaper-GradientTools.glsl");
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-iso-color.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
@@ -293,9 +287,9 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   }
   
   fs.clear();
-  fs.push_back("GLGridLeaper-iso-lighting.glsl");
-  fs.push_back("GLGridLeaper-Method-iso.glsl");
-  fs.push_back("GLGridLeaper-GradientTools.glsl");
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-iso-lighting.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
+  fs.push_back(Core::IO::FileTools::FindFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);

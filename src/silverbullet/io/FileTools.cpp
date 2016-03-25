@@ -17,6 +17,10 @@
 #define LARGE_STAT(name,buffer) _stat64(name,buffer)
 #endif
 
+#ifdef DETECTED_OS_APPLE
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 
 using namespace std;
 using namespace Core::StringTools;
@@ -24,7 +28,27 @@ using namespace Core::StringTools;
 namespace Core {
   namespace IO {
     namespace FileTools {
-
+      
+      std::string FindFileInDirs(const std::string& file,
+                                 const std::vector<std::string> strDirs) {
+        if (FileExists(file)) return file;
+        
+        // not in the current dir!
+        // iterate through all directories, looking for the file in them.
+        for (size_t i = 0;i<strDirs.size();i++) {
+          if(!FileExists(strDirs[i])) {
+            // skip nonexistend directories
+            continue;
+          }
+          
+          string searchFile = strDirs[i] + "/" + file ;
+          if(FileExists(searchFile)) {
+            return searchFile;
+          }
+        }
+        return "";
+      }
+      
       bool HasAbsPath(const std::string& path) {
 #ifdef DETECTED_OS_WINDOWS
         return (path.size() > 2  && path[1] == ':');

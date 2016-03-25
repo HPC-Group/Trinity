@@ -2,6 +2,8 @@
 #include "GLTexture.h"
 
 #include "opengl-base/ShaderDescriptor.h"
+#include "silverbullet/io/FileTools.h"
+#include "mocca/log/LogManager.h"
 
 #include <iostream>
 #include <cstdio>
@@ -17,8 +19,6 @@ bool GLProgram::CompileShader(GLuint& handle, const char* source, GLenum type ){
   handle = glCreateShader(type);
   glShaderSource(handle, 1, &source, NULL);
   glCompileShader(handle);
-
-
 
   if (WriteInfoLog("shader\n", handle, false))
   {
@@ -255,8 +255,8 @@ void GLProgram::CheckSamplerType(const char *name) const {
       eTypeInShader != GL_SAMPLER_2D_SHADOW &&
       eTypeInShader != GL_SAMPLER_2D_RECT_ARB &&
       eTypeInShader != GL_SAMPLER_2D_RECT_SHADOW_ARB) {
-    WARNING("Shader definition (%i) does not match any "
-            "sampler type.", eTypeInShader);
+    LWARNING("Shader definition (%i) does not match any "
+            "sampler type." << int(eTypeInShader));
   }
 }
 #else
@@ -311,4 +311,74 @@ bool GLProgram::WriteInfoLog(const char* shaderdesc, GLuint hObject,
 #endif
     }
     return !bool(bAtMostWarnings==GL_TRUE); // error occured?
+}
+
+GLProgram* GLProgram::LoadAndVerifyShader(const std::vector<std::string> strDirs,
+                                          ...)
+{
+  // first build list of fragment shaders
+  std::vector<std::string> vertex;
+  std::vector<std::string> frag;
+  
+  va_list args;
+  va_start(args, strDirs);
+  {
+    const char* filename;
+    // We expect two NULLs; the first terminates the vertex shader list, the
+    // latter terminates the fragment shader list.
+    
+    while(NULL != (filename = va_arg(args, const char*)) ) {
+      std::string shader = Core::IO::FileTools::FindFileInDirs(std::string(filename), strDirs);
+      if (shader.empty()) {
+        LERROR("Vertex shader file " << filename << " not found.");
+        return nullptr;
+      }
+      vertex.push_back(shader);
+    }
+    
+    while(NULL != (filename = va_arg(args, const char*)) ) {
+      std::string shader = Core::IO::FileTools::FindFileInDirs(std::string(filename), strDirs);
+      if (shader.empty()) {
+        LERROR("Fragment shader file " << filename << " not found.");
+        return nullptr;
+      }
+      frag.push_back(shader);
+    }
+  }
+  
+  va_end(args);
+  
+  return LoadAndVerifyShader(vertex, frag);
+}
+
+GLProgram* GLProgram::LoadAndVerifyShader(const std::vector<std::string>& vert,
+                                          const std::vector<std::string>& frag)
+{
+  
+  for(auto v = vert.begin(); v != vert.end(); ++v)
+  {
+    if (!Core::IO::FileTools::FileExists(*v)) {
+      LERROR("Vertex shader file " << *v << " not found.");
+      return nullptr;
+    }
+  }
+  
+  for(auto f = frag.begin(); f != frag.end(); ++f) {
+    if (!Core::IO::FileTools::FileExists(*f)) {
+      LERROR("Fragment shader file " << *f << " not found.");
+      return nullptr;
+    }
+  }
+  
+  ShaderDescriptor sd(vert, frag);
+  GLProgram* program = new GLProgram();
+  program->Load(sd);
+  
+  if(program == NULL || !program->IsValid()) {
+    LERROR("Invalid shader.");
+    delete program;
+    return nullptr;
+  }
+  
+  return program;
 }

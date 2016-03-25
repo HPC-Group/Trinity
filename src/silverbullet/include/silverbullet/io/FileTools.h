@@ -89,6 +89,10 @@ namespace Core {
       bool GetHomeDirectory(std::string& path);
       bool GetHomeDirectory(std::wstring& path);
       
+      std::string FindFileInDirs(const std::string& file,
+                                 const std::vector<std::string> strDirs);
+
+      
 #ifdef DETECTED_OS_WINDOWS
       std::vector<std::wstring> GetDirContents(const std::wstring& dir,
                                                const std::wstring& fileName=L"*",
