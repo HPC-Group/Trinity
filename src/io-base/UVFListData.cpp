@@ -12,7 +12,7 @@
 // compile this lister with the VALIDATE_FILES to check a
 // file not only for the proper extension but also validate
 // the MD5 sum. This provides much better error detection but
-// can take a significant tiem for large files (hours for TB files)
+// can take a significant time for large files (hours for TB sized files)
 
 // #define VALIDATE_FILES
 
@@ -59,13 +59,17 @@ std::vector<IOData> UVFListData::listData(const std::string& dirID) const {
     
     for (const std::string& name : names) {
       if (isDirectory(name)) {
-        ioDataVec.push_back(IOData(getFilename(name), UVFDataRoot+"@"+name,IOData::DataType::Directory));
+        ioDataVec.push_back(IOData(getFilename(name),
+                                   UVFDataRoot+"@"+name,
+                                   IOData::DataType::Directory));
       } else {
         // TODO: replace the first param of the IOData constructor
         // (getFilename(name)) by the human readable description from the
         // uvf-file
         if (ToLowerCase(getExt(path)) == "uvf")
-          ioDataVec.push_back(IOData(getFilename(name), UVFDataRoot+"@"+name,IOData::DataType::Dataset));
+          ioDataVec.push_back(IOData(getFilename(name),
+                                     UVFDataRoot+"@"+name,
+                                     IOData::DataType::Dataset));
       }
     }
   }
