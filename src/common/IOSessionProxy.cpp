@@ -196,3 +196,8 @@ TransferFunction1D IOSessionProxy::getDefault1DTransferFunction(uint64_t index) 
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getFunction();
 }
+
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC

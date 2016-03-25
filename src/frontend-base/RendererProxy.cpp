@@ -85,3 +85,8 @@ uint64_t RendererProxy::getActiveTimestep() const {
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getTimestep();
 }
+
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC

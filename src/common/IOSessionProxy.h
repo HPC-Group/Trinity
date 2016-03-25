@@ -40,6 +40,10 @@ public:
     std::vector<uint64_t> get2DHistogram() const override;
     TransferFunction1D getDefault1DTransferFunction(uint64_t index) const override;
     std::string getUserDefinedSemantic(uint64_t modality) const override;
+#define PYTHON_MAGIC
+
+
+#undef PYTHON_MAGIC
 
 private:
     CommandInputChannel m_inputChannel;
