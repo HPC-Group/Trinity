@@ -134,11 +134,13 @@ def makeArgumentList(params):
 	return ", ".join(items)
 
 def makeMemberList(params):
+	if not params:
+		return ""
 	items = []
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append("\t\t" + type + member(name) + ";")
+		items.append("\t\t" + type + " " + member(name) + ";")
 	return "\tprivate:\n" + "\n".join(items)
 
 def makeGetterDeclarations(params):
@@ -158,12 +160,14 @@ def makeGetterDefinitions(commandName, params):
 	return "\n\n".join(items)
 	
 def makeInitializerList(params):
+	if not params:
+		return ""
 	items = []
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
 		items.append(member(name) + "(" + name + ")")
-	return ", ".join(items)
+	return "\t:"+ ", ".join(items)
 	
 def makeSerialization(params):
 	items = []
@@ -234,6 +238,8 @@ def makeDeserialization(params):
 	return "\n".join(items)
 	
 def makeEquals(params):
+	if not params:
+		return "\treturn true;"
 	items = []
 	for i in xrange(0, len(params), 2):
 		type = params[i]
@@ -242,6 +248,8 @@ def makeEquals(params):
 	return "\treturn " + " && ".join(items) + ";"
 	
 def makeStreaming(params):
+	if not params:
+		return ""
 	items = []
 	for i in xrange(0, len(params), 2):
 		type = params[i]
@@ -251,6 +259,12 @@ def makeStreaming(params):
 		else:
 			items.append('"; ' + name + ': " << ' + member(name))
 	return "\tstream << " + " << ".join(items) + ";"
+	
+def makeCtorDeclaration(params, ctorType):
+	if not params:
+		return ""
+	else:
+		return ctorType + "(" + makeArgumentList(params) + ");"		
 	
 def expandVariable(variable, input):
 	if variable == "VclType":
@@ -264,9 +278,9 @@ def expandVariable(variable, input):
 	elif variable == "CommandNameReply":
 		return input.commandName + "Reply"
 	elif variable == "RequestCtorDeclaration":
-		return "Request(" + makeArgumentList(input.params) + ");"
+		return makeCtorDeclaration(input.params, "RequestParams")
 	elif variable == "ReplyCtorDeclaration":
-		return "Request(" + makeArgumentList(input.ret) + ");"
+		return makeCtorDeclaration(input.ret, "ReplyParams")
 	elif variable == "RequestMembers":
 		return makeMemberList(input.params)
 	elif variable == "ReplyMembers":

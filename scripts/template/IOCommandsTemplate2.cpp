@@ -1,7 +1,7 @@
 VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
 
 {{CommandNameCmd}}::RequestParams::{{RequestCtorDeclaration}}
-    : {{RequestInitializerList}} {}
+{{RequestInitializerList}} {}
 
 void {{CommandNameCmd}}::RequestParams::serialize(ISerialWriter& writer) const {
 {{RequestParamSerialization}}
@@ -19,7 +19,7 @@ bool {{CommandNameCmd}}::RequestParams::equals(const {{CommandNameCmd}}::Request
 
 std::string {{CommandNameCmd}}::RequestParams::toString() const {
     std::stringstream stream;
-	// TODO
+{{RequestParamStreaming}}
     return stream.str();
 }
 
@@ -39,5 +39,6 @@ bool {{CommandNameCmd}}::ReplyParams::equals(const {{CommandNameCmd}}::ReplyPara
 
 std::string {{CommandNameCmd}}::ReplyParams::toString() const {
     std::stringstream stream;
+{{ReplyParamStreaming}}
     return stream.str();
 }

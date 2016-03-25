@@ -1,7 +1,7 @@
 VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
 
 {{CommandNameCmd}}::RequestParams::{{RequestCtorDeclaration}}
-    : {{RequestInitializerList}} {}
+{{RequestInitializerList}} {}
 
 void {{CommandNameCmd}}::RequestParams::serialize(ISerialWriter& writer) const {
 {{RequestParamSerialization}}
