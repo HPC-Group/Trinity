@@ -8,7 +8,8 @@ using namespace Core::Math;
 
 AbstractRenderer::AbstractRenderer(std::shared_ptr<VisStream> stream,
                                    std::unique_ptr<IIO> ioSession)  :
-IRenderer(stream, std::move(ioSession))
+IRenderer(stream, std::move(ioSession)),
+m_bPaitingActive(false)
 {
   initValueDefaults();
 }
