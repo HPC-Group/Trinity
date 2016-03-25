@@ -233,6 +233,14 @@ def makeDeserialization(params):
 			items.append('\t' + member(name) + ' = reader.getSerializable<' + type + '>("' + name + '");')
 	return "\n".join(items)
 	
+def makeEquals(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append(member(name) + " == other." + member(name))
+	return "\treturn " + " && ".join(items) + ";"
+	
 def expandVariable(variable, input):
 	if variable == "VclType":
 		return input.commandName
@@ -270,6 +278,10 @@ def expandVariable(variable, input):
 		return makeDeserialization(input.params)
 	elif variable == "ReplyParamDeserialization":
 		return makeSerialization(input.ret)
+	elif variable == "RequestParamEquals":
+		return makeEquals(input.params)
+	elif variable == "ReplyParamEquals":
+		return makeEquals(input.ret)
 	else:
 		raise Exception("Unknown variable " + variable)
 		

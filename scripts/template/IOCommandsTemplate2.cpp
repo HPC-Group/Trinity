@@ -12,8 +12,7 @@ void {{CommandNameCmd}}::RequestParams::deserialize(const ISerialReader& reader)
 }
 
 bool {{CommandNameCmd}}::RequestParams::equals(const {{CommandNameCmd}}::RequestParams& other) const {
-	// TODO
-	return true;
+{{RequestParamEquals}}
 }
 
 {{RequestGetterDefinitions}}
@@ -33,8 +32,7 @@ void {{CommandNameCmd}}::ReplyParams::deserialize(const ISerialReader& reader) {
 }
 
 bool {{CommandNameCmd}}::ReplyParams::equals(const {{CommandNameCmd}}::ReplyParams& other) const {
-	// TODO
-    return true;
+{{ReplyParamEquals}}
 }
 
 {{ReplyGetterDefinitions}}
