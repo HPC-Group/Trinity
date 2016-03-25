@@ -189,9 +189,48 @@ def makeSerialization(params):
 		elif "vector<int" in type or "vector<uint" in type or "vector<unsigned int" in type:
 			items.append('\twriter.appendIntVec("' + name + '", ' + member(name) + ');')
 		elif "vector<" in type:
-			items.append("\t// TODO: this is getting to complicated, you need to do this yourself...")
+			items.append("\t// TODO: this is getting to complicated, you need to do this yourself... (" + name + ")")
 		else:
 			items.append('\twriter.appendObject("' + name + '", ' + member(name) + ');')
+	return "\n".join(items)
+	
+def makeDeserialization(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		if type == "uint8_t":
+			items.append('\t' + member(name) + ' = reader.getUInt8("' + name + '");')
+		elif type == "int32_t":
+			items.append('\t' + member(name) + ' = reader.getInt32("' + name + '");')
+		elif type == "uint32_t":
+			items.append('\t' + member(name) + ' = reader.getUInt32("' + name + '");')
+		elif type == "int64_t":
+			items.append('\t' + member(name) + ' = reader.getInt64("' + name + '");')
+		elif type == "uint64_t":
+			items.append('\t' + member(name) + ' = reader.getUInt64("' + name + '");')
+		elif type == "float":
+			items.append('\t' + member(name) + ' = reader.getFloat("' + name + '");')
+		elif type == "double":
+			items.append('\t' + member(name) + ' = reader.getDouble("' + name + '");')
+		elif type == "bool":
+			items.append('\t' + member(name) + ' = reader.getBool("' + name + '");')
+		elif "vector<float>" in type:
+			items.append('\t' + member(name) + ' = reader.getFloatVec("' + name + '");')
+		elif "vector<uint8_t>" in type:
+			items.append('\t' + member(name) + ' = reader.getUInt8Vec("' + name + '");')
+		elif "vector<int32_t>" in type:
+			items.append('\t' + member(name) + ' = reader.getInt32Vec("' + name + '");')
+		elif "vector<uint64_t>" in type:
+			items.append('\t' + member(name) + ' = reader.getUInt64Vec("' + name + '");')
+		elif "vector<bool>" in type:
+			items.append('\t' + member(name) + ' = reader.getBoolVec("' + name + '");')
+		elif "vector<std::string>" in type:
+			items.append('\t' + member(name) + ' = reader.getStringVec("' + name + '");')
+		elif "vector<" in type:
+			items.append("\t// TODO: this is getting to complicated, you need to do this yourself... (" + name + ")")
+		else:
+			items.append('\t' + member(name) + ' = reader.getSerializable<' + type + '>("' + name + '");')
 	return "\n".join(items)
 	
 def expandVariable(variable, input):
@@ -226,6 +265,10 @@ def expandVariable(variable, input):
 	elif variable == "RequestParamSerialization":
 		return makeSerialization(input.params)
 	elif variable == "ReplyParamSerialization":
+		return makeDeserialization(input.ret)
+	elif variable == "RequestParamDeserialization":
+		return makeDeserialization(input.params)
+	elif variable == "ReplyParamDeserialization":
 		return makeSerialization(input.ret)
 	else:
 		raise Exception("Unknown variable " + variable)

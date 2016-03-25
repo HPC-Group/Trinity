@@ -8,7 +8,7 @@ void {{CommandNameCmd}}::RequestParams::serialize(ISerialWriter& writer) const {
 }
 
 void {{CommandNameCmd}}::RequestParams::deserialize(const ISerialReader& reader) {
-	// TODO
+{{RequestParamDeserialization}}
 }
 
 bool {{CommandNameCmd}}::RequestParams::equals(const {{CommandNameCmd}}::RequestParams& other) const {
@@ -29,7 +29,7 @@ void {{CommandNameCmd}}::ReplyParams::serialize(ISerialWriter& writer) const {
 }
 
 void {{CommandNameCmd}}::ReplyParams::deserialize(const ISerialReader& reader) {
-	// TODO
+{{ReplyParamDeserialization}}
 }
 
 bool {{CommandNameCmd}}::ReplyParams::equals(const {{CommandNameCmd}}::ReplyParams& other) const {
