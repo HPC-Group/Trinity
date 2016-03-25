@@ -1,1 +1,1 @@
-	m_cmdMap.insert("{VclType}", VclType::{VclType});
+		m_cmdMap.insert("{{VclType}}", VclType::{{VclType}});

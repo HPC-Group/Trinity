@@ -1,10 +1,10 @@
-class {CommandName}Hdl : public ICommandHandler {
+class {{CommandNameHdl}} : public ICommandHandler {
 public:
-    {CommandName}Hdl(const {CommandName}Request&request, RenderSession* session);
+    {{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session);
 
     std::unique_ptr<Reply> execute() override;
 
 private:
-    {CommandName}Request m_request;
+    {{CommandNameRequest}} m_request;
 	RenderSession* m_session;
 };

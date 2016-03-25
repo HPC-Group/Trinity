@@ -1,1 +1,1 @@
-	{VclType},
+	{{VclType}},

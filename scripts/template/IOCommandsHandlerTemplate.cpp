@@ -1,5 +1,5 @@
-{CommandName}Hdl::{CommandName}Hdl(const {CommandName}Request& request, IOSession* session)
+{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, IOSession* session)
     : m_request(request), m_session(session) {}
 
-std::unique_ptr<Reply> {CommandName}Hdl::execute() {
+std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
 }
