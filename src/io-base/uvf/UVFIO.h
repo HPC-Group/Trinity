@@ -4,7 +4,6 @@
 
 #include "common/IIO.h"
 #include "io-base/IListData.h"
-#include "io-base/fractal/Mandelbulb.h"
 
 #include "mocca/log/LogManager.h"
 

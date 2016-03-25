@@ -1,13 +1,16 @@
 FILE(GLOB IOBASE_HEADER ${CMAKE_CURRENT_LIST_DIR}/*.h
-						${CMAKE_CURRENT_LIST_DIR}/fractal/*.h)
+						${CMAKE_CURRENT_LIST_DIR}/fractal/*.h
+						${CMAKE_CURRENT_LIST_DIR}/uvf/*.h
+)
 
 FILE(GLOB IOBASE_SOURCE ${CMAKE_CURRENT_LIST_DIR}/*.cpp
-						${CMAKE_CURRENT_LIST_DIR}/fractal/*.cpp)
+						${CMAKE_CURRENT_LIST_DIR}/fractal/*.cpp
+						${CMAKE_CURRENT_LIST_DIR}/uvf/*.cpp
+)
+
 
 CreateSourceGroups("${IOBASE_HEADER}" ${CMAKE_CURRENT_LIST_DIR})
 CreateSourceGroups("${IOBASE_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
-
-
 
 list(REMOVE_ITEM IOBASE_SOURCE ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
 

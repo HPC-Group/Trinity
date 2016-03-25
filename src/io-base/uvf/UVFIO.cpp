@@ -1,5 +1,5 @@
+#include "UVFIO.h"
 #include "io-base/UVFListData.h"
-#include "io-base/fractal/UVFIO.h"
 #include "silverbullet/io/FileTools.h"
 #include "silverbullet/base/StringTools.h"
 
@@ -9,6 +9,7 @@
 
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
+using namespace Core::Math;
 using namespace trinity;
 
 
@@ -18,16 +19,16 @@ UVFIO::UVFIO(const std::string& fileId, const IListData& listData) {
 
   if (uvfListData) {
     std::string filename = fileId;
-    if (!uvfListData.stripListerID(filename)) {
-      throw TrinityError("invalid fileId" << fileId,  __FILE__, __LINE__);
+    if (!uvfListData->stripListerID(filename)) {
+      throw TrinityError(std::string("invalid fileId") + fileId,  __FILE__, __LINE__);
     }
 
     if (!fileExists(filename)) {
-      throw TrinityError(filename << " not found", __FILE__, __LINE__);
+      throw TrinityError(filename + " not found", __FILE__, __LINE__);
     }
 
-    if (isDirectory(path) || ToLowerCase(getExt(path)) != "uvf" ) {
-      throw TrinityError(filename << " is not a uvf file", __FILE__, __LINE__);
+    if (isDirectory(filename) || ToLowerCase(getExt(filename)) != "uvf" ) {
+      throw TrinityError(filename + " is not a uvf file", __FILE__, __LINE__);
     }
     
     // TODO: open UVF file here
@@ -168,6 +169,12 @@ uint64_t UVFIO::getTotalBrickCount(uint64_t modality) const {
 
 bool UVFIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
   //TODO
+  return false;
+}
+
+Vec3ui UVFIO::getBrickVoxelCounts(const BrickKey& key) const {
+  //TODO
+  return Vec3ui();
 }
 
 IIO::ValueType UVFIO::getType(uint64_t modality) const {

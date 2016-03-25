@@ -10,7 +10,6 @@
 using namespace Core::Math;
 using namespace trinity;
 
-
 FractalIO::FractalIO(const std::string& fileId, const IListData& listData)
 : m_fractalGenerator(nullptr) {
   LINFO("(fractalio) initializing fractal for file id " + fileId);
