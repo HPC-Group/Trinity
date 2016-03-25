@@ -3,6 +3,45 @@ import argparse
 import re
 from shutil import copyfile
 
+templateInfosAll = [
+	{
+		"source":"../src/commands/Vcl.h",
+		"template":"VclTemplate.h",
+		"marker":"#undef PYTHON_ENUM"
+	},
+	{
+		"source":"../src/commands/Vcl.h",
+		"template":"VclTemplate2.h",
+		"marker":"#undef PYTHON_MAGIC_STRING"
+	}
+]
+
+templateInfosProc = [
+	{
+		"source":"../src/processing-base/ProcessingCommandsHandler.h",
+		"template":"ProcessingCommandsHandlerTemplate.h",
+		"marker":"#undef PYTHON_MAGIC"
+	},
+	{
+		"source":"../src/processing-base/ProcessingCommandsHandler.cpp",
+		"template":"ProcessingCommandsHandlerTemplate.cpp",
+		"marker":"#undef PYTHON_MAGIC"
+	}
+]
+
+templateInfosIO = [
+	{
+		"source":"../src/io-base/IOCommandsHandler.h",
+		"template":"IOCommandsHandlerTemplate.h",
+		"marker":"#undef PYTHON_MAGIC"
+	},
+	{
+		"source":"../src/io-base/IOCommandsHandler.cpp",
+		"template":"IOCommandsHandlerTemplate.cpp",
+		"marker":"#undef PYTHON_MAGIC"
+	}
+]
+
 def insertCodeInSource(destination, code, marker):
 	with open(destination, "r+") as destfile:
 		content = destfile.readlines()
@@ -51,72 +90,30 @@ def expandVariable(variable, input):
 		return input.commandName + "Hdl"
 	elif variable == "CommandNameRequest":
 		return input.commandName + "Request"	
-	
-class Types:
-	proc = 1
-	io = 2
 		
+def process(templateInfos, input):
+	for templateInfo in templateInfos:
+		template = readTemplateFile(templateInfo["template"])
+		marker = templateInfo["marker"]
+		tokens = tokenizeTemplate(template)
+		code = ""
+		for token in tokens:
+			if token.type == TokenType.text:
+				code = code + token.value
+			else:
+				code = code + expandVariable(token.value, input)
+		insertCodeInSource(templateInfo["source"], code, marker)
+
 class Input:
-	def __init__(self, commandName, type, hasReply):
+	def __init__(self, commandName, hasReply):
 		self.commandName = commandName
 		self.hasReply = hasReply
-		if (type == "proc"):
-			self.type = Types.proc
-		elif (type == "io"):
-			self.type = Types.io
-		else:
-			raise Exception("Invalid type: must be 'proc' or 'io'")
-		
-	
-class ProcessorBase(object):
-	def __init__(self, destination, templateInfos, input):
-		self.destination = destination
-		self.templateInfos = templateInfos
-		self.input = input
-	
-	def process(self):
-		for templateInfo in self.templateInfos:
-			filename = templateInfo["filename"]
-			marker = templateInfo["marker"]
-			template = readTemplateFile(filename)
-			tokens = tokenizeTemplate(template)
-			code = ""
-			for token in tokens:
-				if token.type == TokenType.text:
-					code = code + token.value
-				else:
-					code = code + expandVariable(token.value, self.input)
-			insertCodeInSource(self.destination, code, marker)
-
-class VclH(ProcessorBase):
-	def __init__(self, input):
-		filename = "../src/commands/Vcl.h"
-		templateInfo =  [
-			{ "filename":"VclTemplate.h", "marker":"#undef PYTHON_ENUM" },
-			{ "filename":"VclTemplate2.h", "marker":"#undef PYTHON_MAGIC_STRING" }]
-		super(VclH, self).__init__(filename, templateInfo, input)
-
-class CommandHandlerH(ProcessorBase):
-	def __init__(self, input):
-		if input.type == Types.proc:
-			filename = "../src/processing-base/ProcessingCommandsHandler.h"
-			templateInfo = [{ "filename":"ProcessingCommandsHandlerTemplate.h", "marker":"#undef PYTHON_MAGIC" }]
-		else:
-			filename = "../src/io-base/IOCommandsHandler.h"
-			templateInfo = [{ "filename":"IOCommandsHandlerTemplate.h", "marker":"#undef PYTHON_MAGIC" }]
-		super(CommandHandlerH, self).__init__(filename, templateInfo, input )
-		
-class CommandHandlerCPP(ProcessorBase):
-	def __init__(self, input):
-		if input.type == Types.proc:
-			filename = "../src/processing-base/ProcessingCommandsHandler.cpp"
-			templateInfo = [{ "filename":"ProcessingCommandsHandlerTemplate.cpp", "marker":"#undef PYTHON_MAGIC" }]
-		else:
-			filename = "../src/io-base/IOCommandsHandler.cpp"
-			templateInfo = [{ "filename":"IOCommandsHandlerTemplate.cpp", "marker":"#undef PYTHON_MAGIC" }]
-		super(CommandHandlerCPP, self).__init__(filename, templateInfo, input )	
 		
 def main():
+	global templateInfosAll
+	global templateInfosProc
+	global templateInfosIO
+
 	parser = argparse.ArgumentParser(description="Generate Trinity Command.")
 	parser.add_argument('--type', help="type of the command to generate ('proc' or 'io'" )
 	parser.add_argument('--name', help="name of the command to generate")
@@ -125,18 +122,13 @@ def main():
 	parser.add_argument('--parameters', nargs='*', help="all parameters of the command ('please specify all parameters successive, e.g., int x float y double z')")
 	args = parser.parse_args()
 
-	input = Input(args.name, args.type, args.hasReply)
+	input = Input(args.name, args.hasReply)
+	if args.type == "proc":
+		templateInfos = templateInfosAll + templateInfosProc
+	elif args.type == "io":
+		templateInfos = templateInfosAll + templateInfosIO
+	else:
+		raise Exception("There's something wrong with the specified parameters!")
+	process(templateInfos, input)
 	
-	objs = [ VclH(input), CommandHandlerH(input), CommandHandlerCPP(input) ] 
-	for obj in objs:
-		obj.process()
-	
-def test():
-	str = "This is a {{Var}} Test"
-	result = tokenizeTemplate(str)
-	for t in result:
-		print t.type
-		print t.value
-	
-#test()
 main()
