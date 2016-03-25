@@ -113,9 +113,14 @@ def tokenizeTemplate(template):
 			result.append(Token(TokenType.text, token))
 	return result
 
+def member(name):
+	return "m_" + name
+	
+def isIntType(type):
+	return type in ["int", "unsigned int", "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "int64_t", "uint64_t"]
+	
 def crQualify(type, name):
-	if type in ["int", "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t",
-				"uint32_t", "int64_t", "uint64_t", "bool", "float", "double"]:
+	if isIntType(type) or type in ["bool", "float", "double"]:
 		return type + " " + name
 	else:
 		return "const " + type + "& " + name
@@ -133,7 +138,7 @@ def makeMemberList(params):
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append("\t\t" + type + " m_" + name + ";")
+		items.append("\t\t" + type + member(name) + ";")
 	return "\tprivate:\n" + "\n".join(items)
 
 def makeGetterDeclarations(params):
@@ -149,7 +154,7 @@ def makeGetterDefinitions(commandName, params):
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append(type + " " + commandName + "Cmd" + "::get" + name.title() + "() const {\n\t return " + "m_" + name + ";\n}")
+		items.append(type + " " + commandName + "Cmd" + "::get" + name.title() + "() const {\n\t return " + member(name) + ";\n}")
 	return "\n\n".join(items)
 	
 def makeInitializerList(params):
@@ -157,8 +162,37 @@ def makeInitializerList(params):
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append("m_" + name + "(" + name + ")")
+		items.append(member(name) + "(" + name + ")")
 	return ", ".join(items)
+	
+def makeSerialization(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		if isIntType(type):
+			items.append('\twriter.appendInt("' + name + '", ' + member(name) + ');')
+		elif type == "float":
+			items.append('\twriter.appendFloat("' + name + '", ' + member(name) + ');')
+		elif type == "double":
+			items.append('\twriter.appendDouble("' + name + '", ' + member(name) + ');')
+		elif type == "bool":
+			items.append('\twriter.appendBool("' + name + '", ' + member(name) + ');')
+		elif type == "string":
+			items.append('\twriter.appendString("' + name + '", ' + member(name) + ');')
+		elif "vector<float>" in type:
+			items.append('\twriter.appendFloatVec("' + name + '", ' + member(name) + ');')
+		elif "vector<bool>" in type:
+			items.append('\twriter.appendBoolVec("' + name + '", ' + member(name) + ');')
+		elif "vector<std::string>" in type:
+			items.append('\twriter.appendStringVec("' + name + '", ' + member(name) + ');')
+		elif "vector<int" in type or "vector<uint" in type or "vector<unsigned int" in type:
+			items.append('\twriter.appendIntVec("' + name + '", ' + member(name) + ');')
+		elif "vector<" in type:
+			items.append("\t// TODO: this is getting to complicated, you need to do this yourself...")
+		else:
+			items.append('\twriter.appendObject("' + name + '", ' + member(name) + ');')
+	return "\n".join(items)
 	
 def expandVariable(variable, input):
 	if variable == "VclType":
@@ -189,6 +223,10 @@ def expandVariable(variable, input):
 		return makeGetterDefinitions(input.commandName, input.params)
 	elif variable == "ReplyGetterDefinitions":
 		return makeGetterDefinitions(input.commandName, input.ret)
+	elif variable == "RequestParamSerialization":
+		return makeSerialization(input.params)
+	elif variable == "ReplyParamSerialization":
+		return makeSerialization(input.ret)
 	else:
 		raise Exception("Unknown variable " + variable)
 		

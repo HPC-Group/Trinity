@@ -4,7 +4,7 @@ VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
     : {{RequestInitializerList}} {}
 
 void {{CommandNameCmd}}::RequestParams::serialize(ISerialWriter& writer) const {
-	// TODO
+{{RequestParamSerialization}}
 }
 
 void {{CommandNameCmd}}::RequestParams::deserialize(const ISerialReader& reader) {
@@ -25,7 +25,7 @@ std::string {{CommandNameCmd}}::RequestParams::toString() const {
 }
 
 void {{CommandNameCmd}}::ReplyParams::serialize(ISerialWriter& writer) const {
-	// TODO
+{{ReplyParamSerialization}}
 }
 
 void {{CommandNameCmd}}::ReplyParams::deserialize(const ISerialReader& reader) {
