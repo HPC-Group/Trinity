@@ -92,7 +92,6 @@ def openTemplate(templateName):
         continue
       if i == len(parameters) - 2:
         template = template.replace("{Parameters}", parameters[i] + " " + parameters[i + 1])
-        return template
       template = template.replace("{Parameters}", parameters[i] + " " + parameters[i + 1] + ",{Parameters}")
     if len(parameters) == 0:
       template = template.replace("{Parameters}", "").replace("{Parameter_Variables}", "")
