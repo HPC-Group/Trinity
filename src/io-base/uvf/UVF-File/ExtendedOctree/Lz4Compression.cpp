@@ -1,13 +1,13 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
-#include "Basics/SysTools.h"
-#include "Basics/nonstd.h"
+#include "silverbullet/base/StringTools.h"
+#include "../nonstd.h"
 #include "Lz4Compression.h"
 
 extern "C" {
-#include "lz4.h"
-#include "lz4hc.h"
+  #include "ext/lz4/lz4.h"
+  #include "ext/lz4/lz4hc.h"
 }
 
 size_t lz4Compress(std::shared_ptr<uint8_t> src, size_t uncompressedBytes,
@@ -46,7 +46,7 @@ size_t lz4Compress(std::shared_ptr<uint8_t> src, size_t uncompressedBytes,
   assert(compressedBytes >= 0);
   if (compressedBytes <= 0)
     throw std::runtime_error(std::string("LZ4_compress[HC] failed, returned value: ") +
-      SysTools::ToString(compressedBytes));
+                             Core::StringTools::ToString(compressedBytes));
   return compressedBytes;
 }
 
@@ -63,7 +63,7 @@ void lz4Decompress(std::shared_ptr<uint8_t> src, std::shared_ptr<uint8_t>& dst,
   if (readBytes < 0)
     throw std::runtime_error(std::string("LZ4_decompress_fast failed: faulty input "
                              "byte at position ") +
-                             SysTools::ToString(-readBytes));
+                             Core::StringTools::ToString(-readBytes));
 }
 
 /*

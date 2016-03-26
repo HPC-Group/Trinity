@@ -1,11 +1,11 @@
 template<class T, bool bComputeMedian>
 void ExtendedOctreeConverter::DownsampleBricktoBrick(
-  ExtendedOctree &tree, T* pData, const UINT64VECTOR3& targetSize, T* pSourceData,
-  const UINT64VECTOR4& sourceCoords, const UINT64VECTOR3& targetOffset)
+  ExtendedOctree &tree, T* pData, const Core::Math::Vec3ui64& targetSize, T* pSourceData,
+  const Core::Math::Vec4ui64& sourceCoords, const Core::Math::Vec3ui64& targetOffset)
 {
   uint64_t iCompCount = tree.m_iComponentCount;
 
-  const UINT64VECTOR3& sourceSize = tree.ComputeBrickSize(sourceCoords);
+  const Core::Math::Vec3ui64& sourceSize = tree.ComputeBrickSize(sourceCoords);
   GetBrick((uint8_t*)pSourceData, tree, sourceCoords);
 
   const uint64_t evenSizeX = (sourceSize.x-2*m_iOverlap)/2;
@@ -249,11 +249,11 @@ void ExtendedOctreeConverter::DownsampleBricktoBrick(
 
 template<class T, bool bComputeMedian>
 void ExtendedOctreeConverter::DownsampleBrick(
-  ExtendedOctree &tree, bool bClampToEdge, const UINT64VECTOR4& vBrickCoords,
+  ExtendedOctree &tree, bool bClampToEdge, const Core::Math::Vec4ui64& vBrickCoords,
   T* pData, T* pSourceData)
 {
 
-  const UINT64VECTOR3& vTargetBricksize = tree.ComputeBrickSize(vBrickCoords);
+  const Core::Math::Vec3ui64& vTargetBricksize = tree.ComputeBrickSize(vBrickCoords);
   const uint64_t iUncompressedBrickSize = vTargetBricksize.volume() *
                                           tree.GetComponentTypeSize() *
                                           tree.GetComponentCount();
@@ -265,86 +265,86 @@ void ExtendedOctreeConverter::DownsampleBrick(
   const TOCEntry t = {
     (tree.m_vTOC.end()-1)->m_iLength + (tree.m_vTOC.end()-1)->m_iOffset,
     iUncompressedBrickSize, CT_NONE, iUncompressedBrickSize,
-    UINTVECTOR2(0,0)
+    Core::Math::Vec2ui(0,0)
   };
   tree.m_vTOC.push_back(t);
 
-  const UINT64VECTOR4 bricksInLowerLevel = tree.GetBrickCount(vBrickCoords.w-1);
+  const Core::Math::Vec4ui64 bricksInLowerLevel = tree.GetBrickCount(vBrickCoords.w-1);
 
   const bool bHasBrickRight  = vBrickCoords.x*2+1 < bricksInLowerLevel.x;
   const bool bHasBrickBottom = vBrickCoords.y*2+1 < bricksInLowerLevel.y;
   const bool bHasBrickBack   = vBrickCoords.z*2+1 < bricksInLowerLevel.z;
 
-  const UINT64VECTOR3 splitPos(
+  const Core::Math::Vec3ui64 splitPos(
     uint64_t(ceil((tree.m_iBrickSize.x-2*m_iOverlap)/2.0)),
     uint64_t(ceil((tree.m_iBrickSize.y-2*m_iOverlap)/2.0)),
     uint64_t(ceil((tree.m_iBrickSize.z-2*m_iOverlap)/2.0))
   );
 
   // read up to eight bricks and filter them into the one brick
-  UINT64VECTOR4 sourceIndex(vBrickCoords.x*2, vBrickCoords.y*2, vBrickCoords.z*2,
+  Core::Math::Vec4ui64 sourceIndex(vBrickCoords.x*2, vBrickCoords.y*2, vBrickCoords.z*2,
                             vBrickCoords.w-1);
-  UINT64VECTOR3 targetOffset(0,0,0);
+  Core::Math::Vec3ui64 targetOffset(0,0,0);
   DownsampleBricktoBrick<T, bComputeMedian>(tree, pData, vTargetBricksize,
                                             pSourceData, sourceIndex,
                                             targetOffset);
 
   if (bHasBrickRight) {
-    sourceIndex = UINT64VECTOR4(vBrickCoords.x*2+1, vBrickCoords.y*2,
+    sourceIndex = Core::Math::Vec4ui64(vBrickCoords.x*2+1, vBrickCoords.y*2,
                                 vBrickCoords.z*2, vBrickCoords.w-1);
-    targetOffset = UINT64VECTOR3(splitPos.x,0,0);
+    targetOffset = Core::Math::Vec3ui64(splitPos.x,0,0);
     DownsampleBricktoBrick<T, bComputeMedian>(tree, pData, vTargetBricksize,
                                               pSourceData, sourceIndex,
                                               targetOffset);
   }
 
   if (bHasBrickBottom) {
-    sourceIndex = UINT64VECTOR4(vBrickCoords.x*2, vBrickCoords.y*2+1,
+    sourceIndex = Core::Math::Vec4ui64(vBrickCoords.x*2, vBrickCoords.y*2+1,
                                 vBrickCoords.z*2, vBrickCoords.w-1);
-    targetOffset = UINT64VECTOR3(0,splitPos.y,0);
+    targetOffset = Core::Math::Vec3ui64(0,splitPos.y,0);
     DownsampleBricktoBrick<T, bComputeMedian>(tree, pData, vTargetBricksize,
                                               pSourceData, sourceIndex,
                                               targetOffset);
   }
 
   if (bHasBrickBack) {
-    sourceIndex = UINT64VECTOR4(vBrickCoords.x*2, vBrickCoords.y*2,
+    sourceIndex = Core::Math::Vec4ui64(vBrickCoords.x*2, vBrickCoords.y*2,
                                 vBrickCoords.z*2+1, vBrickCoords.w-1);
-    targetOffset = UINT64VECTOR3(0,0,splitPos.z);
+    targetOffset = Core::Math::Vec3ui64(0,0,splitPos.z);
     DownsampleBricktoBrick<T, bComputeMedian>(tree, pData, vTargetBricksize,
                                               pSourceData, sourceIndex,
                                               targetOffset);
   }
 
   if (bHasBrickRight && bHasBrickBottom) {
-    sourceIndex = UINT64VECTOR4(vBrickCoords.x*2+1, vBrickCoords.y*2+1,
+    sourceIndex = Core::Math::Vec4ui64(vBrickCoords.x*2+1, vBrickCoords.y*2+1,
                                 vBrickCoords.z*2, vBrickCoords.w-1);
-    targetOffset = UINT64VECTOR3(splitPos.x,splitPos.y,0);
+    targetOffset = Core::Math::Vec3ui64(splitPos.x,splitPos.y,0);
     DownsampleBricktoBrick<T, bComputeMedian>(tree, pData, vTargetBricksize,
                                               pSourceData, sourceIndex,
                                               targetOffset);
   }
 
   if (bHasBrickRight && bHasBrickBack) {
-    sourceIndex = UINT64VECTOR4(vBrickCoords.x*2+1, vBrickCoords.y*2,
+    sourceIndex = Core::Math::Vec4ui64(vBrickCoords.x*2+1, vBrickCoords.y*2,
                                 vBrickCoords.z*2+1, vBrickCoords.w-1);
-    targetOffset = UINT64VECTOR3(splitPos.x,0,splitPos.z);
+    targetOffset = Core::Math::Vec3ui64(splitPos.x,0,splitPos.z);
     DownsampleBricktoBrick<T, bComputeMedian>(tree, pData, vTargetBricksize,
                                               pSourceData, sourceIndex,
                                               targetOffset);
   }
 
   if (bHasBrickBottom && bHasBrickBack) {
-    sourceIndex = UINT64VECTOR4(vBrickCoords.x*2, vBrickCoords.y*2+1,
+    sourceIndex = Core::Math::Vec4ui64(vBrickCoords.x*2, vBrickCoords.y*2+1,
                                 vBrickCoords.z*2+1, vBrickCoords.w-1);
-    targetOffset = UINT64VECTOR3(0,splitPos.y,splitPos.z);
+    targetOffset = Core::Math::Vec3ui64(0,splitPos.y,splitPos.z);
     DownsampleBricktoBrick<T, bComputeMedian>(tree, pData, vTargetBricksize,
                                               pSourceData, sourceIndex,
                                               targetOffset);
   }
 
   if (bHasBrickRight && bHasBrickBottom && bHasBrickBack) {
-    sourceIndex = UINT64VECTOR4(vBrickCoords.x*2+1, vBrickCoords.y*2+1,
+    sourceIndex = Core::Math::Vec4ui64(vBrickCoords.x*2+1, vBrickCoords.y*2+1,
                                 vBrickCoords.z*2+1, vBrickCoords.w-1);
     targetOffset = splitPos;
     DownsampleBricktoBrick<T, bComputeMedian>(tree, pData, vTargetBricksize,
@@ -376,16 +376,16 @@ void ExtendedOctreeConverter::ComputeHierarchy(ExtendedOctree &tree,
                                     tree.m_iComponentCount)];
   uint64_t bricks_processed = 0;
   for (size_t LoD = 1;LoD<tree.m_vLODTable.size();LoD++) {
-    UINT64VECTOR3 bricksInThisLoD = tree.GetBrickCount(LoD);
+    Core::Math::Vec3ui64 bricksInThisLoD = tree.GetBrickCount(LoD);
     for (uint64_t z = 0;z<bricksInThisLoD.z;z++) {
       for (uint64_t y = 0;y<bricksInThisLoD.y;y++) {
         for (uint64_t x = 0;x<bricksInThisLoD.x;x++) {
           DownsampleBrick<T, bComputeMedian>(tree, bClampToEdge,
-                                             UINT64VECTOR4(x,y,z, LoD),
+                                             Core::Math::Vec4ui64(x,y,z, LoD),
                                              pTempDataSource, pTempDataTarget);
           ++bricks_processed;
         }
-        m_fProgress = MathTools::lerp(float(bricks_processed) / n_bricks,
+        m_fProgress = Core::Math::MathTools::lerp(float(bricks_processed) / n_bricks,
                                       0.0f,1.0f, 0.4f,0.8f);
         PROGRESS;
       }

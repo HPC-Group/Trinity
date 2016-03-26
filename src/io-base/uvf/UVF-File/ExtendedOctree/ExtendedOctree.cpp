@@ -24,11 +24,9 @@
 
 #include <stdexcept>
 #include "ExtendedOctree.h"
-#include "Basics/nonstd.h"
-#include "Basics/Timer.h"
-#include "Controller/Controller.h"
-#include "Controller/StackTimer.h"
-#include "ZlibCompression.h"
+#include "../nonstd.h"
+#include "../Timer.h"
+//#include "ZlibCompression.h"
 #include "LzmaCompression.h"
 #include "Lz4Compression.h"
 #include "BzlibCompression.h"
@@ -90,7 +88,7 @@ bool ExtendedOctree::Open(LargeRAWFile_ptr pLargeRAWFile, uint64_t iOffset,
   m_pLargeRAWFile = pLargeRAWFile;
   m_iOffset = iOffset;
 
-  const bool isBE = EndianConvert::IsBigEndian();
+  const bool isBE = Core::Math::EndianConvert::IsBigEndian();
 
   // load global header
   m_pLargeRAWFile->SeekPos(m_iOffset);
@@ -188,13 +186,13 @@ void ExtendedOctree::Close() {
 void ExtendedOctree::ComputeMetadata() {
   // compute LOD metadata (except for the m_iLoDOffsets
   // which are computed afterwards)
-  UINT64VECTOR3 vVolumeSize = m_vVolumeSize;
-  DOUBLEVECTOR3 vAspect(1.0,1.0,1.0);
+  Core::Math::Vec3ui64 vVolumeSize = m_vVolumeSize;
+  Core::Math::Vec3d vAspect(1.0,1.0,1.0);
 
   assert(this->GetMaxBrickSize()[0] > (2*m_iOverlap));
   assert(this->GetMaxBrickSize()[1] > (2*m_iOverlap));
   assert(this->GetMaxBrickSize()[2] > (2*m_iOverlap));
-  const UINTVECTOR3 vUsableBrickSize = this->GetMaxBrickSize() - 2*m_iOverlap;
+  const Core::Math::Vec3ui vUsableBrickSize = this->GetMaxBrickSize() - 2*m_iOverlap;
   do { 
     LODInfo l;
     l.m_iLODPixelSize = vVolumeSize;
@@ -247,7 +245,7 @@ void ExtendedOctree::ComputeMetadata() {
  
  Accessor for the m_iLODBrickCount variable of the LoD Table
 */
-UINT64VECTOR3 ExtendedOctree::GetBrickCount(uint64_t iLOD) const {
+Core::Math::Vec3ui64 ExtendedOctree::GetBrickCount(uint64_t iLOD) const {
   return m_vLODTable[size_t(iLOD)].m_iLODBrickCount;
 }
 
@@ -256,7 +254,7 @@ UINT64VECTOR3 ExtendedOctree::GetBrickCount(uint64_t iLOD) const {
  
  Accessor for the m_iLODPixelSize variable of the LoD Table
  */
-UINT64VECTOR3 ExtendedOctree::GetLoDSize(uint64_t iLOD) const {
+Core::Math::Vec3ui64 ExtendedOctree::GetLoDSize(uint64_t iLOD) const {
   return m_vLODTable[size_t(iLOD)].m_iLODPixelSize;
 }
 
@@ -273,13 +271,13 @@ UINT64VECTOR3 ExtendedOctree::GetLoDSize(uint64_t iLOD) const {
  the maximum size in this case we also return the maximum size (just like with
  inner bricks).
 */
-UINT64VECTOR3 ExtendedOctree::ComputeBrickSize(const UINT64VECTOR4& vBrickCoords) const {
-  const VECTOR3<bool> bIsLast = IsLastBrick(vBrickCoords);
-  const UINT64VECTOR3 iPixelSize = m_vLODTable[size_t(vBrickCoords.w)].m_iLODPixelSize;
+Core::Math::Vec3ui64 ExtendedOctree::ComputeBrickSize(const Core::Math::Vec4ui64& vBrickCoords) const {
+  const Core::Math::VECTOR3<bool> bIsLast = IsLastBrick(vBrickCoords);
+  const Core::Math::Vec3ui64 iPixelSize = m_vLODTable[size_t(vBrickCoords.w)].m_iLODPixelSize;
   const uint32_t i2Overlap = 2*m_iOverlap;
-  const UINTVECTOR3 iBrickCore = this->GetMaxBrickSize() - i2Overlap;
+  const Core::Math::Vec3ui iBrickCore = this->GetMaxBrickSize() - i2Overlap;
 
-  return UINT64VECTOR3(bIsLast.x && (iPixelSize.x % iBrickCore.x) ? (i2Overlap + (iPixelSize.x % iBrickCore.x)) : m_iBrickSize.x,
+  return Core::Math::Vec3ui64(bIsLast.x && (iPixelSize.x % iBrickCore.x) ? (i2Overlap + (iPixelSize.x % iBrickCore.x)) : m_iBrickSize.x,
                        bIsLast.y && (iPixelSize.y % iBrickCore.y) ? (i2Overlap + (iPixelSize.y % iBrickCore.y)) : m_iBrickSize.y,
                        bIsLast.z && (iPixelSize.z % iBrickCore.z) ? (i2Overlap + (iPixelSize.z % iBrickCore.z)) : m_iBrickSize.z);
 }
@@ -289,12 +287,12 @@ UINT64VECTOR3 ExtendedOctree::ComputeBrickSize(const UINT64VECTOR4& vBrickCoords
  
  the aspect ratio of the LoD (can be different from 1:1:1 due to anisotropic downsampling)
 */
-DOUBLEVECTOR3 ExtendedOctree::GetBrickAspect(const UINT64VECTOR4& vBrickCoords) const {  
+Core::Math::Vec3d ExtendedOctree::GetBrickAspect(const Core::Math::Vec4ui64& vBrickCoords) const {  
   return m_vLODTable[size_t(vBrickCoords.w)].m_vAspect;
 }
 
 
-const TOCEntry& ExtendedOctree::GetBrickToCData(const UINT64VECTOR4& vBrickCoords) const {
+const TOCEntry& ExtendedOctree::GetBrickToCData(const Core::Math::Vec4ui64& vBrickCoords) const {
   return m_vTOC[size_t(BrickCoordsToIndex(vBrickCoords))];
 }
 
@@ -312,11 +310,7 @@ const TOCEntry& ExtendedOctree::GetBrickToCData(size_t index) const {
 */ 
 void ExtendedOctree::GetBrickData(uint8_t* pData, uint64_t index) const {
 
-  tuvok::Controller::Instance().IncrementPerfCounter(PERF_EO_BRICKS, 1.0);
-
   if(m_vTOC[size_t(index)].m_eCompression == CT_NONE) {
-    // not compressed, just read it directly into the buffer.
-    tuvok::StackTimer t(PERF_EO_DISK_READ);
     m_pLargeRAWFile->SeekPos(m_iOffset+m_vTOC[size_t(index)].m_iOffset);
     m_pLargeRAWFile->ReadRAW(pData, m_vTOC[size_t(index)].m_iLength);
     return;
@@ -332,14 +326,13 @@ void ExtendedOctree::GetBrickData(uint8_t* pData, uint64_t index) const {
   std::shared_ptr<uint8_t> buf(new uint8_t[uncompressedSize],
                                nonstd::DeleteArray<uint8_t>());
   std::shared_ptr<uint8_t> out(pData, nonstd::null_deleter());
-  TimedStatement(PERF_EO_DISK_READ,
-    m_pLargeRAWFile->SeekPos(m_iOffset+m_vTOC[size_t(index)].m_iOffset);
-    m_pLargeRAWFile->ReadRAW(buf.get(), m_vTOC[size_t(index)].m_iLength);
-  );
-  tuvok::StackTimer decompress(PERF_EO_DECOMPRESSION);
+
+  m_pLargeRAWFile->SeekPos(m_iOffset+m_vTOC[size_t(index)].m_iOffset);
+  m_pLargeRAWFile->ReadRAW(buf.get(), m_vTOC[size_t(index)].m_iLength);
+
   switch (m_vTOC[size_t(index)].m_eCompression) {
   case CT_ZLIB:
-    zDecompress(buf, out, uncompressedSize);
+    //zDecompress(buf, out, uncompressedSize);
     break;
   case CT_LZMA:
     lzmaDecompress(buf, out, uncompressedSize, m_lzmaProps);
@@ -365,7 +358,7 @@ void ExtendedOctree::GetBrickData(uint8_t* pData, uint64_t index) const {
  Convenience function that calls the function above after computing the 1D
  index from the brick coordinates
 */ 
-void ExtendedOctree::GetBrickData(uint8_t* pData, const UINT64VECTOR4& vBrickCoords) const {
+void ExtendedOctree::GetBrickData(uint8_t* pData, const Core::Math::Vec4ui64& vBrickCoords) const {
   GetBrickData(pData, BrickCoordsToIndex(vBrickCoords));
 }
 
@@ -376,10 +369,10 @@ void ExtendedOctree::GetBrickData(uint8_t* pData, const UINT64VECTOR4& vBrickCoo
  To do this we simply fetch the brick count of the brick's LoD and
  then check if it's index is equal to the max index. 
 */ 
-VECTOR3<bool> ExtendedOctree::IsLastBrick(const UINT64VECTOR4& vBrickCoords) const {
-  const UINT64VECTOR3 vLODSize = m_vLODTable[size_t(vBrickCoords.w)].m_iLODBrickCount;
+Core::Math::VECTOR3<bool> ExtendedOctree::IsLastBrick(const Core::Math::Vec4ui64& vBrickCoords) const {
+  const Core::Math::Vec3ui64 vLODSize = m_vLODTable[size_t(vBrickCoords.w)].m_iLODBrickCount;
 
-  const VECTOR3<bool> res( vBrickCoords.x >= vLODSize.x-1,
+  const Core::Math::VECTOR3<bool> res( vBrickCoords.x >= vLODSize.x-1,
                            vBrickCoords.y >= vLODSize.y-1,
                            vBrickCoords.z >= vLODSize.z-1);
   return res;
@@ -391,8 +384,8 @@ VECTOR3<bool> ExtendedOctree::IsLastBrick(const UINT64VECTOR4& vBrickCoords) con
  Computes the 1D index from a coordinate vector this is the offset introduced
  by the LoD level + the index within that LoD 
 */ 
-uint64_t ExtendedOctree::BrickCoordsToIndex(const UINT64VECTOR4& vBrickCoords) const {
-  const UINT64VECTOR3 vLODSize = m_vLODTable[size_t(vBrickCoords.w)].m_iLODBrickCount;
+uint64_t ExtendedOctree::BrickCoordsToIndex(const Core::Math::Vec4ui64& vBrickCoords) const {
+  const Core::Math::Vec3ui64 vLODSize = m_vLODTable[size_t(vBrickCoords.w)].m_iLODBrickCount;
 
   return m_vLODTable[size_t(vBrickCoords.w)].m_iLoDOffset + 
          vBrickCoords.x + 
@@ -406,8 +399,8 @@ uint64_t ExtendedOctree::BrickCoordsToIndex(const UINT64VECTOR4& vBrickCoords) c
  
  Computes the 4D coordinates for the 1D ToC index 
 */ 
-UINT64VECTOR4 ExtendedOctree::IndexToBrickCoords(uint64_t index) const {
-  UINT64VECTOR4 vBrickCoords(0,0,0,0);
+Core::Math::Vec4ui64 ExtendedOctree::IndexToBrickCoords(uint64_t index) const {
+  Core::Math::Vec4ui64 vBrickCoords(0,0,0,0);
 
   for (size_t i = 0;i<m_vLODTable.size();++i) {
     if (m_vLODTable[i].m_iLoDOffset <= index) {
@@ -418,7 +411,7 @@ UINT64VECTOR4 ExtendedOctree::IndexToBrickCoords(uint64_t index) const {
   }
   index -= m_vLODTable[size_t(vBrickCoords.w)].m_iLoDOffset;
 
-  UINT64VECTOR3 brickCount = m_vLODTable[size_t(vBrickCoords.w)].m_iLODBrickCount;
+  Core::Math::Vec3ui64 brickCount = m_vLODTable[size_t(vBrickCoords.w)].m_iLODBrickCount;
   vBrickCoords.x = index % brickCount.x;
   vBrickCoords.y = (index / brickCount.x) % brickCount.y;
   vBrickCoords.z = index / (brickCount.x*brickCount.y);
@@ -432,11 +425,11 @@ UINT64VECTOR4 ExtendedOctree::IndexToBrickCoords(uint64_t index) const {
  in read write, change the few bytes in the header and then reopen the in
  read only again
 */ 
-bool ExtendedOctree::SetGlobalAspect(const DOUBLEVECTOR3& vVolumeAspect) {
+bool ExtendedOctree::SetGlobalAspect(const Core::Math::Vec3d& vVolumeAspect) {
   bool bTreeWasInRWModeAlready = IsInRWMode();
   if (!bTreeWasInRWModeAlready && !ReOpenRW()) return false;
 
-  const bool isBE = EndianConvert::IsBigEndian();
+  const bool isBE = Core::Math::EndianConvert::IsBigEndian();
 
   // change aspect ratio entries
   m_vVolumeAspect = vVolumeAspect;
@@ -507,7 +500,7 @@ void ExtendedOctree::WriteHeader(LargeRAWFile_ptr pLargeRAWFile,
   assert(m_iBrickSize.volume() > 0);
 
   // write global header
-  const bool isBE = EndianConvert::IsBigEndian();
+  const bool isBE = Core::Math::EndianConvert::IsBigEndian();
   m_pLargeRAWFile->SeekPos(m_iOffset);
   m_pLargeRAWFile->WriteData(uint32_t(m_eComponentType), isBE);
   m_pLargeRAWFile->WriteData(m_iComponentCount, isBE);

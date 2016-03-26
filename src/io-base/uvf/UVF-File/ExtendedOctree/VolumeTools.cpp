@@ -7,11 +7,11 @@
 
 using namespace VolumeTools;
 
-Layout::Layout(UINT64VECTOR3 const& vDomainSize)
+Layout::Layout(Core::Math::Vec3ui64 const& vDomainSize)
   : m_vDomainSize(vDomainSize)
 {}
 
-bool Layout::ExceedsDomain(UINT64VECTOR3 const& vSpatialPosition)
+bool Layout::ExceedsDomain(Core::Math::Vec3ui64 const& vSpatialPosition)
 {
   assert(vSpatialPosition.x < m_vDomainSize.x);
   assert(vSpatialPosition.y < m_vDomainSize.y);
@@ -25,20 +25,20 @@ bool Layout::ExceedsDomain(UINT64VECTOR3 const& vSpatialPosition)
   return false;
 }
 
-ScanlineLayout::ScanlineLayout(UINT64VECTOR3 const& vDomainSize)
+ScanlineLayout::ScanlineLayout(Core::Math::Vec3ui64 const& vDomainSize)
   : Layout(vDomainSize)
 {}
 
-uint64_t ScanlineLayout::GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition)
+uint64_t ScanlineLayout::GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition)
 {
   return vSpatialPosition.x + 
          vSpatialPosition.y * m_vDomainSize.x + 
          vSpatialPosition.z * m_vDomainSize.x * m_vDomainSize.y;
 }
 
-UINT64VECTOR3 ScanlineLayout::GetSpatialPosition(uint64_t iLinearIndex)
+Core::Math::Vec3ui64 ScanlineLayout::GetSpatialPosition(uint64_t iLinearIndex)
 {
-  UINT64VECTOR3 vPosition(0, 0, 0);
+  Core::Math::Vec3ui64 vPosition(0, 0, 0);
 
   vPosition.x = iLinearIndex % m_vDomainSize.x;
   vPosition.y = (iLinearIndex / m_vDomainSize.x) % m_vDomainSize.y;
@@ -47,11 +47,11 @@ UINT64VECTOR3 ScanlineLayout::GetSpatialPosition(uint64_t iLinearIndex)
   return vPosition;
 }
 
-MortonLayout::MortonLayout(UINT64VECTOR3 const& vDomainSize)
+MortonLayout::MortonLayout(Core::Math::Vec3ui64 const& vDomainSize)
   : Layout(vDomainSize)
 {}
 
-uint64_t MortonLayout::GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition)
+uint64_t MortonLayout::GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition)
 {
   if (ExceedsDomain(vSpatialPosition))
     throw std::runtime_error("spatial position out of domain bounds");
@@ -75,14 +75,14 @@ uint64_t MortonLayout::GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition)
   return iIndex;
 }
 
-UINT64VECTOR3 MortonLayout::GetSpatialPosition(uint64_t iLinearIndex)
+Core::Math::Vec3ui64 MortonLayout::GetSpatialPosition(uint64_t iLinearIndex)
 {
   // TODO: check if index is too large
 
   // we use the z-order curve, so we have to deinterlace the bits
   // of the 1d linear index to obtain the 3d spatial position
   uint64_t const iIterations = (sizeof(uint64_t) * 8) / 3;
-  UINT64VECTOR3 vPosition(0, 0, 0);
+  Core::Math::Vec3ui64 vPosition(0, 0, 0);
 
   for (uint64_t i = 0u; i < iIterations; ++i)
   {
@@ -99,12 +99,12 @@ UINT64VECTOR3 MortonLayout::GetSpatialPosition(uint64_t iLinearIndex)
   return vPosition;
 }
 
-HilbertLayout::HilbertLayout(UINT64VECTOR3 const& vDomainSize)
+HilbertLayout::HilbertLayout(Core::Math::Vec3ui64 const& vDomainSize)
   : Layout(vDomainSize)
   , m_iBits(size_t(ceil(log(double(vDomainSize.maxVal()))/log(2.0))))
 {}
 
-uint64_t HilbertLayout::GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition)
+uint64_t HilbertLayout::GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition)
 {
   if (ExceedsDomain(vSpatialPosition))
     throw std::runtime_error("spatial position out of domain bounds");
@@ -117,11 +117,11 @@ uint64_t HilbertLayout::GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition)
   return Hilbert::Encode(m_iBits, v);
 }
 
-UINT64VECTOR3 HilbertLayout::GetSpatialPosition(uint64_t iLinearIndex)
+Core::Math::Vec3ui64 HilbertLayout::GetSpatialPosition(uint64_t iLinearIndex)
 {
   std::array<uint64_t, 3> v = {{0, 0, 0}};
   Hilbert::Decode(m_iBits, iLinearIndex, v);
-  return UINT64VECTOR3(v[0], v[1], v[2]);
+  return Core::Math::Vec3ui64(v[0], v[1], v[2]);
 }
 
 namespace {
@@ -135,7 +135,7 @@ namespace {
 
 } // anonymous namespace
 
-RandomLayout::RandomLayout(UINT64VECTOR3 const& vDomainSize)
+RandomLayout::RandomLayout(Core::Math::Vec3ui64 const& vDomainSize)
   : ScanlineLayout(vDomainSize)
   , m_vLookUp((size_t)vDomainSize.volume())
 {
@@ -143,21 +143,21 @@ RandomLayout::RandomLayout(UINT64VECTOR3 const& vDomainSize)
   std::random_shuffle(m_vLookUp.begin(), m_vLookUp.end());
 }
 
-uint64_t RandomLayout::GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition)
+uint64_t RandomLayout::GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition)
 {
   uint64_t const iIndex = ScanlineLayout::GetLinearIndex(vSpatialPosition);
   assert(iIndex < (uint64_t)m_vLookUp.size());
   return m_vLookUp[(size_t)iIndex];
 }
 
-UINT64VECTOR3 RandomLayout::GetSpatialPosition(uint64_t iLinearIndex)
+Core::Math::Vec3ui64 RandomLayout::GetSpatialPosition(uint64_t iLinearIndex)
 {
   assert(iLinearIndex < (uint64_t)m_vLookUp.size());
   uint64_t const iIndex = m_vLookUp[(size_t)iLinearIndex];
   return ScanlineLayout::GetSpatialPosition(iIndex);
 }
 
-UINTVECTOR2 VolumeTools::Fit1DIndexTo2DArray(uint64_t iMax1DIndex,
+Core::Math::Vec2ui VolumeTools::Fit1DIndexTo2DArray(uint64_t iMax1DIndex,
                                              uint32_t iMax2DArraySize) {
   // check if 1D index exceeds given 2D array
   if (iMax1DIndex > uint64_t(iMax2DArraySize) * uint64_t(iMax2DArraySize)) {
@@ -169,10 +169,10 @@ UINTVECTOR2 VolumeTools::Fit1DIndexTo2DArray(uint64_t iMax1DIndex,
 
   // 1D index fits into a row
   if (iMax1DIndex <= uint64_t(iMax2DArraySize))
-    return UINTVECTOR2(uint32_t(iMax1DIndex), 1);
+    return Core::Math::Vec2ui(uint32_t(iMax1DIndex), 1);
 
   // fit 1D index into the smallest possible rectangle
-  UINTVECTOR2 v2DArraySize;
+  Core::Math::Vec2ui v2DArraySize;
   v2DArraySize.x = uint32_t(std::ceil(std::sqrt(double(iMax1DIndex))));
   v2DArraySize.y = uint32_t(std::ceil(double(iMax1DIndex)/double(v2DArraySize.x)));
 
@@ -187,9 +187,9 @@ UINTVECTOR2 VolumeTools::Fit1DIndexTo2DArray(uint64_t iMax1DIndex,
  brick in-place.
  */
 void VolumeTools::RemoveBoundary(uint8_t *pBrickData, 
-                                 const UINT64VECTOR3& vBrickSize, 
+                                 const Core::Math::Vec3ui64& vBrickSize, 
                                  size_t iVoxelSize, uint32_t iRemove) {
-  const UINT64VECTOR3 vTargetBrickSize = vBrickSize-iRemove*2;
+  const Core::Math::Vec3ui64 vTargetBrickSize = vBrickSize-iRemove*2;
   
   for (uint32_t z = 0;z<vBrickSize.z-2*iRemove;++z) {
     for (uint32_t y = 0;y<vBrickSize.y-2*iRemove;++y) {
@@ -208,9 +208,9 @@ void VolumeTools::RemoveBoundary(uint8_t *pBrickData,
 }
 
 void VolumeTools::Atalasify(size_t iSizeInBytes,
-                            const UINTVECTOR3& vMaxBrickSize,
-                            const UINT64VECTOR3& vCurrBrickSize,
-                            const UINTVECTOR2& atlasSize,
+                            const Core::Math::Vec3ui& vMaxBrickSize,
+                            const Core::Math::Vec3ui64& vCurrBrickSize,
+                            const Core::Math::Vec2ui& atlasSize,
                             uint8_t* pDataSource,
                             uint8_t* pDataTarget) {
   
@@ -244,9 +244,9 @@ void VolumeTools::Atalasify(size_t iSizeInBytes,
 
 
 void VolumeTools::DeAtalasify(size_t iSizeInBytes,
-                              const UINTVECTOR2& vCurrentAtlasSize,
-                              const UINTVECTOR3& vMaxBrickSize,
-                              const UINT64VECTOR3& vCurrBrickSize,
+                              const Core::Math::Vec2ui& vCurrentAtlasSize,
+                              const Core::Math::Vec3ui& vMaxBrickSize,
+                              const Core::Math::Vec3ui64& vCurrBrickSize,
                               uint8_t* pDataSource,
                               uint8_t* pDataTarget) {
   

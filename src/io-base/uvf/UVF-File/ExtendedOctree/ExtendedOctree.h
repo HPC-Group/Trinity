@@ -27,14 +27,14 @@
 #ifndef EXTENDEDOCTREE_H
 #define EXTENDEDOCTREE_H
 
-#include "Basics/StdDefines.h"
+#include "silverbullet/base/StdDefines.h"
 
 #include <memory>
 #include <array>
 
-#include "Basics/LargeRAWFile.h"
+#include "../LargeRAWFile.h"
 // for the small fixed size vectors
-#include "Basics/Vectors.h"
+#include "silverbullet/math/Vectors.h"
 
 /*! \brief This structure holds information about a specific level in the tree
  *
@@ -47,12 +47,12 @@ struct LODInfo {
   /// the aspect ratio of all bricks in this LoD, does not
   /// take the overall aspect into account just the aspect
   /// ratio changes that happen during the downsampling
-  DOUBLEVECTOR3 m_vAspect;
+  Core::Math::Vec3d m_vAspect;
   /// size of the entire LoD in pixels, i.e. for LoD 0 this
   /// is equal to the size of the original dataset
-  UINT64VECTOR3 m_iLODPixelSize;
+  Core::Math::Vec3ui64 m_iLODPixelSize;
   /// number of bricks in x, y, and z in this LoD
-  UINT64VECTOR3 m_iLODBrickCount;
+  Core::Math::Vec3ui64 m_iLODBrickCount;
   /// sum of all m_iLODBrickCount.volume() of the all the
   /// lower LoD, e.g. for LoD with index 2 this would be
   /// lod[0].m_iLODBrickCount.volume() + lod[1].m_iLODBrickCount.volume()
@@ -108,7 +108,7 @@ struct TOCEntry {
   /// then this variable holds the size of a 2D texture
   /// to store the atlas, otherwise at least one component
   /// is equal to zero
-  UINTVECTOR2 m_iAtlasSize;
+  Core::Math::Vec2ui m_iAtlasSize;
 
   // Returns the size of this struct it is basically the
   // the sum of sizeof calls to all members as that may
@@ -119,7 +119,7 @@ struct TOCEntry {
            sizeof(uint64_t/*m_iLength*/) +
            sizeof(uint32_t /*m_eCompression*/) +
            sizeof(uint64_t /*m_iValidLength*/) +
-           sizeof(UINTVECTOR2 /*m_iAtlasSize*/);
+           sizeof(Core::Math::Vec2ui /*m_iAtlasSize*/);
   }
 };
 
@@ -209,7 +209,7 @@ public:
     Returns the brick size limit
     @return the brick size limit
   */
-  UINTVECTOR3 GetMaxBrickSize() const { return UINTVECTOR3(m_iBrickSize); }
+  Core::Math::Vec3ui GetMaxBrickSize() const { return Core::Math::Vec3ui(m_iBrickSize); }
 
   /**
     Returns the number of bricks in a given LoD level. The result of this
@@ -218,7 +218,7 @@ public:
     @param iLoD index of the level to query (0 is highest resolution)
     @return the number of bricks in a given LoD level
   */
-  UINT64VECTOR3 GetBrickCount(uint64_t iLOD) const;
+  Core::Math::Vec3ui64 GetBrickCount(uint64_t iLOD) const;
 
   /**
     Returns the size in voxels of a given LoD level. The result of this
@@ -226,14 +226,14 @@ public:
     @param iLoD index of the level to query (0 is highest resolution)
     @return the number of voxels in a given LoD level
   */
-  UINT64VECTOR3 GetLoDSize(uint64_t iLOD) const;
+  Core::Math::Vec3ui64 GetLoDSize(uint64_t iLOD) const;
 
   /**
     Returns the size of a specific brick
     @param vBrickCoords coordinates of a brick: x,y,z are the spacial coordinates, w is the LoD level
     @return the size of a specific brick
   */
-  UINT64VECTOR3 ComputeBrickSize(const UINT64VECTOR4& vBrickCoords) const;
+  Core::Math::Vec3ui64 ComputeBrickSize(const Core::Math::Vec4ui64& vBrickCoords) const;
 
 
   /**
@@ -241,7 +241,7 @@ public:
     @param vBrickCoords coordinates of a brick: x,y,z are the spacial coordinates, w is the LoD level
     @return the ToC Entry of a brick
   */
-  const TOCEntry& GetBrickToCData(const UINT64VECTOR4& vBrickCoords) const;
+  const TOCEntry& GetBrickToCData(const Core::Math::Vec4ui64& vBrickCoords) const;
 
   /**
     Returns the ToC Entry of a brick
@@ -255,27 +255,27 @@ public:
     @param vBrickCoords coordinates of a brick: x,y,z are the spacial coordinates, w is the LoD level
     @return the aspect ration of a specific brick
   */
-  DOUBLEVECTOR3 GetBrickAspect(const UINT64VECTOR4& vBrickCoords) const;
+  Core::Math::Vec3d GetBrickAspect(const Core::Math::Vec4ui64& vBrickCoords) const;
 
   /**
     use to get the raw (uncompressed) data of a specific brick
     @param pData the raw (uncompressed) data of a specific brick, the user has to make sure pData is big enough to hold the data
     @param vBrickCoords coordinates of a brick: x,y,z are the spacial coordinates, w is the LoD level
   */
-  void GetBrickData(uint8_t* pData, const UINT64VECTOR4& vBrickCoords) const;
+  void GetBrickData(uint8_t* pData, const Core::Math::Vec4ui64& vBrickCoords) const;
 
 
   /**
     Returns the global aspect ratio of the volume
     @return the global aspect ratio of the volume
   */
-  DOUBLEVECTOR3 GetGlobalAspect() const {return m_vVolumeAspect;}
+  Core::Math::Vec3d GetGlobalAspect() const {return m_vVolumeAspect;}
 
   /**
     Use to set the global aspect ratio of the volume, will write this into the header
     @param vVolumeAspect the new aspect ratio of the volume
   */
-  bool SetGlobalAspect(const DOUBLEVECTOR3& vVolumeAspect);
+  bool SetGlobalAspect(const Core::Math::Vec3d& vVolumeAspect);
 
   /**
     Returns the size (in bytes) of the component type e.g. 4 for CT_INT64
@@ -299,14 +299,14 @@ public:
     @param vBrickCoords coordinates of a brick: x,y,z are the spacial coordinates, w is the LoD level
     @return the 1D index to be used for the ToC
   */
-  uint64_t BrickCoordsToIndex(const UINT64VECTOR4& vBrickCoords) const;
+  uint64_t BrickCoordsToIndex(const Core::Math::Vec4ui64& vBrickCoords) const;
 
   /**
     Converts a 1D index into 4-D brick coordinates
     @param  the 1D index as used for the ToC
     @return vBrickCoords coordinates of a brick: x,y,z are the spacial coordinates, w is the LoD level
   */
-  UINT64VECTOR4 IndexToBrickCoords(uint64_t index) const;
+  Core::Math::Vec4ui64 IndexToBrickCoords(uint64_t index) const;
 
 private:
   /// type of the volume components (e.g. byte, int, float) stored as a COMPONENT_TYPE enum
@@ -321,13 +321,13 @@ private:
   bool m_bPrecomputedNormals;
 
   /// the size (in voxels) of the volume represented by the hierarchy (= the size of LoD level 0)
-  UINT64VECTOR3 m_vVolumeSize;
+  Core::Math::Vec3ui64 m_vVolumeSize;
 
   /// aspect ratio of the volume
-  DOUBLEVECTOR3 m_vVolumeAspect;
+  Core::Math::Vec3d m_vVolumeAspect;
 
   /// maximum brick size i.e. the brick size of a non-boundary brick
-  UINT64VECTOR3 m_iBrickSize;
+  Core::Math::Vec3ui64 m_iBrickSize;
 
   /// brick overlap
   uint32_t m_iOverlap;
@@ -359,7 +359,7 @@ private:
     @param vBrickCoords coordinates of a brick: x,y,z are the spacial coordinates, w is the LoD level
     @return whether a brick is the last brick in a row, column, or slice
   */
-  VECTOR3<bool> IsLastBrick(const UINT64VECTOR4& vBrickCoords) const;
+  Core::Math::VECTOR3<bool> IsLastBrick(const Core::Math::Vec4ui64& vBrickCoords) const;
 
   /**
     Computes the LoD Table from the basic volume information (e.g. size, brick-size, overlap)

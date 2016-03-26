@@ -1,12 +1,11 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
-#include "Basics/SysTools.h"
-#include "Basics/nonstd.h"
+#include "../nonstd.h"
 #include "BzlibCompression.h"
 
 extern "C" {
-#include "IO/3rdParty/bzip2/bzlib.h"
+#include "ext/bzip2/bzlib.h"
 }
 
 namespace {

@@ -31,7 +31,7 @@
 #include <functional>
 #include "ExtendedOctree.h"
 #include "VolumeTools.h"
-#include "Basics/MathTools.h"
+#include "silverbullet/math/MathTools.h"
 
 /*! \brief Stores brick statistics such as the minimum and maximum values
  */
@@ -54,7 +54,6 @@ public:
                                 maxScalar != -std::numeric_limits<T>::max(); }
 };
 
-class AbstrDebugOut;
 class ProgressTimer;
 
 /// Vector to store statistics of each brick
@@ -74,9 +73,8 @@ public:
     @param iMemLimit the amount of memory in bytes the converter is allowed to use for caching
     @param progress debug channel to use for progress information
   */
-  ExtendedOctreeConverter(const UINT64VECTOR3& vBrickSize,
-                          uint32_t iOverlap, uint64_t iMemLimit,
-                          AbstrDebugOut& progress);
+  ExtendedOctreeConverter(const Core::Math::Vec3ui64& vBrickSize,
+                          uint32_t iOverlap, uint64_t iMemLimit);
 
   virtual ~ExtendedOctreeConverter();
 
@@ -102,8 +100,8 @@ public:
   */
   bool Convert(const std::string& filename, uint64_t iOffset,
                ExtendedOctree::COMPONENT_TYPE eComponentType,
-               uint64_t iComponentCount, const UINT64VECTOR3& vVolumeSize,
-               const DOUBLEVECTOR3& vVolumeAspect,
+               uint64_t iComponentCount, const Core::Math::Vec3ui64& vVolumeSize,
+               const Core::Math::Vec3d& vVolumeAspect,
                const std::string& targetFile, uint64_t iOutOffset,
                BrickStatVec* stats,
                COMPRESSION_TYPE compression,
@@ -134,8 +132,8 @@ public:
   */
   bool Convert(LargeRAWFile_ptr pLargeRAWFile, uint64_t iOffset,
                ExtendedOctree::COMPONENT_TYPE eComponentType,
-               uint64_t iComponentCount, const UINT64VECTOR3& vVolumeSize,
-               const DOUBLEVECTOR3& vVolumeAspect,
+               uint64_t iComponentCount, const Core::Math::Vec3ui64& vVolumeSize,
+               const Core::Math::Vec3d& vVolumeAspect,
                LargeRAWFile_ptr pLargeRAWOutFile, uint64_t iOutOffset,
                BrickStatVec* stats,
                COMPRESSION_TYPE compression,
@@ -170,8 +168,8 @@ public:
    @param pData pointer to mem to hold atlantified data
    */
   static void Atalasify(const ExtendedOctree &tree,
-                         const UINT64VECTOR4& vBrickCoords,
-                         const UINTVECTOR2& atlasSize,
+                         const Core::Math::Vec4ui64& vBrickCoords,
+                         const Core::Math::Vec2ui& atlasSize,
                          uint8_t* pData);
 
   /**
@@ -183,7 +181,7 @@ public:
    */
    static void Atalasify(const ExtendedOctree &tree,
                           size_t index,
-                          const UINTVECTOR2& atlasSize,
+                          const Core::Math::Vec2ui& atlasSize,
                           uint8_t* pData);
 
   /**
@@ -195,7 +193,7 @@ public:
    @return true iff the conversion was successful
   */
   static bool Atalasify(ExtendedOctree &tree,                         
-                         const UINTVECTOR2& atlasSize);
+                         const Core::Math::Vec2ui& atlasSize);
 
   /**
    Converts all bricks in a tree into atlantified representation
@@ -207,7 +205,7 @@ public:
    @return true iff the conversion was successful
    */
   static bool Atalasify(ExtendedOctree &tree,
-                        const UINTVECTOR2& atlasSize,
+                        const Core::Math::Vec2ui& atlasSize,
                         LargeRAWFile_ptr pLargeRAWFile,
                         uint64_t iOffset);
   
@@ -218,7 +216,7 @@ public:
    @param pData pointer to mem to hold simple 3D data
    */
   static void DeAtalasify(const ExtendedOctree &tree,
-                           const UINT64VECTOR4& vBrickCoords,
+                           const Core::Math::Vec4ui64& vBrickCoords,
                            uint8_t* pData);
 
   /**
@@ -278,8 +276,8 @@ public:
    */
   static bool ApplyFunction(const ExtendedOctree &tree, uint64_t iLODLevel,
                             bool (*brickFunc)(void* pData,
-                                              const UINT64VECTOR3& vBrickSize,
-                                              const UINT64VECTOR3& vBrickOffset,
+                                              const Core::Math::Vec3ui64& vBrickSize,
+                                              const Core::Math::Vec3ui64& vBrickOffset,
                                               void* pUserContext),
                             void* pUserContext, uint32_t iOverlap=0);
 
@@ -371,7 +369,7 @@ private:
 
   /// the maximum brick size allowed (including overlap) e.g. the
   /// usable size is in x is m_vBrickSize.x-2*m_iOverlap
-  UINT64VECTOR3 m_vBrickSize;
+  Core::Math::Vec3ui64 m_vBrickSize;
 
   /// the brick overlap
   uint32_t m_iOverlap;
@@ -394,9 +392,6 @@ private:
 
   /// if not NULL then the statistics for each brick are stored in this vector
   BrickStatVec* m_pBrickStatVec;
-
-  /// where to write progress information
-  AbstrDebugOut& m_Progress;
 
   /// Computes max min statistics for each brick and rewrites 
   /// it using compression, if desired.
@@ -435,7 +430,7 @@ private:
                    bool bCopyYe, 
                    bool bCopyZe, 
                    uint64_t iVoxelSize,
-                   const UINT64VECTOR3& vBrickSize);
+                   const Core::Math::Vec3ui64& vBrickSize);
 
 
   /**
@@ -451,12 +446,12 @@ private:
     @param voxelSize the size (in bytes) of a brick voxel (i.e. component-size*component-count)
   */
   void CopyBrickToBrick(std::vector<uint8_t>& vSourceData,
-                        const UINT64VECTOR3& sourceBrickSize,
+                        const Core::Math::Vec3ui64& sourceBrickSize,
                         std::vector<uint8_t>& vTargetData,
-                        const UINT64VECTOR3& targetBrickSize,
-                        const UINT64VECTOR3& sourceOffset,
-                        const UINT64VECTOR3& targetOffset,
-                        const UINT64VECTOR3& regionSize,
+                        const Core::Math::Vec3ui64& targetBrickSize,
+                        const Core::Math::Vec3ui64& sourceOffset,
+                        const Core::Math::Vec3ui64& targetOffset,
+                        const Core::Math::Vec3ui64& regionSize,
                         size_t voxelSize);
 
   /**
@@ -471,7 +466,7 @@ private:
   */
   void GetInputBrick(std::vector<uint8_t>& vData,
                      ExtendedOctree &tree, LargeRAWFile_ptr pLargeRAWFileIn,
-                     uint64_t iInOffset, const UINT64VECTOR4& coords,
+                     uint64_t iInOffset, const Core::Math::Vec4ui64& coords,
                      bool bClampToEdge);
 
   /**
@@ -507,7 +502,7 @@ private:
     @param vBrickCoords the coordinates (x,y,z, LoD) of the requested brick
   */
   void GetBrick(uint8_t* pData, ExtendedOctree &tree,
-                const UINT64VECTOR4& vBrickCoords);
+                const Core::Math::Vec4ui64& vBrickCoords);
 
   /**
     Loads a specific brick from disk (or cache) into pData
@@ -527,7 +522,7 @@ private:
     @param bForceWrite forces the brick to be flushed to disk. if compression is enabled this performs the compression
   */
   void SetBrick(uint8_t* pData, ExtendedOctree &tree,
-                const UINT64VECTOR4& vBrickCoords, bool bForceWrite=false);
+                const Core::Math::Vec4ui64& vBrickCoords, bool bForceWrite=false);
 
   /**
     Stores a specific brick to disk (or cache) from pData
@@ -597,10 +592,10 @@ private:
     @param targetOffset coordinates were to place the down-sampled data in the target brick
   */
   template<class T, bool bComputeMedian> void DownsampleBricktoBrick(ExtendedOctree &tree, T* pData,
-                                                const UINT64VECTOR3& targetSize,
+                                                const Core::Math::Vec3ui64& targetSize,
                                                 T* pSourceData,
-                                                const UINT64VECTOR4& sourceCoords,
-                                                const UINT64VECTOR3& targetOffset);
+                                                const Core::Math::Vec4ui64& sourceCoords,
+                                                const Core::Math::Vec3ui64& targetOffset);
 
   /**
     This function down-samples up to eight bricks into a single brick.
@@ -615,7 +610,7 @@ private:
   */
   template<class T, bool bComputeMedian> void DownsampleBrick(ExtendedOctree &tree,
                                          bool bClampToEdge,
-                                         const UINT64VECTOR4& vBrickCoords,
+                                         const Core::Math::Vec4ui64& vBrickCoords,
                                          T* pData, T* pSourceData);
 
   /**

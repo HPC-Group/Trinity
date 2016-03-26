@@ -400,7 +400,7 @@ void Histogram2DDataBlock::ComputeTemplate(const TOCBlock* source, double normal
       float progress = 0.5f*float(bz)/float(bricksInSourceLevel.z);
       
       LINFO("Computing 2D Histogram "
-            << progress * 100.0f
+            << (progress * 100.0f)
             << "% ("
             << timer.GetProgressMessage(progress).c_str()
             << ")");
@@ -444,7 +444,7 @@ void Histogram2DDataBlock::ComputeTemplate(const TOCBlock* source, double normal
         }
         float progress = 0.5f+0.5f*float(bz)/float(bricksInSourceLevel.z);
         LINFO("Computing 2D Histogram "
-              << progress * 100.0f
+              << (progress * 100.0f)
               << "% ("
               << timer.GetProgressMessage(progress).c_str()
               << ")");

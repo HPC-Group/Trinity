@@ -3,10 +3,10 @@
 #ifndef VOLUMETOOLS_H
 #define VOLUMETOOLS_H
 
-#include "Basics/StdDefines.h"
+#include "silverbullet/base//StdDefines.h"
 
 // for the small fixed size vectors
-#include "Basics/Vectors.h"
+#include "silverbullet/math/Vectors.h"
 
 #include <algorithm>
 
@@ -19,7 +19,7 @@ namespace VolumeTools {
       @param vDomainSize spatial 3D domain size where a linear 1D index
       @                  should be defined in
       */
-    Layout(UINT64VECTOR3 const& vDomainSize);
+    Layout(Core::Math::Vec3ui64 const& vDomainSize);
 
     /**
       Convert spatial 3D brick position to linear index (position)
@@ -27,14 +27,14 @@ namespace VolumeTools {
       @return linear index
       @throws std::runtime_error if vSpatialPosition exceeds domain boundaries
       */
-    virtual uint64_t GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition) = 0;
+    virtual uint64_t GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition) = 0;
 
     /**
       Convert linear index (position) to spatial 3D brick position
       @param iLinearIndex linear index
       @return spatial 3D position
       */
-    virtual UINT64VECTOR3 GetSpatialPosition(uint64_t iLinearIndex) = 0;
+    virtual Core::Math::Vec3ui64 GetSpatialPosition(uint64_t iLinearIndex) = 0;
 
   protected:
     /**
@@ -42,16 +42,16 @@ namespace VolumeTools {
       @param vSpatialPosition spatial 3D position
       @return true if given spatial position is not part of the domain
       */
-    inline bool ExceedsDomain(UINT64VECTOR3 const& vSpatialPosition);
+    inline bool ExceedsDomain(Core::Math::Vec3ui64 const& vSpatialPosition);
 
-    UINT64VECTOR3 m_vDomainSize;
+    Core::Math::Vec3ui64 m_vDomainSize;
   };
 
   class ScanlineLayout : public Layout {
   public:
-    ScanlineLayout(UINT64VECTOR3 const& vDomainSize);
-    uint64_t GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition);
-    UINT64VECTOR3 GetSpatialPosition(uint64_t iLinearIndex);
+    ScanlineLayout(Core::Math::Vec3ui64 const& vDomainSize);
+    uint64_t GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition);
+    Core::Math::Vec3ui64 GetSpatialPosition(uint64_t iLinearIndex);
   };
 
   // NOTICE: The current implementation works for cubic power of two domains.
@@ -64,9 +64,9 @@ namespace VolumeTools {
   //         http://comments.gmane.org/gmane.games.devel.algorithms/20013
   class MortonLayout : public Layout {
   public:
-    MortonLayout(UINT64VECTOR3 const& vDomainSize);
-    uint64_t GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition);
-    UINT64VECTOR3 GetSpatialPosition(uint64_t iLinearIndex);
+    MortonLayout(Core::Math::Vec3ui64 const& vDomainSize);
+    uint64_t GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition);
+    Core::Math::Vec3ui64 GetSpatialPosition(uint64_t iLinearIndex);
   };
 
   // NOTICE: The current implementation works for cubic power of two domains.
@@ -80,18 +80,18 @@ namespace VolumeTools {
   //         http://web.cs.dal.ca/~chamilto/hilbert/index.html
   class HilbertLayout : public Layout {
   public:
-    HilbertLayout(UINT64VECTOR3 const& vDomainSize);
-    uint64_t GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition);
-    UINT64VECTOR3 GetSpatialPosition(uint64_t iLinearIndex);
+    HilbertLayout(Core::Math::Vec3ui64 const& vDomainSize);
+    uint64_t GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition);
+    Core::Math::Vec3ui64 GetSpatialPosition(uint64_t iLinearIndex);
   private:
     size_t m_iBits;
   };
 
   class RandomLayout : public ScanlineLayout {
   public:
-    RandomLayout(UINT64VECTOR3 const& vDomainSize);
-    uint64_t GetLinearIndex(UINT64VECTOR3 const& vSpatialPosition);
-    UINT64VECTOR3 GetSpatialPosition(uint64_t iLinearIndex);
+    RandomLayout(Core::Math::Vec3ui64 const& vDomainSize);
+    uint64_t GetLinearIndex(Core::Math::Vec3ui64 const& vSpatialPosition);
+    Core::Math::Vec3ui64 GetSpatialPosition(uint64_t iLinearIndex);
   private:
     std::vector<uint64_t> m_vLookUp;
   };
@@ -103,7 +103,7 @@ namespace VolumeTools {
     @return optimal 2d array size to host at least the given amount of numbers
     @throws std::runtime_error if 1d index does not fit given array
     */
-  UINTVECTOR2 Fit1DIndexTo2DArray(uint64_t iMax1DIndex,
+  Core::Math::Vec2ui Fit1DIndexTo2DArray(uint64_t iMax1DIndex,
                                   uint32_t iMax2DArraySize);
 
   /**
@@ -116,9 +116,9 @@ namespace VolumeTools {
     @param pDataTarget pointer to mem to hold atlantified data
     */
   void Atalasify(size_t iSizeInBytes,
-                 const UINTVECTOR3& vMaxBrickSize,
-                 const UINT64VECTOR3& vCurrBrickSize,
-                 const UINTVECTOR2& atlasSize,
+                 const Core::Math::Vec3ui& vMaxBrickSize,
+                 const Core::Math::Vec3ui64& vCurrBrickSize,
+                 const Core::Math::Vec2ui& atlasSize,
                  uint8_t* pDataSource,
                  uint8_t* pDataTarget);
 
@@ -132,9 +132,9 @@ namespace VolumeTools {
     @param pDataTarget pointer to mem to hold non-atlantified data
     */
   void DeAtalasify(size_t iSizeInBytes,
-                   const UINTVECTOR2& vCurrentAtlasSize,
-                   const UINTVECTOR3& vMaxBrickSize,
-                   const UINT64VECTOR3& vCurrBrickSize,
+                   const Core::Math::Vec2ui& vCurrentAtlasSize,
+                   const Core::Math::Vec3ui& vMaxBrickSize,
+                   const Core::Math::Vec3ui64& vCurrBrickSize,
                    uint8_t* pDataSource,
                    uint8_t* pDataTarget);
 
@@ -150,7 +150,7 @@ namespace VolumeTools {
     @param iRemove the number of voxels to be removed
   */
   void RemoveBoundary(uint8_t *pBrickData, 
-                      const UINT64VECTOR3& vBrickSize,
+                      const Core::Math::Vec3ui64& vBrickSize,
                       size_t iVoxelSize, 
                       uint32_t iRemove);
 
@@ -261,7 +261,7 @@ namespace VolumeTools {
                 F(e) + F(f) + F(g) + F(h)) / F(8));
   }
 
-  template<typename T> void ComputeGradientVolumeFloat(T* pSourceData, T* pTargetData, const UINT64VECTOR3& vVolumeSize) {
+  template<typename T> void ComputeGradientVolumeFloat(T* pSourceData, T* pTargetData, const Core::Math::Vec3ui64& vVolumeSize) {
     for (size_t z = 0;z<size_t(vVolumeSize[2]);z++) {
       for (size_t y = 0;y<size_t(vVolumeSize[1]);y++) {
         for (size_t x = 0;x<size_t(vVolumeSize[0]);x++) {
@@ -275,7 +275,7 @@ namespace VolumeTools {
           size_t iFront  = iCenter;
           size_t iBack   = iCenter;
 
-          VECTOR3<T> vScale(0,0,0);
+          Core::Math::VECTOR3<T> vScale(0,0,0);
 
           // handle borders
           if (x > 0)          {iLeft   = iCenter-1; vScale.x++;}
@@ -286,7 +286,7 @@ namespace VolumeTools {
           if (z < vVolumeSize[2]-1) {iBack   = iCenter+size_t(vVolumeSize[0])*size_t(vVolumeSize[1]);vScale.z++;}
 
           // compte central differences
-          VECTOR3<T> vGradient((pSourceData[iLeft] -pSourceData[iRight] )/vScale.x,
+          Core::Math::VECTOR3<T> vGradient((pSourceData[iLeft] -pSourceData[iRight] )/vScale.x,
                                (pSourceData[iTop]  -pSourceData[iBottom])/vScale.y,
                                (pSourceData[iFront]-pSourceData[iBack]  )/vScale.z);
           // safe normalize
@@ -302,7 +302,7 @@ namespace VolumeTools {
     }
   }
 
-  template<typename T> void ComputeGradientVolumeUInt(T* pSourceData, T* pTargetData, const UINT64VECTOR3& vVolumeSize) {
+  template<typename T> void ComputeGradientVolumeUInt(T* pSourceData, T* pTargetData, const Core::Math::Vec3ui64& vVolumeSize) {
     for (size_t z = 0;z<size_t(vVolumeSize[2]);z++) {
       for (size_t y = 0;y<size_t(vVolumeSize[1]);y++) {
         for (size_t x = 0;x<size_t(vVolumeSize[0]);x++) {
@@ -316,7 +316,7 @@ namespace VolumeTools {
           size_t iFront  = iCenter;
           size_t iBack   = iCenter;
 
-          DOUBLEVECTOR3 vScale(0,0,0);
+          Core::Math::Vec3d vScale(0,0,0);
 
           // handle borders
           if (x > 0)          {iLeft   = iCenter-1; vScale.x++;}
@@ -327,7 +327,7 @@ namespace VolumeTools {
           if (z < vVolumeSize[2]-1) {iBack   = iCenter+size_t(vVolumeSize[0])*size_t(vVolumeSize[1]);vScale.z++;}
 
           // compte central differences in double
-          DOUBLEVECTOR3 vGradient((double(pSourceData[iLeft]) -double(pSourceData[iRight]) )/(vScale.x),
+          Core::Math::Vec3d vGradient((double(pSourceData[iLeft]) -double(pSourceData[iRight]) )/(vScale.x),
                                   (double(pSourceData[iTop])  -double(pSourceData[iBottom]))/(vScale.y),
                                   (double(pSourceData[iFront])-double(pSourceData[iBack])  )/(vScale.z));
           // safe normalize
@@ -344,7 +344,7 @@ namespace VolumeTools {
     }
   }
 
-  template<typename T> void ComputeGradientVolumeInt(T* pSourceData, T* pTargetData, const UINT64VECTOR3& vVolumeSize) {
+  template<typename T> void ComputeGradientVolumeInt(T* pSourceData, T* pTargetData, const Core::Math::Vec3ui64& vVolumeSize) {
     for (size_t z = 0;z<size_t(vVolumeSize[2]);z++) {
       for (size_t y = 0;y<size_t(vVolumeSize[1]);y++) {
         for (size_t x = 0;x<size_t(vVolumeSize[0]);x++) {
@@ -358,7 +358,7 @@ namespace VolumeTools {
           size_t iFront  = iCenter;
           size_t iBack   = iCenter;
 
-          DOUBLEVECTOR3 vScale(0,0,0);
+          Core::Math::Vec3d vScale(0,0,0);
 
           // handle borders
           if (x > 0)          {iLeft   = iCenter-1; vScale.x++;}
@@ -369,7 +369,7 @@ namespace VolumeTools {
           if (z < vVolumeSize[2]-1) {iBack   = iCenter+size_t(vVolumeSize[0])*size_t(vVolumeSize[1]);vScale.z++;}
 
           // compute central differences in double
-          DOUBLEVECTOR3 vGradient((double(pSourceData[iLeft]) -double(pSourceData[iRight]) )/(vScale.x),
+          Core::Math::Vec3d vGradient((double(pSourceData[iLeft]) -double(pSourceData[iRight]) )/(vScale.x),
                                   (double(pSourceData[iTop])  -double(pSourceData[iBottom]))/(vScale.y),
                                   (double(pSourceData[iFront])-double(pSourceData[iBack])  )/(vScale.z));
           // safe normalize

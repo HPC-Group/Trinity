@@ -1,8 +1,8 @@
 #include <cassert>
 #include <stdexcept>
 #include <limits>
-#include "zlib.h"
-#include "Basics/nonstd.h"
+#include "ext/zlib/zlib.h"
+#include "../nonstd.h"
 #include "ZlibCompression.h"
 
 /** if you call 'inflateInit' on a stream, you must cause inflateEnd (even if

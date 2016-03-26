@@ -181,7 +181,7 @@ vector<unsigned char> UVF::ComputeChecksum(LargeRAWFile_ptr streamFile, Checksum
         
         float progress = float(i)/float(iBlocks-1);
         LINFO("Computing CRC32 Checksum "
-              << progress * 100.0f
+              << (progress * 100.0f)
               << "% ("
               << timer.GetProgressMessage(progress).c_str()
               << ")");
@@ -214,7 +214,7 @@ vector<unsigned char> UVF::ComputeChecksum(LargeRAWFile_ptr streamFile, Checksum
         
         float progress = 1.0f - float(iSize)/float(iFileSize);
         LINFO("Computing MD5 Checksum "
-              << progress * 100.0f
+              << (progress * 100.0f)
               << "% ("
               << timer.GetProgressMessage(progress).c_str()
               << ")");

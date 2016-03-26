@@ -1,12 +1,12 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
-#include "Basics/nonstd.h"
+#include "../nonstd.h"
 #include "LzmaCompression.h"
 
 extern "C" {
-#include "LzmaEnc.h"
-#include "LzmaDec.h"
+#include "ext/lzma/LzmaEnc.h"
+#include "ext/lzma/LzmaDec.h"
 }
 
 static void* AllocForLzma(void* /*p*/, size_t size) { return malloc(size); }

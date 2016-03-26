@@ -155,7 +155,7 @@ void Histogram1DDataBlock::ComputeTemplate(const TOCBlock* source,
     float progress = float(bz)/float(bricksInSourceLevel.z);
     
     LINFO("Computing 1D Histogram "
-          << progress * 100.0f
+          << (progress * 100.0f)
           << "% ("
           << timer.GetProgressMessage(progress).c_str()
           << ")");
