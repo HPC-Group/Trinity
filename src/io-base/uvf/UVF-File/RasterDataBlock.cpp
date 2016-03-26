@@ -4,15 +4,18 @@
 
 #include "RasterDataBlock.h"
 #include "MaxMinDataBlock.h"
-#include "DebugOut/AbstrDebugOut.h"
-#include <Basics/MathTools.h>
-#include <Basics/SysTools.h>
-#include "Controller/Controller.h"
-#include "Basics/nonstd.h"
 
-using namespace boost;
+#include "silverbullet/math/MathTools.h"
+#include "silverbullet/io/FileTools.h"
+
+#include "mocca/log/LogManager.h"
+
+#include "nonstd.h"
+
 using namespace std;
 using namespace UVFTables;
+
+using namespace Core::Math;
 
 //*************** Raster Data Block **********************
 
@@ -427,7 +430,7 @@ uint64_t RasterDataBlock::GetLODSize(vector<uint64_t>& vLODIndices) const {
     if(ulLODDecFactor[i] < 2)
       vReducedDomainSize[i]  = ulDomainSize[i];
     else
-      vReducedDomainSize[i]  = max<uint64_t>(1,uint64_t(floor(double(ulDomainSize[i]) / double(MathTools::Pow(ulLODDecFactor[i],vLODIndices[size_t(ulLODGroups[i])])))));
+      vReducedDomainSize[i]  = max<uint64_t>(1,uint64_t(floor(double(ulDomainSize[i]) / double(MathTools::powN(ulLODDecFactor[i],vLODIndices[size_t(ulLODGroups[i])])))));
   }
 
   ulSize = ComputeLODLevelSize(vReducedDomainSize);
@@ -447,7 +450,7 @@ uint64_t RasterDataBlock::GetLODSizeAndOffsetTables(vector<uint64_t>& vLODIndice
     if(ulLODDecFactor[i] < 2)
       vReducedDomainSize[i]  = ulDomainSize[i];
     else
-      vReducedDomainSize[i]  = max<uint64_t>(1,uint64_t(floor(double(ulDomainSize[i]) / double(MathTools::Pow(ulLODDecFactor[i],vLODIndices[size_t(ulLODGroups[i])])))));
+      vReducedDomainSize[i]  = max<uint64_t>(1,uint64_t(floor(double(ulDomainSize[i]) / double(MathTools::powN(ulLODDecFactor[i],vLODIndices[size_t(ulLODGroups[i])])))));
   }
 
   ulSize = ComputeLODLevelSizeAndOffsetTables(vReducedDomainSize, iLOD);
@@ -780,7 +783,7 @@ void RasterDataBlock::SubSample(LargeRAWFile_ptr pSourceFile,
                                   uint64_t iTarget,
                                   const void* pIn, void* pOut
                                 ),
-                                AbstrDebugOut* pDebugOut, uint64_t iLODLevel,
+                                uint64_t iLODLevel,
                                 uint64_t iMaxLODLevel)
 {
   pSourceFile->SeekStart();
@@ -841,17 +844,18 @@ void RasterDataBlock::SubSample(LargeRAWFile_ptr pSourceFile,
       } else {
         const uint64_t bytes = iTargetWindowSize * iElementSize;
         if(pTargetFile->WriteRAW(pTargetData, bytes) != bytes) {
-          pDebugOut->Error(_func_, "short write while subsampling!");
+          LERROR("short write while subsampling!");
           assert(1 == 0);
         }
       }
 
-      if(pDebugOut && (--uCount == 0)) {
+      if(--uCount == 0) {
         uCount = uItersPerUpdate;
         float fCurrentOutput = (100.0f*i)/float(iTargetElementCount);
-        pDebugOut->Message(_func_, "Generating data for lod level %i of %i:"
-                           "%6.2f%% completed", int(iLODLevel+1),
-                           int(iMaxLODLevel), fCurrentOutput);
+        
+        LINFO("Generating data for lod level " << int(iLODLevel+1) <<
+              " of " << int(iMaxLODLevel) << " (" << fCurrentOutput <<
+              " %) completed");
       }
 
       const uint64_t bytes = iSourceWindowSize*iElementSize;
@@ -860,14 +864,13 @@ void RasterDataBlock::SubSample(LargeRAWFile_ptr pSourceFile,
         uint64_t iFilePos = pSourceFile->GetPos();
         pSourceFile->SeekPos(iSourcePos*iElementSize);
         if(pSourceFile->ReadRAW(pSourceData, bytes) != bytes) {
-          pDebugOut->Error(_func_, "short read from '%s'",
-                           pSourceFile->GetFilename().c_str());
+          LERROR("short read from '" << pSourceFile->GetFilename().c_str() << "'");
         }
         pSourceFile->SeekPos(iFilePos);
       } else {
         pSourceFile->SeekPos(iSourcePos*iElementSize);
         if(pSourceFile->ReadRAW(pSourceData, bytes) != bytes) {
-          pDebugOut->Error(_func_, "short read from data");
+          LERROR("short read from data");
         }
       }
 
@@ -897,8 +900,7 @@ void RasterDataBlock::SubSample(LargeRAWFile_ptr pSourceFile,
 
   const uint64_t bytes = iTargetWindowSize*iElementSize;
   if(pTargetFile->WriteRAW(pTargetData, bytes) != bytes) {
-    pDebugOut->Error(_func_, "short write to '%s'",
-                     pTargetFile->GetFilename().c_str());
+    LERROR("short write to '" << pTargetFile->GetFilename().c_str() << "'");
   }
   delete[] pSourceData;
   delete[] pTargetData;
@@ -932,15 +934,14 @@ bool RasterDataBlock::FlatDataToBrickedLOD(
                       const void* pIn, void* pOut),
   void (*maxminFunc)(const void* pIn, size_t iStart, size_t iCount,
                      std::vector<DOUBLEVECTOR4>& fMinMax),
-  std::shared_ptr<MaxMinDataBlock> pMaxMinDatBlock,
-  AbstrDebugOut* pDebugOut)
+  std::shared_ptr<MaxMinDataBlock> pMaxMinDatBlock)
 {
   // size of input data
   uint64_t iInPointerSize = ComputeElementSize()/8;
   for (size_t i = 0;i<ulDomainSize.size();i++) iInPointerSize *= ulDomainSize[i];
 
   // create temp file and dump data into it
-  LargeRAWFile pSourceFile(SysTools::AppendFilename(strTempFile,"0"));
+  LargeRAWFile pSourceFile(Core::IO::FileTools::appendFilename(strTempFile,"0"));
 
   if (!pSourceFile.Create(  iInPointerSize )) {
     throw "Unable To create Temp File ";
@@ -951,7 +952,7 @@ bool RasterDataBlock::FlatDataToBrickedLOD(
   // convert the flat file to our bricked LOD representation
   bool bResult = FlatDataToBrickedLOD(
     std::shared_ptr<LargeRAWFile>(&pSourceFile, nonstd::null_deleter()),
-    strTempFile, combineFunc, maxminFunc, pMaxMinDatBlock, pDebugOut
+    strTempFile, combineFunc, maxminFunc, pMaxMinDatBlock
   );
 
   // delete tempfile
@@ -969,7 +970,7 @@ vector<uint64_t> RasterDataBlock::GetLODDomainSize(const vector<uint64_t>& vLOD)
   for (size_t j=0;j<vReducedDomainSize.size();j++)
     vReducedDomainSize[j] = (ulLODDecFactor[j] < 2)
                              ? ulDomainSize[j]
-                             : max<uint64_t>(1,uint64_t(floor(double(ulDomainSize[j]) / double((MathTools::Pow(ulLODDecFactor[j],vLOD[size_t(ulLODGroups[j])]))))));
+                             : max<uint64_t>(1,uint64_t(floor(double(ulDomainSize[j]) / double((MathTools::powN(ulLODDecFactor[j],vLOD[size_t(ulLODGroups[j])]))))));
 
   return vReducedDomainSize;
 }
@@ -990,14 +991,13 @@ RasterDataBlock::FlatDataToBrickedLOD(
                       const void* pIn, void* pOut),
   void (*maxminFunc)(const void* pIn, size_t iStart, size_t iCount,
                      std::vector<DOUBLEVECTOR4>& fMinMax),
-  std::shared_ptr<MaxMinDataBlock> pMaxMinDatBlock,
-  AbstrDebugOut* pDebugOut)
+  std::shared_ptr<MaxMinDataBlock> pMaxMinDatBlock)
 {
 
   // parameter sanity checks
   for (size_t i = 0;i<ulBrickSize.size();i++)  {
     if (ulBrickSize[i] < ulBrickOverlap[i]) {
-      if (pDebugOut) pDebugOut->Error(_func_, "Invalid parameters: Bricksze is smaler than brick overlap");
+      LERROR("Invalid parameters: Bricksze is smaler than brick overlap");
       return false;
     }
   }
@@ -1005,7 +1005,7 @@ RasterDataBlock::FlatDataToBrickedLOD(
   uint64_t uiBytesPerElement = ComputeElementSize()/8;
 
   if (!m_pTempFile) {
-    AllocateTemp(SysTools::AppendFilename(strTempFile,"1"),
+    AllocateTemp(Core::IO::FileTools::appendFilename(strTempFile,"1"),
                  m_vLODOffsets.empty());
   }
 
@@ -1020,11 +1020,9 @@ RasterDataBlock::FlatDataToBrickedLOD(
   vector<uint64_t> vReducedDomainSize;
 
   for (size_t i = 0;i<vLODCombis.size();i++) {
-    if (pDebugOut) {
-      pDebugOut->Message(_func_,
-                         "Generating data for lod level %i of %i", int(i+1),
-                         int(vLODCombis.size()));
-    }
+    
+    LINFO("Generating data for lod level " << int(i+1) <<
+          " of " << int(vLODCombis.size()));
 
     // compute size of the domain
     vReducedDomainSize = GetLODDomainSize(vLODCombis[i]);
@@ -1039,16 +1037,16 @@ RasterDataBlock::FlatDataToBrickedLOD(
     if (i > 0) {
       if (i > 1) {
         SubSample(tempFile, tempFile, vLastReducedDomainSize,
-                  vReducedDomainSize, combineFunc, pDebugOut, i,
+                  vReducedDomainSize, combineFunc, i,
                   vLODCombis.size());
       } else {
-        tempFile = LargeRAWFile_ptr(new LargeRAWFile(SysTools::AppendFilename(strTempFile,"2")));
+        tempFile = LargeRAWFile_ptr(new LargeRAWFile(Core::IO::FileTools::appendFilename(strTempFile,"2")));
         if (!tempFile->Create(ComputeDataSize())) {
-          if (pDebugOut) pDebugOut->Error(_func_, "Unable To create Temp File");
+          LERROR("Unable to create temp file");
           return false;
         }
         SubSample(pSourceData, tempFile, ulDomainSize, vReducedDomainSize,
-                  combineFunc, pDebugOut, i, vLODCombis.size());
+                  combineFunc, i, vLODCombis.size());
       }
       pBrickSource = tempFile;
       vLastReducedDomainSize = vReducedDomainSize;
@@ -1096,9 +1094,9 @@ RasterDataBlock::FlatDataToBrickedLOD(
     unsigned char* pData = new unsigned char[BLOCK_COPY_SIZE];
     for (size_t j=0;j<vBrickPermutation.size();j++) {
 
-       if (pDebugOut) pDebugOut->Message(_func_, "Processing brick %i of %i in lod level %i of %i",int(j+1),int(vBrickPermutation.size()),int(i+1), int(vLODCombis.size()));
-      //Console::printf("      Brick %i (",j);
-      //for (uint64_t k=0;k<vBrickPermutation[j].size();k++) Console::printf("%i ",vBrickPermutation[j][k]);
+      LINFO("Processing brick " << int(j+1) << " of " <<
+            int(vBrickPermutation.size()) << " in lod level " <<
+            int(i+1) << " of " << int(vLODCombis.size()));
 
       uint64_t iBrickSize = vBrickPermutation[j][0];
       vector<uint64_t> vBrickPrefixProd;
@@ -1127,8 +1125,8 @@ RasterDataBlock::FlatDataToBrickedLOD(
 
           size_t bytes = pBrickSource->ReadRAW(pData, iCopySize);
           if(bytes != iCopySize) {
-            T_ERROR("Error reading data from %s!",
-                    pBrickSource->GetFilename().c_str());
+            LERROR("Error reading data from %s!" <<
+                   pBrickSource->GetFilename().c_str());
             return false;
           }
           m_pTempFile->WriteRAW(pData, iCopySize);
@@ -1432,12 +1430,11 @@ void RasterDataBlock::ResetFile(LargeRAWFile_ptr raw)
 
  bool RasterDataBlock::ApplyFunction(const std::vector<uint64_t>& vLOD,
                                      bool (*brickFunc)(void* pData, 
-                                                    const UINT64VECTOR3& vBrickSize,
-                                                    const UINT64VECTOR3& vBrickOffset,
+                                                    const Core::Math::Vec3ui64& vBrickSize,
+                                                    const Core::Math::Vec3ui64& vBrickOffset,
                                                     void* pUserContext),
                                      void* pUserContext,
-                                     uint64_t iOverlap,
-                                     AbstrDebugOut* pDebugOut) const {
+                                     uint64_t iOverlap) const {
 
 #ifdef _DEBUG
   for (size_t i = 0;i<ulBrickSize.size();i++) {
@@ -1463,16 +1460,18 @@ void RasterDataBlock::ResetFile(LargeRAWFile_ptr raw)
   uint64_t iElementSize = ComputeElementSize();
   uint64_t iBrickCounter = 0;
 
-  TraverseBricksToApplyFunction(iBrickCounter, iBrickCount, vLOD, vBrickCount, vCoords,
+  TraverseBricksToApplyFunction(iBrickCounter, iBrickCount, vLOD, vBrickCount,
+                                vCoords,
                                 vBrickCount.size()-1, pData,
-                                iElementSize/8, vPrefixProd, pDebugOut, brickFunc,
+                                iElementSize/8, vPrefixProd, brickFunc,
                                 pUserContext, iOverlap );
 
   return true;
 }
 
-bool RasterDataBlock::BrickedLODToFlatData(const vector<uint64_t>& vLOD, const std::string& strTargetFile,
-                                           bool bAppend, AbstrDebugOut* pDebugOut) const {
+bool RasterDataBlock::BrickedLODToFlatData(const vector<uint64_t>& vLOD,
+                                           const std::string& strTargetFile,
+                                           bool bAppend) const {
 
 
 
@@ -1485,7 +1484,7 @@ bool RasterDataBlock::BrickedLODToFlatData(const vector<uint64_t>& vLOD, const s
 
 
   if (!pTargetFile->IsOpen()) {
-    if (pDebugOut) pDebugOut->Error(_func_,"Unable to write to target file %s.", strTargetFile.c_str());
+    LERROR("Unable to write to target file " << strTargetFile.c_str());
     return false;
   }
 
@@ -1510,7 +1509,7 @@ bool RasterDataBlock::BrickedLODToFlatData(const vector<uint64_t>& vLOD, const s
 
   TraverseBricksToWriteBrickToFile(iBrickCounter, iBrickCount, vLOD, vBrickCount, vCoords,
                                     vBrickCount.size()-1, iTargetOffset, pData, pTargetFile,
-                                    iElementSize/8, vPrefixProd, pDebugOut);
+                                    iElementSize/8, vPrefixProd);
 
   pTargetFile->Close();
   return true;
@@ -1527,10 +1526,9 @@ RasterDataBlock::TraverseBricksToApplyFunction(
   std::vector<unsigned char>& vData,
   uint64_t iElementSize,
   const std::vector<uint64_t>& vPrefixProd,
-  AbstrDebugOut* pDebugOut,
-  bool (*brickFunc)(void* pData, 
-    const UINT64VECTOR3& vBrickSize,
-    const UINT64VECTOR3& vBrickOffset,
+  bool (*brickFunc)(void* pData,
+    const Core::Math::Vec3ui64& vBrickSize,
+    const Core::Math::Vec3ui64& vBrickOffset,
     void* pUserContext),
   void* pUserContext, uint64_t iOverlap
 ) const {
@@ -1539,7 +1537,7 @@ RasterDataBlock::TraverseBricksToApplyFunction(
       vCoords[iCurrentDim] = i;
       if (!TraverseBricksToApplyFunction(iBrickCounter, iBrickCount, vLOD, vBrickCount,
                                          vCoords, iCurrentDim-1,vData ,
-                                         iElementSize, vPrefixProd, pDebugOut,
+                                         iElementSize, vPrefixProd,
                                          brickFunc, pUserContext, iOverlap)) return false;
     }
   } else {
@@ -1565,8 +1563,7 @@ RasterDataBlock::TraverseBricksToApplyFunction(
       }
 
       uint64_t iSourceOffset = 0, iTargetOffset = 0;
-      if (pDebugOut) pDebugOut->Message(_func_, "Extracting volume data\nProcessing brick %i of %i",int(++iBrickCounter),int(iBrickCount));
-
+      LINFO("Extracting volume data\nProcessing brick "<< int(iBrickCounter) << " of " << int(iBrickCount));
 
       WriteBrickToArray(vBrickCount.size()-1, iSourceOffset, iTargetOffset, vBrickSize,
                        vEffectiveBrickSize, vData, vDataOverlapFixed, iElementSize, vPrefixProd,
@@ -1576,9 +1573,10 @@ RasterDataBlock::TraverseBricksToApplyFunction(
       for (size_t j = 0;j<ulBrickSize.size();j++)
         vAbsCoords[j] *= (ulBrickSize[j]-ulBrickOverlap[j]);
 
-      if (pDebugOut) pDebugOut->Message(_func_, "Processing volume data\nProcessing brick %i of %i",int(iBrickCounter),int(iBrickCount));
+      
+      LINFO("Processing volume data\nProcessing brick "<< int(iBrickCounter) << " of " << int(iBrickCount));
 
-      if (!brickFunc(&vDataOverlapFixed[0], UINT64VECTOR3(vEffectiveBrickSize), UINT64VECTOR3(vAbsCoords), pUserContext )) return false;
+      if (!brickFunc(&vDataOverlapFixed[0], Core::Math::Vec3ui64(vEffectiveBrickSize), Core::Math::Vec3ui64(vAbsCoords), pUserContext )) return false;
 
     }
   }
@@ -1595,16 +1593,14 @@ RasterDataBlock::TraverseBricksToWriteBrickToFile(
   std::vector<unsigned char>& vData,
   LargeRAWFile_ptr pTargetFile,
   uint64_t iElementSize,
-  const std::vector<uint64_t>& vPrefixProd,
-  AbstrDebugOut* pDebugOut
+  const std::vector<uint64_t>& vPrefixProd
 ) const {
   if (iCurrentDim>0) {
     for (size_t i = 0;i<vBrickCount[iCurrentDim];i++) {
       vCoords[iCurrentDim] = i;
       if (!TraverseBricksToWriteBrickToFile(iBrickCounter, iBrickCount, vLOD, vBrickCount,
                                             vCoords, iCurrentDim-1, iTargetOffset, vData,
-                                            pTargetFile, iElementSize, vPrefixProd, 
-                                            pDebugOut)) return false;
+                                            pTargetFile, iElementSize, vPrefixProd)) return false;
     }
   } else {
 
@@ -1634,7 +1630,8 @@ RasterDataBlock::TraverseBricksToWriteBrickToFile(
 
       uint64_t iSourceOffset = 0;
       
-      if (pDebugOut) pDebugOut->Message(_func_, "Processing brick %i of %i",int(++iBrickCounter),int(iBrickCount));
+      LINFO("Extracting volume data\nProcessing brick "<< int(iBrickCounter) << " of " << int(iBrickCount));
+      
       WriteBrickToFile(vBrickCount.size()-1, iSourceOffset, iTargetOffset, vBrickSize,
                        vEffectiveBrickSize, vData, pTargetFile, iElementSize, vPrefixProd,
                        vBrickPrefixProduct, true);

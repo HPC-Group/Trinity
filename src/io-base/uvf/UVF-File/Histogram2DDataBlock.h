@@ -5,7 +5,7 @@
 
 #include "DataBlock.h"
 #include "TOCBlock.h"
-#include "../../Basics/Vectors.h"
+#include "silverbullet/math/Vectors.h"
 
 class RasterDataBlock;
 
@@ -53,10 +53,10 @@ protected:
 
   template <class T>
   FUNC_PURE
-  DOUBLEVECTOR3 ComputeGradient(const T* pTempBrickData,
+  Core::Math::Vec3d ComputeGradient(const T* pTempBrickData,
                                 double normalizationFactor, size_t iCompcount,
-                                const UINTVECTOR3& size,
-                                const UINTVECTOR3& coords);
+                                const Core::Math::Vec3ui& size,
+                                const Core::Math::Vec3ui& coords);
 
   template <class T>
   void ComputeTemplate(const TOCBlock* source, double normalizationFactor,

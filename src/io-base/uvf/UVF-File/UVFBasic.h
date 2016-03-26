@@ -11,10 +11,11 @@
   #endif
 #endif
 
-#include "Basics/StdDefines.h"
+#include "silverbullet/base/StdDefines.h"
+
 #define UVF_INVALID UINT64_INVALID
 
-#include "Basics/LargeRAWFile.h"
+#include "LargeRAWFile.h"
 
 class DataBlock;
 

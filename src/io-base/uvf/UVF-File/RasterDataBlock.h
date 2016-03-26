@@ -7,13 +7,11 @@
 #include <algorithm>
 #include <string>
 #include "DataBlock.h"
-#include "Basics/Vectors.h"
-
-class AbstrDebugOut;
+#include "silverbullet/math/Vectors.h"
 
 template<class T, size_t iVecLength>
 void SimpleMaxMin(const void* pIn, size_t iStart, size_t iCount,
-                  std::vector<DOUBLEVECTOR4>& fMinMax) {
+                  std::vector<Core::Math::Vec4d>& fMinMax) {
   const T *pDataIn = (T*)pIn;
 
   fMinMax.resize(iVecLength);
@@ -188,16 +186,15 @@ public:
 
   bool BrickedLODToFlatData(const std::vector<uint64_t>& vLOD,
                             const std::string& strTargetFile,
-                            bool bAppend = false, AbstrDebugOut* pDebugOut=NULL) const;
+                            bool bAppend = false) const;
 
   bool ApplyFunction(const std::vector<uint64_t>& vLOD,
                      bool (*brickFunc)(void* pData, 
-                                    const UINT64VECTOR3& vBrickSize,
-                                    const UINT64VECTOR3& vBrickOffset,
+                                    const Core::Math::Vec3ui64& vBrickSize,
+                                    const Core::Math::Vec3ui64& vBrickOffset,
                                     void* pUserContext),
                      void* pUserContext = NULL,
-                     uint64_t iOverlap=0,
-                     AbstrDebugOut* pDebugOut=NULL) const;
+                     uint64_t iOverlap=0) const;
 
   const std::vector<uint64_t> LargestSingleBrickLODBrickIndex() const;
   const std::vector<uint64_t>& LargestSingleBrickLODBrickSize() const;
@@ -211,20 +208,17 @@ public:
     void (*combineFunc)(const std::vector<uint64_t> &vSource, uint64_t iTarget,
                         const void* pIn, void* pOut),
     void (*maxminFunc)(const void* pIn, size_t iStart, size_t iCount,
-                       std::vector<DOUBLEVECTOR4>& fMinMax),
+                       std::vector<Core::Math::Vec4d>& fMinMax),
     std::shared_ptr<MaxMinDataBlock> pMaxMinDatBlock =
-      std::shared_ptr<MaxMinDataBlock>(),
-    AbstrDebugOut* pDebugOut=NULL
-  );
+      std::shared_ptr<MaxMinDataBlock>());
   bool FlatDataToBrickedLOD(
     LargeRAWFile_ptr pSourceData, const std::string& strTempFile,
     void (*combineFunc)(const std::vector<uint64_t> &vSource, uint64_t iTarget,
                         const void* pIn, void* pOut),
     void (*maxminFunc)(const void* pIn, size_t iStart, size_t iCount,
-                       std::vector<DOUBLEVECTOR4>& fMinMax),
+                       std::vector<Core::Math::Vec4d>& fMinMax),
     std::shared_ptr<MaxMinDataBlock> pMaxMinDatBlock =
-      std::shared_ptr<MaxMinDataBlock>(),
-    AbstrDebugOut* pDebugOut=NULL
+      std::shared_ptr<MaxMinDataBlock>()
   );
 
   void AllocateTemp(const std::string& strTempFile,
@@ -290,7 +284,7 @@ protected:
                  void (*combineFunc)(const std::vector<uint64_t> &vSource,
                                      uint64_t iTarget, const void* pIn,
                                      void* pOut),
-                 AbstrDebugOut* pDebugOut=NULL, uint64_t iLODLevel=0,
+                 uint64_t iLODLevel=0,
                  uint64_t iMaxLODLevel=0);
 
   uint64_t ComputeDataSizeAndOffsetTables();
@@ -308,8 +302,7 @@ protected:
       size_t iCurrentDim, uint64_t iTargetOffset,
       std::vector<unsigned char> &vData,
       LargeRAWFile_ptr pTargetFile, uint64_t iElementSize,
-      const std::vector<uint64_t>& vPrefixProd,
-      AbstrDebugOut* pDebugOut
+      const std::vector<uint64_t>& vPrefixProd
   ) const;
 
   bool TraverseBricksToApplyFunction(
@@ -321,10 +314,9 @@ protected:
       std::vector<unsigned char> &vData,
       uint64_t iElementSize,
       const std::vector<uint64_t>& vPrefixProd,
-      AbstrDebugOut* pDebugOut,
       bool (*brickFunc)(void* pData, 
-                        const UINT64VECTOR3& vBrickSize,
-                        const UINT64VECTOR3& vBrickOffset,
+                        const Core::Math::Vec3ui64& vBrickSize,
+                        const Core::Math::Vec3ui64& vBrickOffset,
                         void* pUserContext),
       void* pUserContext,
       uint64_t iOverlap
