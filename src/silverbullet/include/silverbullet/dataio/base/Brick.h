@@ -1,6 +1,6 @@
 #pragma once
 
-#include "silverbullet/base/StdTuvokDefines.h"
+#include "silverbullet/base/StdDefines.h"
 
 #include "silverbullet/math/Vectors.h"
 
