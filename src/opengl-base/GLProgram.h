@@ -42,6 +42,10 @@ public:
   void Set(const char *name, const Core::Math::Vec2i value);
   void Set(const char *name, const Core::Math::Vec3i value);
   void Set(const char *name, const Core::Math::Vec4i value);
+
+  void Set(const char *name, const Core::Math::Vec3ui value);
+  void Set(const char *name, const Core::Math::Vec3ui8 value);
+  void Set(const char *name, const Core::Math::Vec3ui64 value);
   
   void Set(const char *name, const Core::Math::Mat4f& value);
   void Set(const char *name, const std::vector<Core::Math::Mat4f>& value);

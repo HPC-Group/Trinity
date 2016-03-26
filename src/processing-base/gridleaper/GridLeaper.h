@@ -35,25 +35,29 @@ namespace trinity {
     bool loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy);
     void loadGeometry();
     void initFrameBuffers();
-    void loadVolumeData();
     void loadTransferFunction();
     void initHashTable();
     void initVolumePool(uint64_t gpuMemorySizeInByte);
         
+    void fillRayEntryBuffer();
+    void raycast();
+    void compose();
 
     //help functions move to new GridLeaperTools class?
-    Core::Math::Vec3ui CalculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,const uint64_t usedMemory);
+    Core::Math::Vec3ui calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,const uint64_t usedMemory);
+    const uint64_t getFreeGPUMemory();
 
     Core::Math::Vec4ui RecomputeBrickVisibility(bool bForceSynchronousUpdate);
+    void swapToNextBuffer();
+    void selectShader();
+    void setupRaycastShader();
 
     std::vector<Core::Math::Vec4ui8>  m_bufferData;
 
     std::unique_ptr<GLTexture1D>      m_texTransferFunc;
-    std::unique_ptr<GLTexture3D>      m_texVolume;
     std::unique_ptr<GLTargetBinder>   m_targetBinder;
 
-    std::shared_ptr<GLFBOTex>         m_backfaceBuffer;
-    std::shared_ptr<GLFBOTex>         m_resultBuffer;
+
     std::unique_ptr<GLVolumeBox>      m_bbBox;
     std::unique_ptr<GLRenderPlane>    m_nearPlane;
     std::shared_ptr<OpenGlHeadlessContext> m_context;
@@ -62,21 +66,40 @@ namespace trinity {
     std::unique_ptr<GLHashTable>      m_hashTable;
 
     //Shaders
-    std::unique_ptr<GLProgram>        m_programRenderFrontFaces;
-    std::unique_ptr<GLProgram>        m_programRenderFrontFacesNearPlane;
-    std::unique_ptr<GLProgram>        m_programRayCast1D;
-    std::unique_ptr<GLProgram>        m_programRayCast1DColor;
-    std::unique_ptr<GLProgram>        m_programRayCast1DLighting;
-    std::unique_ptr<GLProgram>        m_programRayCastISO;
-    std::unique_ptr<GLProgram>        m_programRayCastISOLighting;
-    std::unique_ptr<GLProgram>        m_programRayCastISOColor;
-    std::unique_ptr<GLProgram>        m_currentShaderProgram;
-    std::unique_ptr<GLProgram>        m_programCompose;
-    std::unique_ptr<GLProgram>        m_programComposeColorDebugMix;
-    std::unique_ptr<GLProgram>        m_programComposeColorDebugMixAlpha;
-    std::unique_ptr<GLProgram>        m_programComposeClearViewIso;
+    std::shared_ptr<GLProgram>        m_activeShaderProgram;
+    std::shared_ptr<GLProgram>        m_programRenderFrontFaces;
+    std::shared_ptr<GLProgram>        m_programRenderFrontFacesNearPlane;
+    std::shared_ptr<GLProgram>        m_programRayCast1D;
+    std::shared_ptr<GLProgram>        m_programRayCast1DColor;
+    std::shared_ptr<GLProgram>        m_programRayCast1DLighting;
+    std::shared_ptr<GLProgram>        m_programRayCastISO;
+    std::shared_ptr<GLProgram>        m_programRayCastISOLighting;
+    std::shared_ptr<GLProgram>        m_programRayCastISOColor;
+    std::shared_ptr<GLProgram>        m_programCompose;
+    std::shared_ptr<GLProgram>        m_programComposeColorDebugMix;
+    std::shared_ptr<GLProgram>        m_programComposeColorDebugMixAlpha;
+    std::shared_ptr<GLProgram>        m_programComposeClearViewIso;
 
-    VisibilityState                   m_VisibilityState;
+    //Buffers
+    std::shared_ptr<GLFBOTex>       m_resultBuffer;
+    std::shared_ptr<GLFBOTex>       m_pFBORayStart;
+    std::shared_ptr<GLFBOTex>       m_pFBORayStartNext;
+    std::shared_ptr<GLFBOTex>       m_pFBOStartColor;
+    std::shared_ptr<GLFBOTex>       m_pFBOStartColorNext;
+    std::shared_ptr<GLFBOTex>       m_pFBOFinalColor;
+    std::shared_ptr<GLFBOTex>       m_pFBOFinalColorNext;
+#ifdef GLGRIDLEAPER_DEBUGVIEW
+    std::shared_ptr<GLFBOTex>       m_pFBODebug;
+    std::shared_ptr<GLFBOTex>       m_pFBODebugNext;
+#endif
+
+    VisibilityState                 m_visibilityState;
+
+    Core::Math::Vec3ui64            m_IODomainSize;
+    float                           m_fLODFactor;
+    bool                            m_bFinished;
+    bool                            m_bCompleteRedraw;
+
 
   };
 }

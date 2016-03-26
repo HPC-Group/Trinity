@@ -134,6 +134,21 @@ void GLProgram::Set(const char *name, const Core::Math::Vec3i value){
   m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
   glUniform3i(m_currentVariableLocation, value.x, value.y,value.z);
 }
+void GLProgram::Set(const char *name, const Core::Math::Vec3ui value){
+  m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
+  glUniform3ui(m_currentVariableLocation, value.x, value.y,value.z);
+}
+
+void GLProgram::Set(const char *name, const Core::Math::Vec3ui8 value){
+  m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
+  glUniform3ui(m_currentVariableLocation, value.x, value.y,value.z);
+}
+
+void GLProgram::Set(const char *name, const Core::Math::Vec3ui64 value){
+  m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
+  glUniform3ui(m_currentVariableLocation, value.x, value.y,value.z);
+}
+
 void GLProgram::Set(const char *name, const Core::Math::Vec4i value){
   m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
   glUniform4i(m_currentVariableLocation, value.x, value.y,value.z,value.w);
