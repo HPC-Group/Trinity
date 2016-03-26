@@ -4,7 +4,6 @@
 
 using namespace std;
 using namespace UVFTables;
-using namespace tuvok;
 
 MaxMinDataBlock::MaxMinDataBlock(size_t iComponentCount) : 
   DataBlock()
@@ -87,7 +86,7 @@ uint64_t MaxMinDataBlock::GetHeaderFromFile(LargeRAWFile_ptr pStreamFile, uint64
       pStreamFile->ReadData((*i)[j].minGradient, bIsBigEndian);
       pStreamFile->ReadData((*i)[j].maxGradient, bIsBigEndian);
   
-      m_GlobalMaxMin[j].Merge((*i)[j]);
+      m_GlobalMaxMin[j].merge((*i)[j]);
     }
   }
 
@@ -124,18 +123,7 @@ uint64_t MaxMinDataBlock::GetOffsetToNextBlock() const {
   return DataBlock::GetOffsetToNextBlock() + ComputeDataSize();
 }
 
-uint64_t MaxMinDataBlock::ComputeDataSize() const {
-  // We're writing 4 values per iteration in CopyToFile.  We used to use
-  // sizeof(MinMaxBlock) to compute the size of the data, but that's
-  // a bad idea because the compiler is free to pack the class however it
-  // wants.  We'll write out 4 64bit values regardless of the packing of that
-  // class.
-  // Still, if you ever add a new element to that class, you of course need to
-  // add a write for it in CopyToFile, but you also need to come here and
-  // increment the size by 8.  Hopefully this assert will clue you in if you
-  // forget to do that.
-  static_assert(sizeof(MinMaxBlock) == 32,
-                "assuming there are 4 values per element/component!");
+uint64_t MaxMinDataBlock::ComputeDataSize() const {  
   return sizeof(uint64_t) +                              // length of the vector
          sizeof(uint64_t) +                              // component count
          32 * m_vfMaxMinData.size() * m_iComponentCount; // vector of data
@@ -159,7 +147,7 @@ void MaxMinDataBlock::StartNewValue() {
   m_vfMaxMinData.push_back(elems);
 }
 
-void MaxMinDataBlock::MergeData(const std::vector<DOUBLEVECTOR4>& fMaxMinData)
+void MaxMinDataBlock::MergeData(const std::vector<Core::Math::Vec4d>& fMaxMinData)
 {
   for (size_t i = 0;i<m_iComponentCount;i++) {
     MergeData(MinMaxBlock(fMaxMinData[i].x, fMaxMinData[i].y,
@@ -168,8 +156,8 @@ void MaxMinDataBlock::MergeData(const std::vector<DOUBLEVECTOR4>& fMaxMinData)
 }
 
 void MaxMinDataBlock::MergeData(const MinMaxBlock& data, const size_t iComponent) {
-  m_GlobalMaxMin[iComponent].Merge(data);
-  m_vfMaxMinData[m_vfMaxMinData.size()-1][iComponent].Merge(data);
+  m_GlobalMaxMin[iComponent].merge(data);
+  m_vfMaxMinData[m_vfMaxMinData.size()-1][iComponent].merge(data);
 }
 
 void MaxMinDataBlock::SetDataFromFlatVector(BrickStatVec& source, uint64_t iComponentCount) {
@@ -189,7 +177,7 @@ void MaxMinDataBlock::SetDataFromFlatVector(BrickStatVec& source, uint64_t iComp
                        std::numeric_limits<double>::max());
 
       m_vfMaxMinData[i][j] = data;
-      m_GlobalMaxMin[j].Merge(data);
+      m_GlobalMaxMin[j].merge(data);
     }
   }
 }
