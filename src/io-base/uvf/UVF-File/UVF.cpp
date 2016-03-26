@@ -1,6 +1,6 @@
 #include <sstream>
 #include "UVF.h"
-#include "silverbullet/io/md5.h"
+#include "silverbullet/io/MD5.h"
 #include "silverbullet/io/crc32.h"
 #include "nonstd.h"
 #include "DataBlock.h"
