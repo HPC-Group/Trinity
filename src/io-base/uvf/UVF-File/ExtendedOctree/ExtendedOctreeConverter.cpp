@@ -28,7 +28,6 @@
 #include <map>
 #include <unordered_map>
 #include <stdexcept>
-#include "silverbullet/Math/MathTools.h"
 #include "../ProgressTimer.h"
 #include "../Timer.h"
 #include "../nonstd.h"
