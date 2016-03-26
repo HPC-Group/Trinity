@@ -184,6 +184,12 @@ public:
 
 private:
     template <typename U = T>
+    void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, bool>::value>::type* = nullptr) const {
+      writer.appendBool("x", x);
+      writer.appendBool("y", y);
+    }
+  
+    template <typename U = T>
     void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) const {
         writer.appendInt("x", x);
         writer.appendInt("y", y);
@@ -225,6 +231,11 @@ private:
         writer.appendDouble("y", y);
     }
 
+    template <typename U = T>
+    void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, bool>::value>::type* = nullptr) {
+      x = reader.getBool("x");
+      y = reader.getBool("y");
+    }
 
     template <typename U = T>
     void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) {
@@ -511,6 +522,13 @@ public:
 
 private:
     template <typename U = T>
+    void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, bool>::value>::type* = nullptr) const {
+      writer.appendBool("x", x);
+      writer.appendBool("y", y);
+      writer.appendBool("z", z);
+    }
+  
+    template <typename U = T>
     void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) const {
         writer.appendInt("x", x);
         writer.appendInt("y", y);
@@ -560,6 +578,13 @@ private:
     }
 
 
+    template <typename U = T>
+    void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, bool>::value>::type* = nullptr) {
+      x = reader.getBool("x");
+      y = reader.getBool("y");
+      z = reader.getBool("z");
+    }
+  
     template <typename U = T>
     void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) {
         x = reader.getUInt8("x");
