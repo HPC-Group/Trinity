@@ -33,6 +33,6 @@ public:
 private:
     CommandInputChannel m_inputChannel;
     VisStreamReceiver m_visReceiver;
-    int m_remoteSessionId;
+    int m_remoteSid;
 };
 }

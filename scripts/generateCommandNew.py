@@ -61,13 +61,13 @@ r'''{{CommandImplRequestOperators}}
 "ProcCommandHandlerHeader": 
 r'''class {{CommandNameHdl}} : public ICommandHandler {
 public:
-    {{CommandNameHdl}}(const {{CommandNameRequest}}& request, RendererSession* session);
+    {{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session);
 
     std::unique_ptr<Reply> execute() override;
 
 private:
     {{CommandNameRequest}} m_request;
-	RendererSession* m_session;
+	RenderSession* m_session;
 };''',
 
 "IOCommandHandlerHeader": 
