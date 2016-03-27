@@ -86,8 +86,13 @@ Vec3ui64 UVFIO::getDomainSize(uint64_t lod, uint64_t modality) const {
 
 Mat4d UVFIO::getTransformation(uint64_t) const {
   Vec3d scale = m_dataset->GetScale();
+  Vec3d size = Vec3d(m_dataset->GetDomainSize(0, 0));
+  
+  size = size / size.maxVal();
+  
   Mat4d trans;
-  trans.Scaling(float(scale.x), float(scale.y), float(scale.z));
+  trans.Scaling(float(scale.x*size.x), float(scale.y*size.y), float(scale.z*size.z));
+  
   return trans;
 }
 
