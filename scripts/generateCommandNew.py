@@ -1,11 +1,55 @@
 import os
 import argparse
 import re
+from inspect import isfunction
 from shutil import copyfile
 
-files = [
+commonFiles = [
 	"../src/commands/Vcl.h"
 ]
+
+ioFiles = [
+	"../src/io-base/IOCommandsHandler.h"
+]
+
+procFiles = [
+	"../src/processing-base/ProcessingCommandsHandler.h"
+]
+
+templates = {
+"CommandName" : lambda input : input.commandName,
+
+"CommandNameCmd": r'{{CommandName}}Cmd',
+
+"CommandNameHdl": r'{{CommandName}}Hdl',
+
+"CommandNameRequest": r'{{CommandName}}Request',
+
+"CommandNameReply": r'{{CommandName}}Reply',
+
+"CommandHandlerHeader": 
+r'''class {{CommandNameHdl}} : public ICommandHandler {
+public:
+    {{CommandNameHdl}}(const {{CommandNameRequest}}& request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    {{CommandNameRequest}} m_request;
+	IOSession* m_session;
+};''',
+
+"VclType" : r'{{CommandName}}',
+
+"VclEnumEntry" : r'{{VclType}},' ,
+
+"VclMapEntry" : r'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});' 
+
+
+
+
+
+}
 
 def insertCodeInSource(destination, code, marker):
 	with open(destination, "r+") as destfile:
@@ -203,24 +247,17 @@ def makeCtorDeclaration(params, ctorType):
 		return ""
 	else:
 		return ctorType + "(" + makeArgumentList(params) + ");"		
-	
-def expandVariable(variable, input):
-	if variable == "VclType":
-		return input.commandName
-	elif variable == "VclEnumEntry":
-		return "{{VclType}},"	
-	elif variable == "VclMapEntry":
-		return 'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});'
 
-	elif variable == "CommandNameCmd":
-		return input.commandName + "Cmd"
-	elif variable == "CommandNameHdl":
-		return input.commandName + "Hdl"
-	elif variable == "CommandNameRequest":
-		return input.commandName + "Request"	
-	elif variable == "CommandNameReply":
-		return input.commandName + "Reply"
-	elif variable == "RequestCtorDeclaration":
+def expandVariable(variable, input):
+	global templates
+	t = templates[variable]
+	if isfunction(t):
+		return t(input)
+	else:
+		return t
+	
+
+	if variable == "RequestCtorDeclaration":
 		return makeCtorDeclaration(input.params, "RequestParams")
 	elif variable == "ReplyCtorDeclaration":
 		return makeCtorDeclaration(input.ret, "ReplyParams")
@@ -269,6 +306,7 @@ def replaceRecursive(source, input):
 	return result
 	
 def process(files, input):
+	print files
 	for file in files:
 		source = readSourceFile(file)
 		source = replaceAutogen(source)
@@ -276,7 +314,7 @@ def process(files, input):
 		result = ""
 		for token in tokens:
 			result = result + token.value
-		return result
+		print result
 
 class Input:
 	def __init__(self, commandName, hasReply, params, ret):
@@ -286,7 +324,8 @@ class Input:
 		self.ret = ret
 		
 def main():
-	global files
+	global commonFiles
+	global ioFiles
 
 	parser = argparse.ArgumentParser(description="Generate Trinity Command.")
 	parser.add_argument('--type', help="type of the command to generate ('proc' or 'io'" )
@@ -297,12 +336,13 @@ def main():
 	args = parser.parse_args()
 
 	input = Input(args.name, args.hasReply, args.parameters, [args.returnType, "result"])
-#	if args.type == "proc":
-#		templateInfos = templateInfosAll + templateInfosProc
-#	elif args.type == "io":
-#		templateInfos = templateInfosAll + templateInfosIO
-#	else:
-#		raise Exception("There's something wrong with the specified parameters!")
+	files = []
+	if args.type == "proc":
+			files = commonFiles + procFiles
+	elif args.type == "io":
+		files = commonFiles + ioFiles
+	else:
+		raise Exception("There's something wrong with the specified parameters!")
 	process(files, input)
 	
 main()

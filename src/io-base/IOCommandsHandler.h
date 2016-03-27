@@ -42,9 +42,6 @@ private:
     ListFilesRequest m_request;
 };
 
-#define PYTHON_MAGIC
-
-
 class GetMaxBrickSizeHdl : public ICommandHandler {
 public:
     GetMaxBrickSizeHdl(const GetMaxBrickSizeRequest& request, IOSession* session);
@@ -309,5 +306,5 @@ private:
 	IOSession* m_session;
 };
 
-#undef PYTHON_MAGIC
+/* AUTOGEN CommandHandlerHeader */
 }

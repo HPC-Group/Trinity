@@ -34,7 +34,6 @@ enum class VclType {
     InitContext,
     ZoomCamera,
     Paint,
-#define PYTHON_ENUM
     GetTransformation,
     GetBrickOverlapSize,
     GetLargestSingleBrickLOD,
@@ -60,12 +59,12 @@ enum class VclType {
     GetActiveModality,
     SetActiveTimestep,
     GetActiveTimestep,
-#undef PYTHON_ENUM
     GetMaxBrickSize,
     GetMaxUsedBrickSizes,
     MaxMinForKey,
     GetNumberOfTimesteps,
     GetDomainSize,
+    /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
 };
@@ -115,7 +114,6 @@ private:
         m_cmdMap.insert("MaxMinForKey", VclType::MaxMinForKey);
         m_cmdMap.insert("GetNumberOfTimesteps", VclType::GetNumberOfTimesteps);
         m_cmdMap.insert("GetDomainSize", VclType::GetDomainSize);
-#define PYTHON_MAGIC_STRING
         m_cmdMap.insert("GetTransformation", VclType::GetTransformation);
         m_cmdMap.insert("GetBrickOverlapSize", VclType::GetBrickOverlapSize);
         m_cmdMap.insert("GetLargestSingleBrickLOD", VclType::GetLargestSingleBrickLOD);
@@ -141,8 +139,8 @@ private:
         m_cmdMap.insert("GetActiveModality", VclType::GetActiveModality);
         m_cmdMap.insert("SetActiveTimestep", VclType::SetActiveTimestep);
         m_cmdMap.insert("GetActiveTimestep", VclType::GetActiveTimestep);
-#undef PYTHON_MAGIC_STRING
-
+        /* AUTOGEN VclMapEntry */
+		
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));
 
