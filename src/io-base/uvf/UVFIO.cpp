@@ -27,6 +27,10 @@ UVFIO::UVFIO(const std::string& fileId, const IListData& listData) :
       throw TrinityError(std::string("invalid fileId") + fileId,  __FILE__, __LINE__);
     }
 
+    
+    LINFO("(UVFIO) Trying to load " + filename);
+    
+    
     if (!fileExists(filename)) {
       throw TrinityError(filename + " not found", __FILE__, __LINE__);
     }
@@ -37,7 +41,7 @@ UVFIO::UVFIO(const std::string& fileId, const IListData& listData) :
     
     LINFO("(UVFIO) uvf filename looks ok, ready to open");
 
-    dataset = mocca::make_unique<UVFDataset>(filename, MaxAcceptableBricksize, false);
+    dataset = mocca::make_unique<UVFDataset>(filename, MaxAcceptableBricksize, false, false);
     
     LINFO("(UVFIO) successfully opened uvf file");
     
@@ -107,7 +111,7 @@ uint64_t UVFIO::getComponentCount(uint64_t modality) const {
 
 uint64_t UVFIO::getDefault1DTransferFunctionCount() const {
   //TODO
-  return 1;
+  return 5;
 }
 
 uint64_t UVFIO::getDefault2DTransferFunctionCount() const {
@@ -125,9 +129,9 @@ TransferFunction1D UVFIO::getDefault1DTransferFunction(uint64_t index) const {
   // create a transfer function with 4 different ramps
   // resulting in a smooth image with color shifts
   TransferFunction1D tf(256);
-  tf.setStdFunction(center, 0.3, 0, false);
-  tf.setStdFunction(center, 0.1, 1, true);
-  tf.setStdFunction(center, 0.8, 2, true);
+  tf.setStdFunction(center, 0.9, 0, true);
+  tf.setStdFunction(center, 0.9, 1, true);
+  tf.setStdFunction(center, 0.9, 2, true);
   tf.setStdFunction(center, 0.9, 3, false);
   return tf;
 }
