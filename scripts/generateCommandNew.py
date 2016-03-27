@@ -66,13 +66,27 @@ private:
 	IOSession* m_session;
 };''',
 
-"ProcCommandHandlerImpl": "" if input.type == "io" else "{{CommandHandlerImpl}}",
+"ProcCommandHandlerImpl":  
+r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
 
-"IOCommandHandlerImpl": "" if input.type == "proc" else "{{CommandHandlerImpl}}",
+std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
+    {{CommandNameCmd}}::ReplyParams params(m_session->getRenderer().{{InterfaceGetter}}(/* TODO */);
+    return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
+}''',
 
-"IOCommandFactoryEntry": "" if input.type == "proc" else "{{CommandFactoryEntry}}",
+"IOCommandHandlerImpl": 
+r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, IOSession* session)
+    : m_request(request), m_session(session) {}
 
-"ProcCommandFactoryEntry": "" if input.type == "io" else "{{CommandFactoryEntry}}",
+std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
+    {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceGetter}}(/* TODO */);
+    return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
+}''',
+
+"IOCommandFactoryEntry":  lambda input: "" if input.type == "proc" else "{{CommandFactoryEntry}}",
+
+"ProcCommandFactoryEntry":  lambda input: "" if input.type == "io" else "{{CommandFactoryEntry}}",
 
 "ProcRequestFactoryEntry": lambda input: "" if input.type == "io" else "{{RequestFactoryEntry}}",
 
@@ -99,6 +113,7 @@ private:
 
 "CommandNameReply": r'{{CommandName}}Reply',
 
+"InterfaceGetter" : lambda input: untitle(input.commandName),
 
 ## LOWER LEVEL COMMAND HEADER VARIABLES
 
@@ -271,16 +286,6 @@ r'''case VclType::{{VclType}}:
 return mocca::make_unique<{{CommandNameHdl}}>(static_cast<const {{CommandNameRequest}}&>(request), session);
 break;''',
 
-## LOWER LEVEL COMMAND HANDLER IMPL VARIABLES
-
-"CommandHandlerImpl":
-r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session)
-    : m_request(request), m_session(session) {}
-
-std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
-	// TODO
-}''',
-
 ## LOWER LEVEL REQUEST IMPL VARIABLES
 
 "RequestFactoryEntry":
@@ -328,6 +333,9 @@ def tokenizeSource(source):
 			result.append(Token(TokenType.text, token))
 	return result
 
+def untitle(s):
+	return s[0].lower() + s[1:]
+	
 def member(name):
 	return "m_" + name
 	
