@@ -6,21 +6,21 @@ from inspect import isfunction
 from shutil import copyfile
 
 commonFiles = [
-	#"../src/commands/Vcl.h"
+	"../src/commands/Vcl.h"
 ]
 
 ioFiles = [
-	#"../src/commands/IOCommands.h"
-	"../src/commands/IOCommands.cpp"
-	#"../src/io-base/IOCommandsHandler.h",
-	#"../src/io-base/IOCommandsHandler.cpp"
+	"../src/commands/IOCommands.h",
+	"../src/commands/IOCommands.cpp",
+	"../src/io-base/IOCommandsHandler.h",
+	"../src/io-base/IOCommandsHandler.cpp"
 ]
 
 procFiles = [
-	#"../src/commands/ProcessingCommands.h",
-	#"../src/commands/ProcessingCommands.cpp",
-	#"../src/processing-base/ProcessingCommandsHandler.h",
-	#"../src/processing-base/ProcessingCommandsHandler.cpp"
+	"../src/commands/ProcessingCommands.h",
+	"../src/commands/ProcessingCommands.cpp",
+	"../src/processing-base/ProcessingCommandsHandler.h",
+	"../src/processing-base/ProcessingCommandsHandler.cpp"
 ]
 
 templates = {
@@ -43,10 +43,12 @@ r'''struct {{CommandNameCmd}} {
 r'''VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
 
 {{CommandRequestImpl}}
-}''',
+
+{{CommandReplyImplIfNotVoid}}''',
 
 "CommandImplOperators":
-r''' TODO!!!''',
+r'''{{CommandImplRequestOperators}}
+{{CommandImplReplyOperatorsIfNotVoid}}''',
 
 "CommandHandlerHeader": 
 r'''class {{CommandNameHdl}} : public ICommandHandler {
@@ -92,7 +94,7 @@ std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
 r'''class RequestParams : public SerializableTemplate<RequestParams> {
 public:
 	RequestParams() = default;
-	{{RequestCtorDeclaration}}
+	{{RequestCtorDeclaration}};
 	
 	void serialize(ISerialWriter& writer) const override;
 	void deserialize(const ISerialReader& reader) override;
@@ -121,7 +123,7 @@ using {{CommandNameRequest}} = RequestTemplate<{{CommandNameCmd}}>;''',
 r'''class ReplyParams : public SerializableTemplate<ReplyParams> {
 public:
 	ReplyParams() = default;
-	{{ReplyCtorDeclaration}}
+	{{ReplyCtorDeclaration}};
 	
 	void serialize(ISerialWriter& writer) const override;
 	void deserialize(const ISerialReader& reader) override;
@@ -129,8 +131,8 @@ public:
 	std::string toString() const;
 	bool equals(const ReplyParams& other) const;
 
-	{{RequestGetterDeclarations}}
-	{{RequestMemberList}}
+	{{ReplyGetterDeclarations}}
+	{{ReplyMemberList}}
 };''',
 
 "ReplyCtorDeclaration": lambda input : makeCtorDeclaration(input.ret, "ReplyParams"),
@@ -172,7 +174,7 @@ std::string {{CommandNameCmd}}::RequestParams::toString() const {
     return stream.str();
 }''',
 
-"CommandRequestCtorImplIfNotEmpty" : lambda input : "" if not input.params else "{{CommandRequestCtorImpl}}",
+"CommandRequestCtorImplIfNotEmpty": lambda input : "" if not input.params else "{{CommandRequestCtorImpl}}",
 
 "CommandRequestCtorImpl":
 r'''{{CommandNameCmd}}::RequestParams::{{RequestCtorDeclaration}}
@@ -186,9 +188,69 @@ r'''{{CommandNameCmd}}::RequestParams::{{RequestCtorDeclaration}}
 
 "RequestParamEquals": lambda input : makeEquals(input.params),
 
-"RequestGetterDefinitions": lambda input : makeGetterDefinitions(input.commandName, input.params),
+"RequestGetterDefinitions": lambda input : makeGetterDefinitions(input.commandName, input.params, "RequestParams"),
 
 "RequestParamStreaming": lambda input : makeStreaming(input.params),
+
+"CommandReplyImplIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandReplyImpl}}",
+
+"CommandImplRequestOperators":
+r'''bool operator==(const {{CommandNameCmd}}::RequestParams& lhs, const {{CommandNameCmd}}::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::RequestParams& obj) {
+    return os << obj.toString();
+}''',
+
+"CommandReplyImpl":
+r'''
+{{CommandReplyCtorImpl}}
+
+void {{CommandNameCmd}}::ReplyParams::serialize(ISerialWriter& writer) const {
+{{ReplyParamSerialization}}
+}
+
+void {{CommandNameCmd}}::ReplyParams::deserialize(const ISerialReader& reader) {
+{{ReplyParamDeserialization}}
+}
+
+bool {{CommandNameCmd}}::ReplyParams::equals(const {{CommandNameCmd}}::ReplyParams& other) const {
+{{ReplyParamEquals}}
+}
+
+{{ReplyGetterDefinitions}}
+
+std::string {{CommandNameCmd}}::ReplyParams::toString() const {
+    std::stringstream stream;
+{{ReplyParamStreaming}}
+    return stream.str();
+}''',
+
+"CommandReplyCtorImpl":
+r'''{{CommandNameCmd}}::ReplyParams::{{ReplyCtorDeclaration}}
+{{ReplyInitializerList}} {}''',
+
+"ReplyInitializerList": lambda input : makeInitializerList(input.ret),
+
+"ReplyParamSerialization": lambda input : makeSerialization(input.ret),
+
+"ReplyParamDeserialization": lambda input : makeDeserialization(input.ret),
+
+"ReplyParamEquals": lambda input : makeEquals(input.ret),
+
+"ReplyGetterDefinitions": lambda input : makeGetterDefinitions(input.commandName, input.ret, "ReplyParams"),
+
+"ReplyParamStreaming": lambda input : makeStreaming(input.ret),
+
+"CommandImplReplyOperatorsIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandImplReplyOperators}}",
+
+"CommandImplReplyOperators":
+r'''bool operator==(const {{CommandNameCmd}}::ReplyParams& lhs, const {{CommandNameCmd}}::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::ReplyParams& obj) {
+    return os << obj.toString();
+}''',
 
 ## LOWER LEVEL VCL HEADER VARIABLES
 
@@ -261,12 +323,12 @@ def makeGetterDeclarations(params):
 		items.append(type + " get" + name.title() + "() const;")
 	return "\n".join(items)
 	
-def makeGetterDefinitions(commandName, params):
+def makeGetterDefinitions(commandName, params, className):
 	items = []
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append(type + " " + commandName + "Cmd" + "::get" + name.title() + "() const {\n return " + member(name) + ";\n}")
+		items.append(type + "  {{CommandNameCmd}}::" + className + "::get" + name.title() + "() const {\n return " + member(name) + ";\n}")
 	return "\n\n".join(items)
 	
 def makeInitializerList(params):
@@ -374,7 +436,7 @@ def makeCtorDeclaration(params, ctorName):
 	if not params:
 		return ""
 	else:
-		return ctorName + "(" + makeArgumentList(params) + ");"		
+		return ctorName + "(" + makeArgumentList(params) + ")"	
 
 def expandVariable(variable, input):
 	global templates
