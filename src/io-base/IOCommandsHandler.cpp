@@ -48,10 +48,6 @@ std::unique_ptr<Reply> ListFilesHdl::execute() {
     return mocca::make_unique<ListFilesReply>(replyParams, m_request.getRid(), m_request.getSid());
 }
 
-#define PYTHON_MAGIC
-
-
-
 GetMaxBrickSizeHdl::GetMaxBrickSizeHdl(const GetMaxBrickSizeRequest& request, IOSession* session)
     : m_request(request), m_session(session) {}
 
@@ -254,4 +250,4 @@ std::unique_ptr<Reply> GetDefault1DTransferFunctionHdl::execute() {
     return mocca::make_unique<GetDefault1DTransferFunctionReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-#undef PYTHON_MAGIC
+/* AUTOGEN CommandHandlerImpl */

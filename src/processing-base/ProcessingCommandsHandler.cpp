@@ -59,9 +59,6 @@ std::unique_ptr<Reply> InitContextHdl::execute() {
     return nullptr;
 }
 
-#define PYTHON_MAGIC
-
-
 ZoomCameraHdl::ZoomCameraHdl(const ZoomCameraRequest& request, RenderSession* session)
     : m_request(request), m_session(session) {
     }
@@ -120,4 +117,4 @@ std::unique_ptr<Reply> GetActiveTimestepHdl::execute() {
     return mocca::make_unique<GetActiveTimestepReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-#undef PYTHON_MAGIC
+/* AUTOGEN CommandHandlerImpl */

@@ -48,8 +48,6 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetDomainSize:
         return mocca::make_unique<GetDomainSizeHdl>(static_cast<const GetDomainSizeRequest&>(request), session);
         break;
-
-#define PYTHON_MAGIC
     case VclType::GetTransformation:
         return mocca::make_unique<GetTransformationHdl>(static_cast<const GetTransformationRequest&>(request), session);
         break;
@@ -106,8 +104,7 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
         return mocca::make_unique<GetDefault1DTransferFunctionHdl>(static_cast<const GetDefault1DTransferFunctionRequest&>(request),
                                                                    session);
         break;
-
-#undef PYTHON_MAGIC
+        /* AUTOGEN IOCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }

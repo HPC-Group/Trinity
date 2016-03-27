@@ -36,9 +36,6 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::InitContext:
         return mocca::make_unique<InitContextHdl>(static_cast<const InitContextRequest&>(request), session);
         break;
-
-#define PYTHON_MAGIC
-
     case VclType::ZoomCamera:
         return mocca::make_unique<ZoomCameraHdl>(static_cast<const ZoomCameraRequest&>(request), session);
         break;
@@ -60,7 +57,7 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
 	case VclType::GetActiveTimestep:
 		return mocca::make_unique<GetActiveTimestepHdl>(static_cast<const GetActiveTimestepRequest&>(request), session);
 		break;
-#undef PYTHON_MAGIC
+        /* AUTOGEN CommandHandlerImpl */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }
