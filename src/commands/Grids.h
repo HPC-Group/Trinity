@@ -58,17 +58,17 @@ private:
 template <class T> class Grid2D : public GridnD<T> {
 public:
   Grid2D<T>() : GridnD<T>(), m_iSize(0,0) {}
-  Grid2D<T>(const Core::Math::VECTOR2<size_t>& iSize) : m_iSize(iSize) { this->m_pData = new T[m_iSize.area()];}
+  Grid2D<T>(const Core::Math::Vec2ui64& iSize) : m_iSize(iSize) { this->m_pData = new T[m_iSize.area()];}
   Grid2D<T>(const Grid2D<T> &other): m_iSize(other.m_iSize) {
     this->m_pData = new T[m_iSize.area()];
     memcpy(this->m_pData, other->m_pData, sizeof(T)*m_iSize.area());
   }
   virtual ~Grid2D<T>() {}
   
-  Core::Math::VECTOR2<size_t> getFilledSize() const {
-    Core::Math::VECTOR2<size_t> vSize(0,0);
-    for (size_t y = 0;y<m_iSize.y;y++) {
-      for (size_t x = 0;x<m_iSize.x;x++) {
+  Core::Math::Vec2ui64 getFilledSize() const {
+    Core::Math::Vec2ui64 vSize(0,0);
+    for (uint64_t y = 0;y<m_iSize.y;y++) {
+      for (uint64_t x = 0;x<m_iSize.x;x++) {
         if (this->Get(x,y) != 0) {
           if ((x+1) > vSize.x) vSize.x = x+1;
           vSize.y = y+1;
@@ -79,8 +79,8 @@ public:
   }
   
   
-  Core::Math::VECTOR2<size_t> getSize() const {return m_iSize;}
-  void Resize(const Core::Math::VECTOR2<size_t>& iSize) {
+  Core::Math::Vec2ui64 getSize() const {return m_iSize;}
+  void Resize(const Core::Math::Vec2ui64& iSize) {
     delete [] this->m_pData;
     m_iSize = iSize;
     this->m_pData = new T[m_iSize.area()];
@@ -100,22 +100,22 @@ public:
   }
   
 private:
-  Core::Math::VECTOR2<size_t> m_iSize;
+  Core::Math::Vec2ui64 m_iSize;
 };
 
 
 template <class T> class Grid3D : public GridnD<T> {
 public:
   Grid3D<T>() : GridnD<T>(), m_iSize(0,0,0) {}
-  Grid3D<T>(const Core::Math::VECTOR3<size_t>& iSize) : m_iSize(iSize) { this->m_pData = new T[m_iSize.volume()];}
+  Grid3D<T>(const Core::Math::Vec3ui64& iSize) : m_iSize(iSize) { this->m_pData = new T[m_iSize.volume()];}
   Grid3D<T>(const Grid3D<T> &other): m_iSize(other.m_iSize) {
     this->m_pData = new T[m_iSize.volume()];
     memcpy(this->m_pData, other->m_pData, sizeof(T)*m_iSize.volume());
   }
   virtual ~Grid3D<T>() {}
   
-  Core::Math::VECTOR3<size_t> getSize() const {return m_iSize;}
-  void Resize(const Core::Math::VECTOR3<size_t>& iSize) {
+  Core::Math::Vec3ui64 getSize() const {return m_iSize;}
+  void Resize(const Core::Math::Vec3ui64& iSize) {
     delete [] this->m_pData;
     m_iSize = iSize;
     this->m_pData = new T[m_iSize.volume()];
@@ -135,5 +135,5 @@ public:
   }
   
 private:
-  Core::Math::VECTOR3<size_t> m_iSize;
+  Core::Math::Vec3ui64 m_iSize;
 };
