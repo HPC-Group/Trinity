@@ -36,12 +36,12 @@ using namespace Core::StringTools;
 bool UVFListData::stripListerID(std::string& id) const {
   if (id.find(UVFDataPrefix+"@") == 0) {
 
-    if (id == UVFDataPrefix)
-      return false;
-    else {
+    id = id.substr((UVFDataPrefix+"@").length());
+    
+    if (id.empty())
       id = UVFSearchRoot;
-      return true;
-    }
+
+    return true;
   
   } else {
     return false;
