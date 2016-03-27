@@ -86,7 +86,4 @@ uint64_t RendererProxy::getActiveTimestep() const {
     return reply->getParams().getTimestep();
 }
 
-#define PYTHON_MAGIC
-
-
-#undef PYTHON_MAGIC
+/* AUTOGEN RendererProxyImpl */

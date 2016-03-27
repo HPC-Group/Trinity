@@ -27,10 +27,7 @@ public:
 	void deleteContext() override {};  // that does not to go over network... bad design, however
     void zoomCamera(float f) override;
     int getRemoteSessionId() const;
-#define PYTHON_MAGIC
-
-
-#undef PYTHON_MAGIC
+    /* AUTOGEN IOInterfaceOverride */
 
 
 private:
