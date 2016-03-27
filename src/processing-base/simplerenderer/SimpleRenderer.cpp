@@ -3,6 +3,7 @@
 #include "common/VisStream.h"
 #include "opengl-base/OpenGLError.h"
 #include "silverbullet/math/Vectors.h"
+#include "silverbullet/math/MathTools.h"
 
 #include "mocca/log/LogManager.h"
 
@@ -150,8 +151,8 @@ void SimpleRenderer::loadVolumeData() {
   
   m_io->getBrick(brickKey, volume);
   
-  if (volume.size() != brickSize.volume()) {
-    LERROR("invalid volume data vector. size should be " << brickSize.volume() << " but is " << volume.size());
+  if (volume.size() != brickSize.volume()*byteWidth) {
+    LERROR("invalid volume data vector. size should be " << brickSize.volume()*byteWidth << " but is " << volume.size());
     return;
   } else {
     LINFO("(p) volume size data ok");
@@ -163,6 +164,13 @@ void SimpleRenderer::loadVolumeData() {
                                                 GL_LINEAR, GL_LINEAR);
   
   LINFO("(p) volume created");
+  
+  m_transferFuncScaleValue = MathTools::pow2(byteWidth*8)/m_io->getRange(0).y;
+  
+  m_domainTransform = Core::Math::Mat4f(m_io->getTransformation(0));
+  
+  LINFO("(p) m_domainTransform=" << m_domainTransform);
+  
 }
 
 void SimpleRenderer::loadTransferFunction() {
@@ -237,7 +245,7 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   m_backfaceShader->Enable();
   m_backfaceShader->Set("projectionMatrix", m_projection);
   m_backfaceShader->Set("viewMatrix", m_view);
-  m_backfaceShader->Set("worldMatrix", m_model*world);
+  m_backfaceShader->Set("worldMatrix", m_domainTransform*m_model*world);
   m_bbBox->paint();
   m_backfaceShader->Disable();
   
@@ -253,7 +261,8 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   m_raycastShader->Enable();
   m_raycastShader->Set("projectionMatrix", m_projection);
   m_raycastShader->Set("viewMatrix", m_view);
-  m_raycastShader->Set("worldMatrix", m_model*world);
+  m_raycastShader->Set("worldMatrix", m_domainTransform*m_model*world);
+  m_raycastShader->Set("transferFuncScaleValue", m_transferFuncScaleValue);
   
   m_raycastShader->ConnectTextureID("transferfunc", 0);
   m_raycastShader->ConnectTextureID("volume", 1);

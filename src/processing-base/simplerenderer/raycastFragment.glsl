@@ -3,6 +3,9 @@
 // INPUT VARIABLES
 in vec3 entranceInViewSpace;
 
+// CONSTANTS
+uniform float transferFuncScaleValue;
+
 // OUTPUT VARIABLES
 layout(location=0) out vec4 outputColor;
 
@@ -41,7 +44,7 @@ void main(void)
   
   outputColor = vec4(0,0,0,0);
   while (length(pos-rayEntryPos) < rayDist) {
-    float volVal = texture(volume,pos).r;
+    float volVal = texture(volume,pos).r*transferFuncScaleValue;
     vec4 color = texture(transferfunc,volVal);
     
     outputColor = underCompositing(color, outputColor);

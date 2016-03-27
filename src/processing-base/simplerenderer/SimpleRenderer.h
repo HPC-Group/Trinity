@@ -47,5 +47,8 @@ namespace trinity {
     std::unique_ptr<GLVolumeBox>      m_bbBox;
     std::shared_ptr<OpenGlHeadlessContext> m_context;
     
+    Core::Math::Mat4f m_domainTransform;
+    float             m_transferFuncScaleValue;
+    
   };
 }
