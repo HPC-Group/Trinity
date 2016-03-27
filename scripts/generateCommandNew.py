@@ -26,7 +26,9 @@ procFiles = [
 	"../src/commands/ProcessingCommands.cpp",
 	"../src/processing-base/ProcessingCommandsHandler.h",
 	"../src/processing-base/ProcessingCommandsHandler.cpp",
-	"../src/processing-base/ProcessingCommandFactory.cpp"
+	"../src/processing-base/ProcessingCommandFactory.cpp",
+	"../src/frontend-base/RendererProxy.h",
+	"../src/frontend-base/RendererProxy.cpp"
 ]
 
 templates = {
@@ -56,7 +58,19 @@ r'''VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
 r'''{{CommandImplRequestOperators}}
 {{CommandImplReplyOperatorsIfNotVoid}}''',
 
-"CommandHandlerHeader": 
+"ProcCommandHandlerHeader": 
+r'''class {{CommandNameHdl}} : public ICommandHandler {
+public:
+    {{CommandNameHdl}}(const {{CommandNameRequest}}& request, RendererSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    {{CommandNameRequest}} m_request;
+	RendererSession* m_session;
+};''',
+
+"IOCommandHandlerHeader": 
 r'''class {{CommandNameHdl}} : public ICommandHandler {
 public:
     {{CommandNameHdl}}(const {{CommandNameRequest}}& request, IOSession* session);
@@ -73,7 +87,7 @@ r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
-    {{CommandNameCmd}}::ReplyParams params(m_session->getRenderer().{{InterfaceGetter}}(/* TODO */);
+    {{CommandNameCmd}}::ReplyParams params(m_session->getRenderer().{{InterfaceMethod}}(/* TODO */);
     return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
 }''',
 
@@ -82,7 +96,7 @@ r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
-    {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceGetter}}(/* TODO */);
+    {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceMethod}}(/* TODO */);
     return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
 }''',
 
@@ -102,6 +116,22 @@ std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
 
 "RendererInterfaceOverride": lambda input: "" if input.type == "io" else "{{InterfaceOverride}}",
 
+"IOSessionProxyImpl":
+r'''{{ReturnType}} IOSessionProxy::{{InterfaceMethod}}({{RequestArgumentList}}) const {
+{{CommandNameCmd}}::RequestParams params({{RequestArguments}});
+{{CommandNameRequest}} request(params, IDGenerator::nextID(), m_remoteSid);
+auto reply = sendRequestChecked(m_inputChannel, request);
+return reply->getParams().getResult();
+}''',
+
+"RendererProxyImpl":
+r'''{{ReturnType}} RendererProxy::{{InterfaceMethod}}({{RequestArgumentList}}) const {
+{{CommandNameCmd}}::RequestParams params({{RequestArguments}});
+{{CommandNameRequest}} request(params, IDGenerator::nextID(), m_remoteSid);
+auto reply = sendRequestChecked(m_inputChannel, request);
+return reply->getParams().getResult();
+}''',
+
 "VclEnumEntry" : r'{{VclType}},',
 
 "VclMapEntry" : r'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});',
@@ -119,7 +149,18 @@ std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
 
 "CommandNameReply": r'{{CommandName}}Reply',
 
-"InterfaceGetter" : lambda input: untitle(input.commandName),
+"InterfaceMethod" : lambda input: untitle(input.commandName),
+
+"ReturnType": lambda input: input.ret[0],
+
+"RequestArgumentList": lambda input: makeArgumentList(input.params),
+
+"ReplyArgumentList": lambda input: makeArgumentList(input.ret),
+
+"RequestArguments": lambda input: makeArguments(input.params),
+
+"ReplyArguments": lambda input: makeArguments(input.ret),
+
 
 ## LOWER LEVEL COMMAND HEADER VARIABLES
 
@@ -366,6 +407,12 @@ def makeArgumentList(params):
 		items.append(crQualify(type, name))
 	return ", ".join(items)
 
+def makeArguments(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		items.append(params[i + 1])
+	return ", ".join(items)	
+	
 def makeMemberList(params):
 	if not params:
 		return ""
@@ -500,7 +547,7 @@ def makeCtorDeclaration(params, ctorName):
 		return ctorName + "(" + makeArgumentList(params) + ")"	
 
 def makeInterfaceOverride(input):
-	return input.ret[0] + " " + untitle(input.commandName) + "(" + makeArgumentList(input.params) + ");"
+	return "{{ReturnType}} {{InterfaceMethod}} ({{RequestArguments}}) const override;"
 		
 def expandVariable(variable, input):
 	global templates

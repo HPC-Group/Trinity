@@ -123,5 +123,5 @@ private:
 	RenderSession* m_session;
 };
 
-/* AUTOGEN CommandHandlerHeader */
+/* AUTOGEN ProcCommandHandlerHeader */
 }

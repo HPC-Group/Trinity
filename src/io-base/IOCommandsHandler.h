@@ -306,5 +306,5 @@ private:
 	IOSession* m_session;
 };
 
-/* AUTOGEN CommandHandlerHeader */
+/* AUTOGEN IOCommandHandlerHeader */
 }
