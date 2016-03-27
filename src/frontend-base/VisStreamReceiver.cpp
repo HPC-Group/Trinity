@@ -3,7 +3,13 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
+
+
+#include "silverbullet/base/DetectEnv.h"
+
+#if !defined(DETECTED_IOS_SIMULATOR) && !defined(DETECTED_IOS)
 #include "jpeg/JPEGDecoder.h"
+#endif
 
 using namespace trinity;
 
@@ -42,7 +48,10 @@ void VisStreamReceiver::run() {
     }
 
     LINFO("(f) vis receiver connected");
+    
+#if !defined(DETECTED_IOS_SIMULATOR) && !defined(DETECTED_IOS)
     JPEGDecoder jpeg(JPEGDecoder::Format_RGBA, false);
+#endif
 
     while (!isInterrupted()) {
         
@@ -56,9 +65,12 @@ void VisStreamReceiver::run() {
                  JPegFrame f(bytepacket);
                  m_visStream->put(f.decompress)... sth. like this
                  */
-                
+#if !defined(DETECTED_IOS_SIMULATOR) && !defined(DETECTED_IOS)
                 auto frame = jpeg.decode(bytepacket);
                 m_visStream->put(std::move(frame.release()));
+#else
+                m_visStream->put(std::move(bytepacket));
+#endif
             }
             
         } catch (const mocca::net::NetworkError& err) {

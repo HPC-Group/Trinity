@@ -652,7 +652,7 @@ MUI_MasterUI.NodeConnector = (function (){
             {
                         // look like type: InitRenderer; rid: 1; sid: 0; params: { protocol: tcp.prefixed; rendertype: SimpleRenderer; fileid: FractalData@3; ioendpoint: tcp.prefixed:127.0.0.1:6678; streamingparams: { xres: 800; yres: 600 } }
                         console.log("Sending: " + requestType);
-                        MUI_MasterUI.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "FractalData@3", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": 800, "yres": 600 } } } }');
+                        MUI_MasterUI.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "FractalData@3", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": 1000, "yres": 1000 } } } }');
             
 			}
 
@@ -699,8 +699,8 @@ MUI_MasterUI.VisControlConnector = (function (){
             //MUI_MasterUI.NodeConnector.sendRequest("InitRenderer");
             //console.log("done sending init renderer request");
             console.log("sending init context");
-            MUI_MasterUI.VisControlConnector.doSend('{"type": "InitContext", "rid": 1, "sid": 1, "params": { "dummy": 1} }');
-            MUI_MasterUI.VisControlConnector.doSend('{"type": "SetIsoValue", "rid": 1, "sid": 1, "params": { "isoValue": 0 } }');
+            MUI_MasterUI.VisControlConnector.doSend('{"type": "InitContext", "req": { "rid": 1, "sid": 3, "params": { "dummy": 1} } }');
+            MUI_MasterUI.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "isovalue": 0 } } }');
 
             console.log("done sending init context request");
         },
@@ -734,7 +734,7 @@ MUI_MasterUI.VisControlConnector = (function (){
 
         doSend : function(message)
         {
-            console.log("Sent: " + message);
+            //console.log("Sent: " + message);
             websocketControl.send(message);
         }
     };
@@ -747,6 +747,10 @@ MUI_MasterUI.StreamConnector = (function (){
 
     var websocketStream = undefined;
     var port = undefined;
+    var rot = 0.0;
+    var canvas = document.getElementById('myCanvas');
+    var img = new Image();
+    var ctx = canvas.getContext('2d');
     
 
 
@@ -765,6 +769,7 @@ MUI_MasterUI.StreamConnector = (function (){
             websocketStream.binaryType = "blob";
             websocketStream.onopen = function(evt) { MUI_MasterUI.StreamConnector.onOpen(evt) };
             websocketStream.onclose = function(evt) { MUI_MasterUI.StreamConnector.onClose(evt) };
+            websocketStream.onmessage = function(evt) { MUI_MasterUI.StreamConnector.onMessage(evt) };
             websocketStream.ondata = function(src,start,end) { MUI_MasterUI.StreamConnector.onData(src,start,end) };
             websocketStream.onerror = function(evt) { MUI_MasterUI.StreamConnector.onError(evt) };
         
@@ -782,14 +787,21 @@ MUI_MasterUI.StreamConnector = (function (){
             console.log("Websocket DISCONNECTED");
         },
 
-        onData : function(src,start,end)
+        onMessage : function(evt)
         {
-            console.log("gim in!");
-            //console.log("message");
+            //console.log("gim in!");
             //console.log(evt.data);
+
+            img.onload = function () {
+                //console.log("drawing...");
+                ctx.drawImage(img,0,0);
+            }
+            //console.log("replacing image source");
+
+            img.src = URL.createObjectURL(evt.data);
+            MUI_MasterUI.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "isovalue": '+ rot + ' } } }');
+            rot += 0.01;
             
-            src = src.slice(start,end);
-            console.log("got img");
         },
 
         onError : function(evt)
@@ -800,7 +812,7 @@ MUI_MasterUI.StreamConnector = (function (){
 
         doSend : function(message)
         {
-            console.log("Sent: " + message);
+            //console.log("Sent: " + message);
             websocketStream.send(message);
         }
     };

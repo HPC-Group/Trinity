@@ -38,7 +38,7 @@ void AbstractSession::run() {
             auto bytepacket = m_controlConnection->receive();
             if (!bytepacket.isEmpty()) {
                 auto request = Request::createFromByteArray(bytepacket);
-                // LINFO("request: " << *request);
+                //LINFO("request: " << *request);
 
                 auto handler = createHandler(*request);
                 auto reply = handler->execute();
