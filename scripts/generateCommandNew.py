@@ -15,7 +15,7 @@ ioFiles = [
 	"../src/commands/IOCommands.h",
 	"../src/commands/IOCommands.cpp",
 	"../src/io-base/IOCommandsHandler.h",
-	"../src/io-base/IOCommandsHandler.cpp"
+	"../src/io-base/IOCommandsHandler.cpp",
 	"../src/io-base/IOCommandFactory.cpp"
 ]
 
@@ -23,7 +23,7 @@ procFiles = [
 	"../src/commands/ProcessingCommands.h",
 	"../src/commands/ProcessingCommands.cpp",
 	"../src/processing-base/ProcessingCommandsHandler.h",
-	"../src/processing-base/ProcessingCommandsHandler.cpp"
+	"../src/processing-base/ProcessingCommandsHandler.cpp",
 	"../src/processing-base/ProcessingCommandFactory.cpp"
 ]
 
@@ -66,23 +66,13 @@ private:
 	IOSession* m_session;
 };''',
 
-"CommandHandlerImpl":
-r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session)
-    : m_request(request), m_session(session) {}
+"ProcCommandHandlerImpl": "" if input.type == "io" else "{{CommandHandlerImpl}}",
 
-std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
-	// TODO
-}''',
+"IOCommandHandlerImpl": "" if input.type == "proc" else "{{CommandHandlerImpl}}",
 
-"IOCommandFactoryEntry":
-r'''case VclType::{VclType}:
-return mocca::make_unique<{CommandName}Hdl>(static_cast<const {CommandName}Request&>(request), session);
-break;''',
+"IOCommandFactoryEntry": "" if input.type == "proc" else "{{CommandFactoryEntry}}",
 
-"ProcCommandFactoryEntry":
-r'''case VclType::{VclType}:
-return mocca::make_unique<{CommandName}Hdl>(static_cast<const {CommandName}Request&>(request), session);
-break;''',
+"ProcCommandFactoryEntry": "" if input.type == "io" else "{{CommandFactoryEntry}}",
 
 "ProcRequestFactoryEntry": lambda input: "" if input.type == "io" else "{{RequestFactoryEntry}}",
 
@@ -272,6 +262,23 @@ r'''bool operator==(const {{CommandNameCmd}}::ReplyParams& lhs, const {{CommandN
 }
 std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::ReplyParams& obj) {
     return os << obj.toString();
+}''',
+
+## LOWER LEVEL COMMAND FACTORY VARIABLES
+
+"CommandFactoryEntry":
+r'''case VclType::{{VclType}}:
+return mocca::make_unique<{{CommandNameHdl}}>(static_cast<const {{CommandNameRequest}}&>(request), session);
+break;''',
+
+## LOWER LEVEL COMMAND HANDLER IMPL VARIABLES
+
+"CommandHandlerImpl":
+r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
+	// TODO
 }''',
 
 ## LOWER LEVEL REQUEST IMPL VARIABLES

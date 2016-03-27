@@ -250,4 +250,4 @@ std::unique_ptr<Reply> GetDefault1DTransferFunctionHdl::execute() {
     return mocca::make_unique<GetDefault1DTransferFunctionReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-/* AUTOGEN CommandHandlerImpl */
+/* AUTOGEN IOCommandHandlerImpl */
