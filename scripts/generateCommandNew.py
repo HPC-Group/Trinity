@@ -1,31 +1,36 @@
 import os
 import argparse
 import re
+import subprocess
 from inspect import isfunction
 from shutil import copyfile
 
 commonFiles = [
-	"../src/commands/Vcl.h"
+	#"../src/commands/Vcl.h"
 ]
 
 ioFiles = [
-	"../src/io-base/IOCommandsHandler.h"
+	"../src/commands/IOCommands.h"
+	#"../src/io-base/IOCommandsHandler.h",
+	#"../src/io-base/IOCommandsHandler.cpp"
 ]
 
 procFiles = [
-	"../src/processing-base/ProcessingCommandsHandler.h"
+	#"../src/commands/ProcessingCommands.h",
+	#"../src/processing-base/ProcessingCommandsHandler.h",
+	#"../src/processing-base/ProcessingCommandsHandler.cpp"
 ]
 
 templates = {
-"CommandName" : lambda input : input.commandName,
+## TOPLEVEL VARIABLES
+"CommandHeader": 
+r'''struct {{CommandNameCmd}} {
+    static VclType Type;
 
-"CommandNameCmd": r'{{CommandName}}Cmd',
-
-"CommandNameHdl": r'{{CommandName}}Hdl',
-
-"CommandNameRequest": r'{{CommandName}}Request',
-
-"CommandNameReply": r'{{CommandName}}Reply',
+	{{CommandRequestParams}}
+	
+	{{CommandReplyParamsIfNotVoid}}
+};''',
 
 "CommandHandlerHeader": 
 r'''class {{CommandNameHdl}} : public ICommandHandler {
@@ -39,16 +44,83 @@ private:
 	IOSession* m_session;
 };''',
 
-"VclType" : r'{{CommandName}}',
+"CommandHandlerImpl":
+r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
+
+std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
+	// TODO
+}''',
 
 "VclEnumEntry" : r'{{VclType}},' ,
 
-"VclMapEntry" : r'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});' 
+"VclMapEntry" : r'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});',
 
 
+## LOWER LEVEL COMMON VARIABLES
+
+"CommandName" : lambda input : input.commandName,
+
+"CommandNameCmd": r'{{CommandName}}Cmd',
+
+"CommandNameHdl": r'{{CommandName}}Hdl',
+
+"CommandNameRequest": r'{{CommandName}}Request',
+
+"CommandNameReply": r'{{CommandName}}Reply',
 
 
+## LOWER LEVEL COMMAND HEADER VARIABLES
 
+"CommandRequestParams":
+r'''class RequestParams : public SerializableTemplate<RequestParams> {
+public:
+	RequestParams() = default;
+	{{RequestCtorDeclaration}}
+	
+	void serialize(ISerialWriter& writer) const override;
+	void deserialize(const ISerialReader& reader) override;
+
+	std::string toString() const;
+	bool equals(const RequestParams& other) const;
+	
+	{{RequestGetterDeclarations}}
+	{{RequestMemberList}}
+};''',
+
+"RequestCtorDeclaration": lambda input : makeCtorDeclaration(input.params, "RequestParams"),
+
+"RequestGetterDeclarations": lambda input : makeGetterDeclarations(input.params),
+
+"RequestMemberList": lambda input : makeMemberList(input.params),
+
+"CommandReplyParamsIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandReplyParams}}",
+
+"CommandReplyParams": 
+r'''class ReplyParams : public SerializableTemplate<ReplyParams> {
+public:
+	ReplyParams() = default;
+	{{ReplyCtorDeclaration}}
+	
+	void serialize(ISerialWriter& writer) const override;
+	void deserialize(const ISerialReader& reader) override;
+
+	std::string toString() const;
+	bool equals(const ReplyParams& other) const;
+
+	{{RequestGetterDeclarations}}
+	{{RequestMemberList}}
+};''',
+
+"ReplyCtorDeclaration": lambda input : makeCtorDeclaration(input.ret, "ReplyParams"),
+
+"ReplyGetterDeclarations": lambda input : makeGetterDeclarations(input.ret),
+
+"ReplyMemberList": lambda input : makeMemberList(input.ret),
+
+## LOWER LEVEL VCL HEADER VARIABLES
+
+"VclType" : r'{{CommandName}}'
 }
 
 def insertCodeInSource(destination, code, marker):
@@ -122,15 +194,15 @@ def makeMemberList(params):
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append("\t\t" + type + " " + member(name) + ";")
-	return "\tprivate:\n" + "\n".join(items)
+		items.append(type + " " + member(name) + ";")
+	return "private:\n" + "\n".join(items)
 
 def makeGetterDeclarations(params):
 	items = []
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append("\t\t" + type + " get" + name.title() + "() const;")
+		items.append(type + " get" + name.title() + "() const;")
 	return "\n".join(items)
 	
 def makeGetterDefinitions(commandName, params):
@@ -138,7 +210,7 @@ def makeGetterDefinitions(commandName, params):
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append(type + " " + commandName + "Cmd" + "::get" + name.title() + "() const {\n\t return " + member(name) + ";\n}")
+		items.append(type + " " + commandName + "Cmd" + "::get" + name.title() + "() const {\n return " + member(name) + ";\n}")
 	return "\n\n".join(items)
 	
 def makeInitializerList(params):
@@ -149,7 +221,7 @@ def makeInitializerList(params):
 		type = params[i]
 		name = params[i + 1]
 		items.append(member(name) + "(" + name + ")")
-	return "\t:"+ ", ".join(items)
+	return ":"+ ", ".join(items)
 	
 def makeSerialization(params):
 	items = []
@@ -157,27 +229,27 @@ def makeSerialization(params):
 		type = params[i]
 		name = params[i + 1]
 		if isIntType(type):
-			items.append('\twriter.appendInt("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendInt("' + name + '", ' + member(name) + ');')
 		elif type == "float":
-			items.append('\twriter.appendFloat("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendFloat("' + name + '", ' + member(name) + ');')
 		elif type == "double":
-			items.append('\twriter.appendDouble("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendDouble("' + name + '", ' + member(name) + ');')
 		elif type == "bool":
-			items.append('\twriter.appendBool("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendBool("' + name + '", ' + member(name) + ');')
 		elif type == "string":
-			items.append('\twriter.appendString("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendString("' + name + '", ' + member(name) + ');')
 		elif "vector<float>" in type:
-			items.append('\twriter.appendFloatVec("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendFloatVec("' + name + '", ' + member(name) + ');')
 		elif "vector<bool>" in type:
-			items.append('\twriter.appendBoolVec("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendBoolVec("' + name + '", ' + member(name) + ');')
 		elif "vector<std::string>" in type:
-			items.append('\twriter.appendStringVec("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendStringVec("' + name + '", ' + member(name) + ');')
 		elif "vector<int" in type or "vector<uint" in type or "vector<unsigned int" in type:
-			items.append('\twriter.appendIntVec("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendIntVec("' + name + '", ' + member(name) + ');')
 		elif "vector<" in type:
-			items.append("\t// TODO: this is getting to complicated, you need to do this yourself... (" + name + ")")
+			items.append("// TODO: this is getting to complicated, you need to do this yourself... (" + name + ")")
 		else:
-			items.append('\twriter.appendObject("' + name + '", ' + member(name) + ');')
+			items.append('writer.appendObject("' + name + '", ' + member(name) + ');')
 	return "\n".join(items)
 	
 def makeDeserialization(params):
@@ -186,48 +258,48 @@ def makeDeserialization(params):
 		type = params[i]
 		name = params[i + 1]
 		if type == "uint8_t":
-			items.append('\t' + member(name) + ' = reader.getUInt8("' + name + '");')
+			items.append(member(name) + ' = reader.getUInt8("' + name + '");')
 		elif type == "int32_t":
-			items.append('\t' + member(name) + ' = reader.getInt32("' + name + '");')
+			items.append(member(name) + ' = reader.getInt32("' + name + '");')
 		elif type == "uint32_t":
-			items.append('\t' + member(name) + ' = reader.getUInt32("' + name + '");')
+			items.append(member(name) + ' = reader.getUInt32("' + name + '");')
 		elif type == "int64_t":
-			items.append('\t' + member(name) + ' = reader.getInt64("' + name + '");')
+			items.append(member(name) + ' = reader.getInt64("' + name + '");')
 		elif type == "uint64_t":
-			items.append('\t' + member(name) + ' = reader.getUInt64("' + name + '");')
+			items.append(member(name) + ' = reader.getUInt64("' + name + '");')
 		elif type == "float":
-			items.append('\t' + member(name) + ' = reader.getFloat("' + name + '");')
+			items.append(member(name) + ' = reader.getFloat("' + name + '");')
 		elif type == "double":
-			items.append('\t' + member(name) + ' = reader.getDouble("' + name + '");')
+			items.append(member(name) + ' = reader.getDouble("' + name + '");')
 		elif type == "bool":
-			items.append('\t' + member(name) + ' = reader.getBool("' + name + '");')
+			items.append(member(name) + ' = reader.getBool("' + name + '");')
 		elif "vector<float>" in type:
-			items.append('\t' + member(name) + ' = reader.getFloatVec("' + name + '");')
+			items.append(member(name) + ' = reader.getFloatVec("' + name + '");')
 		elif "vector<uint8_t>" in type:
-			items.append('\t' + member(name) + ' = reader.getUInt8Vec("' + name + '");')
+			items.append(member(name) + ' = reader.getUInt8Vec("' + name + '");')
 		elif "vector<int32_t>" in type:
-			items.append('\t' + member(name) + ' = reader.getInt32Vec("' + name + '");')
+			items.append(member(name) + ' = reader.getInt32Vec("' + name + '");')
 		elif "vector<uint64_t>" in type:
-			items.append('\t' + member(name) + ' = reader.getUInt64Vec("' + name + '");')
+			items.append(member(name) + ' = reader.getUInt64Vec("' + name + '");')
 		elif "vector<bool>" in type:
-			items.append('\t' + member(name) + ' = reader.getBoolVec("' + name + '");')
+			items.append(member(name) + ' = reader.getBoolVec("' + name + '");')
 		elif "vector<std::string>" in type:
-			items.append('\t' + member(name) + ' = reader.getStringVec("' + name + '");')
+			items.append(member(name) + ' = reader.getStringVec("' + name + '");')
 		elif "vector<" in type:
-			items.append("\t// TODO: this is getting to complicated, you need to do this yourself... (" + name + ")")
+			items.append("// TODO: this is getting to complicated, you need to do this yourself... (" + name + ")")
 		else:
-			items.append('\t' + member(name) + ' = reader.getSerializable<' + type + '>("' + name + '");')
+			items.append(member(name) + ' = reader.getSerializable<' + type + '>("' + name + '");')
 	return "\n".join(items)
 	
 def makeEquals(params):
 	if not params:
-		return "\treturn true;"
+		return "return true;"
 	items = []
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
 		items.append(member(name) + " == other." + member(name))
-	return "\treturn " + " && ".join(items) + ";"
+	return "return " + " && ".join(items) + ";"
 	
 def makeStreaming(params):
 	if not params:
@@ -240,13 +312,13 @@ def makeStreaming(params):
 			items.append('"' + name + ': " << ' + member(name))
 		else:
 			items.append('"; ' + name + ': " << ' + member(name))
-	return "\tstream << " + " << ".join(items) + ";"
+	return "stream << " + " << ".join(items) + ";"
 	
-def makeCtorDeclaration(params, ctorType):
+def makeCtorDeclaration(params, ctorName):
 	if not params:
 		return ""
 	else:
-		return ctorType + "(" + makeArgumentList(params) + ");"		
+		return ctorName + "(" + makeArgumentList(params) + ");"		
 
 def expandVariable(variable, input):
 	global templates
@@ -255,44 +327,6 @@ def expandVariable(variable, input):
 		return t(input)
 	else:
 		return t
-	
-
-	if variable == "RequestCtorDeclaration":
-		return makeCtorDeclaration(input.params, "RequestParams")
-	elif variable == "ReplyCtorDeclaration":
-		return makeCtorDeclaration(input.ret, "ReplyParams")
-	elif variable == "RequestMembers":
-		return makeMemberList(input.params)
-	elif variable == "ReplyMembers":
-		return makeMemberList(input.ret)
-	elif variable == "RequestGetterDeclarations":
-		return makeGetterDeclarations(input.params)
-	elif variable == "ReplyGetterDeclarations":
-		return makeGetterDeclarations(input.ret)
-	elif variable == "RequestInitializerList":
-		return makeInitializerList(input.params)
-	elif variable == "RequestGetterDefinitions":
-		return makeGetterDefinitions(input.commandName, input.params)
-	elif variable == "ReplyGetterDefinitions":
-		return makeGetterDefinitions(input.commandName, input.ret)
-	elif variable == "RequestParamSerialization":
-		return makeSerialization(input.params)
-	elif variable == "ReplyParamSerialization":
-		return makeDeserialization(input.ret)
-	elif variable == "RequestParamDeserialization":
-		return makeDeserialization(input.params)
-	elif variable == "ReplyParamDeserialization":
-		return makeSerialization(input.ret)
-	elif variable == "RequestParamEquals":
-		return makeEquals(input.params)
-	elif variable == "ReplyParamEquals":
-		return makeEquals(input.ret)
-	elif variable == "RequestParamStreaming":
-		return makeStreaming(input.params)
-	elif variable == "ReplyParamStreaming":
-		return makeStreaming(input.ret)
-	else:
-		raise Exception("Unknown variable " + variable)
 		
 def replaceRecursive(source, input):
 	tokens = tokenizeSource(source)
@@ -304,7 +338,17 @@ def replaceRecursive(source, input):
 		else:
 			result.append(token)
 	return result
-	
+
+def clangFormat(source):
+	proc = subprocess.Popen(
+		'clang-format',stdout=subprocess.PIPE,
+		stdin=subprocess.PIPE)
+	proc.stdin.write(source)
+	proc.stdin.close()
+	result = proc.stdout.read()
+	proc.wait()
+	return result
+
 def process(files, input):
 	print files
 	for file in files:
@@ -314,28 +358,27 @@ def process(files, input):
 		result = ""
 		for token in tokens:
 			result = result + token.value
-		print result
-
+		print clangFormat(result)
+		
 class Input:
-	def __init__(self, commandName, hasReply, params, ret):
+	def __init__(self, commandName, params, ret):
 		self.commandName = commandName
-		self.hasReply = hasReply
 		self.params = params
 		self.ret = ret
 		
 def main():
 	global commonFiles
 	global ioFiles
+	global procFiles
 
 	parser = argparse.ArgumentParser(description="Generate Trinity Command.")
 	parser.add_argument('--type', help="type of the command to generate ('proc' or 'io'" )
 	parser.add_argument('--name', help="name of the command to generate")
-	parser.add_argument('--hasReply', help="shows if the command has a reply ('true' or 'false'")
 	parser.add_argument('--returnType', help="return value of the command")
 	parser.add_argument('--parameters', nargs='*', help="all parameters of the command ('please specify all parameters successive, e.g., int x float y double z')")
 	args = parser.parse_args()
 
-	input = Input(args.name, args.hasReply, args.parameters, [args.returnType, "result"])
+	input = Input(args.name, args.parameters, [args.returnType, "result"])
 	files = []
 	if args.type == "proc":
 			files = commonFiles + procFiles

@@ -56,6 +56,9 @@ std::ostream& operator<<(std::ostream& os, const ListFilesCmd::RequestParams& ob
 bool operator==(const ListFilesCmd::ReplyParams& lhs, const ListFilesCmd::ReplyParams& rhs);
 std::ostream& operator<<(std::ostream& os, const ListFilesCmd::ReplyParams& obj);
 
+using ListFilesRequest = RequestTemplate<ListFilesCmd>;
+using ListFilesReply = ReplyTemplate<ListFilesCmd>;
+
 struct InitIOSessionCmd {
     static VclType Type;
 
@@ -101,6 +104,9 @@ bool operator==(const InitIOSessionCmd::ReplyParams& lhs, const InitIOSessionCmd
 std::ostream& operator<<(std::ostream& os, const InitIOSessionCmd::RequestParams& obj);
 std::ostream& operator<<(std::ostream& os, const InitIOSessionCmd::ReplyParams& obj);
 
+using InitIOSessionRequest = RequestTemplate<InitIOSessionCmd>;
+using InitIOSessionReply = ReplyTemplate<InitIOSessionCmd>;
+
 struct GetLODLevelCountCmd {
     static VclType Type;
 
@@ -144,8 +150,8 @@ bool operator==(const GetLODLevelCountCmd::ReplyParams& lhs, const GetLODLevelCo
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestParams& obj);
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj);
 
-#define PYTHON_MAGIC
-
+using GetLODLevelCountRequest = RequestTemplate<GetLODLevelCountCmd>;
+using GetLODLevelCountReply = ReplyTemplate<GetLODLevelCountCmd>;
 
 struct GetMaxBrickSizeCmd {
     static VclType Type;
@@ -1202,14 +1208,5 @@ std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCmd
 using GetDefault1DTransferFunctionRequest = RequestTemplate<GetDefault1DTransferFunctionCmd>;
 using GetDefault1DTransferFunctionReply = ReplyTemplate<GetDefault1DTransferFunctionCmd>;
 
-#undef PYTHON_MAGIC
-
-using ListFilesRequest = RequestTemplate<ListFilesCmd>;
-using ListFilesReply = ReplyTemplate<ListFilesCmd>;
-
-using InitIOSessionRequest = RequestTemplate<InitIOSessionCmd>;
-using InitIOSessionReply = ReplyTemplate<InitIOSessionCmd>;
-
-using GetLODLevelCountRequest = RequestTemplate<GetLODLevelCountCmd>;
-using GetLODLevelCountReply = ReplyTemplate<GetLODLevelCountCmd>;
+/* AUTOGEN CommandHeader */
 }
