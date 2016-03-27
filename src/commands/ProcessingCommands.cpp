@@ -185,9 +185,6 @@ std::string InitContextCmd::RequestParams::toString() const {
     return stream.str();
 }
 
-#define PYTHON_MAGIC_DEFINITION
-
-
 VclType ZoomCameraCmd::Type = VclType::ZoomCamera;
 
 float ZoomCameraCmd::RequestParams::getZoom() const {
@@ -463,7 +460,7 @@ uint64_t GetActiveTimestepCmd::ReplyParams::getTimestep() const {
     return m_timestep;
 }
 
-#undef PYTHON_MAGIC_DEFINITION
+/* AUTOGEN CommandImpl */
 
 namespace trinity {
 bool operator==(const StreamingParams& lhs, const StreamingParams& rhs) {
@@ -499,9 +496,6 @@ bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::
 std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& obj) {
     return os << obj.toString();
 }
-
-#define PYTHON_MAGIC
-
 
 bool operator==(const ZoomCameraCmd::RequestParams& lhs, const ZoomCameraCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
@@ -576,5 +570,5 @@ std::ostream& operator<<(std::ostream& os, const GetActiveTimestepCmd::ReplyPara
     return os << obj.toString();
 }
 
-#undef PYTHON_MAGIC
+/* AUTOGEN CommandImplOperators */
 }

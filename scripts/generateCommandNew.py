@@ -10,13 +10,15 @@ commonFiles = [
 ]
 
 ioFiles = [
-	"../src/commands/IOCommands.h"
+	#"../src/commands/IOCommands.h"
+	"../src/commands/IOCommands.cpp"
 	#"../src/io-base/IOCommandsHandler.h",
 	#"../src/io-base/IOCommandsHandler.cpp"
 ]
 
 procFiles = [
 	#"../src/commands/ProcessingCommands.h",
+	#"../src/commands/ProcessingCommands.cpp",
 	#"../src/processing-base/ProcessingCommandsHandler.h",
 	#"../src/processing-base/ProcessingCommandsHandler.cpp"
 ]
@@ -30,7 +32,21 @@ r'''struct {{CommandNameCmd}} {
 	{{CommandRequestParams}}
 	
 	{{CommandReplyParamsIfNotVoid}}
-};''',
+};
+
+{{CommandRequestOperators}}
+
+{{CommandReplyOperatorsIfNotVoid}}
+''',
+
+"CommandImpl":
+r'''VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
+
+{{CommandRequestImpl}}
+}''',
+
+"CommandImplOperators":
+r''' TODO!!!''',
 
 "CommandHandlerHeader": 
 r'''class {{CommandNameHdl}} : public ICommandHandler {
@@ -94,6 +110,11 @@ public:
 
 "RequestMemberList": lambda input : makeMemberList(input.params),
 
+"CommandRequestOperators" :
+r'''bool operator==(const {{CommandNameCmd}}::RequestParams& lhs, const {{CommandNameCmd}}::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::RequestParams& obj);
+using {{CommandNameRequest}} = RequestTemplate<{{CommandNameCmd}}>;''',
+
 "CommandReplyParamsIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandReplyParams}}",
 
 "CommandReplyParams": 
@@ -118,26 +139,61 @@ public:
 
 "ReplyMemberList": lambda input : makeMemberList(input.ret),
 
+"CommandReplyOperatorsIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandReplyOperators}}",
+
+"CommandReplyOperators" :
+r'''bool operator==(const {{CommandNameCmd}}::ReplyParams& lhs, const {{CommandNameCmd}}::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::ReplyParams& obj);
+using {{CommandNameReply}} = ReplyTemplate<{{CommandNameCmd}}>;''',
+
+## LOWER LEVEL COMMAND IMPL VARIABLES
+
+"CommandRequestImpl":
+r'''
+{{CommandRequestCtorImplIfNotEmpty}}
+
+void {{CommandNameCmd}}::RequestParams::serialize(ISerialWriter& writer) const {
+{{RequestParamSerialization}}
+}
+
+void {{CommandNameCmd}}::RequestParams::deserialize(const ISerialReader& reader) {
+{{RequestParamDeserialization}}
+}
+
+bool {{CommandNameCmd}}::RequestParams::equals(const {{CommandNameCmd}}::RequestParams& other) const {
+{{RequestParamEquals}}
+}
+
+{{RequestGetterDefinitions}}
+
+std::string {{CommandNameCmd}}::RequestParams::toString() const {
+    std::stringstream stream;
+{{RequestParamStreaming}}
+    return stream.str();
+}''',
+
+"CommandRequestCtorImplIfNotEmpty" : lambda input : "" if not input.params else "{{CommandRequestCtorImpl}}",
+
+"CommandRequestCtorImpl":
+r'''{{CommandNameCmd}}::RequestParams::{{RequestCtorDeclaration}}
+{{RequestInitializerList}} {}''',
+
+"RequestInitializerList": lambda input : makeInitializerList(input.params),
+
+"RequestParamSerialization": lambda input : makeSerialization(input.params),
+
+"RequestParamDeserialization": lambda input : makeDeserialization(input.params),
+
+"RequestParamEquals": lambda input : makeEquals(input.params),
+
+"RequestGetterDefinitions": lambda input : makeGetterDefinitions(input.commandName, input.params),
+
+"RequestParamStreaming": lambda input : makeStreaming(input.params),
+
 ## LOWER LEVEL VCL HEADER VARIABLES
 
 "VclType" : r'{{CommandName}}'
 }
-
-def insertCodeInSource(destination, code, marker):
-	with open(destination, "r+") as destfile:
-		content = destfile.readlines()
-		pos = determineInsertPosition(content, marker)
-		content.insert(pos, code + "\n")
-		destfile.truncate()
-		destfile.seek(0)
-		destfile.writelines(content)
-			
-def determineInsertPosition(code, marker):
-	pos = 0
-	for line in code:
-		pos = pos + 1
-		if line.strip() == marker:
-			return pos - 1
 			
 def readSourceFile(filename):
 	with open(filename, "r+") as sourceFile:
@@ -349,6 +405,10 @@ def clangFormat(source):
 	proc.wait()
 	return result
 
+def replaceFile(filename, source):
+	with open(filename, "w") as destfile:
+		destfile.write(source)
+		
 def process(files, input):
 	print files
 	for file in files:
@@ -358,7 +418,8 @@ def process(files, input):
 		result = ""
 		for token in tokens:
 			result = result + token.value
-		print clangFormat(result)
+		formatted = clangFormat(result)
+		replaceFile(file, formatted)
 		
 class Input:
 	def __init__(self, commandName, params, ret):

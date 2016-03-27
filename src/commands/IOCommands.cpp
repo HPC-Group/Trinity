@@ -177,9 +177,6 @@ std::string GetLODLevelCountCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
-#define PYTHON_MAGIC_DEFINITION
-
-
 ////////////// GetMaxBrickSizeCmd //////////////
 
 VclType GetMaxBrickSizeCmd::Type = VclType::GetMaxBrickSize;
@@ -1411,8 +1408,7 @@ TransferFunction1D GetDefault1DTransferFunctionCmd::ReplyParams::getFunction() c
     return m_function;
 }
 
-#undef PYTHON_MAGIC_DEFINITION
-
+/* AUTOGEN CommandImpl */
 
 namespace trinity {
 bool operator==(const IOData& lhs, const IOData& rhs) {
@@ -1460,9 +1456,6 @@ std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::RequestPar
 std::ostream& operator<<(std::ostream& os, const GetLODLevelCountCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
-
-#define PYTHON_MAGIC
-
 
 bool operator==(const GetMaxBrickSizeCmd::RequestParams& lhs, const GetMaxBrickSizeCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
@@ -1781,5 +1774,5 @@ std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCmd
     return os << obj.toString();
 }
 
-#undef PYTHON_MAGIC
+/* AUTOGEN CommandImplOperators */
 }
