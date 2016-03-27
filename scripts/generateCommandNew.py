@@ -16,7 +16,9 @@ ioFiles = [
 	"../src/commands/IOCommands.cpp",
 	"../src/io-base/IOCommandsHandler.h",
 	"../src/io-base/IOCommandsHandler.cpp",
-	"../src/io-base/IOCommandFactory.cpp"
+	"../src/io-base/IOCommandFactory.cpp",
+	"../src/common/IOSessionProxy.h",
+	"../src/common/IOSessionProxy.cpp"
 ]
 
 procFiles = [
@@ -95,6 +97,10 @@ std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
 "ProcReplyFactoryEntry": lambda input: "" if input.type == "io" or "void" in input.ret else "{{ReplyFactoryEntry}}",
 
 "IOReplyFactoryEntry": lambda input: "" if input.type == "proc" or "void" in input.ret else "{{ReplyFactoryEntry}}",
+
+"IOInterfaceOverride": lambda input: "" if input.type == "proc" else "{{InterfaceOverride}}",
+
+"RendererInterfaceOverride": lambda input: "" if input.type == "io" else "{{InterfaceOverride}}",
 
 "VclEnumEntry" : r'{{VclType}},',
 
@@ -300,6 +306,10 @@ r''' else if (type == {{CommandNameReply}}::Ifc::Type) {
 	return reader->getSerializablePtr<{{CommandNameReply}}>("rep");
 }''',
 
+## LOWER LEVEL PROXY HEADER VARIABLES
+
+"InterfaceOverride": lambda input : makeInterfaceOverride(input),
+
 ## LOWER LEVEL VCL HEADER VARIABLES
 
 "VclType" : r'{{CommandName}}'
@@ -489,6 +499,9 @@ def makeCtorDeclaration(params, ctorName):
 	else:
 		return ctorName + "(" + makeArgumentList(params) + ")"	
 
+def makeInterfaceOverride(input):
+	return input.ret[0] + " " + untitle(input.commandName) + "(" + makeArgumentList(input.params) + ");"
+		
 def expandVariable(variable, input):
 	global templates
 	t = templates[variable]
