@@ -16,6 +16,7 @@ ioFiles = [
 	"../src/commands/IOCommands.cpp",
 	"../src/io-base/IOCommandsHandler.h",
 	"../src/io-base/IOCommandsHandler.cpp"
+	"../src/io-base/IOCommandFactory.cpp"
 ]
 
 procFiles = [
@@ -23,6 +24,7 @@ procFiles = [
 	"../src/commands/ProcessingCommands.cpp",
 	"../src/processing-base/ProcessingCommandsHandler.h",
 	"../src/processing-base/ProcessingCommandsHandler.cpp"
+	"../src/processing-base/ProcessingCommandFactory.cpp"
 ]
 
 templates = {
@@ -71,6 +73,16 @@ r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request
 std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
 	// TODO
 }''',
+
+"IOCommandFactoryEntry":
+r'''case VclType::{VclType}:
+return mocca::make_unique<{CommandName}Hdl>(static_cast<const {CommandName}Request&>(request), session);
+break;''',
+
+"ProcCommandFactoryEntry":
+r'''case VclType::{VclType}:
+return mocca::make_unique<{CommandName}Hdl>(static_cast<const {CommandName}Request&>(request), session);
+break;''',
 
 "ProcRequestFactoryEntry": lambda input: "" if input.type == "io" else "{{RequestFactoryEntry}}",
 

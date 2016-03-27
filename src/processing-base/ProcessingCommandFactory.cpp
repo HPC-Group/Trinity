@@ -57,7 +57,7 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
 	case VclType::GetActiveTimestep:
 		return mocca::make_unique<GetActiveTimestepHdl>(static_cast<const GetActiveTimestepRequest&>(request), session);
 		break;
-        /* AUTOGEN CommandHandlerImpl */
+        /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }
