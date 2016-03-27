@@ -1,6 +1,7 @@
 #include <string>
 
 #include "io-base/UVFListData.h"
+#include "uvf/UVFIO.h"
 #include "common/TrinityError.h"
 #include "mocca/log/LogManager.h"
 #include "silverbullet/io/FileTools.h"
@@ -87,4 +88,9 @@ std::vector<IOData> UVFListData::listData(const std::string& dirID) const {
   }
   return ioDataVec;
 }
+
+std::unique_ptr<trinity::IIO> UVFListData::createIO(const std::string& fileId) const {
+  return std::unique_ptr<UVFIO>(new UVFIO(fileId, *this));
+}
+
 

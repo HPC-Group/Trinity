@@ -2,6 +2,7 @@
 #include "io-base/FractalListData.h"
 #include "common/TrinityError.h"
 #include "mocca/log/LogManager.h"
+#include "fractal/FractalIO.h"
 
 #define FractalDataRoot "FractalData"
 
@@ -133,3 +134,9 @@ Vec3ui64 FractalListData::brickSize(const std::string& fileID) const {
   }
   throw TrinityError("invalid file ID", __FILE__, __LINE__);
 }
+
+
+std::unique_ptr<trinity::IIO> FractalListData::createIO(const std::string& fileId) const {
+  return std::unique_ptr<FractalIO>(new FractalIO(fileId, *this));
+}
+

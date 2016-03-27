@@ -16,7 +16,8 @@ std::unique_ptr<Reply> InitIOSessionHdl::execute() {
 
     auto fileID = requestParams.getFileId();
     auto& listData = m_node->getListDataForID(fileID);
-    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), IOSession::createIO(fileID, listData));
+    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(),
+                                                 listData.createIO(fileID));
     session->start();
     
     InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());

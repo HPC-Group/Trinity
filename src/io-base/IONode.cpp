@@ -1,6 +1,7 @@
 #include "io-base/IONode.h"
 
 #include "io-base/FractalListData.h"
+#include "io-base/UVFListData.h"
 
 #include "mocca/base/Memory.h"
 #include "mocca/net/NetworkError.h"
@@ -11,11 +12,13 @@ using namespace trinity;
 IONode::IONode()
     : AbstractNode(nullptr) {
     m_listData.push_back(mocca::make_unique<FractalListData>());
+    m_listData.push_back(mocca::make_unique<UVFListData>());
 }
 
 IONode::IONode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator)
     : AbstractNode(std::move(aggregator)) {
     m_listData.push_back(mocca::make_unique<FractalListData>());
+    m_listData.push_back(mocca::make_unique<UVFListData>());
 }
 
 IONode::~IONode() {
