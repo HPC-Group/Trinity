@@ -34,7 +34,7 @@ using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 
 bool UVFListData::stripListerID(std::string& id) const {
-  if (id.find(UVFDataPrefix+"@") != 0) {
+  if (id.find(UVFDataPrefix+"@") == 0) {
 
     if (id == UVFDataPrefix)
       return false;
