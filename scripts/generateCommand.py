@@ -1,265 +1,626 @@
-#
-
-import os, sys
+import os
 import argparse
+import re
+import subprocess
+from inspect import isfunction
 from shutil import copyfile
 
-from string import Template
+commonFiles = [
+	"../src/commands/Vcl.h",
+	"../src/commands/Request.cpp",
+	"../src/commands/Reply.cpp"
+]
 
-class Types:
-	proc = 1
-	io = 2
+ioFiles = [
+	"../src/commands/IOCommands.h",
+	"../src/commands/IOCommands.cpp",
+	"../src/io-base/IOCommandsHandler.h",
+	"../src/io-base/IOCommandsHandler.cpp",
+	"../src/io-base/IOCommandFactory.cpp",
+	"../src/common/IOSessionProxy.h",
+	"../src/common/IOSessionProxy.cpp"
+]
 
-srcPath = "../src"
+procFiles = [
+	"../src/commands/ProcessingCommands.h",
+	"../src/commands/ProcessingCommands.cpp",
+	"../src/processing-base/ProcessingCommandsHandler.h",
+	"../src/processing-base/ProcessingCommandsHandler.cpp",
+	"../src/processing-base/ProcessingCommandFactory.cpp",
+	"../src/frontend-base/RendererProxy.h",
+	"../src/frontend-base/RendererProxy.cpp"
+]
 
-templateDir = "./template/"
+templates = {
+## TOPLEVEL VARIABLES
+"CommandHeader": 
+r'''struct {{CommandNameCmd}} {
+    static VclType Type;
 
-procDir = "./processingFiles/"
-ioDir = "./ioFiles/"
-commDir = "./commFiles/"
-commonDir = "./commonFiles/"
-frontendDir = "./frontendFiles/"
+	{{CommandRequestParams}}
+	
+	{{CommandReplyParamsIfNotVoid}}
+};
 
-processingFiles = {0 : "ProcessingCommands.h",
-		   1 : "ProcessingCommands.cpp",
-		   2 : "",
-		   3 : "ProcessingCommandsHandler.h",
-		   4 : "ProcessingCommandsHandler.cpp",
-		   5 : "ProcessingCommandFactory.cpp"}
+{{CommandRequestOperators}}
 
-ioFiles = {0 : "IOCommands.h",
-	   1 : "IOCommands.cpp",
-	   2 : "",
-	   3 : "IOCommandsHandler.h",
-	   4 : "IOCommandsHandler.cpp",
-	   5 : "IOCommandFactory.cpp"}
+{{CommandReplyOperatorsIfNotVoid}}
+''',
 
-commFiles = {0 : "Request.cpp",
-	     1 : "Reply.cpp",
-	     2 : "Vcl.h"}
+"CommandImpl":
+r'''VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
 
-commonFiles = {0 : "IOSessionProxy.h",
-							 1 : "IOSessionProxy.cpp"}
+{{CommandRequestImpl}}
 
-frontendFiles = {0 : "RendererProxy.h",
-								 1 : "RendererProxy.cpp"}
+{{CommandReplyImplIfNotVoid}}''',
 
-processingTemplates = {0 : "ProcessingCommandsTemplate.h",
-		       1 : "ProcessingCommandsTemplate.cpp",
-		       2 : "ProcessingCommandsTemplate2.cpp",
-		       3 : "ProcessingCommandsHandlerTemplate.h",
-		       4 : "ProcessingCommandsHandlerTemplate.cpp",
-		       5 : "ProcessingCommandFactoryTemplate.cpp"}
+"CommandImplOperators":
+r'''{{CommandImplRequestOperators}}
+{{CommandImplReplyOperatorsIfNotVoid}}''',
 
-ioTemplates = {0 : "IOCommandsTemplate.h",
-	       1 : "IOCommandsTemplate.cpp",
-	       2 : "IOCommandsTemplate2.cpp",
-	       3 : "IOCommandsHandlerTemplate.h",
-	       4 : "IOCommandsHandlerTemplate.cpp",
-	       5 : "IOCommandFactoryTemplate.cpp"}
+"ProcCommandHandlerHeader": 
+r'''class {{CommandNameHdl}} : public ICommandHandler {
+public:
+    {{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session);
 
-commonTemplates = {0 : "IOSessionProxyTemplate.h",
-									 1 : "IOSessionProxyTemplate.cpp"}
+    std::unique_ptr<Reply> execute() override;
 
-frontendTemplates = {0 : "RendererProxyTemplate.h",
-										 1 : "RendererProxyTemplate.cpp"}
+private:
+    {{CommandNameRequest}} m_request;
+	RenderSession* m_session;
+};''',
 
+"IOCommandHandlerHeader": 
+r'''class {{CommandNameHdl}} : public ICommandHandler {
+public:
+    {{CommandNameHdl}}(const {{CommandNameRequest}}& request, IOSession* session);
 
-def openFile(filename, templateName, lookup):
-  with open(filename, "r+") as datafile:
-    content = datafile.readlines()
-    determineStartStop(content, lookup)
-    
-    template = openTemplate(templateName)
-    
-    content.insert(stop, template + "\n")
-    datafile.truncate()
-    datafile.seek(0)
-    datafile.writelines(content)
-    
-    
-def openTemplate(templateName):
-  with open(templateName, "r+") as templateFile:
-    template = templateFile.read()
-    template = template.replace("{CommandName}", name).replace("{VclType}", vclType).replace("{return}", returnType).replace("{CommandName_small}", nameSmall)
+    std::unique_ptr<Reply> execute() override;
 
-    for i in range(len(parameterVariables)):
-      if i == len(parameterVariables) - 1:
-        template = template.replace("{Parameter_Variables}", parameterVariables[i])
-      template = template.replace("{Parameter_Variables}", parameterVariables[i] + " " + ",{Parameter_Variables}")
-    for i in range(len(parameters)):
-      if i % 2 == 1:
-        continue
-      if i == len(parameters) - 2:
-        template = template.replace("{Parameters}", parameters[i] + " " + parameters[i + 1])
-      template = template.replace("{Parameters}", parameters[i] + " " + parameters[i + 1] + ",{Parameters}")
-    if len(parameters) == 0:
-      template = template.replace("{Parameters}", "").replace("{Parameter_Variables}", "")
-    return template
+private:
+    {{CommandNameRequest}} m_request;
+	IOSession* m_session;
+};''',
 
+"ProcCommandHandlerImpl":  
+r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session)
+    : m_request(request), m_session(session) {}
 
-def generateCommandsHdr():
-  refreshSrc()
-  generateVcl()
+std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
+    {{CommandNameCmd}}::ReplyParams params(m_session->getRenderer().{{InterfaceMethod}}(/* TODO */);
+    return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
+}''',
 
-  if type == Types.proc:
-    for i in processingFiles:
-      if (i == 2):
-        openFile(procDir + processingFiles[i - 1], templateDir + processingTemplates[i], "#undef PYTHON_MAGIC_DEFINITION")
-      else:
-        openFile(procDir + processingFiles[i], templateDir + processingTemplates[i], "#undef PYTHON_MAGIC")
+"IOCommandHandlerImpl": 
+r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, IOSession* session)
+    : m_request(request), m_session(session) {}
 
-    for i in frontendFiles:
-      openFile(frontendDir + frontendFiles[i], templateDir + frontendTemplates[i], "#undef PYTHON_MAGIC")
-    
-    generateRequest("#undef PYTHON_MAGIC_PROC")
-    if hasReply == "true":
-      generateReply("#undef PYTHON_MAGIC_PROC")
-    
-    copyFiles(Types.proc)
-  else:  
-    for i in ioFiles:
-      if i == 2:
-        openFile(ioDir + ioFiles[i - 1], templateDir + ioTemplates[i], "#undef PYTHON_MAGIC_DEFINITION")
-      else:
-        openFile(ioDir + ioFiles[i], templateDir + ioTemplates[i], "#undef PYTHON_MAGIC")
+std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
+    {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceMethod}}(/* TODO */);
+    return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
+}''',
 
-    for i in commonFiles:
-      openFile(commonDir + commonFiles[i], templateDir + commonTemplates[i], "#undef PYTHON_MAGIC")
-    
-    generateRequest("#undef PYTHON_MAGIC_IO")
-    if hasReply == "true":
-      generateReply("#undef PYTHON_MAGIC_IO")
-        
-    copyFiles(Types.io)
-    
-  
-def generateRequest(lookup):
-  openFile(commDir + commFiles[0], templateDir + "RequestTemplate.cpp", lookup)
-  
-  
-def generateReply(lookup):
-  openFile(commDir + commFiles[1], templateDir + "ReplyTemplate.cpp", lookup)
-  
+"IOCommandFactoryEntry":  lambda input: "" if input.type == "proc" else "{{CommandFactoryEntry}}",
 
-def generateVcl():
-  openFile(commDir + commFiles[2], templateDir + "VclTemplate.h", "#undef PYTHON_ENUM")
-  openFile(commDir + commFiles[2], templateDir + "VclTemplate2.h", "#undef PYTHON_MAGIC_STRING")
-  
-  
-def refreshSrc():
-  copyfile("../src/commands/" + processingFiles[0], procDir + processingFiles[0])
-  copyfile("../src/commands/" + processingFiles[1], procDir + processingFiles[1])
-  copyfile("../src/processing-base/" + processingFiles[3], procDir + processingFiles[3])
-  copyfile("../src/processing-base/" + processingFiles[4], procDir + processingFiles[4])
-  copyfile("../src/processing-base/" + processingFiles[5], procDir + processingFiles[5])
-  
-  copyfile("../src/commands/" + ioFiles[0], ioDir + ioFiles[0])
-  copyfile("../src/commands/" + ioFiles[1], ioDir + ioFiles[1])
-  copyfile("../src/io-base/" + ioFiles[3], ioDir + ioFiles[3])
-  copyfile("../src/io-base/" + ioFiles[4], ioDir + ioFiles[4])
-  copyfile("../src/io-base/" + ioFiles[5], ioDir + ioFiles[5])
-      
-  copyfile("../src/commands/" + commFiles[0], commDir + commFiles[0])
-  copyfile("../src/commands/" + commFiles[1], commDir + commFiles[1])
-  copyfile("../src/commands/" + commFiles[2], commDir + commFiles[2])
-  
-  copyfile("../src/common/" + commonFiles[0], commonDir + commonFiles[0])
-  copyfile("../src/common/" + commonFiles[1], commonDir + commonFiles[1])
-  #copyfile("../src/common/" + commonFiles[2], commonDir + commonFiles[2])
-  
-  copyfile("../src/frontend-base/" + frontendFiles[0], frontendDir + frontendFiles[0])
-  copyfile("../src/frontend-base/" + frontendFiles[1], frontendDir + frontendFiles[1])
+"ProcCommandFactoryEntry":  lambda input: "" if input.type == "io" else "{{CommandFactoryEntry}}",
+
+"ProcRequestFactoryEntry": lambda input: "" if input.type == "io" else "{{RequestFactoryEntry}}",
+
+"IORequestFactoryEntry": lambda input: "" if input.type == "proc" else "{{RequestFactoryEntry}}",
+
+"ProcReplyFactoryEntry": lambda input: "" if input.type == "io" or "void" in input.ret else "{{ReplyFactoryEntry}}",
+
+"IOReplyFactoryEntry": lambda input: "" if input.type == "proc" or "void" in input.ret else "{{ReplyFactoryEntry}}",
+
+"IOInterfaceOverride": lambda input: "" if input.type == "proc" else "{{InterfaceOverride}}",
+
+"RendererInterfaceOverride": lambda input: "" if input.type == "io" else "{{InterfaceOverride}}",
+
+"IOSessionProxyImpl":
+r'''{{ReturnType}} IOSessionProxy::{{InterfaceMethod}}({{RequestArgumentList}}) const {
+{{CommandNameCmd}}::RequestParams params({{RequestArguments}});
+{{CommandNameRequest}} request(params, IDGenerator::nextID(), m_remoteSid);
+auto reply = sendRequestChecked(m_inputChannel, request);
+return reply->getParams().getResult();
+}''',
+
+"RendererProxyImpl":
+r'''{{ReturnType}} RendererProxy::{{InterfaceMethod}}({{RequestArgumentList}}) const {
+{{CommandNameCmd}}::RequestParams params({{RequestArguments}});
+{{CommandNameRequest}} request(params, IDGenerator::nextID(), m_remoteSid);
+auto reply = sendRequestChecked(m_inputChannel, request);
+return reply->getParams().getResult();
+}''',
+
+"VclEnumEntry" : r'{{VclType}},',
+
+"VclMapEntry" : r'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});',
 
 
-def copyFiles(type):
-    if type == Types.proc:
-      copyfile(procDir + processingFiles[0], "../src/commands/" + processingFiles[0])
-      copyfile(procDir + processingFiles[1], "../src/commands/" + processingFiles[1])
-      copyfile(procDir + processingFiles[3], "../src/processing-base/" + processingFiles[3])
-      copyfile(procDir + processingFiles[4], "../src/processing-base/" + processingFiles[4])
-      copyfile(procDir + processingFiles[5], "../src/processing-base/" + processingFiles[5])
-      copyfile(frontendDir + frontendFiles[0], "/src/frotend-base/" + frontendFiles[0])
-      copyfile(frontendDir + frontendFiles[1], "/src/frotend-base/" + frontendFiles[1])
-    else:
-      copyfile(ioDir + ioFiles[0], "../src/commands/" + ioFiles[0])
-      copyfile(ioDir + ioFiles[1], "../src/commands/" + ioFiles[1])
-      copyfile(ioDir + ioFiles[3], "../src/io-base/" + ioFiles[3])
-      copyfile(ioDir + ioFiles[4], "../src/io-base/" + ioFiles[4])
-      copyfile(ioDir + ioFiles[5], "../src/io-base/" + ioFiles[5])
-      copyfile(commonDir + commonFiles[0], "../src/common/" + commonFiles[0])
-      copyfile(commonDir + commonFiles[1], "../src/common/" + commonFiles[1])
-      
-    copyfile(commDir + commFiles[0], "../src/commands/" + commFiles[0])
-    copyfile(commDir + commFiles[1], "../src/commands/" + commFiles[1])
-    copyfile(commDir + commFiles[2], "../src/commands/" + commFiles[2])
+## LOWER LEVEL COMMON VARIABLES
+
+"CommandName" : lambda input : input.commandName,
+
+"CommandNameCmd": r'{{CommandName}}Cmd',
+
+"CommandNameHdl": r'{{CommandName}}Hdl',
+
+"CommandNameRequest": r'{{CommandName}}Request',
+
+"CommandNameReply": r'{{CommandName}}Reply',
+
+"InterfaceMethod" : lambda input: untitle(input.commandName),
+
+"ReturnType": lambda input: input.ret[0],
+
+"RequestArgumentList": lambda input: makeArgumentList(input.params),
+
+"ReplyArgumentList": lambda input: makeArgumentList(input.ret),
+
+"RequestArguments": lambda input: makeArguments(input.params),
+
+"ReplyArguments": lambda input: makeArguments(input.ret),
 
 
-def readFile(datafile):
-	return datafile.readlines()
+## LOWER LEVEL COMMAND HEADER VARIABLES
 
+"CommandRequestParams":
+r'''class RequestParams : public SerializableTemplate<RequestParams> {
+public:
+	RequestParams() = default;
+	{{RequestCtorDeclaration}};
+	
+	void serialize(ISerialWriter& writer) const override;
+	void deserialize(const ISerialReader& reader) override;
 
-def determineStartStop(content, lookup):
-  global start
-  global stop
-  start, stop = 0, 0
-  tmpStop = 0
-  for line in content:
-    tmpStop = tmpStop + 1
-    if lookup in line:
-      stop = tmpStop - 1
-      start = tmpStop - 2
-      
-      
+	std::string toString() const;
+	bool equals(const RequestParams& other) const;
+	
+	{{RequestGetterDeclarations}}
+	{{RequestMemberList}}
+};''',
+
+"RequestCtorDeclaration": lambda input : makeCtorDeclaration(input.params, "RequestParams"),
+
+"RequestGetterDeclarations": lambda input : makeGetterDeclarations(input.params),
+
+"RequestMemberList": lambda input : makeMemberList(input.params),
+
+"CommandRequestOperators" :
+r'''bool operator==(const {{CommandNameCmd}}::RequestParams& lhs, const {{CommandNameCmd}}::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::RequestParams& obj);
+using {{CommandNameRequest}} = RequestTemplate<{{CommandNameCmd}}>;''',
+
+"CommandReplyParamsIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandReplyParams}}",
+
+"CommandReplyParams": 
+r'''class ReplyParams : public SerializableTemplate<ReplyParams> {
+public:
+	ReplyParams() = default;
+	{{ReplyCtorDeclaration}};
+	
+	void serialize(ISerialWriter& writer) const override;
+	void deserialize(const ISerialReader& reader) override;
+
+	std::string toString() const;
+	bool equals(const ReplyParams& other) const;
+
+	{{ReplyGetterDeclarations}}
+	{{ReplyMemberList}}
+};''',
+
+"ReplyCtorDeclaration": lambda input : makeCtorDeclaration(input.ret, "ReplyParams"),
+
+"ReplyGetterDeclarations": lambda input : makeGetterDeclarations(input.ret),
+
+"ReplyMemberList": lambda input : makeMemberList(input.ret),
+
+"CommandReplyOperatorsIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandReplyOperators}}",
+
+"CommandReplyOperators" :
+r'''bool operator==(const {{CommandNameCmd}}::ReplyParams& lhs, const {{CommandNameCmd}}::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::ReplyParams& obj);
+using {{CommandNameReply}} = ReplyTemplate<{{CommandNameCmd}}>;''',
+
+## LOWER LEVEL COMMAND IMPL VARIABLES
+
+"CommandRequestImpl":
+r'''
+{{CommandRequestCtorImplIfNotEmpty}}
+
+void {{CommandNameCmd}}::RequestParams::serialize(ISerialWriter& writer) const {
+{{RequestParamSerialization}}
+}
+
+void {{CommandNameCmd}}::RequestParams::deserialize(const ISerialReader& reader) {
+{{RequestParamDeserialization}}
+}
+
+bool {{CommandNameCmd}}::RequestParams::equals(const {{CommandNameCmd}}::RequestParams& other) const {
+{{RequestParamEquals}}
+}
+
+{{RequestGetterDefinitions}}
+
+std::string {{CommandNameCmd}}::RequestParams::toString() const {
+    std::stringstream stream;
+{{RequestParamStreaming}}
+    return stream.str();
+}''',
+
+"CommandRequestCtorImplIfNotEmpty": lambda input : "" if not input.params else "{{CommandRequestCtorImpl}}",
+
+"CommandRequestCtorImpl":
+r'''{{CommandNameCmd}}::RequestParams::{{RequestCtorDeclaration}}
+{{RequestInitializerList}} {}''',
+
+"RequestInitializerList": lambda input : makeInitializerList(input.params),
+
+"RequestParamSerialization": lambda input : makeSerialization(input.params),
+
+"RequestParamDeserialization": lambda input : makeDeserialization(input.params),
+
+"RequestParamEquals": lambda input : makeEquals(input.params),
+
+"RequestGetterDefinitions": lambda input : makeGetterDefinitions(input.commandName, input.params, "RequestParams"),
+
+"RequestParamStreaming": lambda input : makeStreaming(input.params),
+
+"CommandReplyImplIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandReplyImpl}}",
+
+"CommandImplRequestOperators":
+r'''bool operator==(const {{CommandNameCmd}}::RequestParams& lhs, const {{CommandNameCmd}}::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::RequestParams& obj) {
+    return os << obj.toString();
+}''',
+
+"CommandReplyImpl":
+r'''
+{{CommandReplyCtorImpl}}
+
+void {{CommandNameCmd}}::ReplyParams::serialize(ISerialWriter& writer) const {
+{{ReplyParamSerialization}}
+}
+
+void {{CommandNameCmd}}::ReplyParams::deserialize(const ISerialReader& reader) {
+{{ReplyParamDeserialization}}
+}
+
+bool {{CommandNameCmd}}::ReplyParams::equals(const {{CommandNameCmd}}::ReplyParams& other) const {
+{{ReplyParamEquals}}
+}
+
+{{ReplyGetterDefinitions}}
+
+std::string {{CommandNameCmd}}::ReplyParams::toString() const {
+    std::stringstream stream;
+{{ReplyParamStreaming}}
+    return stream.str();
+}''',
+
+"CommandReplyCtorImpl":
+r'''{{CommandNameCmd}}::ReplyParams::{{ReplyCtorDeclaration}}
+{{ReplyInitializerList}} {}''',
+
+"ReplyInitializerList": lambda input : makeInitializerList(input.ret),
+
+"ReplyParamSerialization": lambda input : makeSerialization(input.ret),
+
+"ReplyParamDeserialization": lambda input : makeDeserialization(input.ret),
+
+"ReplyParamEquals": lambda input : makeEquals(input.ret),
+
+"ReplyGetterDefinitions": lambda input : makeGetterDefinitions(input.commandName, input.ret, "ReplyParams"),
+
+"ReplyParamStreaming": lambda input : makeStreaming(input.ret),
+
+"CommandImplReplyOperatorsIfNotVoid": lambda input : "" if "void" in input.ret else "{{CommandImplReplyOperators}}",
+
+"CommandImplReplyOperators":
+r'''bool operator==(const {{CommandNameCmd}}::ReplyParams& lhs, const {{CommandNameCmd}}::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::ReplyParams& obj) {
+    return os << obj.toString();
+}''',
+
+## LOWER LEVEL COMMAND FACTORY VARIABLES
+
+"CommandFactoryEntry":
+r'''case VclType::{{VclType}}:
+return mocca::make_unique<{{CommandNameHdl}}>(static_cast<const {{CommandNameRequest}}&>(request), session);
+break;''',
+
+## LOWER LEVEL REQUEST IMPL VARIABLES
+
+"RequestFactoryEntry":
+r''' else if (type == {{CommandNameRequest}}::Ifc::Type) {
+	return reader->getSerializablePtr<{{CommandNameRequest}}>("req");
+}''',
+
+## LOWER LEVEL REPLY IMPL VARIABLES
+
+"ReplyFactoryEntry":
+r''' else if (type == {{CommandNameReply}}::Ifc::Type) {
+	return reader->getSerializablePtr<{{CommandNameReply}}>("rep");
+}''',
+
+## LOWER LEVEL PROXY HEADER VARIABLES
+
+"InterfaceOverride": lambda input : makeInterfaceOverride(input),
+
+## LOWER LEVEL VCL HEADER VARIABLES
+
+"VclType" : r'{{CommandName}}'
+}
+			
+def readSourceFile(filename):
+	with open(filename, "r+") as sourceFile:
+		source = sourceFile.read()
+		return source
+
+class TokenType:
+	text = 1
+	variable = 2
+		
+class Token:
+	def __init__(self, type, value):
+		self.type = type
+		self.value = value
+
+def replaceAutogen(source):
+	return re.sub(r"/\* AUTOGEN (\w+) \*/", r"{{\1}}", source)
+		
+def tokenizeSource(source):
+	regex = "({{\w+}})"
+	tokens = re.split(regex, source)
+	result = []
+	for token in tokens:
+		if token[0:2] == "{{":
+			result.append(Token(TokenType.variable, token[2:-2]))
+		else:
+			result.append(Token(TokenType.text, token))
+	return result
+
+def untitle(s):
+	return s[0].lower() + s[1:]
+	
+def member(name):
+	return "m_" + name
+	
+def isIntType(type):
+	return type in ["int", "unsigned int", "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "int64_t", "uint64_t"]
+	
+def crQualify(type, name):
+	if isIntType(type) or type in ["bool", "float", "double"]:
+		return type + " " + name
+	else:
+		return "const " + type + "& " + name
+	
+def makeArgumentList(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append(crQualify(type, name))
+	return ", ".join(items)
+
+def makeArguments(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		items.append(params[i + 1])
+	return ", ".join(items)	
+	
+def makeMemberList(params):
+	if not params:
+		return ""
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append(type + " " + member(name) + ";")
+	return "private:\n" + "\n".join(items)
+
+def makeGetterDeclarations(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append(type + " get" + name.title() + "() const;")
+	return "\n".join(items)
+	
+def makeGetterDefinitions(commandName, params, className):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append(type + "  {{CommandNameCmd}}::" + className + "::get" + name.title() + "() const {\n return " + member(name) + ";\n}")
+	return "\n\n".join(items)
+	
+def makeInitializerList(params):
+	if not params:
+		return ""
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append(member(name) + "(" + name + ")")
+	return ":"+ ", ".join(items)
+	
+def makeSerialization(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		if isIntType(type):
+			items.append('writer.appendInt("' + name + '", ' + member(name) + ');')
+		elif type == "float":
+			items.append('writer.appendFloat("' + name + '", ' + member(name) + ');')
+		elif type == "double":
+			items.append('writer.appendDouble("' + name + '", ' + member(name) + ');')
+		elif type == "bool":
+			items.append('writer.appendBool("' + name + '", ' + member(name) + ');')
+		elif type == "string":
+			items.append('writer.appendString("' + name + '", ' + member(name) + ');')
+		elif "vector<float>" in type:
+			items.append('writer.appendFloatVec("' + name + '", ' + member(name) + ');')
+		elif "vector<bool>" in type:
+			items.append('writer.appendBoolVec("' + name + '", ' + member(name) + ');')
+		elif "vector<std::string>" in type:
+			items.append('writer.appendStringVec("' + name + '", ' + member(name) + ');')
+		elif "vector<int" in type or "vector<uint" in type or "vector<unsigned int" in type:
+			items.append('writer.appendIntVec("' + name + '", ' + member(name) + ');')
+		elif "vector<" in type:
+			items.append("// TODO: this is getting to complicated, you need to do this yourself... (" + name + ")")
+		else:
+			items.append('writer.appendObject("' + name + '", ' + member(name) + ');')
+	return "\n".join(items)
+	
+def makeDeserialization(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		if type == "uint8_t":
+			items.append(member(name) + ' = reader.getUInt8("' + name + '");')
+		elif type == "int32_t":
+			items.append(member(name) + ' = reader.getInt32("' + name + '");')
+		elif type == "uint32_t":
+			items.append(member(name) + ' = reader.getUInt32("' + name + '");')
+		elif type == "int64_t":
+			items.append(member(name) + ' = reader.getInt64("' + name + '");')
+		elif type == "uint64_t":
+			items.append(member(name) + ' = reader.getUInt64("' + name + '");')
+		elif type == "float":
+			items.append(member(name) + ' = reader.getFloat("' + name + '");')
+		elif type == "double":
+			items.append(member(name) + ' = reader.getDouble("' + name + '");')
+		elif type == "bool":
+			items.append(member(name) + ' = reader.getBool("' + name + '");')
+		elif "vector<float>" in type:
+			items.append(member(name) + ' = reader.getFloatVec("' + name + '");')
+		elif "vector<uint8_t>" in type:
+			items.append(member(name) + ' = reader.getUInt8Vec("' + name + '");')
+		elif "vector<int32_t>" in type:
+			items.append(member(name) + ' = reader.getInt32Vec("' + name + '");')
+		elif "vector<uint64_t>" in type:
+			items.append(member(name) + ' = reader.getUInt64Vec("' + name + '");')
+		elif "vector<bool>" in type:
+			items.append(member(name) + ' = reader.getBoolVec("' + name + '");')
+		elif "vector<std::string>" in type:
+			items.append(member(name) + ' = reader.getStringVec("' + name + '");')
+		elif "vector<" in type:
+			items.append("// TODO: this is getting to complicated, you need to do this yourself... (" + name + ")")
+		else:
+			items.append(member(name) + ' = reader.getSerializable<' + type + '>("' + name + '");')
+	return "\n".join(items)
+	
+def makeEquals(params):
+	if not params:
+		return "return true;"
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		items.append(member(name) + " == other." + member(name))
+	return "return " + " && ".join(items) + ";"
+	
+def makeStreaming(params):
+	if not params:
+		return ""
+	items = []
+	for i in xrange(0, len(params), 2):
+		type = params[i]
+		name = params[i + 1]
+		if i == 0:
+			items.append('"' + name + ': " << ' + member(name))
+		else:
+			items.append('"; ' + name + ': " << ' + member(name))
+	return "stream << " + " << ".join(items) + ";"
+	
+def makeCtorDeclaration(params, ctorName):
+	if not params:
+		return ""
+	else:
+		return ctorName + "(" + makeArgumentList(params) + ")"	
+
+def makeInterfaceOverride(input):
+	return "{{ReturnType}} {{InterfaceMethod}} ({{RequestArguments}}) const override;"
+		
+def expandVariable(variable, input):
+	global templates
+	t = templates[variable]
+	if isfunction(t):
+		return t(input)
+	else:
+		return t
+		
+def replaceRecursive(source, input):
+	tokens = tokenizeSource(source)
+	result = []
+	for idx, token in enumerate(tokens):
+		if token.type == TokenType.variable:
+			expanded = expandVariable(token.value, input)
+			result = result + replaceRecursive(expanded, input)
+		else:
+			result.append(token)
+	return result
+
+def clangFormat(source):
+	proc = subprocess.Popen(
+		'clang-format',stdout=subprocess.PIPE,
+		stdin=subprocess.PIPE)
+	proc.stdin.write(source)
+	proc.stdin.close()
+	result = proc.stdout.read()
+	proc.wait()
+	return result
+
+def replaceFile(filename, source):
+	with open(filename, "w") as destfile:
+		destfile.write(source)
+		
+def process(files, input):
+	print files
+	for file in files:
+		source = readSourceFile(file)
+		source = replaceAutogen(source)
+		tokens = replaceRecursive(source, input)
+		result = ""
+		for token in tokens:
+			result = result + token.value
+		formatted = clangFormat(result)
+		replaceFile(file, formatted)
+		
+class Input:
+	def __init__(self, commandName, type, params, ret):
+		self.commandName = commandName
+		self.type = type
+		self.params = params
+		self.ret = ret
+		
 def main():
-	global type
-	global name
-	global nameSmall
-	global hasReply
-	global vclType
-	global returnType
-	global parameters
-	global parameterVariables
+	global commonFiles
+	global ioFiles
+	global procFiles
+
 	parser = argparse.ArgumentParser(description="Generate Trinity Command.")
 	parser.add_argument('--type', help="type of the command to generate ('proc' or 'io'" )
 	parser.add_argument('--name', help="name of the command to generate")
-	parser.add_argument('--hasReply', help="shows if the command has a reply ('true' or 'false'")
-	#parser.add_argument('--vclType', help="VclType of the command")
 	parser.add_argument('--returnType', help="return value of the command")
 	parser.add_argument('--parameters', nargs='*', help="all parameters of the command ('please specify all parameters successive, e.g., int x float y double z')")
-	
 	args = parser.parse_args()
-	if (args.type == "proc"):
-		type = Types.proc
-	elif (args.type == "io"):
-		type = Types.io
+
+	input = Input(args.name, args.type, args.parameters, [args.returnType, "result"])
+	files = []
+	if args.type == "proc":
+			files = commonFiles + procFiles
+	elif args.type == "io":
+		files = commonFiles + ioFiles
 	else:
-		raise("Invalid type: must be 'proc' or 'io'")
-	      
-	if not args.name:
-		raise("Invalid name: give it a name!")
-	
-	if (args.hasReply != "true" and args.hasReply != "false"):
-		raise("Invalid reply: must be 'true' or 'false'")
-	      
-	if not args.returnType:
-		raise("Invalid return type: specify something!")
-	
-	if not args.parameters or not isinstance(args.parameters, list) or len(args.parameters) % 2 != 0:
-		raise("There's something wrong with the specified parameters!")
-	
-	#if not args.vclType:
-	#	raise("Invalid VclType: specify something!")
-		
-	name = args.name
-	nameSmall = str(name[0].lower() + name[1:])
-	hasReply = args.hasReply
-	vclType = args.name
-	returnType = args.returnType
-	parameters = args.parameters
-	parameterVariables = parameters[1::2]
-	
-	generateCommandsHdr()
-	
+		raise Exception("There's something wrong with the specified parameters!")
+	process(files, input)
 	
 main()
