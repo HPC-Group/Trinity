@@ -3,73 +3,8 @@ import argparse
 import re
 from shutil import copyfile
 
-templateInfosAll = [
-	{
-		"source":"../src/commands/Vcl.h",
-		"template":"VclTemplate.h",
-		"marker":"#undef PYTHON_ENUM"
-	},
-	{
-		"source":"../src/commands/Vcl.h",
-		"template":"VclTemplate2.h",
-		"marker":"#undef PYTHON_MAGIC_STRING"
-	}
-]
-
-templateInfosProc = [
-	{
-		"source":"../src/processing-base/ProcessingCommandsHandler.h",
-		"template":"ProcessingCommandsHandlerTemplate.h",
-		"marker":"#undef PYTHON_MAGIC"
-	},
-	{
-		"source":"../src/processing-base/ProcessingCommandsHandler.cpp",
-		"template":"ProcessingCommandsHandlerTemplate.cpp",
-		"marker":"#undef PYTHON_MAGIC"
-	},
-	{
-		"source":"../src/commands/ProcessingCommands.h",
-		"template":"ProcessingCommandsTemplate.h",
-		"marker":"#undef PYTHON_MAGIC"
-	},
-	{
-		"source":"../src/commands/ProcessingCommands.cpp",
-		"template":"ProcessingCommandsTemplate.cpp",
-		"marker":"#undef PYTHON_MAGIC"
-	},
-	{
-		"source":"../src/commands/ProcessingCommands.cpp",
-		"template":"ProcessingCommandsTemplate2.cpp",
-		"marker":"#undef PYTHON_MAGIC_DEFINITION"
-	}
-]
-
-templateInfosIO = [
-	{
-		"source":"../src/io-base/IOCommandsHandler.h",
-		"template":"IOCommandsHandlerTemplate.h",
-		"marker":"#undef PYTHON_MAGIC"
-	},
-	{
-		"source":"../src/io-base/IOCommandsHandler.cpp",
-		"template":"IOCommandsHandlerTemplate.cpp",
-		"marker":"#undef PYTHON_MAGIC"
-	},
-	{
-		"source":"../src/commands/IOCommands.h",
-		"template":"IOCommandsTemplate.h",
-		"marker":"#undef PYTHON_MAGIC"
-	},
-	{
-		"source":"../src/commands/IOCommands.cpp",
-		"template":"IOCommandsTemplate.cpp",
-		"marker":"#undef PYTHON_MAGIC"
-	},
-	{
-		"source":"../src/commands/IOCommands.cpp",
-		"template":"IOCommandsTemplate2.cpp",
-		"marker":"#undef PYTHON_MAGIC_DEFINITION"
-	}
+files = [
+	"../src/commands/Vcl.h"
 ]
 
 def insertCodeInSource(destination, code, marker):
@@ -88,10 +23,10 @@ def determineInsertPosition(code, marker):
 		if line.strip() == marker:
 			return pos - 1
 			
-def readTemplateFile(filename):
-	with open(os.path.join("template", filename), "r+") as templateFile:
-		template = templateFile.read()
-		return template
+def readSourceFile(filename):
+	with open(filename, "r+") as sourceFile:
+		source = sourceFile.read()
+		return source
 
 class TokenType:
 	text = 1
@@ -102,9 +37,12 @@ class Token:
 		self.type = type
 		self.value = value
 
-def tokenizeTemplate(template):
+def replaceAutogen(source):
+	return re.sub(r"/\* AUTOGEN (\w+) \*/", r"{{\1}}", source)
+		
+def tokenizeSource(source):
 	regex = "({{\w+}})"
-	tokens = re.split(regex, template)
+	tokens = re.split(regex, source)
 	result = []
 	for token in tokens:
 		if token[0:2] == "{{":
@@ -269,6 +207,11 @@ def makeCtorDeclaration(params, ctorType):
 def expandVariable(variable, input):
 	if variable == "VclType":
 		return input.commandName
+	elif variable == "VclEnumEntry":
+		return "{{VclType}},"	
+	elif variable == "VclMapEntry":
+		return 'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});'
+
 	elif variable == "CommandNameCmd":
 		return input.commandName + "Cmd"
 	elif variable == "CommandNameHdl":
@@ -314,19 +257,26 @@ def expandVariable(variable, input):
 	else:
 		raise Exception("Unknown variable " + variable)
 		
-		
-def process(templateInfos, input):
-	for templateInfo in templateInfos:
-		template = readTemplateFile(templateInfo["template"])
-		marker = templateInfo["marker"]
-		tokens = tokenizeTemplate(template)
-		code = ""
+def replaceRecursive(source, input):
+	tokens = tokenizeSource(source)
+	result = []
+	for idx, token in enumerate(tokens):
+		if token.type == TokenType.variable:
+			expanded = expandVariable(token.value, input)
+			result = result + replaceRecursive(expanded, input)
+		else:
+			result.append(token)
+	return result
+	
+def process(files, input):
+	for file in files:
+		source = readSourceFile(file)
+		source = replaceAutogen(source)
+		tokens = replaceRecursive(source, input)
+		result = ""
 		for token in tokens:
-			if token.type == TokenType.text:
-				code = code + token.value
-			else:
-				code = code + expandVariable(token.value, input)
-		insertCodeInSource(templateInfo["source"], code, marker)
+			result = result + token.value
+		return result
 
 class Input:
 	def __init__(self, commandName, hasReply, params, ret):
@@ -336,9 +286,7 @@ class Input:
 		self.ret = ret
 		
 def main():
-	global templateInfosAll
-	global templateInfosProc
-	global templateInfosIO
+	global files
 
 	parser = argparse.ArgumentParser(description="Generate Trinity Command.")
 	parser.add_argument('--type', help="type of the command to generate ('proc' or 'io'" )
@@ -349,12 +297,12 @@ def main():
 	args = parser.parse_args()
 
 	input = Input(args.name, args.hasReply, args.parameters, [args.returnType, "result"])
-	if args.type == "proc":
-		templateInfos = templateInfosAll + templateInfosProc
-	elif args.type == "io":
-		templateInfos = templateInfosAll + templateInfosIO
-	else:
-		raise Exception("There's something wrong with the specified parameters!")
-	process(templateInfos, input)
+#	if args.type == "proc":
+#		templateInfos = templateInfosAll + templateInfosProc
+#	elif args.type == "io":
+#		templateInfos = templateInfosAll + templateInfosIO
+#	else:
+#		raise Exception("There's something wrong with the specified parameters!")
+	process(files, input)
 	
 main()
