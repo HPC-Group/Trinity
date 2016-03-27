@@ -18,10 +18,7 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     // processing commands
     if (type == InitProcessingSessionReply::Ifc::Type) {
         return reader->getSerializablePtr<InitProcessingSessionReply>("rep");
-    }
-#define PYTHON_MAGIC_PROC
-
-    else if (type == ZoomCameraReply::Ifc::Type) {
+    } else if (type == ZoomCameraReply::Ifc::Type) {
         return reader->getSerializablePtr<ZoomCameraReply>("rep");
     } else if (type == SupportsRenderModeReply::Ifc::Type) {
         return reader->getSerializablePtr<SupportsRenderModeReply>("rep");
@@ -30,8 +27,7 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     } else if (type == GetActiveTimestepReply::Ifc::Type) {
         return reader->getSerializablePtr<GetActiveTimestepReply>("rep");
     }
-
-#undef PYTHON_MAGIC_PROC
+	/* AUTOGEN ProcReplyFactoryEntry */
 
     // IO commands
     if (type == ListFilesRequest::Ifc::Type) {
@@ -40,9 +36,7 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<InitIOSessionReply>("rep");
     } else if (type == GetLODLevelCountReply::Ifc::Type) {
         return reader->getSerializablePtr<GetLODLevelCountReply>("rep");
-    }
-#define PYTHON_MAGIC_IO
-    else if (type == GetMaxBrickSizeReply::Ifc::Type) {
+    } else if (type == GetMaxBrickSizeReply::Ifc::Type) {
         return reader->getSerializablePtr<GetMaxBrickSizeReply>("rep");
     } else if (type == GetMaxUsedBrickSizesReply::Ifc::Type) {
         return reader->getSerializablePtr<GetMaxUsedBrickSizesReply>("rep");
@@ -89,8 +83,7 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     } else if (type == GetDefault1DTransferFunctionReply::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionReply>("rep");
     }
-
-#undef PYTHON_MAGIC_IO
+	/* AUTOGEN IOReplyFactoryEntry */
 
     // error commands
     else if (type == ErrorReply::Ifc::Type) {

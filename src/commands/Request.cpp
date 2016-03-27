@@ -22,11 +22,7 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetIsoValueRequest>("req");
     } else if (type == InitContextRequest::Ifc::Type) {
         return reader->getSerializablePtr<InitContextRequest>("req");
-    }
-#define PYTHON_MAGIC_PROC
-
-
-    else if (type == ZoomCameraRequest::Ifc::Type) {
+    } else if (type == ZoomCameraRequest::Ifc::Type) {
         return reader->getSerializablePtr<ZoomCameraRequest>("req");
     } else if (type == SetRenderModeRequest::Ifc::Type) {
         return reader->getSerializablePtr<SetRenderModeRequest>("req");
@@ -41,8 +37,7 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
     } else if (type == GetActiveTimestepRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetActiveTimestepRequest>("req");
     }
-
-#undef PYTHON_MAGIC_PROC
+	/* AUTOGEN ProcRequestFactoryEntry */
 
     // IO commands
     else if (type == ListFilesRequest::Ifc::Type) {
@@ -51,9 +46,7 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<InitIOSessionRequest>("req");
     } else if (type == GetLODLevelCountRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetLODLevelCountRequest>("req");
-    }
-#define PYTHON_MAGIC_IO
-    else if (type == GetMaxBrickSizeRequest::Ifc::Type) {
+    } else if (type == GetMaxBrickSizeRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetMaxBrickSizeRequest>("req");
     } else if (type == GetMaxUsedBrickSizesRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetMaxUsedBrickSizesRequest>("req");
@@ -100,8 +93,7 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
     } else if (type == GetDefault1DTransferFunctionRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionRequest>("req");
     }
-
-#undef PYTHON_MAGIC_IO
+	/* AUTOGEN IORequestFactoryEntry */
 
     throw TrinityError("Invalid request type", __FILE__, __LINE__);
 }

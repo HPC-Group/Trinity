@@ -7,6 +7,8 @@ from shutil import copyfile
 
 commonFiles = [
 	"../src/commands/Vcl.h"
+	"../src/commands/Request.cpp"
+	"../src/commands/Reply.cpp"
 ]
 
 ioFiles = [
@@ -70,7 +72,15 @@ std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
 	// TODO
 }''',
 
-"VclEnumEntry" : r'{{VclType}},' ,
+"ProcRequestFactoryEntry": lambda input: "" if input.type == "io" else "{{RequestFactoryEntry}}",
+
+"IORequestFactoryEntry": lambda input: "" if input.type == "proc" else "{{RequestFactoryEntry}}",
+
+"ProcReplyFactoryEntry": lambda input: "" if input.type == "io" else "{{ReplyFactoryEntry}}",
+
+"IOReplyFactoryEntry": lambda input: "" if input.type == "proc" else "{{ReplyFactoryEntry}}",
+
+"VclEnumEntry" : r'{{VclType}},',
 
 "VclMapEntry" : r'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});',
 
@@ -251,6 +261,20 @@ r'''bool operator==(const {{CommandNameCmd}}::ReplyParams& lhs, const {{CommandN
 std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::ReplyParams& obj) {
     return os << obj.toString();
 }''',
+
+## LOWER LEVEL REQUEST IMPL VARIABLES
+
+"RequestFactoryEntry":
+r''' else if (type == {CommandName}Request::Ifc::Type) {
+	return reader->getSerializablePtr<{CommandName}Request>("req");
+}'''
+
+## LOWER LEVEL REPLY IMPL VARIABLES
+
+"ReplyFactoryEntry":
+r''' else if (type == {CommandName}Reply::Ifc::Type) {
+	return reader->getSerializablePtr<{CommandName}Reply>("rep");
+}'''
 
 ## LOWER LEVEL VCL HEADER VARIABLES
 
