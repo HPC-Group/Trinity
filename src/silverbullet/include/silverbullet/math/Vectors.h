@@ -185,7 +185,7 @@ namespace Core {
       
     private:
       template <typename U = T>
-      void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, size_t>::value>::type* = nullptr) const {
+      void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, unsigned long>::value>::type* = nullptr) const {
         writer.appendInt("x", uint64_t(x));
         writer.appendInt("y", uint64_t(y));
       }
@@ -269,7 +269,7 @@ namespace Core {
       }
       
       template <typename U = T>
-      void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, size_t>::value>::type* = nullptr) {
+      void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, unsigned long>::value>::type* = nullptr) {
         x = size_t(reader.getInt64("x"));
         y = size_t(reader.getInt64("y"));
       }
@@ -535,7 +535,7 @@ namespace Core {
       
     private:
       template <typename U = T>
-      void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, size_t>::value>::type* = nullptr) const {
+      void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, unsigned long>::value>::type* = nullptr) const {
         writer.appendInt("x", uint64_t(x));
         writer.appendInt("y", uint64_t(y));
         writer.appendInt("z", uint64_t(z));
@@ -634,7 +634,7 @@ namespace Core {
       }
       
       template <typename U = T>
-      void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, size_t>::value>::type* = nullptr) {
+      void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, unsigned long>::value>::type* = nullptr) {
         x = size_t(reader.getInt64("x"));
         y = size_t(reader.getInt64("y"));
         z = size_t(reader.getInt64("z"));
