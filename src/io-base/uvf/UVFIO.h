@@ -46,6 +46,7 @@ namespace trinity {
     
     // todo end
   private:
-    std::unique_ptr<UVFDataset> dataset;
+    std::unique_ptr<UVFDataset> m_dataset;
+    std::string                 m_filename;
   };
 }

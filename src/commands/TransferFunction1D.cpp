@@ -189,10 +189,12 @@ bool TransferFunction1D::load(std::istream& tf) {
   if (!tf) {
     return false;
   }
-  m_colorData.resize(iSize);
+  m_colorData.resize(iSize*4);
   
+  float f;
   for (size_t i = 0; i < m_colorData.size(); ++i) {
-    tf >> m_colorData[i];
+    tf >> f;
+    m_colorData[i] = uint8_t(f*255);
   }
   
   return tf.good();
@@ -200,11 +202,13 @@ bool TransferFunction1D::load(std::istream& tf) {
 
 
 bool TransferFunction1D::save(std::ostream& file) const {
-  file << m_colorData.size() << std::endl;
+  file << m_colorData.size()*4 << std::endl;
   
   for (size_t i = 0; i < m_colorData.size(); ++i) {
-    file << m_colorData[i] << " ";
-    file << std::endl;
+    file << m_colorData[i]/255.0f << " ";
+    
+    if (i%4 == 3)
+      file << std::endl;
   }
   
   return true;
