@@ -85,6 +85,9 @@ bool operator==(const InitProcessingSessionCmd::ReplyParams& lhs, const InitProc
 std::ostream& operator<<(std::ostream& os, const InitProcessingSessionCmd::RequestParams& obj);
 std::ostream& operator<<(std::ostream& os, const InitProcessingSessionCmd::ReplyParams& obj);
 
+using InitProcessingSessionRequest = RequestTemplate<InitProcessingSessionCmd>;
+using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;
+
 struct SetIsoValueCmd {
     static VclType Type;
 
@@ -109,6 +112,7 @@ struct SetIsoValueCmd {
 bool operator==(const SetIsoValueCmd::RequestParams& lhs, const SetIsoValueCmd::RequestParams& rhs);
 std::ostream& operator<<(std::ostream& os, const SetIsoValueCmd::RequestParams& obj);
 
+using SetIsoValueRequest = RequestTemplate<SetIsoValueCmd>;
 
 struct InitContextCmd {
     static VclType Type;
@@ -132,8 +136,7 @@ struct InitContextCmd {
 bool operator==(const InitContextCmd::RequestParams& lhs, const InitContextCmd::RequestParams& rhs);
 std::ostream& operator<<(std::ostream& os, const InitContextCmd::RequestParams& obj);
 
-
-#define PYTHON_MAGIC
+using InitContextRequest = RequestTemplate<InitContextCmd>;
 
 struct ZoomCameraCmd {
     static VclType Type;
@@ -378,13 +381,5 @@ std::ostream& operator<<(std::ostream& os, const GetActiveTimestepCmd::ReplyPara
 using GetActiveTimestepRequest = RequestTemplate<GetActiveTimestepCmd>;
 using GetActiveTimestepReply = ReplyTemplate<GetActiveTimestepCmd>;
 
-#undef PYTHON_MAGIC
-
-
-
-using InitProcessingSessionRequest = RequestTemplate<InitProcessingSessionCmd>;
-using InitProcessingSessionReply = ReplyTemplate<InitProcessingSessionCmd>;
-
-using SetIsoValueRequest = RequestTemplate<SetIsoValueCmd>;
-using InitContextRequest = RequestTemplate<InitContextCmd>;
+/* AUTOGEN CommandHeader */
 }

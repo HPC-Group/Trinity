@@ -6,8 +6,8 @@ from inspect import isfunction
 from shutil import copyfile
 
 commonFiles = [
-	"../src/commands/Vcl.h"
-	"../src/commands/Request.cpp"
+	"../src/commands/Vcl.h",
+	"../src/commands/Request.cpp",
 	"../src/commands/Reply.cpp"
 ]
 
@@ -76,9 +76,9 @@ std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
 
 "IORequestFactoryEntry": lambda input: "" if input.type == "proc" else "{{RequestFactoryEntry}}",
 
-"ProcReplyFactoryEntry": lambda input: "" if input.type == "io" else "{{ReplyFactoryEntry}}",
+"ProcReplyFactoryEntry": lambda input: "" if input.type == "io" or "void" in input.ret else "{{ReplyFactoryEntry}}",
 
-"IOReplyFactoryEntry": lambda input: "" if input.type == "proc" else "{{ReplyFactoryEntry}}",
+"IOReplyFactoryEntry": lambda input: "" if input.type == "proc" or "void" in input.ret else "{{ReplyFactoryEntry}}",
 
 "VclEnumEntry" : r'{{VclType}},',
 
@@ -265,16 +265,16 @@ std::ostream& operator<<(std::ostream& os, const {{CommandNameCmd}}::ReplyParams
 ## LOWER LEVEL REQUEST IMPL VARIABLES
 
 "RequestFactoryEntry":
-r''' else if (type == {CommandName}Request::Ifc::Type) {
-	return reader->getSerializablePtr<{CommandName}Request>("req");
-}'''
+r''' else if (type == {{CommandNameRequest}}::Ifc::Type) {
+	return reader->getSerializablePtr<{{CommandNameRequest}}>("req");
+}''',
 
 ## LOWER LEVEL REPLY IMPL VARIABLES
 
 "ReplyFactoryEntry":
-r''' else if (type == {CommandName}Reply::Ifc::Type) {
-	return reader->getSerializablePtr<{CommandName}Reply>("rep");
-}'''
+r''' else if (type == {{CommandNameReply}}::Ifc::Type) {
+	return reader->getSerializablePtr<{{CommandNameReply}}>("rep");
+}''',
 
 ## LOWER LEVEL VCL HEADER VARIABLES
 
@@ -508,8 +508,9 @@ def process(files, input):
 		replaceFile(file, formatted)
 		
 class Input:
-	def __init__(self, commandName, params, ret):
+	def __init__(self, commandName, type, params, ret):
 		self.commandName = commandName
+		self.type = type
 		self.params = params
 		self.ret = ret
 		
@@ -525,7 +526,7 @@ def main():
 	parser.add_argument('--parameters', nargs='*', help="all parameters of the command ('please specify all parameters successive, e.g., int x float y double z')")
 	args = parser.parse_args()
 
-	input = Input(args.name, args.parameters, [args.returnType, "result"])
+	input = Input(args.name, args.type, args.parameters, [args.returnType, "result"])
 	files = []
 	if args.type == "proc":
 			files = commonFiles + procFiles

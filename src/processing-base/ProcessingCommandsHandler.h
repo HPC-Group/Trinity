@@ -46,9 +46,6 @@ private:
     int m_sid;
 };
 
-#define PYTHON_MAGIC
-
-
 class ZoomCameraHdl : public ICommandHandler {
 public:
     ZoomCameraHdl(const ZoomCameraRequest& request, RenderSession* session);
@@ -126,5 +123,5 @@ private:
 	RenderSession* m_session;
 };
 
-#undef PYTHON_MAGIC
+/* AUTOGEN CommandHandlerHeader */
 }
