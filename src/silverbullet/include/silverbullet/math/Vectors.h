@@ -1319,11 +1319,16 @@ namespace Core {
       , m42(e[13])
       , m43(e[14])
       , m44(e[15]){};
-      // We do not want the implicit copy c'tor to fullfill the std::is_trivially_copyable properties!
-      // MATRIX4( const MATRIX4<T>& other ) : m11(other.m11), m12(other.m12), m13(other.m13), m14(other.m14),
-      // m21(other.m21), m22(other.m22), m23(other.m23), m24(other.m24),
-      // m31(other.m31), m32(other.m32), m33(other.m33), m34(other.m34),
-      // m41(other.m41), m42(other.m42), m43(other.m43), m44(other.m44) {};
+      
+      // We do not want the implicit copy c'tor to fulfill the std::is_trivially_copyable properties!
+      // VECTOR4<T>(const VECTOR4<S> &other): x(other.x), y(other.y), z(other.z), w(other.w) {}
+      template <class S>
+      explicit MATRIX4(const MATRIX4<S>& other) :
+      m11(other.m11), m12(other.m12), m13(other.m13), m14(other.m14),
+      m21(other.m21), m22(other.m22), m23(other.m23), m24(other.m24),
+      m31(other.m31), m32(other.m32), m33(other.m33), m34(other.m34),
+      m41(other.m41), m42(other.m42), m43(other.m43), m44(other.m44) {};
+      
       MATRIX4(const MATRIX3<T>& other)
       : m11(other.m11)
       , m12(other.m12)
