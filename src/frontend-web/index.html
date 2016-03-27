@@ -30,8 +30,8 @@
     <![endif]-->
     
   </head>
-  <body onload="MUI_MasterUI.init()">
-  <canvas id="myCanvas" width="1000" height="1000"></canvas>
+  <body onload="TRI_Frontend.init()">
+  <canvas id="myCanvas" width="800" height="800" style="display:none"></canvas>
 	
 	<nav class="navbar navbar-inverse navbar-embossed" role="navigation">
 		<div class="navbar-header">
@@ -43,7 +43,7 @@
 		<div class="collapse navbar-collapse" id="navbar-collapse-01">
 		  <ul class="nav navbar-nav navbar-left">
 		  	<li><a href="../utilities/index.html">Home</a></li>
-            <li><a href="#" data-toggle="modal" data-target="#uisModal" onclick="MUI_MasterUI.Connector.sendRequest('queryUIs')"><span class="fui-arrow-right"></span>Running UIs</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#uisModal" onclick="TRI_Frontend.Connector.sendRequest('queryUIs')"><span class="fui-arrow-right"></span>Running UIs</a></li>
 		  </ul>
           <ul class="nav navbar-nav navbar-right">
 			<li><a href="#" data-toggle="modal" data-target="#aboutModal">About</a></li>
@@ -87,7 +87,7 @@
 			  </div> -->
 			</div>
 			<div align="center">
-			  <button id="btn_connect" type="submit" class="btn btn-primary btn-medium" onclick="MUI_MasterUI.connect()"> <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> connect </button>
+			  <button id="btn_connect" type="submit" class="btn btn-primary btn-medium" onclick="TRI_Frontend.connect()"> <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> connect </button>
 			</div>
 			<p>
 			<div id ="div_connect_success" class="alert alert-success" role="alert" align="center"> Connection established! </div>
@@ -114,7 +114,7 @@
 					  <div class="carousel-caption">
 						<h1>ImageVis.</h1>
 						<p>An example application for doctors.</p>
-						<p><a class="btn btn-lg btn-primary" role="button" onclick="MUI_MasterUI.applicationSelected()">Select</a></p>
+						<p><a class="btn btn-lg btn-primary" role="button" onclick="TRI_Frontend.applicationSelected()">Select</a></p>
 					  </div>
 					
 				  </div>
@@ -141,7 +141,7 @@
 			  
 			</div>
 			<div align="center">
-				  <button type="button" id="btnStartUI" class="btn btn-primary" onmouseup="MUI_MasterUI.startUI()" disabled>Start UI</button>
+				  <button type="button" id="btnStartUI" class="btn btn-primary" onmouseup="TRI_Frontend.startUI()" disabled>Start UI</button>
 			</div>
             <p></p>
 		  </div>
