@@ -7,13 +7,17 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/base/Error.h"
 
+
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 using namespace Core::Math;
 using namespace trinity;
 
+#define MaxAcceptableBricksize 512
 
-UVFIO::UVFIO(const std::string& fileId, const IListData& listData) {
+UVFIO::UVFIO(const std::string& fileId, const IListData& listData) :
+  dataset(nullptr)
+{
   LINFO("(UVFIO) initializing for file id " + fileId);
   const auto uvfListData = dynamic_cast<const UVFListData*>(&listData);
 
@@ -31,9 +35,15 @@ UVFIO::UVFIO(const std::string& fileId, const IListData& listData) {
       throw TrinityError(filename + " is not a uvf file", __FILE__, __LINE__);
     }
     
-    // TODO: open UVF file here
+    LINFO("(UVFIO) uvf filename looks ok, ready to open");
+
+    dataset = mocca::make_unique<UVFDataset>(filename, MaxAcceptableBricksize, false);
     
-    LINFO("(UVFIO) uvf file looks ok, ready to open");
+    LINFO("(UVFIO) successfully opened uvf file");
+    
+    if (!dataset->IsSameEndianness()) {
+      throw TrinityError("dataset ist stored in incompatible endianness", __FILE__, __LINE__);
+    }
 
   } else {
     throw TrinityError("invalid listData type", __FILE__, __LINE__);
@@ -41,68 +51,58 @@ UVFIO::UVFIO(const std::string& fileId, const IListData& listData) {
 }
 
 Vec3ui64 UVFIO::getMaxBrickSize() const {
-  // TODO
-  return Vec3ui64();
+  return Vec3ui64(dataset->GetMaxBrickSize());
 }
 
 Vec3ui64 UVFIO::getMaxUsedBrickSizes() const {
-  // TODO
-  return Vec3ui64();
+  return Vec3ui64(dataset->GetMaxUsedBrickSizes());
 }
 
 MinMaxBlock UVFIO::maxMinForKey(const BrickKey& key) const {
-  // TODO
-  return MinMaxBlock(0, 255, 0, 1);
+  return dataset->MaxMinForKey(key);
 }
 
 uint64_t UVFIO::getLODLevelCount(uint64_t modality) const {
-  // TODO
-  return 0;
+  return dataset->GetLODLevelCount();
 }
 
 uint64_t UVFIO::getNumberOfTimesteps() const {
-  // TODO
-  return 0;
+  return dataset->GetNumberOfTimesteps();
 }
 
 Vec3ui64 UVFIO::getDomainSize(uint64_t lod, uint64_t modality) const {
-  // TODO
-  return Vec3ui64();
+  return dataset->GetDomainSize(lod, 0);  // HACK: assume all timesteps have same size
 }
 
 Mat4d UVFIO::getTransformation(uint64_t) const {
-  // TODO
-  return Mat4d();
+  Vec3d scale = dataset->GetScale();
+  Mat4d trans;
+  trans.Scaling(float(scale.x), float(scale.y), float(scale.z));
+  return trans;
 }
 
 Vec3ui UVFIO::getBrickOverlapSize() const {
-  // TODO
-  return Vec3ui(0, 0, 0);
+  return dataset->GetBrickOverlapSize();
 }
 
 uint64_t UVFIO::getLargestSingleBrickLOD(uint64_t modality) const {
-  //TODO
-  return 0;
+  return dataset->GetLargestSingleBrickLOD(0); // HACK: assume all timesteps have same size
 }
 
 Vec3f UVFIO::getBrickExtents(const BrickKey& key) const {
-  //TODO
-  return Vec3f(1, 1, 1);
+  return dataset->GetBrickExtents(key);
 }
 
 Vec3ui UVFIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
-  //TODO
-  return Vec3ui(1, 1, 1);
+  return dataset->GetBrickLayout(lod, 0); // HACK: assume all timesteps have same layout
 }
 
 uint64_t UVFIO::getModalityCount() const {
-  //TODO
   return 1;
 }
 
 uint64_t UVFIO::getComponentCount(uint64_t modality) const {
-  //TODO
-  return 1;
+  return dataset->GetComponentCount();
 }
 
 uint64_t UVFIO::getDefault1DTransferFunctionCount() const {
@@ -152,37 +152,63 @@ std::vector<uint64_t> UVFIO::get2DHistogram() const {
 }
 
 std::string UVFIO::getUserDefinedSemantic(uint64_t modality) const {
-  //TODO
-  return "UVF dataset";
+  return dataset->Name();
 }
 
 Vec2f UVFIO::getRange(uint64_t modality) const {
-  //TODO
-  return Vec2f(0, 255);
+  std::pair<double,double> r = dataset->GetRange();
+  return Vec2f(r.first, r.second);
 }
 
 
 uint64_t UVFIO::getTotalBrickCount(uint64_t modality) const {
-  //TODO
-  return 0;
+  return dataset->GetTotalBrickCount();
 }
 
 bool UVFIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
-  //TODO
-  return false;
+  return dataset->GetBrick(key, data);
 }
 
 Vec3ui UVFIO::getBrickVoxelCounts(const BrickKey& key) const {
-  //TODO
-  return Vec3ui();
+  return dataset->GetBrickVoxelCounts(key);
 }
 
 IIO::ValueType UVFIO::getType(uint64_t modality) const {
-  // TODO
-  return ValueType::T_UINT8;
+  if (dataset->GetIsSigned()) {
+    if (dataset->GetIsFloat()) {
+      switch (dataset->GetBitWidth()) {
+        case 32 : return ValueType::T_FLOAT;
+        case 64 : return ValueType::T_DOUBLE;
+        default : throw TrinityError("invalid data type", __FILE__, __LINE__);
+      }
+    } else { // signed integer
+      switch (dataset->GetBitWidth()) {
+        case 8 : return ValueType::T_INT8;
+        case 16 : return ValueType::T_INT16;
+        case 32 : return ValueType::T_INT32;
+        case 64 : return ValueType::T_INT64;
+        default : throw TrinityError("invalid data type", __FILE__, __LINE__);
+      }
+    }
+  } else { // unsigned
+    if (dataset->GetIsFloat()) {
+      throw TrinityError("invalid data type", __FILE__, __LINE__);
+    } else { // unsigned integer
+      switch (dataset->GetBitWidth()) {
+        case 8 : return ValueType::T_UINT8;
+        case 16 : return ValueType::T_UINT16;
+        case 32 : return ValueType::T_UINT32;
+        case 64 : return ValueType::T_UINT64;
+        default : throw TrinityError("invalid data type", __FILE__, __LINE__);
+      }
+    }
+  }
 }
 
 IIO::Semantic UVFIO::getSemantic(uint64_t modality) const {
-  // TODO
-  return Semantic::Scalar;
+  if (dataset->GetComponentCount() == 1) {
+    return Semantic::Scalar;
+  } else {
+    return Semantic::Color;  // UVF only support scalar or color
+  }
 }
