@@ -109,13 +109,28 @@ bool SimpleRenderer::loadShaders() {
 void SimpleRenderer::loadVolumeData() {
   LINFO("(p) creating volume");
   
-  // this simple renderer can only handle scalar 8bit uints
-  // so check if the volume satisfies these conditions
-  if (m_io->getComponentCount(0) != 1 || m_io->getType(0) != IIO::ValueType::T_UINT8) {
-    LERROR("(p) invalid volume format");
+  if (m_io->getComponentCount(0) != 1) {
+    LERROR("(p) this basic renderer only supports scalar data");
     return;
   }
   
+  GLenum format;
+  size_t byteWidth;
+  if (m_io->getType(0) == IIO::ValueType::T_UINT8 ||
+      m_io->getType(0) == IIO::ValueType::T_INT8) {
+    format = GL_UNSIGNED_BYTE;
+    byteWidth = 1;
+  } else {
+    if (m_io->getType(0) == IIO::ValueType::T_UINT16 ||
+        m_io->getType(0) == IIO::ValueType::T_INT16) {
+      format = GL_UNSIGNED_SHORT;
+      byteWidth = 2;
+    } else {
+      LERROR("(p) this basic renderer only supports 8bit and 16bit data");
+      return;
+    }
+  }
+
   // this simple renderer cannot handle bricks, so we render the
   // "best" LoD that consists of a single brick
   uint64_t singleBrickLoD = m_io->getLargestSingleBrickLOD(0);
@@ -131,7 +146,7 @@ void SimpleRenderer::loadVolumeData() {
   
   // HACK:
   // getBrick should resize the vector, but for now we have to do this manually
-  volume.resize(brickSize.volume());
+  volume.resize(brickSize.volume()*byteWidth);
   
   m_io->getBrick(brickKey, volume);
   
@@ -142,7 +157,9 @@ void SimpleRenderer::loadVolumeData() {
     LINFO("(p) volume size data ok");
   }
   
-  m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x, brickSize.y, brickSize.z, GL_RED, GL_RED, GL_UNSIGNED_BYTE, volume.data(),
+  m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x, brickSize.y,
+                                                brickSize.z, GL_RED, GL_RED,
+                                                format, volume.data(),
                                                 GL_LINEAR, GL_LINEAR);
   
   LINFO("(p) volume created");
