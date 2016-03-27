@@ -44,8 +44,7 @@ bool UVFListData::stripListerID(std::string& id) const {
     }
   
   } else {
-    id = id.substr(UVFDataPrefix.length());
-    return true;
+    return false;
   }
 }
 
