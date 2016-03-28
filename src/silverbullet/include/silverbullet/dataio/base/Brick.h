@@ -21,19 +21,20 @@ using Core::Math::Vec3ui;
 /// brick metadata, but no data; to obtain the data one must query the dataset.
 
 struct BrickKey : public trinity::SerializableTemplate<BrickKey> {
-    uint64_t modality;
-    uint64_t timestep;
-    uint64_t lod;
-    uint64_t index;
-
-    BrickKey() = default;
-    BrickKey(uint64_t m, uint64_t t, uint64_t l, uint64_t i) : modality(m), timestep(t), lod(l), index(i) {}
-    
-    bool equals(const BrickKey& other) const;
-    std::string toString() const;
-
-    void serialize(trinity::ISerialWriter& writer) const;
-    void deserialize(const trinity::ISerialReader& reader);
+  uint64_t modality;
+  uint64_t timestep;
+  uint64_t lod;
+  uint64_t index;
+  
+  BrickKey() = default;
+  BrickKey(uint64_t m, uint64_t t, uint64_t l, uint64_t i) : modality(m), timestep(t), lod(l), index(i) {}
+  
+  bool equals(const BrickKey& other) const;
+  std::string toString() const;
+  std::string toFileDesc() const;
+  
+  void serialize(trinity::ISerialWriter& writer) const;
+  void deserialize(const trinity::ISerialReader& reader);
 };
 
 bool operator==(const BrickKey& lhs, const BrickKey& rhs);

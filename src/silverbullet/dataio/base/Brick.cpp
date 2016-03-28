@@ -10,6 +10,13 @@ std::string BrickKey::toString() const {
     return stream.str();
 }
 
+std::string BrickKey::toFileDesc() const {
+  std::stringstream stream;
+  stream << modality << "_" << timestep << "_" << lod << "_" << index;
+  return stream.str();
+}
+
+
 void BrickKey::serialize(trinity::ISerialWriter& writer) const {
     writer.appendInt("modality", modality);
     writer.appendInt("timestep", timestep);
