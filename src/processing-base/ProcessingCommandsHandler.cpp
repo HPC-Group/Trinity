@@ -285,4 +285,22 @@ std::unique_ptr<Reply> GetLightDirectionHdl::execute() {
     return mocca::make_unique<GetLightDirectionReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+SetSampleRateModifierHdl::SetSampleRateModifierHdl(const SetSampleRateModifierRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetSampleRateModifierHdl::execute() {
+    m_session->getRenderer().setSampleRateModifier(m_request.getParams().getFSampleRateModifier());
+    return nullptr;
+}
+
+GetSampleRateModifierHdl::GetSampleRateModifierHdl(const GetSampleRateModifierRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetSampleRateModifierHdl::execute() {
+    GetSampleRateModifierCmd::ReplyParams params(m_session->getRenderer().getSampleRateModifier());
+    return mocca::make_unique<GetSampleRateModifierReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

@@ -45,6 +45,8 @@ public:
     PhongColorTriple getLightingColors() const override;
     void setLightDirection(const Core::Math::Vec3f& direction) override;
     Core::Math::Vec3f getLightDirection() const override;
+    void setSampleRateModifier(float fSampleRateModifier) override;
+    float getSampleRateModifier() const override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

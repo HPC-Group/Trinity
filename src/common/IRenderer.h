@@ -102,6 +102,10 @@ public:
     virtual void setLightDirection(const Core::Math::Vec3f& direction) = 0;
     virtual Core::Math::Vec3f getLightDirection() const = 0;
 
+    // SAMPLE RATE FUNCTIONS
+    virtual void setSampleRateModifier(float fSampleRateModifier) = 0;
+    virtual float getSampleRateModifier() const = 0;
+
 
     virtual void zoomCamera(float f) = 0;
 

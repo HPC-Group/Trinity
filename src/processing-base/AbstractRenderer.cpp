@@ -222,7 +222,7 @@ void AbstractRenderer::setSampleRateModifier(float fSampleRateModifier) {
   paint();
 }
 
-float AbstractRenderer::getSampleRateModifier() {
+float AbstractRenderer::getSampleRateModifier() const {
   return m_fSampleRateModifier;
 }
 

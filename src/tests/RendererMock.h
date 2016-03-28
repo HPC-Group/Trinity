@@ -32,4 +32,6 @@ public:
     MOCK_CONST_METHOD0(getLightingColors, PhongColorTriple());
     MOCK_METHOD1(setLightDirection, void(const Core::Math::Vec3f&));
     MOCK_CONST_METHOD0(getLightDirection, Core::Math::Vec3f());
+    MOCK_METHOD1(setSampleRateModifier, void(float));
+    MOCK_CONST_METHOD0(getSampleRateModifier, float());
 };

@@ -320,5 +320,27 @@ private:
     RenderSession* m_session;
 };
 
+class SetSampleRateModifierHdl : public ICommandHandler {
+public:
+    SetSampleRateModifierHdl(const SetSampleRateModifierRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetSampleRateModifierRequest m_request;
+    RenderSession* m_session;
+};
+
+class GetSampleRateModifierHdl : public ICommandHandler {
+public:
+    GetSampleRateModifierHdl(const GetSampleRateModifierRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetSampleRateModifierRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

@@ -72,6 +72,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetLightDirectionRequest>("req");
     } else if (type == GetLightDirectionRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetLightDirectionRequest>("req");
+    } else if (type == SetSampleRateModifierRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetSampleRateModifierRequest>("req");
+    } else if (type == GetSampleRateModifierRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetSampleRateModifierRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

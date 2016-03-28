@@ -81,6 +81,8 @@ enum class VclType {
     GetLightingColors,
     SetLightDirection,
     GetLightDirection,
+    SetSampleRateModifier,
+    GetSampleRateModifier,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -174,6 +176,8 @@ private:
         m_cmdMap.insert("GetLightingColors", VclType::GetLightingColors);
         m_cmdMap.insert("SetLightDirection", VclType::SetLightDirection);
         m_cmdMap.insert("GetLightDirection", VclType::GetLightDirection);
+        m_cmdMap.insert("SetSampleRateModifier", VclType::SetSampleRateModifier);
+        m_cmdMap.insert("GetSampleRateModifier", VclType::GetSampleRateModifier);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

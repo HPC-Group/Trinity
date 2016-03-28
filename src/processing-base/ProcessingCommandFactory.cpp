@@ -113,6 +113,12 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::GetLightDirection:
         return mocca::make_unique<GetLightDirectionHdl>(static_cast<const GetLightDirectionRequest&>(request), session);
         break;
+    case VclType::SetSampleRateModifier:
+        return mocca::make_unique<SetSampleRateModifierHdl>(static_cast<const SetSampleRateModifierRequest&>(request), session);
+        break;
+    case VclType::GetSampleRateModifier:
+        return mocca::make_unique<GetSampleRateModifierHdl>(static_cast<const GetSampleRateModifierRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

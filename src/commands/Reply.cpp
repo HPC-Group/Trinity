@@ -45,6 +45,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetLightingColorsReply>("rep");
     } else if (type == GetLightDirectionReply::Ifc::Type) {
         return reader->getSerializablePtr<GetLightDirectionReply>("rep");
+    } else if (type == GetSampleRateModifierReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetSampleRateModifierReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 

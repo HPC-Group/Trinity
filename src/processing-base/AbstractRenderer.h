@@ -64,8 +64,8 @@ namespace trinity {
     Core::Math::Vec3f getLightDirection() const override;
 
     // SAMPLE RATE FUNCTIONS
-    virtual void setSampleRateModifier(float fSampleRateModifier);
-    virtual float getSampleRateModifier();
+    void setSampleRateModifier(float fSampleRateModifier) override;
+    float getSampleRateModifier() const override;
 
     // render parameters
     virtual void setBoundingBoxMode(BBoxMode mode);

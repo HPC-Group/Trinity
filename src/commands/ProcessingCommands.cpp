@@ -1172,6 +1172,77 @@ std::string GetLightDirectionCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// SetSampleRateModifierCmd //////////////
+
+VclType SetSampleRateModifierCmd::Type = VclType::SetSampleRateModifier;
+
+SetSampleRateModifierCmd::RequestParams::RequestParams(float fSampleRateModifier)
+    : m_fSampleRateModifier(fSampleRateModifier) {}
+
+void SetSampleRateModifierCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendFloat("fSampleRateModifier", m_fSampleRateModifier);
+}
+
+void SetSampleRateModifierCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_fSampleRateModifier = reader.getFloat("fSampleRateModifier");
+}
+
+bool SetSampleRateModifierCmd::RequestParams::equals(const SetSampleRateModifierCmd::RequestParams& other) const {
+    return m_fSampleRateModifier == other.m_fSampleRateModifier;
+}
+
+float SetSampleRateModifierCmd::RequestParams::getFSampleRateModifier() const {
+    return m_fSampleRateModifier;
+}
+
+std::string SetSampleRateModifierCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "fSampleRateModifier: " << m_fSampleRateModifier;
+    return stream.str();
+}
+
+////////////// GetSampleRateModifierCmd //////////////
+
+VclType GetSampleRateModifierCmd::Type = VclType::GetSampleRateModifier;
+
+void GetSampleRateModifierCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetSampleRateModifierCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetSampleRateModifierCmd::RequestParams::equals(const GetSampleRateModifierCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetSampleRateModifierCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetSampleRateModifierCmd::ReplyParams::ReplyParams(float result)
+    : m_result(result) {}
+
+void GetSampleRateModifierCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendFloat("result", m_result);
+}
+
+void GetSampleRateModifierCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getFloat("result");
+}
+
+bool GetSampleRateModifierCmd::ReplyParams::equals(const GetSampleRateModifierCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+float GetSampleRateModifierCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetSampleRateModifierCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1468,6 +1539,26 @@ bool operator==(const GetLightDirectionCmd::ReplyParams& lhs, const GetLightDire
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetLightDirectionCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetSampleRateModifierCmd::RequestParams& lhs, const SetSampleRateModifierCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetSampleRateModifierCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetSampleRateModifierCmd::RequestParams& lhs, const GetSampleRateModifierCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetSampleRateModifierCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetSampleRateModifierCmd::ReplyParams& lhs, const GetSampleRateModifierCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetSampleRateModifierCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

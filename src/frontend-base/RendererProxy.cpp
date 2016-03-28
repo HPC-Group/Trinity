@@ -204,4 +204,17 @@ Core::Math::Vec3f RendererProxy::getLightDirection() const {
     return reply->getParams().getResult();
 }
 
+void RendererProxy::setSampleRateModifier(float fSampleRateModifier) {
+    SetSampleRateModifierCmd::RequestParams params(fSampleRateModifier);
+    SetSampleRateModifierRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+float RendererProxy::getSampleRateModifier() const {
+    GetSampleRateModifierCmd::RequestParams params;
+    GetSampleRateModifierRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

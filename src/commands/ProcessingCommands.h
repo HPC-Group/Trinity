@@ -1011,5 +1011,70 @@ bool operator==(const GetLightDirectionCmd::ReplyParams& lhs, const GetLightDire
 std::ostream& operator<<(std::ostream& os, const GetLightDirectionCmd::ReplyParams& obj);
 using GetLightDirectionReply = ReplyTemplate<GetLightDirectionCmd>;
 
+struct SetSampleRateModifierCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(float fSampleRateModifier);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        float getFSampleRateModifier() const;
+
+    private:
+        float m_fSampleRateModifier;
+    };
+};
+
+bool operator==(const SetSampleRateModifierCmd::RequestParams& lhs, const SetSampleRateModifierCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetSampleRateModifierCmd::RequestParams& obj);
+using SetSampleRateModifierRequest = RequestTemplate<SetSampleRateModifierCmd>;
+
+struct GetSampleRateModifierCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(float result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        float getResult() const;
+
+    private:
+        float m_result;
+    };
+};
+
+bool operator==(const GetSampleRateModifierCmd::RequestParams& lhs, const GetSampleRateModifierCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetSampleRateModifierCmd::RequestParams& obj);
+using GetSampleRateModifierRequest = RequestTemplate<GetSampleRateModifierCmd>;
+
+bool operator==(const GetSampleRateModifierCmd::ReplyParams& lhs, const GetSampleRateModifierCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetSampleRateModifierCmd::ReplyParams& obj);
+using GetSampleRateModifierReply = ReplyTemplate<GetSampleRateModifierCmd>;
+
 /* AUTOGEN CommandHeader */
 }
