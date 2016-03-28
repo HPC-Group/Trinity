@@ -34,15 +34,16 @@ using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 
 bool UVFListData::stripListerID(std::string& id) const {
+  if (id == UVFDataPrefix) {
+    id = UVFSearchRoot;
+    return true;
+  }
+  
   if (id.find(UVFDataPrefix+"@") == 0) {
-
     id = id.substr((UVFDataPrefix+"@").length());
-    
     if (id.empty())
       id = UVFSearchRoot;
-
     return true;
-  
   } else {
     return false;
   }
@@ -67,23 +68,27 @@ std::vector<IOData> UVFListData::listData(const std::string& dirID) const {
   std::vector<IOData> ioDataVec;
   
   if (stripListerID(path)) {
-    std::vector<std::string> names = getDirContents(path);
+    if (!isDirectory(path)) return ioDataVec;
     
+    std::vector<std::string> names = getDirContents(path);
     for (const std::string& name : names) {
-      if (isDirectory(name)) {
+      // TODO: replace the first param of the IOData constructor
+      // (getFilename(name)) by the human readable description from the
+      // uvf-file
+      if (ToLowerCase(getExt(name)) == "uvf")
         ioDataVec.push_back(IOData(getFilename(name),
                                    UVFDataPrefix+"@"+name,
-                                   IOData::DataType::Directory));
-      } else {
-        // TODO: replace the first param of the IOData constructor
-        // (getFilename(name)) by the human readable description from the
-        // uvf-file
-        if (ToLowerCase(getExt(path)) == "uvf")
-          ioDataVec.push_back(IOData(getFilename(name),
-                                     UVFDataPrefix+"@"+name,
-                                     IOData::DataType::Dataset));
-      }
+                                   IOData::DataType::Dataset));
     }
+    std::vector<std::string> dirs = getSubDirList(path);
+    for (const std::string& dir : dirs) {
+      if (dir == "." || dir == ".." || dir == "") continue;
+      
+      ioDataVec.push_back(IOData(getFilename(dir),
+                                 UVFDataPrefix+"@"+dir,
+                                 IOData::DataType::Directory));
+    }
+    
   }
   return ioDataVec;
 }
