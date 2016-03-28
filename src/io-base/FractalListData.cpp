@@ -58,13 +58,13 @@ static std::array<FractalData, 22> data {
                                          IOData::DataType::Dataset),
                 Vec3ui64(256, 256, 256), Vec3ui64(256, 256, 256)),
     
-    FractalData("FractalData@1b", IOData("64^3", "FractalData@3b",
+    FractalData("FractalData@1b", IOData("50^3", "FractalData@3b",
                                          IOData::DataType::Dataset),
                 Vec3ui64(50, 50, 50), Vec3ui64(50, 50, 50)),
-    FractalData("FractalData@1b", IOData("128^3", "FractalData@4b",
+    FractalData("FractalData@1b", IOData("100^3", "FractalData@4b",
                                          IOData::DataType::Dataset),
                 Vec3ui64(100, 100, 100), Vec3ui64(100, 100, 100)),
-    FractalData("FractalData@1b", IOData("256^3", "FractalData@5b",
+    FractalData("FractalData@1b", IOData("200^3", "FractalData@5b",
                                          IOData::DataType::Dataset),
                 Vec3ui64(200, 200, 200), Vec3ui64(200, 200, 200)),
     
