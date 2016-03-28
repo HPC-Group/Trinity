@@ -485,5 +485,52 @@ bool operator==(const Set1DTransferFunctionCmd::RequestParams& lhs, const Set1DT
 std::ostream& operator<<(std::ostream& os, const Set1DTransferFunctionCmd::RequestParams& obj);
 using Set1DTransferFunctionRequest = RequestTemplate<Set1DTransferFunctionCmd>;
 
+struct GetDefault1DTransferFunctionProcCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t index);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getIndex() const;
+
+    private:
+        uint64_t m_index;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const TransferFunction1D& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        TransferFunction1D getResult() const;
+
+    private:
+        TransferFunction1D m_result;
+    };
+};
+
+bool operator==(const GetDefault1DTransferFunctionProcCmd::RequestParams& lhs,
+                const GetDefault1DTransferFunctionProcCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionProcCmd::RequestParams& obj);
+using GetDefault1DTransferFunctionProcRequest = RequestTemplate<GetDefault1DTransferFunctionProcCmd>;
+
+bool operator==(const GetDefault1DTransferFunctionProcCmd::ReplyParams& lhs, const GetDefault1DTransferFunctionProcCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionProcCmd::ReplyParams& obj);
+using GetDefault1DTransferFunctionProcReply = ReplyTemplate<GetDefault1DTransferFunctionProcCmd>;
+
 /* AUTOGEN CommandHeader */
 }

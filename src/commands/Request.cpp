@@ -42,6 +42,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetTimestepCountProcRequest>("req");
     } else if (type == Set1DTransferFunctionRequest::Ifc::Type) {
         return reader->getSerializablePtr<Set1DTransferFunctionRequest>("req");
+    } else if (type == GetDefault1DTransferFunctionProcRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetDefault1DTransferFunctionProcRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

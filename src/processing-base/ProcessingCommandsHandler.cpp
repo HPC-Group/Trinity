@@ -148,4 +148,14 @@ std::unique_ptr<Reply> Set1DTransferFunctionHdl::execute() {
     return nullptr;
 }
 
+GetDefault1DTransferFunctionProcHdl::GetDefault1DTransferFunctionProcHdl(const GetDefault1DTransferFunctionProcRequest& request,
+                                                                         RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetDefault1DTransferFunctionProcHdl::execute() {
+    GetDefault1DTransferFunctionProcCmd::ReplyParams params(m_session->getRenderer().getDefault1DTransferFunction(m_request.getParams().getIndex()));
+    return mocca::make_unique<GetDefault1DTransferFunctionProcReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

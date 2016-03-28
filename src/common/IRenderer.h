@@ -66,6 +66,7 @@ public:
     virtual uint64_t getTimestepCount() const = 0;
     
     virtual void set1DTransferFunction(const TransferFunction1D& tf) = 0;
+    virtual TransferFunction1D getDefault1DTransferFunction(uint64_t index) const = 0;
 
     virtual void setIsoValue(float) = 0;
     virtual void zoomCamera(float f) = 0;

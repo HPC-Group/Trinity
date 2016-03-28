@@ -106,4 +106,11 @@ void RendererProxy::set1DTransferFunction(const TransferFunction1D& tf) {
     m_inputChannel.sendRequest(request);
 }
 
+TransferFunction1D RendererProxy::getDefault1DTransferFunction(uint64_t index) const {
+    GetDefault1DTransferFunctionProcCmd::RequestParams params(index);
+    GetDefault1DTransferFunctionProcRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

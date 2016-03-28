@@ -568,6 +568,60 @@ std::string Set1DTransferFunctionCmd::RequestParams::toString() const {
     return stream.str();
 }
 
+////////////// GetDefault1DTransferFunctionProcCmd //////////////
+
+VclType GetDefault1DTransferFunctionProcCmd::Type = VclType::GetDefault1DTransferFunctionProc;
+
+GetDefault1DTransferFunctionProcCmd::RequestParams::RequestParams(uint64_t index)
+    : m_index(index) {}
+
+void GetDefault1DTransferFunctionProcCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("index", m_index);
+}
+
+void GetDefault1DTransferFunctionProcCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_index = reader.getUInt64("index");
+}
+
+bool GetDefault1DTransferFunctionProcCmd::RequestParams::equals(const GetDefault1DTransferFunctionProcCmd::RequestParams& other) const {
+    return m_index == other.m_index;
+}
+
+uint64_t GetDefault1DTransferFunctionProcCmd::RequestParams::getIndex() const {
+    return m_index;
+}
+
+std::string GetDefault1DTransferFunctionProcCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "index: " << m_index;
+    return stream.str();
+}
+
+GetDefault1DTransferFunctionProcCmd::ReplyParams::ReplyParams(const TransferFunction1D& result)
+    : m_result(result) {}
+
+void GetDefault1DTransferFunctionProcCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("result", m_result);
+}
+
+void GetDefault1DTransferFunctionProcCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializable<TransferFunction1D>("result");
+}
+
+bool GetDefault1DTransferFunctionProcCmd::ReplyParams::equals(const GetDefault1DTransferFunctionProcCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+TransferFunction1D GetDefault1DTransferFunctionProcCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetDefault1DTransferFunctionProcCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -708,6 +762,20 @@ bool operator==(const Set1DTransferFunctionCmd::RequestParams& lhs, const Set1DT
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const Set1DTransferFunctionCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetDefault1DTransferFunctionProcCmd::RequestParams& lhs,
+                const GetDefault1DTransferFunctionProcCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionProcCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetDefault1DTransferFunctionProcCmd::ReplyParams& lhs, const GetDefault1DTransferFunctionProcCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionProcCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 
