@@ -339,4 +339,22 @@ std::unique_ptr<Reply> GetRendererSpecialsHdl::execute() {
     return mocca::make_unique<GetRendererSpecialsReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+SetBackgroundColorsHdl::SetBackgroundColorsHdl(const SetBackgroundColorsRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetBackgroundColorsHdl::execute() {
+    m_session->getRenderer().setBackgroundColors(m_request.getParams().getColors());
+    return nullptr;
+}
+
+GetBackgroundColorsHdl::GetBackgroundColorsHdl(const GetBackgroundColorsRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetBackgroundColorsHdl::execute() {
+    GetBackgroundColorsCmd::ReplyParams params(m_session->getRenderer().getBackgroundColors());
+    return mocca::make_unique<GetBackgroundColorsReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

@@ -386,5 +386,27 @@ private:
     RenderSession* m_session;
 };
 
+class SetBackgroundColorsHdl : public ICommandHandler {
+public:
+    SetBackgroundColorsHdl(const SetBackgroundColorsRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetBackgroundColorsRequest m_request;
+    RenderSession* m_session;
+};
+
+class GetBackgroundColorsHdl : public ICommandHandler {
+public:
+    GetBackgroundColorsHdl(const GetBackgroundColorsRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetBackgroundColorsRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

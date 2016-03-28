@@ -51,6 +51,8 @@ public:
     BBoxMode getBoundingBoxMode() const override;
     void setRendererSpecials(const std::vector<uint64_t>& params) override;
     std::vector<uint64_t> getRendererSpecials() const override;
+    void setBackgroundColors(const BackgroundColors& colors) override;
+    BackgroundColors getBackgroundColors() const override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

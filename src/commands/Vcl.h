@@ -87,6 +87,8 @@ enum class VclType {
     GetBoundingBoxMode,
     SetRendererSpecials,
     GetRendererSpecials,
+    SetBackgroundColors,
+    GetBackgroundColors,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -186,6 +188,8 @@ private:
         m_cmdMap.insert("GetBoundingBoxMode", VclType::GetBoundingBoxMode);
         m_cmdMap.insert("SetRendererSpecials", VclType::SetRendererSpecials);
         m_cmdMap.insert("GetRendererSpecials", VclType::GetRendererSpecials);
+        m_cmdMap.insert("SetBackgroundColors", VclType::SetBackgroundColors);
+        m_cmdMap.insert("GetBackgroundColors", VclType::GetBackgroundColors);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

@@ -132,6 +132,9 @@ public:
     virtual void setRendererSpecials(const std::vector<uint64_t>& params) = 0;
     virtual std::vector<uint64_t> getRendererSpecials() const = 0;
 
+    virtual void setBackgroundColors(const BackgroundColors& colors) = 0;
+    virtual BackgroundColors getBackgroundColors() const = 0;
+
 
     virtual void zoomCamera(float f) = 0;
 

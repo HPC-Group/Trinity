@@ -84,6 +84,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetRendererSpecialsRequest>("req");
     } else if (type == GetRendererSpecialsRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetRendererSpecialsRequest>("req");
+    } else if (type == SetBackgroundColorsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetBackgroundColorsRequest>("req");
+    } else if (type == GetBackgroundColorsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetBackgroundColorsRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

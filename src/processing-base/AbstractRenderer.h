@@ -74,8 +74,8 @@ namespace trinity {
     void setRendererSpecials(const std::vector<uint64_t>& params) override;
     std::vector<uint64_t> getRendererSpecials() const override;
 
-    virtual void setBackgroundColors(const BackgroundColors& colors);
-    virtual BackgroundColors getBackgroundColors() const;
+    void setBackgroundColors(const BackgroundColors& colors) override;
+    BackgroundColors getBackgroundColors() const override;
 
     // CLIPPING
     virtual void enableClipping(bool enable);

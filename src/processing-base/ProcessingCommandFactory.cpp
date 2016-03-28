@@ -131,6 +131,12 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::GetRendererSpecials:
         return mocca::make_unique<GetRendererSpecialsHdl>(static_cast<const GetRendererSpecialsRequest&>(request), session);
         break;
+    case VclType::SetBackgroundColors:
+        return mocca::make_unique<SetBackgroundColorsHdl>(static_cast<const SetBackgroundColorsRequest&>(request), session);
+        break;
+    case VclType::GetBackgroundColors:
+        return mocca::make_unique<GetBackgroundColorsHdl>(static_cast<const GetBackgroundColorsRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

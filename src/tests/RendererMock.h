@@ -38,4 +38,6 @@ public:
     MOCK_CONST_METHOD0(getBoundingBoxMode, BBoxMode());
     MOCK_METHOD1(setRendererSpecials, void(const std::vector<uint64_t>&));
     MOCK_CONST_METHOD0(getRendererSpecials, std::vector<uint64_t>());
+    MOCK_METHOD1(setBackgroundColors, void(const BackgroundColors&));
+    MOCK_CONST_METHOD0(getBackgroundColors, BackgroundColors());
 };

@@ -1206,5 +1206,70 @@ bool operator==(const GetRendererSpecialsCmd::ReplyParams& lhs, const GetRendere
 std::ostream& operator<<(std::ostream& os, const GetRendererSpecialsCmd::ReplyParams& obj);
 using GetRendererSpecialsReply = ReplyTemplate<GetRendererSpecialsCmd>;
 
+struct SetBackgroundColorsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const IRenderer::BackgroundColors& colors);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        IRenderer::BackgroundColors getColors() const;
+
+    private:
+        IRenderer::BackgroundColors m_colors;
+    };
+};
+
+bool operator==(const SetBackgroundColorsCmd::RequestParams& lhs, const SetBackgroundColorsCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetBackgroundColorsCmd::RequestParams& obj);
+using SetBackgroundColorsRequest = RequestTemplate<SetBackgroundColorsCmd>;
+
+struct GetBackgroundColorsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const IRenderer::BackgroundColors& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        IRenderer::BackgroundColors getResult() const;
+
+    private:
+        IRenderer::BackgroundColors m_result;
+    };
+};
+
+bool operator==(const GetBackgroundColorsCmd::RequestParams& lhs, const GetBackgroundColorsCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBackgroundColorsCmd::RequestParams& obj);
+using GetBackgroundColorsRequest = RequestTemplate<GetBackgroundColorsCmd>;
+
+bool operator==(const GetBackgroundColorsCmd::ReplyParams& lhs, const GetBackgroundColorsCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBackgroundColorsCmd::ReplyParams& obj);
+using GetBackgroundColorsReply = ReplyTemplate<GetBackgroundColorsCmd>;
+
 /* AUTOGEN CommandHeader */
 }

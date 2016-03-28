@@ -243,4 +243,17 @@ std::vector<uint64_t> RendererProxy::getRendererSpecials() const {
     return reply->getParams().getResult();
 }
 
+void RendererProxy::setBackgroundColors(const BackgroundColors& colors) {
+    SetBackgroundColorsCmd::RequestParams params(colors);
+    SetBackgroundColorsRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+IRenderer::BackgroundColors RendererProxy::getBackgroundColors() const {
+    GetBackgroundColorsCmd::RequestParams params;
+    GetBackgroundColorsRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

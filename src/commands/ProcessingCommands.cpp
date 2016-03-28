@@ -1387,6 +1387,77 @@ std::string GetRendererSpecialsCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// SetBackgroundColorsCmd //////////////
+
+VclType SetBackgroundColorsCmd::Type = VclType::SetBackgroundColors;
+
+SetBackgroundColorsCmd::RequestParams::RequestParams(const IRenderer::BackgroundColors& colors)
+    : m_colors(colors) {}
+
+void SetBackgroundColorsCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("colors", m_colors);
+}
+
+void SetBackgroundColorsCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_colors = reader.getSerializable<IRenderer::BackgroundColors>("colors");
+}
+
+bool SetBackgroundColorsCmd::RequestParams::equals(const SetBackgroundColorsCmd::RequestParams& other) const {
+    return m_colors == other.m_colors;
+}
+
+IRenderer::BackgroundColors SetBackgroundColorsCmd::RequestParams::getColors() const {
+    return m_colors;
+}
+
+std::string SetBackgroundColorsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "colors: " << m_colors;
+    return stream.str();
+}
+
+////////////// GetBackgroundColorsCmd //////////////
+
+VclType GetBackgroundColorsCmd::Type = VclType::GetBackgroundColors;
+
+void GetBackgroundColorsCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetBackgroundColorsCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetBackgroundColorsCmd::RequestParams::equals(const GetBackgroundColorsCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetBackgroundColorsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetBackgroundColorsCmd::ReplyParams::ReplyParams(const IRenderer::BackgroundColors& result)
+    : m_result(result) {}
+
+void GetBackgroundColorsCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("result", m_result);
+}
+
+void GetBackgroundColorsCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializable<IRenderer::BackgroundColors>("result");
+}
+
+bool GetBackgroundColorsCmd::ReplyParams::equals(const GetBackgroundColorsCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+IRenderer::BackgroundColors GetBackgroundColorsCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetBackgroundColorsCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1743,6 +1814,26 @@ bool operator==(const GetRendererSpecialsCmd::ReplyParams& lhs, const GetRendere
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetRendererSpecialsCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetBackgroundColorsCmd::RequestParams& lhs, const SetBackgroundColorsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetBackgroundColorsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBackgroundColorsCmd::RequestParams& lhs, const GetBackgroundColorsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBackgroundColorsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetBackgroundColorsCmd::ReplyParams& lhs, const GetBackgroundColorsCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBackgroundColorsCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

@@ -51,6 +51,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetBoundingBoxModeReply>("rep");
     } else if (type == GetRendererSpecialsReply::Ifc::Type) {
         return reader->getSerializablePtr<GetRendererSpecialsReply>("rep");
+    } else if (type == GetBackgroundColorsReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetBackgroundColorsReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 
