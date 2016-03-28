@@ -109,7 +109,6 @@ bool FractalListData::containsIOData(const std::string& fileOrDirID) const {
 
 std::vector<IOData> FractalListData::listData(const std::string& dirID) const {
   std::vector<IOData> ioDataVec;
-  LINFO("(fractalio) listData for directory id " + dirID);
   for(const auto& s: data) {
     if (s.m_container == dirID) {
       ioDataVec.push_back(s.m_ioData);
