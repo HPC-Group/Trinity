@@ -100,7 +100,9 @@ static std::array<FractalData, 22> data {
 
 bool FractalListData::containsIOData(const std::string& fileOrDirID) const {
   for(const auto& s: data) {
-    if (s.m_container == fileOrDirID) return true;
+    if (s.m_container == fileOrDirID ||           // for directories
+        s.m_ioData.getFileId() == fileOrDirID)    // for files
+      return true;
   }
   return false;
 }
