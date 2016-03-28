@@ -148,6 +148,7 @@ TYPED_TEST(MathSerializationTest, Vector3_UInt8) {
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
+    ASSERT_EQ(z, result.z);
 }
 
 TYPED_TEST(MathSerializationTest, Vector3_Int32) {
@@ -165,6 +166,7 @@ TYPED_TEST(MathSerializationTest, Vector3_Int32) {
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
+    ASSERT_EQ(z, result.z);
 }
 
 TYPED_TEST(MathSerializationTest, Vector3_UInt32) {
@@ -182,6 +184,7 @@ TYPED_TEST(MathSerializationTest, Vector3_UInt32) {
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
+    ASSERT_EQ(z, result.z);
 }
 
 TYPED_TEST(MathSerializationTest, Vector3_Int64) {
@@ -199,6 +202,7 @@ TYPED_TEST(MathSerializationTest, Vector3_Int64) {
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
+    ASSERT_EQ(z, result.z);
 }
 
 TYPED_TEST(MathSerializationTest, Vector3_UInt64) {
@@ -216,6 +220,7 @@ TYPED_TEST(MathSerializationTest, Vector3_UInt64) {
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
+    ASSERT_EQ(z, result.z);
 }
 
 TYPED_TEST(MathSerializationTest, Vector3_Float) {
@@ -233,6 +238,7 @@ TYPED_TEST(MathSerializationTest, Vector3_Float) {
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
+    ASSERT_EQ(z, result.z);
 }
 
 TYPED_TEST(MathSerializationTest, Vector3_Double) {
@@ -250,6 +256,27 @@ TYPED_TEST(MathSerializationTest, Vector3_Double) {
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
+    ASSERT_EQ(z, result.z);
+}
+
+TYPED_TEST(MathSerializationTest, Vector4_UInt8) {
+    TypeParam factory;
+    auto writer = factory.createWriter();
+
+    uint8_t x = 128;
+    uint8_t y = 250;
+    uint8_t z = 255;
+    uint8_t w = 42;
+    Core::Math::VECTOR4<uint8_t> vec(x, y, z, w);
+
+    writer->appendObject("vec", vec);
+    auto byteArray = writer->write();
+    auto reader = factory.createReader(byteArray);
+    auto result = reader->template getSerializable<decltype(vec)>("vec");
+    ASSERT_EQ(x, result.x);
+    ASSERT_EQ(y, result.y);
+    ASSERT_EQ(z, result.z);
+    ASSERT_EQ(w, result.w);
 }
 
 TYPED_TEST(MathSerializationTest, Matrix4_Double) {

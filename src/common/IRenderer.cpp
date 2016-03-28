@@ -27,3 +27,15 @@ const IRenderer::RenderModeMapper& IRenderer::renderModeMapper() {
     }
     return mapper;
 }
+
+void IRenderer::PhongColorTriple::serialize(ISerialWriter& writer) const {
+    writer.appendObject("ambient", ambient);
+    writer.appendObject("diffuse", diffuse);
+    writer.appendObject("specular", specular);
+}
+
+void IRenderer::PhongColorTriple::deserialize(const ISerialReader& reader) {
+    ambient = reader.getSerializable<Core::Math::Vec4ui8>("ambient");
+    diffuse = reader.getSerializable<Core::Math::Vec4ui8>("diffuse");
+    specular = reader.getSerializable<Core::Math::Vec4ui8>("specular");
+}

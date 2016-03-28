@@ -31,10 +31,19 @@ public:
         PL_RECOMPOSE
     };
 
-    struct PhongColorTriple {
+    struct PhongColorTriple : public SerializableTemplate<PhongColorTriple> {
+        PhongColorTriple() = default;
+        PhongColorTriple(const Core::Math::Vec4ui8& a, Core::Math::Vec4ui8& d, Core::Math::Vec4ui8& s)
+            : ambient(a)
+            , diffuse(d)
+            , specular(s) {}
+
         Core::Math::Vec4ui8 ambient;
         Core::Math::Vec4ui8 diffuse;
         Core::Math::Vec4ui8 specular;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
     };
 
     using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;

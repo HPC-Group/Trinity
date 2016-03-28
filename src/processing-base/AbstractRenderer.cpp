@@ -29,7 +29,7 @@ void AbstractRenderer::initValueDefaults(){
   m_clearViewRadius = 0.25f;
   m_clearBorderSize = 0.05f;
   m_enableLighting = true;
-  m_lightingColors = {
+  m_lightingColors = PhongColorTriple{
     Vec4ui8(25,25,25,255),
     Vec4ui8(128,128,128,255),
     Vec4ui8(255,255,255,255)

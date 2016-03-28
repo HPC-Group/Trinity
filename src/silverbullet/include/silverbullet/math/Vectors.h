@@ -660,7 +660,7 @@ namespace Core {
 #define HIDDEN /* nothing */
 #endif
     
-    template <class T = int32_t> class VECTOR4 {
+    template <class T = int32_t> class VECTOR4 : public trinity::ISerializable {
       template <class U> HIDDEN friend std::istream& operator>>(std::istream&, VECTOR4<U>&);
       
     public:
@@ -889,6 +889,107 @@ namespace Core {
       VECTOR2<T> zw() const { return VECTOR2<T>(z, w); }
       
       VECTOR3<T> xyz() const { return VECTOR3<T>(x, y, z); }
+
+      std::unique_ptr<trinity::ISerializable> clone() const override { return std::unique_ptr<ISerializable>(new VECTOR4(*this)); }
+      void serialize(trinity::ISerialWriter& writer) const override { serializeImpl(writer); }
+      void deserialize(const trinity::ISerialReader& reader) override { deserializeImpl(reader); }
+
+      private:
+          template <typename U = T>
+          void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) const {
+              writer.appendInt("x", x);
+              writer.appendInt("y", y);
+              writer.appendInt("z", z);
+              writer.appendInt("w", w);
+          }
+
+          template <typename U = T>
+          void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, int32_t>::value>::type* = nullptr) const {
+              writer.appendInt("x", x);
+              writer.appendInt("y", y);
+              writer.appendInt("z", z);
+              writer.appendInt("w", w);
+          }
+
+          template <typename U = T>
+          void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, uint32_t>::value>::type* = nullptr) const {
+              writer.appendInt("x", x);
+              writer.appendInt("y", y);
+              writer.appendInt("z", z);
+              writer.appendInt("w", w);
+          }
+
+          template <typename U = T>
+          void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, uint64_t>::value>::type* = nullptr) const {
+              writer.appendInt("x", x);
+              writer.appendInt("y", y);
+              writer.appendInt("z", z);
+              writer.appendInt("w", w);
+          }
+
+          template <typename U = T>
+          void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, float>::value>::type* = nullptr) const {
+              writer.appendFloat("x", x);
+              writer.appendFloat("y", y);
+              writer.appendFloat("z", z);
+              writer.appendFloat("w", w);
+          }
+
+          template <typename U = T>
+          void serializeImpl(trinity::ISerialWriter& writer, typename std::enable_if<std::is_same<U, double>::value>::type* = nullptr) const {
+              writer.appendDouble("x", x);
+              writer.appendDouble("y", y);
+              writer.appendDouble("z", z);
+              writer.appendDouble("w", w);
+          }
+
+          template <typename U = T>
+          void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, uint8_t>::value>::type* = nullptr) {
+              x = reader.getUInt8("x");
+              y = reader.getUInt8("y");
+              z = reader.getUInt8("z");
+              w = reader.getUInt8("w");
+          }
+
+          template <typename U = T>
+          void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, int32_t>::value>::type* = nullptr) {
+              x = reader.getInt32("x");
+              y = reader.getInt32("y");
+              z = reader.getInt32("z");
+              w = reader.getInt32("w");
+          }
+
+          template <typename U = T>
+          void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, uint32_t>::value>::type* = nullptr) {
+              x = reader.getUInt32("x");
+              y = reader.getUInt32("y");
+              z = reader.getUInt32("z");
+              w = reader.getUInt32("w");
+          }
+
+          template <typename U = T>
+          void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, uint64_t>::value>::type* = nullptr) {
+              x = reader.getUInt64("x");
+              y = reader.getUInt64("y");
+              z = reader.getUInt64("z");
+              w = reader.getUInt64("w");
+          }
+
+          template <typename U = T>
+          void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, float>::value>::type* = nullptr) {
+              x = reader.getFloat("x");
+              y = reader.getFloat("y");
+              z = reader.getFloat("z");
+              w = reader.getFloat("w");
+          }
+
+          template <typename U = T>
+          void deserializeImpl(const trinity::ISerialReader& reader, typename std::enable_if<std::is_same<U, double>::value>::type* = nullptr) {
+              x = reader.getDouble("x");
+              y = reader.getDouble("y");
+              z = reader.getDouble("z");
+              w = reader.getDouble("w");
+          }
     };
     
     template <class T> std::istream& operator>>(std::istream& is, VECTOR4<T>& v4) {
