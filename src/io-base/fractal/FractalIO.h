@@ -1,5 +1,7 @@
 #pragma once
 
+#define CACHE_BRICKS
+
 #include <vector>
 
 #include "common/IIO.h"
@@ -7,6 +9,10 @@
 #include "io-base/fractal/Mandelbulb.h"
 
 #include "mocca/log/LogManager.h"
+
+#ifdef CACHE_BRICKS
+#include "BrickCacher.h"
+#endif
 
 namespace trinity {
   
@@ -52,6 +58,10 @@ namespace trinity {
     bool m_bFlat;
     std::unique_ptr<Mandelbulb<uint8_t>> m_fractalGenerator;
     
+#ifdef CACHE_BRICKS
+    BrickCacher          m_bc;
+#endif
+ 
     void genBrickParams(const BrickKey& brickKey, Core::Math::Vec3ui64& start, Core::Math::Vec3d& stepping,
                         Core::Math::Vec3ui64& size) const;
     

@@ -1,8 +1,6 @@
 #include "io-base/FractalListData.h"
 #include "io-base/fractal/FractalIO.h"
 
-// #include "silverbullet/math/MathTools.h"
-
 #include "common/TrinityError.h"
 #include "mocca/log/LogManager.h"
 #include "mocca/base/Error.h"
@@ -11,7 +9,11 @@ using namespace Core::Math;
 using namespace trinity;
 
 FractalIO::FractalIO(const std::string& fileId, const IListData& listData)
-: m_fractalGenerator(nullptr) {
+: m_fractalGenerator(nullptr)
+#ifdef CACHE_BRICKS
+, m_bc(".","fractal")
+#endif
+{
   LINFO("(fractalio) initializing fractal for file id " + fileId);
   const auto fractalListData = dynamic_cast<const FractalListData*>(&listData);
 
@@ -55,28 +57,24 @@ Vec3ui64 FractalIO::getMaxUsedBrickSizes() const {
 
 MinMaxBlock FractalIO::maxMinForKey(const BrickKey& key) const {
   // TODO: compute gradients and fill 3rd and 4th parameters accordingly
+  
+  uint8_t min = 255, max = 0;
+#ifdef CACHE_BRICKS
+  if (m_bc.getMaxMin(key,min, max)) {
+    return MinMaxBlock(min, max, 0, 1);
+  }
+#endif
 
   if (!m_bFlat) {
-    uint8_t min = 255, max = 0;
-    Vec3ui64 start, end, size, pos;
-    Vec3d step;
-    genBrickParams(key, start, step, size);
-    pos = start;
-    Vec3d dStart = Vec3d(start);
-    for (int z = 0; z < size.z; ++z) {
-      for (int y = 0; y < size.y; ++y) {
-        for (int x = 0; x < size.x; ++x) {
-          const size_t i = size_t(x + y * size.x + z * size.x * size.y);
-          const Vec3ui64 pos = Vec3ui64(dStart + step * Vec3d(x,y,z));
-          uint8_t v = m_fractalGenerator->computePoint(pos.x, pos.y, pos.z);
-          if (v < min) min = v;
-          if (v > max) max = v;
-          if (min == 0 && max == 255)
-            return MinMaxBlock(0, 255, 0, 1);
-        }
-      }
+    std::vector<uint8_t> data;
+    getBrick(key, data);
+    
+    for (uint8_t v : data) {
+      if (v < min) min = v;
+      if (v > max) max = v;
+      if (min == 0 && max == 255) break;
     }
-
+    
     return MinMaxBlock(min, max, 0, 1);
   } else {
     return MinMaxBlock(0, 255, 0, 1);
@@ -301,6 +299,13 @@ bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
     created = true;
   }
 
+#ifdef CACHE_BRICKS
+  if (m_bc.getBrick<uint8_t>(key, data)) {
+    return created;
+  }
+#endif
+  
+
   if (!m_bFlat) {
     Vec3ui64 start, end, size, pos;
     Vec3d step;
@@ -331,6 +336,11 @@ bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
       }
     }
   }
+
+#ifdef CACHE_BRICKS
+  m_bc.setBrick<uint8_t>(key, data);
+#endif
+  
   return created;
 }
 
