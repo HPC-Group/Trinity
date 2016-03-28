@@ -68,6 +68,7 @@ enum class VclType {
     Set1DTransferFunction,
     GetDefault1DTransferFunctionProc,
     GetDefault1DTransferFunctionCountProc,
+    Get1DHistogramProc,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -148,6 +149,7 @@ private:
         m_cmdMap.insert("Set1DTransferFunction", VclType::Set1DTransferFunction);
         m_cmdMap.insert("GetDefault1DTransferFunctionProc", VclType::GetDefault1DTransferFunctionProc);
         m_cmdMap.insert("GetDefault1DTransferFunctionCountProc", VclType::GetDefault1DTransferFunctionCountProc);
+        m_cmdMap.insert("Get1DHistogramProc", VclType::Get1DHistogramProc);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

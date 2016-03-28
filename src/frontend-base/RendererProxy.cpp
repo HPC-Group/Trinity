@@ -120,4 +120,11 @@ uint64_t RendererProxy::getDefault1DTransferFunctionCount() const {
     return reply->getParams().getResult();
 }
 
+std::vector<uint64_t> RendererProxy::get1DHistogram() const {
+    Get1DHistogramProcCmd::RequestParams params;
+    Get1DHistogramProcRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

@@ -74,6 +74,9 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
         return mocca::make_unique<GetDefault1DTransferFunctionCountProcHdl>(
             static_cast<const GetDefault1DTransferFunctionCountProcRequest&>(request), session);
         break;
+    case VclType::Get1DHistogramProc:
+        return mocca::make_unique<Get1DHistogramProcHdl>(static_cast<const Get1DHistogramProcRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

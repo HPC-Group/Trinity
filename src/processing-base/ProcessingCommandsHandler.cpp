@@ -169,4 +169,13 @@ std::unique_ptr<Reply> GetDefault1DTransferFunctionCountProcHdl::execute() {
     return mocca::make_unique<GetDefault1DTransferFunctionCountProcReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+Get1DHistogramProcHdl::Get1DHistogramProcHdl(const Get1DHistogramProcRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> Get1DHistogramProcHdl::execute() {
+    Get1DHistogramProcCmd::ReplyParams params(m_session->getRenderer().get1DHistogram(/* TODO */));
+    return mocca::make_unique<Get1DHistogramProcReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

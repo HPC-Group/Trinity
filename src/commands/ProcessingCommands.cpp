@@ -666,6 +666,48 @@ std::string GetDefault1DTransferFunctionCountProcCmd::ReplyParams::toString() co
     return stream.str();
 }
 
+////////////// Get1DHistogramProcCmd //////////////
+
+VclType Get1DHistogramProcCmd::Type = VclType::Get1DHistogramProc;
+
+void Get1DHistogramProcCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void Get1DHistogramProcCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool Get1DHistogramProcCmd::RequestParams::equals(const Get1DHistogramProcCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string Get1DHistogramProcCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+Get1DHistogramProcCmd::ReplyParams::ReplyParams(const std::vector<uint64_t>& result)
+    : m_result(result) {}
+
+void Get1DHistogramProcCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendIntVec("result", m_result);
+}
+
+void Get1DHistogramProcCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getUInt64Vec("result");
+}
+
+bool Get1DHistogramProcCmd::ReplyParams::equals(const Get1DHistogramProcCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+std::vector<uint64_t> Get1DHistogramProcCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string Get1DHistogramProcCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -835,6 +877,19 @@ bool operator==(const GetDefault1DTransferFunctionCountProcCmd::ReplyParams& lhs
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountProcCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const Get1DHistogramProcCmd::RequestParams& lhs, const Get1DHistogramProcCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const Get1DHistogramProcCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const Get1DHistogramProcCmd::ReplyParams& lhs, const Get1DHistogramProcCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const Get1DHistogramProcCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

@@ -33,6 +33,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionProcReply>("rep");
     } else if (type == GetDefault1DTransferFunctionCountProcReply::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionCountProcReply>("rep");
+    } else if (type == Get1DHistogramProcReply::Ifc::Type) {
+        return reader->getSerializablePtr<Get1DHistogramProcReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 

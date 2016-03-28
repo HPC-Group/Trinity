@@ -574,5 +574,45 @@ bool operator==(const GetDefault1DTransferFunctionCountProcCmd::ReplyParams& lhs
 std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountProcCmd::ReplyParams& obj);
 using GetDefault1DTransferFunctionCountProcReply = ReplyTemplate<GetDefault1DTransferFunctionCountProcCmd>;
 
+struct Get1DHistogramProcCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const std::vector<uint64_t>& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        std::vector<uint64_t> getResult() const;
+
+    private:
+        std::vector<uint64_t> m_result;
+    };
+};
+
+bool operator==(const Get1DHistogramProcCmd::RequestParams& lhs, const Get1DHistogramProcCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const Get1DHistogramProcCmd::RequestParams& obj);
+using Get1DHistogramProcRequest = RequestTemplate<Get1DHistogramProcCmd>;
+
+bool operator==(const Get1DHistogramProcCmd::ReplyParams& lhs, const Get1DHistogramProcCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const Get1DHistogramProcCmd::ReplyParams& obj);
+using Get1DHistogramProcReply = ReplyTemplate<Get1DHistogramProcCmd>;
+
 /* AUTOGEN CommandHeader */
 }

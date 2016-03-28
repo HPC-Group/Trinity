@@ -19,4 +19,5 @@ public:
     MOCK_METHOD1(set1DTransferFunction, void(const TransferFunction1D&));
     MOCK_CONST_METHOD1(getDefault1DTransferFunction, TransferFunction1D(uint64_t));
     MOCK_CONST_METHOD0(getDefault1DTransferFunctionCount, uint64_t());
+    MOCK_CONST_METHOD0(get1DHistogram, std::vector<uint64_t>());
 };

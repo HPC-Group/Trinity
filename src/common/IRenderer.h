@@ -52,11 +52,11 @@ public:
 
     std::shared_ptr<VisStream> getVisStream();
 
-
-    // base rendering api begin   
+    // GLOBAL RENDERMODE SETTINGS
     virtual void setRenderMode(ERenderMode mode) = 0;
     virtual bool supportsRenderMode(ERenderMode mode) = 0;
 
+    // MODALITIES AND TIMESTEPS
     virtual void setActiveModality(uint64_t modality) = 0;
     virtual uint64_t getActiveModality() const = 0;
     virtual void setActiveTimestep(uint64_t timestep) = 0;
@@ -65,9 +65,11 @@ public:
     virtual uint64_t getModalityCount() const = 0;
     virtual uint64_t getTimestepCount() const = 0;
     
+    // 1D TF
     virtual void set1DTransferFunction(const TransferFunction1D& tf) = 0;
     virtual TransferFunction1D getDefault1DTransferFunction(uint64_t index) const = 0;
     virtual uint64_t getDefault1DTransferFunctionCount() const = 0;
+    virtual std::vector<uint64_t> get1DHistogram() const = 0;
 
     virtual void setIsoValue(float) = 0;
     virtual void zoomCamera(float f) = 0;

@@ -178,5 +178,16 @@ private:
     RenderSession* m_session;
 };
 
+class Get1DHistogramProcHdl : public ICommandHandler {
+public:
+    Get1DHistogramProcHdl(const Get1DHistogramProcRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    Get1DHistogramProcRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }
