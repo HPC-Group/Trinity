@@ -1523,6 +1523,262 @@ std::string SetClipVolumeCmd::RequestParams::toString() const {
     return stream.str();
 }
 
+////////////// SetViewParametersCmd //////////////
+
+VclType SetViewParametersCmd::Type = VclType::SetViewParameters;
+
+SetViewParametersCmd::RequestParams::RequestParams(float angle, float znear, float zfar)
+    : m_angle(angle)
+    , m_znear(znear)
+    , m_zfar(zfar) {}
+
+void SetViewParametersCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendFloat("angle", m_angle);
+    writer.appendFloat("znear", m_znear);
+    writer.appendFloat("zfar", m_zfar);
+}
+
+void SetViewParametersCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_angle = reader.getFloat("angle");
+    m_znear = reader.getFloat("znear");
+    m_zfar = reader.getFloat("zfar");
+}
+
+bool SetViewParametersCmd::RequestParams::equals(const SetViewParametersCmd::RequestParams& other) const {
+    return m_angle == other.m_angle && m_znear == other.m_znear && m_zfar == other.m_zfar;
+}
+
+float SetViewParametersCmd::RequestParams::getAngle() const {
+    return m_angle;
+}
+
+float SetViewParametersCmd::RequestParams::getZnear() const {
+    return m_znear;
+}
+
+float SetViewParametersCmd::RequestParams::getZfar() const {
+    return m_zfar;
+}
+
+std::string SetViewParametersCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "angle: " << m_angle << "; znear: " << m_znear << "; zfar: " << m_zfar;
+    return stream.str();
+}
+
+////////////// RotateCameraCmd //////////////
+
+VclType RotateCameraCmd::Type = VclType::RotateCamera;
+
+RotateCameraCmd::RequestParams::RequestParams(const Core::Math::Vec3f& rotation)
+    : m_rotation(rotation) {}
+
+void RotateCameraCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("rotation", m_rotation);
+}
+
+void RotateCameraCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_rotation = reader.getSerializable<Core::Math::Vec3f>("rotation");
+}
+
+bool RotateCameraCmd::RequestParams::equals(const RotateCameraCmd::RequestParams& other) const {
+    return m_rotation == other.m_rotation;
+}
+
+Core::Math::Vec3f RotateCameraCmd::RequestParams::getRotation() const {
+    return m_rotation;
+}
+
+std::string RotateCameraCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "rotation: " << m_rotation;
+    return stream.str();
+}
+
+////////////// MoveCameraCmd //////////////
+
+VclType MoveCameraCmd::Type = VclType::MoveCamera;
+
+MoveCameraCmd::RequestParams::RequestParams(const Core::Math::Vec3f& direction)
+    : m_direction(direction) {}
+
+void MoveCameraCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("direction", m_direction);
+}
+
+void MoveCameraCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_direction = reader.getSerializable<Core::Math::Vec3f>("direction");
+}
+
+bool MoveCameraCmd::RequestParams::equals(const MoveCameraCmd::RequestParams& other) const {
+    return m_direction == other.m_direction;
+}
+
+Core::Math::Vec3f MoveCameraCmd::RequestParams::getDirection() const {
+    return m_direction;
+}
+
+std::string MoveCameraCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "direction: " << m_direction;
+    return stream.str();
+}
+
+////////////// RotateSceneCmd //////////////
+
+VclType RotateSceneCmd::Type = VclType::RotateScene;
+
+RotateSceneCmd::RequestParams::RequestParams(const Core::Math::Vec3f& rotation)
+    : m_rotation(rotation) {}
+
+void RotateSceneCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("rotation", m_rotation);
+}
+
+void RotateSceneCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_rotation = reader.getSerializable<Core::Math::Vec3f>("rotation");
+}
+
+bool RotateSceneCmd::RequestParams::equals(const RotateSceneCmd::RequestParams& other) const {
+    return m_rotation == other.m_rotation;
+}
+
+Core::Math::Vec3f RotateSceneCmd::RequestParams::getRotation() const {
+    return m_rotation;
+}
+
+std::string RotateSceneCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "rotation: " << m_rotation;
+    return stream.str();
+}
+
+////////////// MoveSceneCmd //////////////
+
+VclType MoveSceneCmd::Type = VclType::MoveScene;
+
+MoveSceneCmd::RequestParams::RequestParams(const Core::Math::Vec3f& direction)
+    : m_direction(direction) {}
+
+void MoveSceneCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("direction", m_direction);
+}
+
+void MoveSceneCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_direction = reader.getSerializable<Core::Math::Vec3f>("direction");
+}
+
+bool MoveSceneCmd::RequestParams::equals(const MoveSceneCmd::RequestParams& other) const {
+    return m_direction == other.m_direction;
+}
+
+Core::Math::Vec3f MoveSceneCmd::RequestParams::getDirection() const {
+    return m_direction;
+}
+
+std::string MoveSceneCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "direction: " << m_direction;
+    return stream.str();
+}
+
+////////////// RescaleSceneCmd //////////////
+
+VclType RescaleSceneCmd::Type = VclType::RescaleScene;
+
+RescaleSceneCmd::RequestParams::RequestParams(float scale)
+    : m_scale(scale) {}
+
+void RescaleSceneCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendFloat("scale", m_scale);
+}
+
+void RescaleSceneCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_scale = reader.getFloat("scale");
+}
+
+bool RescaleSceneCmd::RequestParams::equals(const RescaleSceneCmd::RequestParams& other) const {
+    return m_scale == other.m_scale;
+}
+
+float RescaleSceneCmd::RequestParams::getScale() const {
+    return m_scale;
+}
+
+std::string RescaleSceneCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "scale: " << m_scale;
+    return stream.str();
+}
+
+////////////// ResetCameraCmd //////////////
+
+VclType ResetCameraCmd::Type = VclType::ResetCamera;
+
+void ResetCameraCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void ResetCameraCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool ResetCameraCmd::RequestParams::equals(const ResetCameraCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string ResetCameraCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+////////////// ResetObjectCmd //////////////
+
+VclType ResetObjectCmd::Type = VclType::ResetObject;
+
+void ResetObjectCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void ResetObjectCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool ResetObjectCmd::RequestParams::equals(const ResetObjectCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string ResetObjectCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+////////////// StartRenderingCmd //////////////
+
+VclType StartRenderingCmd::Type = VclType::StartRendering;
+
+void StartRenderingCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void StartRenderingCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool StartRenderingCmd::RequestParams::equals(const StartRenderingCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string StartRenderingCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+////////////// StopRenderingCmd //////////////
+
+VclType StopRenderingCmd::Type = VclType::StopRendering;
+
+void StopRenderingCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void StopRenderingCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool StopRenderingCmd::RequestParams::equals(const StopRenderingCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string StopRenderingCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1913,6 +2169,76 @@ bool operator==(const SetClipVolumeCmd::RequestParams& lhs, const SetClipVolumeC
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const SetClipVolumeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetViewParametersCmd::RequestParams& lhs, const SetViewParametersCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetViewParametersCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const RotateCameraCmd::RequestParams& lhs, const RotateCameraCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const RotateCameraCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const MoveCameraCmd::RequestParams& lhs, const MoveCameraCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const MoveCameraCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const RotateSceneCmd::RequestParams& lhs, const RotateSceneCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const RotateSceneCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const MoveSceneCmd::RequestParams& lhs, const MoveSceneCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const MoveSceneCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const RescaleSceneCmd::RequestParams& lhs, const RescaleSceneCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const RescaleSceneCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const ResetCameraCmd::RequestParams& lhs, const ResetCameraCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const ResetCameraCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const ResetObjectCmd::RequestParams& lhs, const ResetObjectCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const ResetObjectCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const StartRenderingCmd::RequestParams& lhs, const StartRenderingCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const StartRenderingCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const StopRenderingCmd::RequestParams& lhs, const StopRenderingCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const StopRenderingCmd::RequestParams& obj) {
     return os << obj.toString();
 }
 

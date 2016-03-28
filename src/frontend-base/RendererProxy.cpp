@@ -268,4 +268,64 @@ void RendererProxy::setClipVolume(const Core::Math::Vec3f& minValues, const Core
     m_inputChannel.sendRequest(request);
 }
 
+void RendererProxy::setViewParameters(float angle, float znear, float zfar) {
+    SetViewParametersCmd::RequestParams params(angle, znear, zfar);
+    SetViewParametersRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::rotateCamera(Core::Math::Vec3f rotation) {
+    RotateCameraCmd::RequestParams params(rotation);
+    RotateCameraRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::moveCamera(Core::Math::Vec3f direction) {
+    MoveCameraCmd::RequestParams params(direction);
+    MoveCameraRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::rotateScene(Core::Math::Vec3f rotation) {
+    RotateSceneCmd::RequestParams params(rotation);
+    RotateSceneRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::moveScene(Core::Math::Vec3f direction) {
+    MoveSceneCmd::RequestParams params(direction);
+    MoveSceneRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::rescaleScene(float scale) {
+    RescaleSceneCmd::RequestParams params(scale);
+    RescaleSceneRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::resetCamera() {
+    ResetCameraCmd::RequestParams params;
+    ResetCameraRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::resetObject() {
+    ResetObjectCmd::RequestParams params;
+    ResetObjectRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::startRendering() {
+    StartRenderingCmd::RequestParams params;
+    StartRenderingRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::stopRendering() {
+    StopRenderingCmd::RequestParams params;
+    StopRenderingRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
 /* AUTOGEN RendererProxyImpl */

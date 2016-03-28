@@ -91,6 +91,16 @@ enum class VclType {
     GetBackgroundColors,
     EnableClipping,
     SetClipVolume,
+    SetViewParameters,
+    RotateCamera,
+    MoveCamera,
+    RotateScene,
+    MoveScene,
+    RescaleScene,
+    ResetCamera,
+    ResetObject,
+    StartRendering,
+    StopRendering,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -194,6 +204,16 @@ private:
         m_cmdMap.insert("GetBackgroundColors", VclType::GetBackgroundColors);
         m_cmdMap.insert("EnableClipping", VclType::EnableClipping);
         m_cmdMap.insert("SetClipVolume", VclType::SetClipVolume);
+        m_cmdMap.insert("SetViewParameters", VclType::SetViewParameters);
+        m_cmdMap.insert("RotateCamera", VclType::RotateCamera);
+        m_cmdMap.insert("MoveCamera", VclType::MoveCamera);
+        m_cmdMap.insert("RotateScene", VclType::RotateScene);
+        m_cmdMap.insert("MoveScene", VclType::MoveScene);
+        m_cmdMap.insert("RescaleScene", VclType::RescaleScene);
+        m_cmdMap.insert("ResetCamera", VclType::ResetCamera);
+        m_cmdMap.insert("ResetObject", VclType::ResetObject);
+        m_cmdMap.insert("StartRendering", VclType::StartRendering);
+        m_cmdMap.insert("StopRendering", VclType::StopRendering);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

@@ -92,6 +92,26 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<EnableClippingRequest>("req");
     } else if (type == SetClipVolumeRequest::Ifc::Type) {
         return reader->getSerializablePtr<SetClipVolumeRequest>("req");
+    } else if (type == SetViewParametersRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetViewParametersRequest>("req");
+    } else if (type == RotateCameraRequest::Ifc::Type) {
+        return reader->getSerializablePtr<RotateCameraRequest>("req");
+    } else if (type == MoveCameraRequest::Ifc::Type) {
+        return reader->getSerializablePtr<MoveCameraRequest>("req");
+    } else if (type == RotateSceneRequest::Ifc::Type) {
+        return reader->getSerializablePtr<RotateSceneRequest>("req");
+    } else if (type == MoveSceneRequest::Ifc::Type) {
+        return reader->getSerializablePtr<MoveSceneRequest>("req");
+    } else if (type == RescaleSceneRequest::Ifc::Type) {
+        return reader->getSerializablePtr<RescaleSceneRequest>("req");
+    } else if (type == ResetCameraRequest::Ifc::Type) {
+        return reader->getSerializablePtr<ResetCameraRequest>("req");
+    } else if (type == ResetObjectRequest::Ifc::Type) {
+        return reader->getSerializablePtr<ResetObjectRequest>("req");
+    } else if (type == StartRenderingRequest::Ifc::Type) {
+        return reader->getSerializablePtr<StartRenderingRequest>("req");
+    } else if (type == StopRenderingRequest::Ifc::Type) {
+        return reader->getSerializablePtr<StopRenderingRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

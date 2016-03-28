@@ -55,6 +55,16 @@ public:
     BackgroundColors getBackgroundColors() const override;
     void enableClipping(bool enable) override;
     void setClipVolume(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues) override;
+    void setViewParameters(float angle, float znear, float zfar) override;
+    void rotateCamera(Core::Math::Vec3f rotation) override;
+    void moveCamera(Core::Math::Vec3f direction) override;
+    void rotateScene(Core::Math::Vec3f rotation) override;
+    void moveScene(Core::Math::Vec3f direction) override;
+    void rescaleScene(float scale) override;
+    void resetCamera() override;
+    void resetObject() override;
+    void startRendering() override;
+    void stopRendering() override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

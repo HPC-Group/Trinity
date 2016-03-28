@@ -6,7 +6,6 @@ class RendererMock : public trinity::IRenderer {
 public:
     MOCK_METHOD1(setRenderMode, void(IRenderer::ERenderMode));
     MOCK_METHOD1(supportsRenderMode, bool(IRenderer::ERenderMode));
-    MOCK_METHOD1(zoomCamera, void(float));
     MOCK_METHOD0(initContext, void());
     MOCK_METHOD0(deleteContext, void());
     MOCK_METHOD1(setActiveModality, void(uint64_t));
@@ -42,4 +41,15 @@ public:
     MOCK_CONST_METHOD0(getBackgroundColors, BackgroundColors());
     MOCK_METHOD1(enableClipping, void(bool));
     MOCK_METHOD2(setClipVolume, void(const Core::Math::Vec3f&, const Core::Math::Vec3f&));
+    MOCK_METHOD3(setViewParameters, void(float, float, float));
+    MOCK_METHOD1(rotateCamera, void(Core::Math::Vec3f));
+    MOCK_METHOD1(moveCamera, void(Core::Math::Vec3f));
+    MOCK_METHOD1(zoomCamera, void(float));
+    MOCK_METHOD1(rotateScene, void(Core::Math::Vec3f));
+    MOCK_METHOD1(moveScene, void(Core::Math::Vec3f));
+    MOCK_METHOD1(rescaleScene, void(float));
+    MOCK_METHOD0(resetCamera, void());
+    MOCK_METHOD0(resetObject, void());
+    MOCK_METHOD0(startRendering, void());
+    MOCK_METHOD0(stopRendering, void());
 };

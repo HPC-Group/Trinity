@@ -143,6 +143,36 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::SetClipVolume:
         return mocca::make_unique<SetClipVolumeHdl>(static_cast<const SetClipVolumeRequest&>(request), session);
         break;
+    case VclType::SetViewParameters:
+        return mocca::make_unique<SetViewParametersHdl>(static_cast<const SetViewParametersRequest&>(request), session);
+        break;
+    case VclType::RotateCamera:
+        return mocca::make_unique<RotateCameraHdl>(static_cast<const RotateCameraRequest&>(request), session);
+        break;
+    case VclType::MoveCamera:
+        return mocca::make_unique<MoveCameraHdl>(static_cast<const MoveCameraRequest&>(request), session);
+        break;
+    case VclType::RotateScene:
+        return mocca::make_unique<RotateSceneHdl>(static_cast<const RotateSceneRequest&>(request), session);
+        break;
+    case VclType::MoveScene:
+        return mocca::make_unique<MoveSceneHdl>(static_cast<const MoveSceneRequest&>(request), session);
+        break;
+    case VclType::RescaleScene:
+        return mocca::make_unique<RescaleSceneHdl>(static_cast<const RescaleSceneRequest&>(request), session);
+        break;
+    case VclType::ResetCamera:
+        return mocca::make_unique<ResetCameraHdl>(static_cast<const ResetCameraRequest&>(request), session);
+        break;
+    case VclType::ResetObject:
+        return mocca::make_unique<ResetObjectHdl>(static_cast<const ResetObjectRequest&>(request), session);
+        break;
+    case VclType::StartRendering:
+        return mocca::make_unique<StartRenderingHdl>(static_cast<const StartRenderingRequest&>(request), session);
+        break;
+    case VclType::StopRendering:
+        return mocca::make_unique<StopRenderingHdl>(static_cast<const StopRenderingRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

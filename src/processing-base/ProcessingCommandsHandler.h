@@ -430,5 +430,115 @@ private:
     RenderSession* m_session;
 };
 
+class SetViewParametersHdl : public ICommandHandler {
+public:
+    SetViewParametersHdl(const SetViewParametersRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetViewParametersRequest m_request;
+    RenderSession* m_session;
+};
+
+class RotateCameraHdl : public ICommandHandler {
+public:
+    RotateCameraHdl(const RotateCameraRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    RotateCameraRequest m_request;
+    RenderSession* m_session;
+};
+
+class MoveCameraHdl : public ICommandHandler {
+public:
+    MoveCameraHdl(const MoveCameraRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    MoveCameraRequest m_request;
+    RenderSession* m_session;
+};
+
+class RotateSceneHdl : public ICommandHandler {
+public:
+    RotateSceneHdl(const RotateSceneRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    RotateSceneRequest m_request;
+    RenderSession* m_session;
+};
+
+class MoveSceneHdl : public ICommandHandler {
+public:
+    MoveSceneHdl(const MoveSceneRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    MoveSceneRequest m_request;
+    RenderSession* m_session;
+};
+
+class RescaleSceneHdl : public ICommandHandler {
+public:
+    RescaleSceneHdl(const RescaleSceneRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    RescaleSceneRequest m_request;
+    RenderSession* m_session;
+};
+
+class ResetCameraHdl : public ICommandHandler {
+public:
+    ResetCameraHdl(const ResetCameraRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    ResetCameraRequest m_request;
+    RenderSession* m_session;
+};
+
+class ResetObjectHdl : public ICommandHandler {
+public:
+    ResetObjectHdl(const ResetObjectRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    ResetObjectRequest m_request;
+    RenderSession* m_session;
+};
+
+class StartRenderingHdl : public ICommandHandler {
+public:
+    StartRenderingHdl(const StartRenderingRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    StartRenderingRequest m_request;
+    RenderSession* m_session;
+};
+
+class StopRenderingHdl : public ICommandHandler {
+public:
+    StopRenderingHdl(const StopRenderingRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    StopRenderingRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

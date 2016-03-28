@@ -375,4 +375,95 @@ std::unique_ptr<Reply> SetClipVolumeHdl::execute() {
     return nullptr;
 }
 
+SetViewParametersHdl::SetViewParametersHdl(const SetViewParametersRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetViewParametersHdl::execute() {
+    m_session->getRenderer().setViewParameters(m_request.getParams().getAngle(), m_request.getParams().getZnear(),
+                                               m_request.getParams().getZfar());
+    return nullptr;
+}
+
+RotateCameraHdl::RotateCameraHdl(const RotateCameraRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> RotateCameraHdl::execute() {
+    m_session->getRenderer().rotateCamera(m_request.getParams().getRotation());
+    return nullptr;
+}
+
+MoveCameraHdl::MoveCameraHdl(const MoveCameraRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> MoveCameraHdl::execute() {
+    m_session->getRenderer().moveCamera(m_request.getParams().getDirection());
+    return nullptr;
+}
+
+RotateSceneHdl::RotateSceneHdl(const RotateSceneRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> RotateSceneHdl::execute() {
+    m_session->getRenderer().rotateScene(m_request.getParams().getRotation());
+    return nullptr;
+}
+
+MoveSceneHdl::MoveSceneHdl(const MoveSceneRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> MoveSceneHdl::execute() {
+    m_session->getRenderer().moveScene(m_request.getParams().getDirection());
+    return nullptr;
+}
+
+RescaleSceneHdl::RescaleSceneHdl(const RescaleSceneRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> RescaleSceneHdl::execute() {
+    m_session->getRenderer().rescaleScene(m_request.getParams().getScale());
+    return nullptr;
+}
+
+ResetCameraHdl::ResetCameraHdl(const ResetCameraRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> ResetCameraHdl::execute() {
+    m_session->getRenderer().resetCamera();
+    return nullptr;
+}
+
+ResetObjectHdl::ResetObjectHdl(const ResetObjectRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> ResetObjectHdl::execute() {
+    m_session->getRenderer().resetObject();
+    return nullptr;
+}
+
+StartRenderingHdl::StartRenderingHdl(const StartRenderingRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> StartRenderingHdl::execute() {
+    m_session->getRenderer().startRendering();
+    return nullptr;
+}
+
+StopRenderingHdl::StopRenderingHdl(const StopRenderingRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> StopRenderingHdl::execute() {
+    m_session->getRenderer().stopRendering();
+    return nullptr;
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

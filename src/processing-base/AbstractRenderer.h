@@ -82,21 +82,21 @@ public:
     void setClipVolume(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues) override;
 
     // TRANSFORMATION
-    virtual void setViewParameters(float angle, float znear, float zfar);
+    void setViewParameters(float angle, float znear, float zfar) override;
 
-    virtual void rotateCamera(Core::Math::Vec3f rotation);
-    virtual void moveCamera(Core::Math::Vec3f direction);
-    virtual void zoomCamera(float zoom) override;
+    void rotateCamera(Core::Math::Vec3f rotation) override;
+    void moveCamera(Core::Math::Vec3f direction) override;
+    void zoomCamera(float zoom) override;
 
-    virtual void rotateScene(Core::Math::Vec3f rotation);
-    virtual void moveScene(Core::Math::Vec3f direction);
-    virtual void rescaleScene(float scale);
+    void rotateScene(Core::Math::Vec3f rotation) override;
+    void moveScene(Core::Math::Vec3f direction) override;
+    void rescaleScene(float scale) override;
 
-    virtual void resetCamera();
-    virtual void resetObject();
+    void resetCamera() override;
+    void resetObject() override;
 
-    virtual void startRendering();
-    virtual void stopRendering();
+    void startRendering() override;
+    void stopRendering() override;
 
     /*******  Non RPC IRenderer Interface **********/
 

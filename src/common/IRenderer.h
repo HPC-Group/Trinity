@@ -12,24 +12,11 @@ class VisStream;
 class IRenderer {
 
 public:
-    enum class ERenderMode {
-        RM_1DTRANS = 0,
-        RM_2DTRANS,
-        RM_ISOSURFACE,
-        RM_CLEARVIEW,
-        RM_INVALID
-    };
+    enum class ERenderMode { RM_1DTRANS = 0, RM_2DTRANS, RM_ISOSURFACE, RM_CLEARVIEW, RM_INVALID };
 
-    enum class BBoxMode {
-        BBM_NONE = 0,
-        BBM_DATASET,
-        BBM_BRICKS
-    };
+    enum class BBoxMode { BBM_NONE = 0, BBM_DATASET, BBM_BRICKS };
 
-    enum class PaintLevel {
-        PL_REDRAW = 0,
-        PL_RECOMPOSE
-    };
+    enum class PaintLevel { PL_REDRAW = 0, PL_RECOMPOSE };
 
     using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;
     static const RenderModeMapper& renderModeMapper();
@@ -55,7 +42,7 @@ public:
         void deserialize(const ISerialReader& reader) override;
     };
 
-    struct BackgroundColors : public SerializableTemplate<PhongColorTriple> {
+    struct BackgroundColors : public SerializableTemplate<BackgroundColors> {
         BackgroundColors() = default;
         BackgroundColors(const Core::Math::Vec3ui8& c1, const Core::Math::Vec3ui8& c2)
             : colorOne(c1)
@@ -95,7 +82,7 @@ public:
 
     virtual uint64_t getModalityCount() const = 0;
     virtual uint64_t getTimestepCount() const = 0;
-    
+
     // 1D TF
     virtual void set1DTransferFunction(const TransferFunction1D& tf) = 0;
     virtual TransferFunction1D getDefault1DTransferFunction(uint64_t index) const = 0;
@@ -139,11 +126,26 @@ public:
     virtual void enableClipping(bool enable) = 0;
     virtual void setClipVolume(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues) = 0;
 
-    virtual void zoomCamera(float f) = 0;
+    // TRANSFORMATION
+    virtual void setViewParameters(float angle, float znear, float zfar) = 0;
 
-	// postponed init and delete due to opengl specific things
+    virtual void rotateCamera(Core::Math::Vec3f rotation) = 0;
+    virtual void moveCamera(Core::Math::Vec3f direction) = 0;
+    virtual void zoomCamera(float zoom) = 0;
+
+    virtual void rotateScene(Core::Math::Vec3f rotation) = 0;
+    virtual void moveScene(Core::Math::Vec3f direction) = 0;
+    virtual void rescaleScene(float scale) = 0;
+
+    virtual void resetCamera() = 0;
+    virtual void resetObject() = 0;
+
+    virtual void startRendering() = 0;
+    virtual void stopRendering() = 0;
+
+    // postponed init and delete due to opengl specific things
     virtual void initContext() = 0;
-	virtual void deleteContext() = 0;
+    virtual void deleteContext() = 0;
 
 protected:
     std::shared_ptr<VisStream> m_visStream;

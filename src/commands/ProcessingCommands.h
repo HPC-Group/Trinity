@@ -1323,5 +1323,235 @@ bool operator==(const SetClipVolumeCmd::RequestParams& lhs, const SetClipVolumeC
 std::ostream& operator<<(std::ostream& os, const SetClipVolumeCmd::RequestParams& obj);
 using SetClipVolumeRequest = RequestTemplate<SetClipVolumeCmd>;
 
+struct SetViewParametersCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(float angle, float znear, float zfar);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        float getAngle() const;
+        float getZnear() const;
+        float getZfar() const;
+
+    private:
+        float m_angle;
+        float m_znear;
+        float m_zfar;
+    };
+};
+
+bool operator==(const SetViewParametersCmd::RequestParams& lhs, const SetViewParametersCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetViewParametersCmd::RequestParams& obj);
+using SetViewParametersRequest = RequestTemplate<SetViewParametersCmd>;
+
+struct RotateCameraCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Vec3f& rotation);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Vec3f getRotation() const;
+
+    private:
+        Core::Math::Vec3f m_rotation;
+    };
+};
+
+bool operator==(const RotateCameraCmd::RequestParams& lhs, const RotateCameraCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const RotateCameraCmd::RequestParams& obj);
+using RotateCameraRequest = RequestTemplate<RotateCameraCmd>;
+
+struct MoveCameraCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Vec3f& direction);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Vec3f getDirection() const;
+
+    private:
+        Core::Math::Vec3f m_direction;
+    };
+};
+
+bool operator==(const MoveCameraCmd::RequestParams& lhs, const MoveCameraCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const MoveCameraCmd::RequestParams& obj);
+using MoveCameraRequest = RequestTemplate<MoveCameraCmd>;
+
+struct RotateSceneCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Vec3f& rotation);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Vec3f getRotation() const;
+
+    private:
+        Core::Math::Vec3f m_rotation;
+    };
+};
+
+bool operator==(const RotateSceneCmd::RequestParams& lhs, const RotateSceneCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const RotateSceneCmd::RequestParams& obj);
+using RotateSceneRequest = RequestTemplate<RotateSceneCmd>;
+
+struct MoveSceneCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Vec3f& direction);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Vec3f getDirection() const;
+
+    private:
+        Core::Math::Vec3f m_direction;
+    };
+};
+
+bool operator==(const MoveSceneCmd::RequestParams& lhs, const MoveSceneCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const MoveSceneCmd::RequestParams& obj);
+using MoveSceneRequest = RequestTemplate<MoveSceneCmd>;
+
+struct RescaleSceneCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(float scale);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        float getScale() const;
+
+    private:
+        float m_scale;
+    };
+};
+
+bool operator==(const RescaleSceneCmd::RequestParams& lhs, const RescaleSceneCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const RescaleSceneCmd::RequestParams& obj);
+using RescaleSceneRequest = RequestTemplate<RescaleSceneCmd>;
+
+struct ResetCameraCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+};
+
+bool operator==(const ResetCameraCmd::RequestParams& lhs, const ResetCameraCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ResetCameraCmd::RequestParams& obj);
+using ResetCameraRequest = RequestTemplate<ResetCameraCmd>;
+
+struct ResetObjectCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+};
+
+bool operator==(const ResetObjectCmd::RequestParams& lhs, const ResetObjectCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ResetObjectCmd::RequestParams& obj);
+using ResetObjectRequest = RequestTemplate<ResetObjectCmd>;
+
+struct StartRenderingCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+};
+
+bool operator==(const StartRenderingCmd::RequestParams& lhs, const StartRenderingCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const StartRenderingCmd::RequestParams& obj);
+using StartRenderingRequest = RequestTemplate<StartRenderingCmd>;
+
+struct StopRenderingCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+};
+
+bool operator==(const StopRenderingCmd::RequestParams& lhs, const StopRenderingCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const StopRenderingCmd::RequestParams& obj);
+using StopRenderingRequest = RequestTemplate<StopRenderingCmd>;
+
 /* AUTOGEN CommandHeader */
 }
