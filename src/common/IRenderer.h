@@ -135,6 +135,9 @@ public:
     virtual void setBackgroundColors(const BackgroundColors& colors) = 0;
     virtual BackgroundColors getBackgroundColors() const = 0;
 
+    // CLIPPING
+    virtual void enableClipping(bool enable) = 0;
+    virtual void setClipVolume(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues) = 0;
 
     virtual void zoomCamera(float f) = 0;
 

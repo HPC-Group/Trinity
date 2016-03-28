@@ -1,17 +1,17 @@
 #pragma once
 
-#include <memory>
-#include <array>
-#include <vector>
 #include "common/IRenderer.h"
+
+#include <array>
+#include <memory>
+#include <vector>
 
 namespace trinity {
 
-  class AbstractRenderer : public IRenderer {
+class AbstractRenderer : public IRenderer {
 
-  public:
-    AbstractRenderer(std::shared_ptr<VisStream> stream,
-                     std::unique_ptr<IIO> ioSession);
+public:
+    AbstractRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
     AbstractRenderer() = default;
 
     /*******  IRenderer Interface **********/
@@ -28,7 +28,7 @@ namespace trinity {
 
     uint64_t getModalityCount() const override;
     uint64_t getTimestepCount() const override;
-    
+
     // 1D TF
     void set1DTransferFunction(const TransferFunction1D& tf) override;
     TransferFunction1D getDefault1DTransferFunction(uint64_t index) const override;
@@ -78,9 +78,8 @@ namespace trinity {
     BackgroundColors getBackgroundColors() const override;
 
     // CLIPPING
-    virtual void enableClipping(bool enable);
-    virtual void setClipVolume(const Core::Math::Vec3f& minValues,
-                               const Core::Math::Vec3f& maxValues);
+    void enableClipping(bool enable) override;
+    void setClipVolume(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues) override;
 
     // TRANSFORMATION
     virtual void setViewParameters(float angle, float znear, float zfar);
@@ -99,53 +98,52 @@ namespace trinity {
     virtual void startRendering();
     virtual void stopRendering();
 
-
     /*******  Non RPC IRenderer Interface **********/
 
     virtual void initContext() override = 0;
     virtual void deleteContext() override = 0;
     virtual void paint(PaintLevel paintlevel = IRenderer::PaintLevel::PL_REDRAW) {
-      if (m_bPaitingActive) paintInternal(paintlevel);
+        if (m_bPaitingActive)
+            paintInternal(paintlevel);
     }
     virtual void resizeFramebuffer();
 
     /*******  IRenderer Interface end **********/
 
-  protected:
+protected:
     virtual void paintInternal(PaintLevel paintlevel) = 0;
     virtual void recomputeProjectionMatrix();
-    
-    ERenderMode                                         m_renderMode;
-    uint64_t                                            m_activeModality;
-    uint64_t                                            m_activeTimestep;
-    TransferFunction1D                                  m_1Dtf;
-    //TransferFunction2D                                  m_2Dtf; // TODO: 2D TF
-    std::array<float, 2>                                m_isoValue;
-    std::array<Core::Math::Vec3ui8, 2>                  m_isoValueColor;
-    Core::Math::Vec2f                                   m_clearViewWindowPos;
-    float                                               m_clearViewRadius;
-    float                                               m_clearBorderSize;
-    bool                                                m_enableLighting;
-    PhongColorTriple                                    m_lightingColors;
-    Core::Math::Vec3f                                   m_lightDirection;
-    float                                               m_fSampleRateModifier;
-    BBoxMode                                            m_BBoxMode;
-    std::vector<uint64_t>                               m_RendererSpecials;
-    BackgroundColors                                    m_backgroundColors;
-    bool                                                m_enableClipping;
-    Core::Math::Vec3f                                   m_clipVolumeMin;
-    Core::Math::Vec3f                                   m_clipVolumeMax;
-    float                                               m_viewAngle;
-    float                                               m_zNear;
-    float                                               m_zFar;
-    Core::Math::Mat4f                                   m_projection;
-    Core::Math::Mat4f                                   m_view;
-    Core::Math::Mat4f                                   m_model;
-    
-  private:
-    bool    m_bPaitingActive;
+
+    ERenderMode m_renderMode;
+    uint64_t m_activeModality;
+    uint64_t m_activeTimestep;
+    TransferFunction1D m_1Dtf;
+    // TransferFunction2D                                  m_2Dtf; // TODO: 2D TF
+    std::array<float, 2> m_isoValue;
+    std::array<Core::Math::Vec3ui8, 2> m_isoValueColor;
+    Core::Math::Vec2f m_clearViewWindowPos;
+    float m_clearViewRadius;
+    float m_clearBorderSize;
+    bool m_enableLighting;
+    PhongColorTriple m_lightingColors;
+    Core::Math::Vec3f m_lightDirection;
+    float m_fSampleRateModifier;
+    BBoxMode m_BBoxMode;
+    std::vector<uint64_t> m_RendererSpecials;
+    BackgroundColors m_backgroundColors;
+    bool m_enableClipping;
+    Core::Math::Vec3f m_clipVolumeMin;
+    Core::Math::Vec3f m_clipVolumeMax;
+    float m_viewAngle;
+    float m_zNear;
+    float m_zFar;
+    Core::Math::Mat4f m_projection;
+    Core::Math::Mat4f m_view;
+    Core::Math::Mat4f m_model;
+
+private:
+    bool m_bPaitingActive;
 
     void initValueDefaults();
-
-  };
+};
 }

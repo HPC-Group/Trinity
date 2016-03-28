@@ -408,5 +408,27 @@ private:
     RenderSession* m_session;
 };
 
+class EnableClippingHdl : public ICommandHandler {
+public:
+    EnableClippingHdl(const EnableClippingRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    EnableClippingRequest m_request;
+    RenderSession* m_session;
+};
+
+class SetClipVolumeHdl : public ICommandHandler {
+public:
+    SetClipVolumeHdl(const SetClipVolumeRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetClipVolumeRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

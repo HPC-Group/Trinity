@@ -1458,6 +1458,71 @@ std::string GetBackgroundColorsCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// EnableClippingCmd //////////////
+
+VclType EnableClippingCmd::Type = VclType::EnableClipping;
+
+EnableClippingCmd::RequestParams::RequestParams(bool enable)
+    : m_enable(enable) {}
+
+void EnableClippingCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendBool("enable", m_enable);
+}
+
+void EnableClippingCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_enable = reader.getBool("enable");
+}
+
+bool EnableClippingCmd::RequestParams::equals(const EnableClippingCmd::RequestParams& other) const {
+    return m_enable == other.m_enable;
+}
+
+bool EnableClippingCmd::RequestParams::getEnable() const {
+    return m_enable;
+}
+
+std::string EnableClippingCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "enable: " << m_enable;
+    return stream.str();
+}
+
+////////////// SetClipVolumeCmd //////////////
+
+VclType SetClipVolumeCmd::Type = VclType::SetClipVolume;
+
+SetClipVolumeCmd::RequestParams::RequestParams(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues)
+    : m_minValues(minValues)
+    , m_maxValues(maxValues) {}
+
+void SetClipVolumeCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("minValues", m_minValues);
+    writer.appendObject("maxValues", m_maxValues);
+}
+
+void SetClipVolumeCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_minValues = reader.getSerializable<Core::Math::Vec3f>("minValues");
+    m_maxValues = reader.getSerializable<Core::Math::Vec3f>("maxValues");
+}
+
+bool SetClipVolumeCmd::RequestParams::equals(const SetClipVolumeCmd::RequestParams& other) const {
+    return m_minValues == other.m_minValues && m_maxValues == other.m_maxValues;
+}
+
+Core::Math::Vec3f SetClipVolumeCmd::RequestParams::getMinValues() const {
+    return m_minValues;
+}
+
+Core::Math::Vec3f SetClipVolumeCmd::RequestParams::getMaxValues() const {
+    return m_maxValues;
+}
+
+std::string SetClipVolumeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "minValues: " << m_minValues << "; maxValues: " << m_maxValues;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1834,6 +1899,20 @@ bool operator==(const GetBackgroundColorsCmd::ReplyParams& lhs, const GetBackgro
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetBackgroundColorsCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const EnableClippingCmd::RequestParams& lhs, const EnableClippingCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const EnableClippingCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetClipVolumeCmd::RequestParams& lhs, const SetClipVolumeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetClipVolumeCmd::RequestParams& obj) {
     return os << obj.toString();
 }
 

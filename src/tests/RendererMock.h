@@ -40,4 +40,6 @@ public:
     MOCK_CONST_METHOD0(getRendererSpecials, std::vector<uint64_t>());
     MOCK_METHOD1(setBackgroundColors, void(const BackgroundColors&));
     MOCK_CONST_METHOD0(getBackgroundColors, BackgroundColors());
+    MOCK_METHOD1(enableClipping, void(bool));
+    MOCK_METHOD2(setClipVolume, void(const Core::Math::Vec3f&, const Core::Math::Vec3f&));
 };

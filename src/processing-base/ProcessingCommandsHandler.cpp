@@ -357,4 +357,22 @@ std::unique_ptr<Reply> GetBackgroundColorsHdl::execute() {
     return mocca::make_unique<GetBackgroundColorsReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+EnableClippingHdl::EnableClippingHdl(const EnableClippingRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> EnableClippingHdl::execute() {
+    m_session->getRenderer().enableClipping(m_request.getParams().getEnable());
+    return nullptr;
+}
+
+SetClipVolumeHdl::SetClipVolumeHdl(const SetClipVolumeRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetClipVolumeHdl::execute() {
+    m_session->getRenderer().setClipVolume(m_request.getParams().getMinValues(), m_request.getParams().getMaxValues());
+    return nullptr;
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

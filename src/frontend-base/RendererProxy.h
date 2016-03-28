@@ -53,6 +53,8 @@ public:
     std::vector<uint64_t> getRendererSpecials() const override;
     void setBackgroundColors(const BackgroundColors& colors) override;
     BackgroundColors getBackgroundColors() const override;
+    void enableClipping(bool enable) override;
+    void setClipVolume(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues) override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

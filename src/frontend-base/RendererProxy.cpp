@@ -256,4 +256,16 @@ IRenderer::BackgroundColors RendererProxy::getBackgroundColors() const {
     return reply->getParams().getResult();
 }
 
+void RendererProxy::enableClipping(bool enable) {
+    EnableClippingCmd::RequestParams params(enable);
+    EnableClippingRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::setClipVolume(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues) {
+    SetClipVolumeCmd::RequestParams params(minValues, maxValues);
+    SetClipVolumeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
 /* AUTOGEN RendererProxyImpl */

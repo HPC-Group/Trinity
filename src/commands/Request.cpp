@@ -88,6 +88,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetBackgroundColorsRequest>("req");
     } else if (type == GetBackgroundColorsRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetBackgroundColorsRequest>("req");
+    } else if (type == EnableClippingRequest::Ifc::Type) {
+        return reader->getSerializablePtr<EnableClippingRequest>("req");
+    } else if (type == SetClipVolumeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetClipVolumeRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

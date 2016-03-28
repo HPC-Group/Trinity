@@ -89,6 +89,8 @@ enum class VclType {
     GetRendererSpecials,
     SetBackgroundColors,
     GetBackgroundColors,
+    EnableClipping,
+    SetClipVolume,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -190,6 +192,8 @@ private:
         m_cmdMap.insert("GetRendererSpecials", VclType::GetRendererSpecials);
         m_cmdMap.insert("SetBackgroundColors", VclType::SetBackgroundColors);
         m_cmdMap.insert("GetBackgroundColors", VclType::GetBackgroundColors);
+        m_cmdMap.insert("EnableClipping", VclType::EnableClipping);
+        m_cmdMap.insert("SetClipVolume", VclType::SetClipVolume);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

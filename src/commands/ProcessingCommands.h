@@ -1271,5 +1271,57 @@ bool operator==(const GetBackgroundColorsCmd::ReplyParams& lhs, const GetBackgro
 std::ostream& operator<<(std::ostream& os, const GetBackgroundColorsCmd::ReplyParams& obj);
 using GetBackgroundColorsReply = ReplyTemplate<GetBackgroundColorsCmd>;
 
+struct EnableClippingCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(bool enable);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        bool getEnable() const;
+
+    private:
+        bool m_enable;
+    };
+};
+
+bool operator==(const EnableClippingCmd::RequestParams& lhs, const EnableClippingCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const EnableClippingCmd::RequestParams& obj);
+using EnableClippingRequest = RequestTemplate<EnableClippingCmd>;
+
+struct SetClipVolumeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Vec3f getMinValues() const;
+        Core::Math::Vec3f getMaxValues() const;
+
+    private:
+        Core::Math::Vec3f m_minValues;
+        Core::Math::Vec3f m_maxValues;
+    };
+};
+
+bool operator==(const SetClipVolumeCmd::RequestParams& lhs, const SetClipVolumeCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetClipVolumeCmd::RequestParams& obj);
+using SetClipVolumeRequest = RequestTemplate<SetClipVolumeCmd>;
+
 /* AUTOGEN CommandHeader */
 }
