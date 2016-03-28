@@ -98,6 +98,21 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::SetClearBorderSize:
         return mocca::make_unique<SetClearBorderSizeHdl>(static_cast<const SetClearBorderSizeRequest&>(request), session);
         break;
+    case VclType::EnableLighting:
+        return mocca::make_unique<EnableLightingHdl>(static_cast<const EnableLightingRequest&>(request), session);
+        break;
+    case VclType::SetLightingColors:
+        return mocca::make_unique<SetLightingColorsHdl>(static_cast<const SetLightingColorsRequest&>(request), session);
+        break;
+    case VclType::GetLightingColors:
+        return mocca::make_unique<GetLightingColorsHdl>(static_cast<const GetLightingColorsRequest&>(request), session);
+        break;
+    case VclType::SetLightDirection:
+        return mocca::make_unique<SetLightDirectionHdl>(static_cast<const SetLightDirectionRequest&>(request), session);
+        break;
+    case VclType::GetLightDirection:
+        return mocca::make_unique<GetLightDirectionHdl>(static_cast<const GetLightDirectionRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

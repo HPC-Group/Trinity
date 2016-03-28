@@ -856,5 +856,160 @@ bool operator==(const SetClearBorderSizeCmd::RequestParams& lhs, const SetClearB
 std::ostream& operator<<(std::ostream& os, const SetClearBorderSizeCmd::RequestParams& obj);
 using SetClearBorderSizeRequest = RequestTemplate<SetClearBorderSizeCmd>;
 
+struct EnableLightingCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(bool enable);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        bool getEnable() const;
+
+    private:
+        bool m_enable;
+    };
+};
+
+bool operator==(const EnableLightingCmd::RequestParams& lhs, const EnableLightingCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const EnableLightingCmd::RequestParams& obj);
+using EnableLightingRequest = RequestTemplate<EnableLightingCmd>;
+
+struct SetLightingColorsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const IRenderer::PhongColorTriple& colors);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        IRenderer::PhongColorTriple getColors() const;
+
+    private:
+        IRenderer::PhongColorTriple m_colors;
+    };
+};
+
+bool operator==(const SetLightingColorsCmd::RequestParams& lhs, const SetLightingColorsCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetLightingColorsCmd::RequestParams& obj);
+using SetLightingColorsRequest = RequestTemplate<SetLightingColorsCmd>;
+
+struct GetLightingColorsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const IRenderer::PhongColorTriple& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        IRenderer::PhongColorTriple getResult() const;
+
+    private:
+        IRenderer::PhongColorTriple m_result;
+    };
+};
+
+bool operator==(const GetLightingColorsCmd::RequestParams& lhs, const GetLightingColorsCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetLightingColorsCmd::RequestParams& obj);
+using GetLightingColorsRequest = RequestTemplate<GetLightingColorsCmd>;
+
+bool operator==(const GetLightingColorsCmd::ReplyParams& lhs, const GetLightingColorsCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetLightingColorsCmd::ReplyParams& obj);
+using GetLightingColorsReply = ReplyTemplate<GetLightingColorsCmd>;
+
+struct SetLightDirectionCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Vec3f& direction);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Vec3f getDirection() const;
+
+    private:
+        Core::Math::Vec3f m_direction;
+    };
+};
+
+bool operator==(const SetLightDirectionCmd::RequestParams& lhs, const SetLightDirectionCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetLightDirectionCmd::RequestParams& obj);
+using SetLightDirectionRequest = RequestTemplate<SetLightDirectionCmd>;
+
+struct GetLightDirectionCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec3f& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec3f getResult() const;
+
+    private:
+        Core::Math::Vec3f m_result;
+    };
+};
+
+bool operator==(const GetLightDirectionCmd::RequestParams& lhs, const GetLightDirectionCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetLightDirectionCmd::RequestParams& obj);
+using GetLightDirectionRequest = RequestTemplate<GetLightDirectionCmd>;
+
+bool operator==(const GetLightDirectionCmd::ReplyParams& lhs, const GetLightDirectionCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetLightDirectionCmd::ReplyParams& obj);
+using GetLightDirectionReply = ReplyTemplate<GetLightDirectionCmd>;
+
 /* AUTOGEN CommandHeader */
 }

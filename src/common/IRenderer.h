@@ -42,6 +42,9 @@ public:
         Core::Math::Vec4ui8 diffuse;
         Core::Math::Vec4ui8 specular;
 
+        bool equals(const PhongColorTriple& other) const;
+        std::string toString() const;
+
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
     };
@@ -92,6 +95,13 @@ public:
     virtual void setClearViewRadius(float radius) = 0;
     virtual void setClearBorderSize(float borderSize) = 0;
 
+    // LIGTHING FUNCTIONS
+    virtual void enableLighting(bool enable) = 0;
+    virtual void setLightingColors(const PhongColorTriple& colors) = 0;
+    virtual PhongColorTriple getLightingColors() const = 0;
+    virtual void setLightDirection(const Core::Math::Vec3f& direction) = 0;
+    virtual Core::Math::Vec3f getLightDirection() const = 0;
+
 
     virtual void zoomCamera(float f) = 0;
 
@@ -103,4 +113,8 @@ protected:
     std::shared_ptr<VisStream> m_visStream;
     std::unique_ptr<IIO> m_io;
 };
+
+bool operator==(const IRenderer::PhongColorTriple& lhs, const IRenderer::PhongColorTriple& rhs);
+std::ostream& operator<<(std::ostream& os, const IRenderer::PhongColorTriple& obj);
+
 }

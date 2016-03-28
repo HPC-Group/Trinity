@@ -40,6 +40,11 @@ public:
     void setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos) override;
     void setClearViewRadius(float radius) override;
     void setClearBorderSize(float borderSize) override;
+    void enableLighting(bool enable) override;
+    void setLightingColors(const PhongColorTriple& colors) override;
+    PhongColorTriple getLightingColors() const override;
+    void setLightDirection(const Core::Math::Vec3f& direction) override;
+    Core::Math::Vec3f getLightDirection() const override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

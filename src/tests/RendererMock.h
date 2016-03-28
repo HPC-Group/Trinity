@@ -27,4 +27,9 @@ public:
     MOCK_METHOD1(setClearViewPosition, void(const Core::Math::Vec2f&));
     MOCK_METHOD1(setClearViewRadius, void(float));
     MOCK_METHOD1(setClearBorderSize, void(float));
+    MOCK_METHOD1(enableLighting, void(bool));
+    MOCK_METHOD1(setLightingColors, void(const PhongColorTriple&));
+    MOCK_CONST_METHOD0(getLightingColors, PhongColorTriple());
+    MOCK_METHOD1(setLightDirection, void(const Core::Math::Vec3f&));
+    MOCK_CONST_METHOD0(getLightDirection, Core::Math::Vec3f());
 };

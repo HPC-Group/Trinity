@@ -172,4 +172,36 @@ void RendererProxy::setClearBorderSize(float borderSize) {
     m_inputChannel.sendRequest(request);
 }
 
+void RendererProxy::enableLighting(bool enable) {
+    EnableLightingCmd::RequestParams params(enable);
+    EnableLightingRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::setLightingColors(const PhongColorTriple& colors) {
+    SetLightingColorsCmd::RequestParams params(colors);
+    SetLightingColorsRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+IRenderer::PhongColorTriple RendererProxy::getLightingColors() const {
+    GetLightingColorsCmd::RequestParams params;
+    GetLightingColorsRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
+void RendererProxy::setLightDirection(const Core::Math::Vec3f& direction) {
+    SetLightDirectionCmd::RequestParams params(direction);
+    SetLightDirectionRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+Core::Math::Vec3f RendererProxy::getLightDirection() const {
+    GetLightDirectionCmd::RequestParams params;
+    GetLightDirectionRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

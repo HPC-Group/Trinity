@@ -265,5 +265,60 @@ private:
     RenderSession* m_session;
 };
 
+class EnableLightingHdl : public ICommandHandler {
+public:
+    EnableLightingHdl(const EnableLightingRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    EnableLightingRequest m_request;
+    RenderSession* m_session;
+};
+
+class SetLightingColorsHdl : public ICommandHandler {
+public:
+    SetLightingColorsHdl(const SetLightingColorsRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetLightingColorsRequest m_request;
+    RenderSession* m_session;
+};
+
+class GetLightingColorsHdl : public ICommandHandler {
+public:
+    GetLightingColorsHdl(const GetLightingColorsRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetLightingColorsRequest m_request;
+    RenderSession* m_session;
+};
+
+class SetLightDirectionHdl : public ICommandHandler {
+public:
+    SetLightDirectionHdl(const SetLightDirectionRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetLightDirectionRequest m_request;
+    RenderSession* m_session;
+};
+
+class GetLightDirectionHdl : public ICommandHandler {
+public:
+    GetLightDirectionHdl(const GetLightDirectionRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetLightDirectionRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

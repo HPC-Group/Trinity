@@ -62,6 +62,16 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetClearViewRadiusRequest>("req");
     } else if (type == SetClearBorderSizeRequest::Ifc::Type) {
         return reader->getSerializablePtr<SetClearBorderSizeRequest>("req");
+    } else if (type == EnableLightingRequest::Ifc::Type) {
+        return reader->getSerializablePtr<EnableLightingRequest>("req");
+    } else if (type == SetLightingColorsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetLightingColorsRequest>("req");
+    } else if (type == GetLightingColorsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetLightingColorsRequest>("req");
+    } else if (type == SetLightDirectionRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetLightDirectionRequest>("req");
+    } else if (type == GetLightDirectionRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetLightDirectionRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

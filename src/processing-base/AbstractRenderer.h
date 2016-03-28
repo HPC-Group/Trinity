@@ -57,11 +57,11 @@ namespace trinity {
     // isovalues and colors are set using the iso functions with surface index 1
 
     // LIGTHING FUNCTIONS
-    virtual void enableLighting(bool enable);
-    virtual void setLightingColors(const PhongColorTriple& colors);
-    virtual PhongColorTriple getLightingColors() const;
-    virtual void setLightDirection(const Core::Math::Vec3f& direction);
-    virtual Core::Math::Vec3f getLightDirection() const;
+    void enableLighting(bool enable) override;
+    void setLightingColors(const PhongColorTriple& colors) override;
+    PhongColorTriple getLightingColors() const override;
+    void setLightDirection(const Core::Math::Vec3f& direction) override;
+    Core::Math::Vec3f getLightDirection() const override;
 
     // SAMPLE RATE FUNCTIONS
     virtual void setSampleRateModifier(float fSampleRateModifier);

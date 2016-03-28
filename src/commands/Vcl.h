@@ -76,6 +76,11 @@ enum class VclType {
     SetClearViewPosition,
     SetClearViewRadius,
     SetClearBorderSize,
+    EnableLighting,
+    SetLightingColors,
+    GetLightingColors,
+    SetLightDirection,
+    GetLightDirection,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -164,6 +169,11 @@ private:
         m_cmdMap.insert("SetClearViewPosition", VclType::SetClearViewPosition);
         m_cmdMap.insert("SetClearViewRadius", VclType::SetClearViewRadius);
         m_cmdMap.insert("SetClearBorderSize", VclType::SetClearBorderSize);
+        m_cmdMap.insert("EnableLighting", VclType::EnableLighting);
+        m_cmdMap.insert("SetLightingColors", VclType::SetLightingColors);
+        m_cmdMap.insert("GetLightingColors", VclType::GetLightingColors);
+        m_cmdMap.insert("SetLightDirection", VclType::SetLightDirection);
+        m_cmdMap.insert("GetLightDirection", VclType::GetLightDirection);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

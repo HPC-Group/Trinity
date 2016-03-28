@@ -1001,6 +1001,177 @@ std::string SetClearBorderSizeCmd::RequestParams::toString() const {
     return stream.str();
 }
 
+////////////// EnableLightingCmd //////////////
+
+VclType EnableLightingCmd::Type = VclType::EnableLighting;
+
+EnableLightingCmd::RequestParams::RequestParams(bool enable)
+    : m_enable(enable) {}
+
+void EnableLightingCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendBool("enable", m_enable);
+}
+
+void EnableLightingCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_enable = reader.getBool("enable");
+}
+
+bool EnableLightingCmd::RequestParams::equals(const EnableLightingCmd::RequestParams& other) const {
+    return m_enable == other.m_enable;
+}
+
+bool EnableLightingCmd::RequestParams::getEnable() const {
+    return m_enable;
+}
+
+std::string EnableLightingCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "enable: " << m_enable;
+    return stream.str();
+}
+
+////////////// SetLightingColorsCmd //////////////
+
+VclType SetLightingColorsCmd::Type = VclType::SetLightingColors;
+
+SetLightingColorsCmd::RequestParams::RequestParams(const IRenderer::PhongColorTriple& colors)
+    : m_colors(colors) {}
+
+void SetLightingColorsCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("colors", m_colors);
+}
+
+void SetLightingColorsCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_colors = reader.getSerializable<IRenderer::PhongColorTriple>("colors");
+}
+
+bool SetLightingColorsCmd::RequestParams::equals(const SetLightingColorsCmd::RequestParams& other) const {
+    return m_colors == other.m_colors;
+}
+
+IRenderer::PhongColorTriple SetLightingColorsCmd::RequestParams::getColors() const {
+    return m_colors;
+}
+
+std::string SetLightingColorsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "colors: " << m_colors;
+    return stream.str();
+}
+
+////////////// GetLightingColorsCmd //////////////
+
+VclType GetLightingColorsCmd::Type = VclType::GetLightingColors;
+
+void GetLightingColorsCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetLightingColorsCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetLightingColorsCmd::RequestParams::equals(const GetLightingColorsCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetLightingColorsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetLightingColorsCmd::ReplyParams::ReplyParams(const IRenderer::PhongColorTriple& result)
+    : m_result(result) {}
+
+void GetLightingColorsCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("result", m_result);
+}
+
+void GetLightingColorsCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializable<IRenderer::PhongColorTriple>("result");
+}
+
+bool GetLightingColorsCmd::ReplyParams::equals(const GetLightingColorsCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+IRenderer::PhongColorTriple GetLightingColorsCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetLightingColorsCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
+////////////// SetLightDirectionCmd //////////////
+
+VclType SetLightDirectionCmd::Type = VclType::SetLightDirection;
+
+SetLightDirectionCmd::RequestParams::RequestParams(const Core::Math::Vec3f& direction)
+    : m_direction(direction) {}
+
+void SetLightDirectionCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("direction", m_direction);
+}
+
+void SetLightDirectionCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_direction = reader.getSerializable<Core::Math::Vec3f>("direction");
+}
+
+bool SetLightDirectionCmd::RequestParams::equals(const SetLightDirectionCmd::RequestParams& other) const {
+    return m_direction == other.m_direction;
+}
+
+Core::Math::Vec3f SetLightDirectionCmd::RequestParams::getDirection() const {
+    return m_direction;
+}
+
+std::string SetLightDirectionCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "direction: " << m_direction;
+    return stream.str();
+}
+
+////////////// GetLightDirectionCmd //////////////
+
+VclType GetLightDirectionCmd::Type = VclType::GetLightDirection;
+
+void GetLightDirectionCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetLightDirectionCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetLightDirectionCmd::RequestParams::equals(const GetLightDirectionCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetLightDirectionCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetLightDirectionCmd::ReplyParams::ReplyParams(const Core::Math::Vec3f& result)
+    : m_result(result) {}
+
+void GetLightDirectionCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("result", m_result);
+}
+
+void GetLightDirectionCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializable<Core::Math::Vec3f>("result");
+}
+
+bool GetLightDirectionCmd::ReplyParams::equals(const GetLightDirectionCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+Core::Math::Vec3f GetLightDirectionCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetLightDirectionCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1250,6 +1421,53 @@ bool operator==(const SetClearBorderSizeCmd::RequestParams& lhs, const SetClearB
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const SetClearBorderSizeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const EnableLightingCmd::RequestParams& lhs, const EnableLightingCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const EnableLightingCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetLightingColorsCmd::RequestParams& lhs, const SetLightingColorsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetLightingColorsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetLightingColorsCmd::RequestParams& lhs, const GetLightingColorsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetLightingColorsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetLightingColorsCmd::ReplyParams& lhs, const GetLightingColorsCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetLightingColorsCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetLightDirectionCmd::RequestParams& lhs, const SetLightDirectionCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetLightDirectionCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetLightDirectionCmd::RequestParams& lhs, const GetLightDirectionCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetLightDirectionCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetLightDirectionCmd::ReplyParams& lhs, const GetLightDirectionCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetLightDirectionCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

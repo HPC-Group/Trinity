@@ -41,6 +41,10 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetIsosurfaceColorReply>("rep");
     } else if (type == GetRangeProcReply::Ifc::Type) {
         return reader->getSerializablePtr<GetRangeProcReply>("rep");
+    } else if (type == GetLightingColorsReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetLightingColorsReply>("rep");
+    } else if (type == GetLightDirectionReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetLightDirectionReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 

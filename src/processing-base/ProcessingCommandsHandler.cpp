@@ -240,4 +240,49 @@ std::unique_ptr<Reply> SetClearBorderSizeHdl::execute() {
     return nullptr;
 }
 
+EnableLightingHdl::EnableLightingHdl(const EnableLightingRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> EnableLightingHdl::execute() {
+    m_session->getRenderer().enableLighting(m_request.getParams().getEnable());
+    return nullptr;
+}
+
+SetLightingColorsHdl::SetLightingColorsHdl(const SetLightingColorsRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetLightingColorsHdl::execute() {
+    m_session->getRenderer().setLightingColors(m_request.getParams().getColors());
+    return nullptr;
+}
+
+GetLightingColorsHdl::GetLightingColorsHdl(const GetLightingColorsRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetLightingColorsHdl::execute() {
+    GetLightingColorsCmd::ReplyParams params(m_session->getRenderer().getLightingColors());
+    return mocca::make_unique<GetLightingColorsReply>(params, m_request.getRid(), m_session->getSid());
+}
+
+SetLightDirectionHdl::SetLightDirectionHdl(const SetLightDirectionRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetLightDirectionHdl::execute() {
+    m_session->getRenderer().setLightDirection(m_request.getParams().getDirection());
+    return nullptr;
+}
+
+GetLightDirectionHdl::GetLightDirectionHdl(const GetLightDirectionRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetLightDirectionHdl::execute() {
+    GetLightDirectionCmd::ReplyParams params(m_session->getRenderer().getLightDirection());
+    return mocca::make_unique<GetLightDirectionReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */
