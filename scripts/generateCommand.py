@@ -45,18 +45,25 @@ r'''struct {{CommandNameCmd}} {
 {{CommandRequestOperators}}
 
 {{CommandReplyOperatorsIfNotVoid}}
-''',
+
+/* AUTOGEN CommandHeader */''',
 
 "CommandImpl":
-r'''VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
+r'''////////////// {{CommandNameCmd}} //////////////
+
+VclType {{CommandNameCmd}}::Type = VclType::{{VclType}};
 
 {{CommandRequestImpl}}
 
-{{CommandReplyImplIfNotVoid}}''',
+{{CommandReplyImplIfNotVoid}}
+
+/* AUTOGEN CommandImpl */''',
 
 "CommandImplOperators":
 r'''{{CommandImplRequestOperators}}
-{{CommandImplReplyOperatorsIfNotVoid}}''',
+{{CommandImplReplyOperatorsIfNotVoid}}
+
+/* AUTOGEN CommandImplOperators */''',
 
 "ProcCommandHandlerHeader": 
 r'''class {{CommandNameHdl}} : public ICommandHandler {
@@ -68,7 +75,9 @@ public:
 private:
     {{CommandNameRequest}} m_request;
 	RenderSession* m_session;
-};''',
+};
+
+/* AUTOGEN CommandNameHdl */''',
 
 "IOCommandHandlerHeader": 
 r'''class {{CommandNameHdl}} : public ICommandHandler {
@@ -80,16 +89,20 @@ public:
 private:
     {{CommandNameRequest}} m_request;
 	IOSession* m_session;
-};''',
+};
+
+/* AUTOGEN IOCommandHandlerHeader */''',
 
 "ProcCommandHandlerImpl":  
 r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, RenderSession* session)
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
-    {{CommandNameCmd}}::ReplyParams params(m_session->getRenderer().{{InterfaceMethod}}(/* TODO */);
+    {{CommandNameCmd}}::ReplyParams params(m_session->getRenderer().{{InterfaceMethod}}(/* TODO */));
     return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
-}''',
+}
+
+/* AUTOGEN ProcCommandHandlerImpl */''',
 
 "IOCommandHandlerImpl": 
 r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request, IOSession* session)
@@ -98,23 +111,25 @@ r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request
 std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
     {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceMethod}}(/* TODO */);
     return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
-}''',
+}
 
-"IOCommandFactoryEntry":  lambda input: "" if input.type == "proc" else "{{CommandFactoryEntry}}",
+/* AUTOGEN IOCommandHandlerImpl */''',
 
-"ProcCommandFactoryEntry":  lambda input: "" if input.type == "io" else "{{CommandFactoryEntry}}",
+"IOCommandFactoryEntry":  lambda input: "/* AUTOGEN IOCommandFactoryEntry */" if input.type == "proc" else "{{CommandFactoryEntry}}\n/* AUTOGEN IOCommandFactoryEntry */",
 
-"ProcRequestFactoryEntry": lambda input: "" if input.type == "io" else "{{RequestFactoryEntry}}",
+"ProcCommandFactoryEntry":  lambda input: "/* AUTOGEN ProcCommandFactoryEntry */" if input.type == "io" else "{{CommandFactoryEntry}}\n/* AUTOGEN ProcCommandFactoryEntry */",
 
-"IORequestFactoryEntry": lambda input: "" if input.type == "proc" else "{{RequestFactoryEntry}}",
+"ProcRequestFactoryEntry": lambda input: "/* AUTOGEN ProcRequestFactoryEntry */" if input.type == "io" else "{{RequestFactoryEntry}}\n/* AUTOGEN ProcRequestFactoryEntry */",
 
-"ProcReplyFactoryEntry": lambda input: "" if input.type == "io" or "void" in input.ret else "{{ReplyFactoryEntry}}",
+"IORequestFactoryEntry": lambda input: "/* AUTOGEN IORequestFactoryEntry */" if input.type == "proc" else "{{RequestFactoryEntry}}\n/* AUTOGEN IORequestFactoryEntry */",
 
-"IOReplyFactoryEntry": lambda input: "" if input.type == "proc" or "void" in input.ret else "{{ReplyFactoryEntry}}",
+"ProcReplyFactoryEntry": lambda input: "/* AUTOGEN ProcReplyFactoryEntry */" if input.type == "io" or "void" in input.ret else "{{ReplyFactoryEntry}}\n/* AUTOGEN ProcReplyFactoryEntry */",
 
-"IOInterfaceOverride": lambda input: "" if input.type == "proc" else "{{InterfaceOverride}}",
+"IOReplyFactoryEntry": lambda input: "/* AUTOGEN IOReplyFactoryEntry */" if input.type == "proc" or "void" in input.ret else "{{ReplyFactoryEntry}}\n/* AUTOGEN IOReplyFactoryEntry */",
 
-"RendererInterfaceOverride": lambda input: "" if input.type == "io" else "{{InterfaceOverride}}",
+"IOInterfaceOverride": lambda input: "/* AUTOGEN IOInterfaceOverride */" if input.type == "proc" else "{{InterfaceOverride}}\n/* AUTOGEN IOInterfaceOverride */",
+
+"RendererInterfaceOverride": lambda input: "/* AUTOGEN RendererInterfaceOverride */" if input.type == "io" else "{{InterfaceOverride}}\n/* AUTOGEN RendererInterfaceOverride */",
 
 "IOSessionProxyImpl":
 r'''{{ReturnType}} IOSessionProxy::{{InterfaceMethod}}({{RequestArgumentList}}) const {
@@ -122,7 +137,9 @@ r'''{{ReturnType}} IOSessionProxy::{{InterfaceMethod}}({{RequestArgumentList}}) 
 {{CommandNameRequest}} request(params, IDGenerator::nextID(), m_remoteSid);
 auto reply = sendRequestChecked(m_inputChannel, request);
 return reply->getParams().getResult();
-}''',
+}
+
+/* AUTOGEN IOSessionProxyImpl */''',
 
 "RendererProxyImpl":
 r'''{{ReturnType}} RendererProxy::{{InterfaceMethod}}({{RequestArgumentList}}) const {
@@ -130,11 +147,13 @@ r'''{{ReturnType}} RendererProxy::{{InterfaceMethod}}({{RequestArgumentList}}) c
 {{CommandNameRequest}} request(params, IDGenerator::nextID(), m_remoteSid);
 auto reply = sendRequestChecked(m_inputChannel, request);
 return reply->getParams().getResult();
-}''',
+}
 
-"VclEnumEntry" : r'{{VclType}},',
+/* AUTOGEN RendererProxyImpl */''',
 
-"VclMapEntry" : r'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});',
+"VclEnumEntry" : "{{VclType}},\n/* AUTOGEN VclEnumEntry */",
+
+"VclMapEntry" : 'm_cmdMap.insert("{{VclType}}", VclType::{{VclType}});\n/* AUTOGEN VclMapEntry */',
 
 
 ## LOWER LEVEL COMMON VARIABLES
@@ -149,7 +168,7 @@ return reply->getParams().getResult();
 
 "CommandNameReply": r'{{CommandName}}Reply',
 
-"InterfaceMethod" : lambda input: untitle(input.commandName),
+"InterfaceMethod" : lambda input: untitle(input.methodname),
 
 "ReturnType": lambda input: input.ret[0],
 
@@ -168,7 +187,7 @@ return reply->getParams().getResult();
 r'''class RequestParams : public SerializableTemplate<RequestParams> {
 public:
 	RequestParams() = default;
-	{{RequestCtorDeclaration}};
+	{{RequestCtorDeclarationSemicolon}}
 	
 	void serialize(ISerialWriter& writer) const override;
 	void deserialize(const ISerialReader& reader) override;
@@ -181,6 +200,8 @@ public:
 };''',
 
 "RequestCtorDeclaration": lambda input : makeCtorDeclaration(input.params, "RequestParams"),
+
+"RequestCtorDeclarationSemicolon": lambda input : "" if not input.params else makeCtorDeclaration(input.params, "RequestParams") + ";",
 
 "RequestGetterDeclarations": lambda input : makeGetterDeclarations(input.params),
 
@@ -210,6 +231,8 @@ public:
 };''',
 
 "ReplyCtorDeclaration": lambda input : makeCtorDeclaration(input.ret, "ReplyParams"),
+
+"ReplyCtorDeclarationSemicolon": lambda input : "" if not inpur.ret else makeCtorDeclaration(input.ret, "Reply") + ";",
 
 "ReplyGetterDeclarations": lambda input : makeGetterDeclarations(input.ret),
 
@@ -595,9 +618,10 @@ def process(files, input):
 		replaceFile(file, formatted)
 		
 class Input:
-	def __init__(self, commandName, type, params, ret):
+	def __init__(self, commandName, type, methodname, params, ret):
 		self.commandName = commandName
 		self.type = type
+		self.methodname = methodname
 		self.params = params
 		self.ret = ret
 		
@@ -609,11 +633,12 @@ def main():
 	parser = argparse.ArgumentParser(description="Generate Trinity Command.")
 	parser.add_argument('--type', help="type of the command to generate ('proc' or 'io'" )
 	parser.add_argument('--name', help="name of the command to generate")
-	parser.add_argument('--returnType', help="return value of the command")
+	parser.add_argument('--methodname', help="name of the corresponding interface method")
+	parser.add_argument('--returntype', help="return value of the command")
 	parser.add_argument('--parameters', nargs='*', help="all parameters of the command ('please specify all parameters successive, e.g., int x float y double z')")
 	args = parser.parse_args()
 
-	input = Input(args.name, args.type, args.parameters, [args.returnType, "result"])
+	input = Input(args.name, args.type, args.methodname, args.parameters, [args.returntype, "result"])
 	files = []
 	if args.type == "proc":
 			files = commonFiles + procFiles
