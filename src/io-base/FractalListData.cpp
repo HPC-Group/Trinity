@@ -27,12 +27,15 @@ struct FractalData {
   Vec3ui64 m_brick;
 };
 
-static std::array<FractalData, 22> data {
+static std::array<FractalData, 23> data {
   {FractalData(FractalDataRoot, IOData("Flat Data", "FractalData@Flat",
                                        IOData::DataType::Directory)),
     FractalData(FractalDataRoot, IOData("Bricked Data", "FractalData@Bricked",
                                         IOData::DataType::Directory)),
     
+										FractalData("FractalData@Flat", IOData("EMPTY", "FractalData@EMPTY",
+										IOData::DataType::Directory)),
+
     FractalData("FractalData@Flat", IOData("Power of 2", "FractalData@1a",
                                            IOData::DataType::Directory)),
     FractalData("FractalData@Flat", IOData("Non Power of 2", "FractalData@1b",

@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 
     ioNode = std::unique_ptr<trinity::IONodeProxy>(new trinity::IONodeProxy(endpointIO));
 	LINFO("listing fractal dir with \"flat data\": ");
-    auto datalist = ioNode->listFiles("FractalData@Flat");
+    auto datalist = ioNode->listFiles("FractalData@EMPTY");
     for(const auto& data : datalist) {
         LINFO(data.toString());
     }

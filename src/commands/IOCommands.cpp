@@ -2,6 +2,7 @@
 
 #include "mocca/base/ContainerTools.h"
 #include "mocca/base/StringTools.h"
+#include "mocca/log/LogManager.h"
 
 using namespace trinity;
 
@@ -54,7 +55,14 @@ void ListFilesCmd::ReplyParams::serialize(ISerialWriter& writer) const {
 }
 
 void ListFilesCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_ioData = reader.getSerializableVec<IOData>("iodata");
+	
+	// fixme apparently, we cannot receive empty vectors
+	try {
+		m_ioData = reader.getSerializableVec<IOData>("iodata");
+	}
+	catch (const TrinityError & e) {
+		LWARNING("(list) list data might be empty or corrupted: " << e.what());
+	}
 }
 
 std::vector<IOData> ListFilesCmd::ReplyParams::getIOData() const {

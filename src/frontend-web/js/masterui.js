@@ -183,7 +183,7 @@ TRI_Frontend.NodeConnector = (function (){
             {
                         // look like type: InitRenderer; rid: 1; sid: 0; params: { protocol: tcp.prefixed; rendertype: SimpleRenderer; fileid: FractalData@3; ioendpoint: tcp.prefixed:127.0.0.1:6678; streamingparams: { xres: 800; yres: 600 } }
                         console.log("Sending: " + requestType);
-                        TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "FractalData@3", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": 800, "yres": 800 } } } }');
+                        TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "UVFData@head512.uvf", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": 2000, "yres": 2000 } } } }');
             
 			}
 
@@ -213,12 +213,16 @@ TRI_Frontend.VisControlConnector = (function () {
 
         onMove: function (xnew, ynew) {
 
-        		dragActive = false;
 	        	deltax = xnew - x;
+
+	        	if(deltax > 2.0 || deltax < -2.0) {
+	        		x = xnew;
+	        	} else {
 	        	//console.log("x: " + deltax);
 	        	x = xnew;
 	        	console.log("x: " + deltax);
 	        	rot = rot + deltax * 0.001;
+	        }
 	        	
         },
 
