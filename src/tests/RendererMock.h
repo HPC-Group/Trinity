@@ -21,4 +21,5 @@ public:
     MOCK_CONST_METHOD0(get1DHistogram, std::vector<uint64_t>());
     MOCK_METHOD2(setIsoValue, void(uint8_t, float));
     MOCK_CONST_METHOD1(getIsoValue, float(uint8_t));
+    MOCK_METHOD2(setIsosurfaceColor, void(uint8_t, const Core::Math::Vec3ui8&));
 };

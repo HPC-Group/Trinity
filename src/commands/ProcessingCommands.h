@@ -662,5 +662,32 @@ bool operator==(const GetIsoValueCmd::ReplyParams& lhs, const GetIsoValueCmd::Re
 std::ostream& operator<<(std::ostream& os, const GetIsoValueCmd::ReplyParams& obj);
 using GetIsoValueReply = ReplyTemplate<GetIsoValueCmd>;
 
+struct SetIsosurfaceColorCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint8_t getSurfaceIndex() const;
+        Core::Math::Vec3ui8 getVColor() const;
+
+    private:
+        uint8_t m_surfaceIndex;
+        Core::Math::Vec3ui8 m_vColor;
+    };
+};
+
+bool operator==(const SetIsosurfaceColorCmd::RequestParams& lhs, const SetIsosurfaceColorCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetIsosurfaceColorCmd::RequestParams& obj);
+using SetIsosurfaceColorRequest = RequestTemplate<SetIsosurfaceColorCmd>;
+
 /* AUTOGEN CommandHeader */
 }

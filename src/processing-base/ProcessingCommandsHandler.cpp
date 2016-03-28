@@ -186,4 +186,13 @@ std::unique_ptr<Reply> GetIsoValueHdl::execute() {
     return mocca::make_unique<GetIsoValueReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+SetIsosurfaceColorHdl::SetIsosurfaceColorHdl(const SetIsosurfaceColorRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetIsosurfaceColorHdl::execute() {
+    m_session->getRenderer().setIsosurfaceColor(m_request.getParams().getSurfaceIndex(), m_request.getParams().getVColor());
+    return nullptr;
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

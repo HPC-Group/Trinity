@@ -34,6 +34,7 @@ public:
     uint64_t getDefault1DTransferFunctionCount() const override;
     std::vector<uint64_t> get1DHistogram() const override;
     float getIsoValue(uint8_t surfaceIndex) const override;
+    void setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor) override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

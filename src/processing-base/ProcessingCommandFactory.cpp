@@ -80,6 +80,9 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::GetIsoValue:
         return mocca::make_unique<GetIsoValueHdl>(static_cast<const GetIsoValueRequest&>(request), session);
         break;
+    case VclType::SetIsosurfaceColor:
+        return mocca::make_unique<SetIsosurfaceColorHdl>(static_cast<const SetIsosurfaceColorRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

@@ -70,6 +70,7 @@ enum class VclType {
     GetDefault1DTransferFunctionCountProc,
     Get1DHistogramProc,
     GetIsoValue,
+    SetIsosurfaceColor,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -152,6 +153,7 @@ private:
         m_cmdMap.insert("GetDefault1DTransferFunctionCountProc", VclType::GetDefault1DTransferFunctionCountProc);
         m_cmdMap.insert("Get1DHistogramProc", VclType::Get1DHistogramProc);
         m_cmdMap.insert("GetIsoValue", VclType::GetIsoValue);
+        m_cmdMap.insert("SetIsosurfaceColor", VclType::SetIsosurfaceColor);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

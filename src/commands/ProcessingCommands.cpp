@@ -770,6 +770,42 @@ std::string GetIsoValueCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// SetIsosurfaceColorCmd //////////////
+
+VclType SetIsosurfaceColorCmd::Type = VclType::SetIsosurfaceColor;
+
+SetIsosurfaceColorCmd::RequestParams::RequestParams(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor)
+    : m_surfaceIndex(surfaceIndex)
+    , m_vColor(vColor) {}
+
+void SetIsosurfaceColorCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("surfaceIndex", m_surfaceIndex);
+    writer.appendObject("vColor", m_vColor);
+}
+
+void SetIsosurfaceColorCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_surfaceIndex = reader.getUInt8("surfaceIndex");
+    m_vColor = reader.getSerializable<Core::Math::Vec3ui8>("vColor");
+}
+
+bool SetIsosurfaceColorCmd::RequestParams::equals(const SetIsosurfaceColorCmd::RequestParams& other) const {
+    return m_surfaceIndex == other.m_surfaceIndex && m_vColor == other.m_vColor;
+}
+
+uint8_t SetIsosurfaceColorCmd::RequestParams::getSurfaceIndex() const {
+    return m_surfaceIndex;
+}
+
+Core::Math::Vec3ui8 SetIsosurfaceColorCmd::RequestParams::getVColor() const {
+    return m_vColor;
+}
+
+std::string SetIsosurfaceColorCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "surfaceIndex: " << m_surfaceIndex << "; vColor: " << m_vColor;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -965,6 +1001,13 @@ bool operator==(const GetIsoValueCmd::ReplyParams& lhs, const GetIsoValueCmd::Re
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetIsoValueCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetIsosurfaceColorCmd::RequestParams& lhs, const SetIsosurfaceColorCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetIsosurfaceColorCmd::RequestParams& obj) {
     return os << obj.toString();
 }
 

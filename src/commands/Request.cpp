@@ -50,6 +50,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<Get1DHistogramProcRequest>("req");
     } else if (type == GetIsoValueRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetIsoValueRequest>("req");
+    } else if (type == SetIsosurfaceColorRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetIsosurfaceColorRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

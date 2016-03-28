@@ -199,5 +199,16 @@ private:
     RenderSession* m_session;
 };
 
+class SetIsosurfaceColorHdl : public ICommandHandler {
+public:
+    SetIsosurfaceColorHdl(const SetIsosurfaceColorRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetIsosurfaceColorRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

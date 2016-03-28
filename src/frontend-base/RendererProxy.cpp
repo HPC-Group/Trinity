@@ -134,4 +134,10 @@ float RendererProxy::getIsoValue(uint8_t surfaceIndex) const {
     return reply->getParams().getResult();
 }
 
+void RendererProxy::setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor) {
+    SetIsosurfaceColorCmd::RequestParams params(surfaceIndex, vColor);
+    SetIsosurfaceColorRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
 /* AUTOGEN RendererProxyImpl */
