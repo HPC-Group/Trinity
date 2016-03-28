@@ -11,5 +11,5 @@ AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: Inline
 BreakConstructorInitializersBeforeComma : true
 NamespaceIndentation: None
-MaxEmptyLinesToKeep: 2
+MaxEmptyLinesToKeep: 1
 AlignAfterOpenBracket: Align

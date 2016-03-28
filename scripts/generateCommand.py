@@ -77,7 +77,7 @@ private:
 	RenderSession* m_session;
 };
 
-/* AUTOGEN CommandNameHdl */''',
+/* AUTOGEN ProcCommandHandlerHeader */''',
 
 "IOCommandHandlerHeader": 
 r'''class {{CommandNameHdl}} : public ICommandHandler {

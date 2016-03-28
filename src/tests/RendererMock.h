@@ -15,4 +15,5 @@ public:
     MOCK_METHOD1(setActiveTimestep, void(uint64_t));
     MOCK_CONST_METHOD0(getActiveTimestep, uint64_t());
     MOCK_CONST_METHOD0(getModalityCount, uint64_t());
+    MOCK_CONST_METHOD0(getTimestepCount, uint64_t());
 };

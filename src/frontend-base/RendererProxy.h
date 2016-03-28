@@ -28,6 +28,7 @@ public:
     void zoomCamera(float f) override;
     int getRemoteSessionId() const;
     uint64_t getModalityCount() const override;
+    uint64_t getTimestepCount() const override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

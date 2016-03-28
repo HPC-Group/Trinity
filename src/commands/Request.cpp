@@ -38,6 +38,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetActiveTimestepRequest>("req");
     } else if (type == GetModalityCountProcRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetModalityCountProcRequest>("req");
+    } else if (type == GetTimestepCountProcRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetTimestepCountProcRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

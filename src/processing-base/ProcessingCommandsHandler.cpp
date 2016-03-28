@@ -130,4 +130,13 @@ std::unique_ptr<Reply> GetModalityCountProcHdl::execute() {
     return mocca::make_unique<GetModalityCountProcReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetTimestepCountProcHdl::GetTimestepCountProcHdl(const GetTimestepCountProcRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetTimestepCountProcHdl::execute() {
+    GetTimestepCountProcCmd::ReplyParams params(m_session->getRenderer().getTimestepCount());
+    return mocca::make_unique<GetTimestepCountProcReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

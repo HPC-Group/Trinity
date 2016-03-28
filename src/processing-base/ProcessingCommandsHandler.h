@@ -134,5 +134,16 @@ private:
     RenderSession* m_session;
 };
 
-/* AUTOGEN CommandNameHdl */
+class GetTimestepCountProcHdl : public ICommandHandler {
+public:
+    GetTimestepCountProcHdl(const GetTimestepCountProcRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetTimestepCountProcRequest m_request;
+    RenderSession* m_session;
+};
+
+/* AUTOGEN ProcCommandHandlerHeader */
 }

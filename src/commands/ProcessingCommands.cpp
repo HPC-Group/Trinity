@@ -497,6 +497,48 @@ std::string GetModalityCountProcCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// GetTimestepCountProcCmd //////////////
+
+VclType GetTimestepCountProcCmd::Type = VclType::GetTimestepCountProc;
+
+void GetTimestepCountProcCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetTimestepCountProcCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetTimestepCountProcCmd::RequestParams::equals(const GetTimestepCountProcCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetTimestepCountProcCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetTimestepCountProcCmd::ReplyParams::ReplyParams(uint64_t result)
+    : m_result(result) {}
+
+void GetTimestepCountProcCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("result", m_result);
+}
+
+void GetTimestepCountProcCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getUInt64("result");
+}
+
+bool GetTimestepCountProcCmd::ReplyParams::equals(const GetTimestepCountProcCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+uint64_t GetTimestepCountProcCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetTimestepCountProcCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -617,6 +659,19 @@ bool operator==(const GetModalityCountProcCmd::ReplyParams& lhs, const GetModali
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetModalityCountProcCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetTimestepCountProcCmd::RequestParams& lhs, const GetTimestepCountProcCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetTimestepCountProcCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetTimestepCountProcCmd::ReplyParams& lhs, const GetTimestepCountProcCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetTimestepCountProcCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

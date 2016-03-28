@@ -93,4 +93,11 @@ uint64_t RendererProxy::getModalityCount() const {
     return reply->getParams().getResult();
 }
 
+uint64_t RendererProxy::getTimestepCount() const {
+    GetTimestepCountProcCmd::RequestParams params;
+    GetTimestepCountProcRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

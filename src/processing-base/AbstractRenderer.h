@@ -27,7 +27,7 @@ namespace trinity {
     uint64_t getActiveTimestep() const override;
 
     uint64_t getModalityCount() const override;
-    virtual uint64_t getTimestepCount() const;
+    uint64_t getTimestepCount() const override;
     
     // 1D TF
     virtual void set1DTransferFunction(const TransferFunction1D& tf);
