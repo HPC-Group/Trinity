@@ -806,6 +806,114 @@ std::string SetIsosurfaceColorCmd::RequestParams::toString() const {
     return stream.str();
 }
 
+////////////// GetIsosurfaceColorCmd //////////////
+
+VclType GetIsosurfaceColorCmd::Type = VclType::GetIsosurfaceColor;
+
+GetIsosurfaceColorCmd::RequestParams::RequestParams(uint8_t surfaceIndex)
+    : m_surfaceIndex(surfaceIndex) {}
+
+void GetIsosurfaceColorCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("surfaceIndex", m_surfaceIndex);
+}
+
+void GetIsosurfaceColorCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_surfaceIndex = reader.getUInt8("surfaceIndex");
+}
+
+bool GetIsosurfaceColorCmd::RequestParams::equals(const GetIsosurfaceColorCmd::RequestParams& other) const {
+    return m_surfaceIndex == other.m_surfaceIndex;
+}
+
+uint8_t GetIsosurfaceColorCmd::RequestParams::getSurfaceIndex() const {
+    return m_surfaceIndex;
+}
+
+std::string GetIsosurfaceColorCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "surfaceIndex: " << m_surfaceIndex;
+    return stream.str();
+}
+
+GetIsosurfaceColorCmd::ReplyParams::ReplyParams(const Core::Math::Vec3ui8& result)
+    : m_result(result) {}
+
+void GetIsosurfaceColorCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("result", m_result);
+}
+
+void GetIsosurfaceColorCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializable<Core::Math::Vec3ui8>("result");
+}
+
+bool GetIsosurfaceColorCmd::ReplyParams::equals(const GetIsosurfaceColorCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+Core::Math::Vec3ui8 GetIsosurfaceColorCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetIsosurfaceColorCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
+////////////// GetRangeProcCmd //////////////
+
+VclType GetRangeProcCmd::Type = VclType::GetRangeProc;
+
+GetRangeProcCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
+
+void GetRangeProcCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetRangeProcCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
+
+bool GetRangeProcCmd::RequestParams::equals(const GetRangeProcCmd::RequestParams& other) const {
+    return m_modality == other.m_modality;
+}
+
+uint64_t GetRangeProcCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+std::string GetRangeProcCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
+}
+
+GetRangeProcCmd::ReplyParams::ReplyParams(const Core::Math::Vec2f& result)
+    : m_result(result) {}
+
+void GetRangeProcCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("result", m_result);
+}
+
+void GetRangeProcCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializable<Core::Math::Vec2f>("result");
+}
+
+bool GetRangeProcCmd::ReplyParams::equals(const GetRangeProcCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+Core::Math::Vec2f GetRangeProcCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetRangeProcCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1008,6 +1116,32 @@ bool operator==(const SetIsosurfaceColorCmd::RequestParams& lhs, const SetIsosur
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const SetIsosurfaceColorCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetIsosurfaceColorCmd::RequestParams& lhs, const GetIsosurfaceColorCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetIsosurfaceColorCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetIsosurfaceColorCmd::ReplyParams& lhs, const GetIsosurfaceColorCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetIsosurfaceColorCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetRangeProcCmd::RequestParams& lhs, const GetRangeProcCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetRangeProcCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetRangeProcCmd::ReplyParams& lhs, const GetRangeProcCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetRangeProcCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

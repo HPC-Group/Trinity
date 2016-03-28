@@ -47,8 +47,8 @@ namespace trinity {
     void setIsoValue(uint8_t surfaceIndex, float fIsoValue) override;
     float getIsoValue(uint8_t surfaceIndex) const override;
     void setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor) override;
-    virtual Core::Math::Vec3ui8 getIsosurfaceColor(uint8_t surfaceIndex) const;
-    virtual Core::Math::Vec2f getRange(uint64_t modality) const;
+    Core::Math::Vec3ui8 getIsosurfaceColor(uint8_t surfaceIndex) const override;
+    Core::Math::Vec2f getRange(uint64_t modality) const override;
 
     // CLEARVIEW FUNCTIONS
     virtual void setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos);

@@ -52,6 +52,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetIsoValueRequest>("req");
     } else if (type == SetIsosurfaceColorRequest::Ifc::Type) {
         return reader->getSerializablePtr<SetIsosurfaceColorRequest>("req");
+    } else if (type == GetIsosurfaceColorRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetIsosurfaceColorRequest>("req");
+    } else if (type == GetRangeProcRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetRangeProcRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

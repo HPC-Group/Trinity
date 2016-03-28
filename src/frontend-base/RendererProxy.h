@@ -35,6 +35,8 @@ public:
     std::vector<uint64_t> get1DHistogram() const override;
     float getIsoValue(uint8_t surfaceIndex) const override;
     void setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor) override;
+    Core::Math::Vec3ui8 getIsosurfaceColor(uint8_t surfaceIndex) const override;
+    Core::Math::Vec2f getRange(uint64_t modality) const override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

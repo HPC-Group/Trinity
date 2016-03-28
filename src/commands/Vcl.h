@@ -71,6 +71,8 @@ enum class VclType {
     Get1DHistogramProc,
     GetIsoValue,
     SetIsosurfaceColor,
+    GetIsosurfaceColor,
+    GetRangeProc,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -154,6 +156,8 @@ private:
         m_cmdMap.insert("Get1DHistogramProc", VclType::Get1DHistogramProc);
         m_cmdMap.insert("GetIsoValue", VclType::GetIsoValue);
         m_cmdMap.insert("SetIsosurfaceColor", VclType::SetIsosurfaceColor);
+        m_cmdMap.insert("GetIsosurfaceColor", VclType::GetIsosurfaceColor);
+        m_cmdMap.insert("GetRangeProc", VclType::GetRangeProc);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

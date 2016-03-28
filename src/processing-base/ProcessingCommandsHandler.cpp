@@ -195,4 +195,22 @@ std::unique_ptr<Reply> SetIsosurfaceColorHdl::execute() {
     return nullptr;
 }
 
+GetIsosurfaceColorHdl::GetIsosurfaceColorHdl(const GetIsosurfaceColorRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetIsosurfaceColorHdl::execute() {
+    GetIsosurfaceColorCmd::ReplyParams params(m_session->getRenderer().getIsosurfaceColor(m_request.getParams().getSurfaceIndex()));
+    return mocca::make_unique<GetIsosurfaceColorReply>(params, m_request.getRid(), m_session->getSid());
+}
+
+GetRangeProcHdl::GetRangeProcHdl(const GetRangeProcRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetRangeProcHdl::execute() {
+    GetRangeProcCmd::ReplyParams params(m_session->getRenderer().getRange(m_request.getParams().getModality()));
+    return mocca::make_unique<GetRangeProcReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

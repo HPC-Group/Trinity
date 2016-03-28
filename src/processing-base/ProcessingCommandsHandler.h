@@ -210,5 +210,27 @@ private:
     RenderSession* m_session;
 };
 
+class GetIsosurfaceColorHdl : public ICommandHandler {
+public:
+    GetIsosurfaceColorHdl(const GetIsosurfaceColorRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetIsosurfaceColorRequest m_request;
+    RenderSession* m_session;
+};
+
+class GetRangeProcHdl : public ICommandHandler {
+public:
+    GetRangeProcHdl(const GetRangeProcRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetRangeProcRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

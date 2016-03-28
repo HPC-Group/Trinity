@@ -22,4 +22,6 @@ public:
     MOCK_METHOD2(setIsoValue, void(uint8_t, float));
     MOCK_CONST_METHOD1(getIsoValue, float(uint8_t));
     MOCK_METHOD2(setIsosurfaceColor, void(uint8_t, const Core::Math::Vec3ui8&));
+    MOCK_CONST_METHOD1(getIsosurfaceColor, Core::Math::Vec3ui8(uint8_t));
+    MOCK_CONST_METHOD1(getRange, Core::Math::Vec2f(uint64_t));
 };

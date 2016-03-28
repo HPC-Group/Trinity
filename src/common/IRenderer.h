@@ -75,6 +75,9 @@ public:
     virtual void setIsoValue(uint8_t surfaceIndex, float) = 0;
     virtual float getIsoValue(uint8_t surfaceIndex) const = 0;
     virtual void setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor) = 0;
+    virtual Core::Math::Vec3ui8 getIsosurfaceColor(uint8_t surfaceIndex) const = 0;
+    virtual Core::Math::Vec2f getRange(uint64_t modality) const = 0;
+
 
     virtual void zoomCamera(float f) = 0;
 

@@ -689,5 +689,97 @@ bool operator==(const SetIsosurfaceColorCmd::RequestParams& lhs, const SetIsosur
 std::ostream& operator<<(std::ostream& os, const SetIsosurfaceColorCmd::RequestParams& obj);
 using SetIsosurfaceColorRequest = RequestTemplate<SetIsosurfaceColorCmd>;
 
+struct GetIsosurfaceColorCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint8_t surfaceIndex);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint8_t getSurfaceIndex() const;
+
+    private:
+        uint8_t m_surfaceIndex;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec3ui8& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec3ui8 getResult() const;
+
+    private:
+        Core::Math::Vec3ui8 m_result;
+    };
+};
+
+bool operator==(const GetIsosurfaceColorCmd::RequestParams& lhs, const GetIsosurfaceColorCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetIsosurfaceColorCmd::RequestParams& obj);
+using GetIsosurfaceColorRequest = RequestTemplate<GetIsosurfaceColorCmd>;
+
+bool operator==(const GetIsosurfaceColorCmd::ReplyParams& lhs, const GetIsosurfaceColorCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetIsosurfaceColorCmd::ReplyParams& obj);
+using GetIsosurfaceColorReply = ReplyTemplate<GetIsosurfaceColorCmd>;
+
+struct GetRangeProcCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t modality);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getModality() const;
+
+    private:
+        uint64_t m_modality;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const Core::Math::Vec2f& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        Core::Math::Vec2f getResult() const;
+
+    private:
+        Core::Math::Vec2f m_result;
+    };
+};
+
+bool operator==(const GetRangeProcCmd::RequestParams& lhs, const GetRangeProcCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetRangeProcCmd::RequestParams& obj);
+using GetRangeProcRequest = RequestTemplate<GetRangeProcCmd>;
+
+bool operator==(const GetRangeProcCmd::ReplyParams& lhs, const GetRangeProcCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetRangeProcCmd::ReplyParams& obj);
+using GetRangeProcReply = ReplyTemplate<GetRangeProcCmd>;
+
 /* AUTOGEN CommandHeader */
 }

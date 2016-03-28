@@ -140,4 +140,18 @@ void RendererProxy::setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::V
     m_inputChannel.sendRequest(request);
 }
 
+Core::Math::Vec3ui8 RendererProxy::getIsosurfaceColor(uint8_t surfaceIndex) const {
+    GetIsosurfaceColorCmd::RequestParams params(surfaceIndex);
+    GetIsosurfaceColorRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
+Core::Math::Vec2f RendererProxy::getRange(uint64_t modality) const {
+    GetRangeProcCmd::RequestParams params(modality);
+    GetRangeProcRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

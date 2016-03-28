@@ -37,6 +37,10 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<Get1DHistogramProcReply>("rep");
     } else if (type == GetIsoValueReply::Ifc::Type) {
         return reader->getSerializablePtr<GetIsoValueReply>("rep");
+    } else if (type == GetIsosurfaceColorReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetIsosurfaceColorReply>("rep");
+    } else if (type == GetRangeProcReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetRangeProcReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 
