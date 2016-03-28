@@ -12,37 +12,41 @@
 #include "frontend-base/ProcessingNodeProxy.h"
 
 namespace Ui {
-class Window;
+  class Window;
 }
 
 class Window : public QMainWindow {
-    Q_OBJECT
-
+  Q_OBJECT
+  
 public:
-    explicit Window(QWidget* parent = 0);
-    ~Window();
-    void repaint();
-
+  explicit Window(QWidget* parent = 0);
+  ~Window();
+  void repaint();
+  
 private:
-    void initRenderer();
-
-private slots:
-    void on_IOconnectIP_clicked();
-
-    void update();
-
-    void on_PRconnectIP_clicked();
-
+  void initRenderer();
+  
+  private slots:
+  void on_IOconnectIP_clicked();
+  
+  void update();
+  
+  void on_PRconnectIP_clicked();
+  
 private:
-    Ui::Window* ui;
-    uint32_t _renderWidth;
-    uint32_t _renderHeight;
-
-    std::unique_ptr<trinity::ProcessingNodeProxy> _processingNode;
-    std::unique_ptr<trinity::IONodeProxy> _ioNode;
-
-    std::unique_ptr<trinity::RendererProxy> _renderer;
-    bool _initDone;
+  Ui::Window* ui;
+  uint32_t _renderWidth;
+  uint32_t _renderHeight;
+  
+  std::unique_ptr<trinity::ProcessingNodeProxy> _processingNode;
+  std::unique_ptr<trinity::IONodeProxy> _ioNode;
+  
+  std::unique_ptr<trinity::RendererProxy> _renderer;
+  bool _initDone;
+  
+  void printDataTree(const std::string& dataId,
+                     const std::string& indent="") const;
+  
 };
 
 #endif // WINDOW_H
