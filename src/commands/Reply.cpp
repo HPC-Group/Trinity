@@ -10,7 +10,6 @@
 
 using namespace trinity;
 
-
 std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
     VclType type = Vcl::instance().toType(reader->getString("type"));
@@ -26,8 +25,10 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetActiveModalityReply>("rep");
     } else if (type == GetActiveTimestepReply::Ifc::Type) {
         return reader->getSerializablePtr<GetActiveTimestepReply>("rep");
+    } else if (type == GetModalityCountProcReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetModalityCountProcReply>("rep");
     }
-	/* AUTOGEN ProcReplyFactoryEntry */
+    /* AUTOGEN ProcReplyFactoryEntry */
 
     // IO commands
     if (type == ListFilesRequest::Ifc::Type) {
@@ -83,7 +84,7 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
     } else if (type == GetDefault1DTransferFunctionReply::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionReply>("rep");
     }
-	/* AUTOGEN IOReplyFactoryEntry */
+    /* AUTOGEN IOReplyFactoryEntry */
 
     // error commands
     else if (type == ErrorReply::Ifc::Type) {

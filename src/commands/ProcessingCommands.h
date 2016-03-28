@@ -36,9 +36,8 @@ struct InitProcessingSessionCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        explicit RequestParams(const std::string& protocol, const VclType& renderType,
-                               const std::string& fileId, const mocca::net::Endpoint& ioEndpoint,
-                               const StreamingParams& p);
+        explicit RequestParams(const std::string& protocol, const VclType& renderType, const std::string& fileId,
+                               const mocca::net::Endpoint& ioEndpoint, const StreamingParams& p);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -152,6 +151,7 @@ struct ZoomCameraCmd {
         std::string toString() const;
         bool equals(const RequestParams& other) const;
         float getZoom() const;
+
     private:
         float m_zoom;
     };
@@ -201,7 +201,6 @@ bool operator==(const SetRenderModeCmd::RequestParams& lhs, const SetRenderModeC
 std::ostream& operator<<(std::ostream& os, const SetRenderModeCmd::RequestParams& obj);
 
 using SetRenderModeRequest = RequestTemplate<SetRenderModeCmd>;
-
 
 struct SupportsRenderModeCmd {
     static VclType Type;
@@ -262,7 +261,7 @@ struct SetActiveModalityCmd {
 
         std::string toString() const;
         bool equals(const RequestParams& other) const;
-    
+
         uint64_t getModality() const;
 
     private:
@@ -380,6 +379,46 @@ std::ostream& operator<<(std::ostream& os, const GetActiveTimestepCmd::ReplyPara
 
 using GetActiveTimestepRequest = RequestTemplate<GetActiveTimestepCmd>;
 using GetActiveTimestepReply = ReplyTemplate<GetActiveTimestepCmd>;
+
+struct GetModalityCountProcCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getResult() const;
+
+    private:
+        uint64_t m_result;
+    };
+};
+
+bool operator==(const GetModalityCountProcCmd::RequestParams& lhs, const GetModalityCountProcCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetModalityCountProcCmd::RequestParams& obj);
+using GetModalityCountProcRequest = RequestTemplate<GetModalityCountProcCmd>;
+
+bool operator==(const GetModalityCountProcCmd::ReplyParams& lhs, const GetModalityCountProcCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetModalityCountProcCmd::ReplyParams& obj);
+using GetModalityCountProcReply = ReplyTemplate<GetModalityCountProcCmd>;
 
 /* AUTOGEN CommandHeader */
 }

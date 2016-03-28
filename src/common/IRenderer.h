@@ -62,6 +62,8 @@ public:
     virtual void setActiveTimestep(uint64_t timestep) = 0;
     virtual uint64_t getActiveTimestep() const = 0;
 
+    virtual uint64_t getModalityCount() const = 0;
+
     virtual void setIsoValue(float) = 0;
     virtual void zoomCamera(float f) = 0;
 

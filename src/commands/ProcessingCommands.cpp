@@ -194,7 +194,6 @@ float ZoomCameraCmd::RequestParams::getZoom() const {
 ZoomCameraCmd::RequestParams::RequestParams(float value)
     : m_zoom(value) {}
 
-
 void ZoomCameraCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendFloat("zoom", m_zoom);
 }
@@ -230,7 +229,6 @@ std::string ZoomCameraCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
-
 ////////////// SetRenderModeCmd //////////////
 
 VclType SetRenderModeCmd::Type = VclType::SetRenderMode;
@@ -259,7 +257,6 @@ std::string SetRenderModeCmd::RequestParams::toString() const {
 IRenderer::ERenderMode SetRenderModeCmd::RequestParams::getRenderMode() const {
     return m_renderMode;
 }
-
 
 ////////////// SupportsRenderModeCmd //////////////
 
@@ -314,7 +311,6 @@ std::string SupportsRenderModeCmd::ReplyParams::toString() const {
 bool SupportsRenderModeCmd::ReplyParams::getResult() const {
     return m_result;
 }
-
 
 ////////////// SetActiveModalityCmd //////////////
 
@@ -417,7 +413,6 @@ uint64_t SetActiveTimestepCmd::RequestParams::getTimestep() const {
     return m_timestep;
 }
 
-
 ////////////// GetActiveTimestepCmd //////////////
 
 VclType GetActiveTimestepCmd::Type = VclType::GetActiveTimestep;
@@ -458,6 +453,48 @@ std::string GetActiveTimestepCmd::ReplyParams::toString() const {
 
 uint64_t GetActiveTimestepCmd::ReplyParams::getTimestep() const {
     return m_timestep;
+}
+
+////////////// GetModalityCountProcCmd //////////////
+
+VclType GetModalityCountProcCmd::Type = VclType::GetModalityCountProc;
+
+void GetModalityCountProcCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetModalityCountProcCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetModalityCountProcCmd::RequestParams::equals(const GetModalityCountProcCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetModalityCountProcCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetModalityCountProcCmd::ReplyParams::ReplyParams(uint64_t result)
+    : m_result(result) {}
+
+void GetModalityCountProcCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("result", m_result);
+}
+
+void GetModalityCountProcCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getUInt64("result");
+}
+
+bool GetModalityCountProcCmd::ReplyParams::equals(const GetModalityCountProcCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+uint64_t GetModalityCountProcCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetModalityCountProcCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
 }
 
 /* AUTOGEN CommandImpl */
@@ -567,6 +604,19 @@ std::ostream& operator<<(std::ostream& os, const GetActiveTimestepCmd::RequestPa
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetActiveTimestepCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetModalityCountProcCmd::RequestParams& lhs, const GetModalityCountProcCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetModalityCountProcCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetModalityCountProcCmd::ReplyParams& lhs, const GetModalityCountProcCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetModalityCountProcCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

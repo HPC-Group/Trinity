@@ -21,12 +21,12 @@ namespace trinity {
     bool supportsRenderMode(ERenderMode mode) override;
 
     // MODALITIES AND TIMESTEPS
-    virtual void setActiveModality(uint64_t modality) override;
-    virtual uint64_t getActiveModality() const override;
-    virtual void setActiveTimestep(uint64_t timestep) override;
-    virtual uint64_t getActiveTimestep() const override;
+    void setActiveModality(uint64_t modality) override;
+    uint64_t getActiveModality() const override;
+    void setActiveTimestep(uint64_t timestep) override;
+    uint64_t getActiveTimestep() const override;
 
-    virtual uint64_t getModalityCount() const;
+    uint64_t getModalityCount() const override;
     virtual uint64_t getTimestepCount() const;
     
     // 1D TF

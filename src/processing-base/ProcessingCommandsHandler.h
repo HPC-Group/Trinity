@@ -81,47 +81,58 @@ private:
 
 class SetActiveModalityHdl : public ICommandHandler {
 public:
-    SetActiveModalityHdl(const SetActiveModalityRequest&request, RenderSession* session);
+    SetActiveModalityHdl(const SetActiveModalityRequest& request, RenderSession* session);
 
     std::unique_ptr<Reply> execute() override;
 
 private:
     SetActiveModalityRequest m_request;
-	RenderSession* m_session;
+    RenderSession* m_session;
 };
 
 class GetActiveModalityHdl : public ICommandHandler {
 public:
-    GetActiveModalityHdl(const GetActiveModalityRequest&request, RenderSession* session);
+    GetActiveModalityHdl(const GetActiveModalityRequest& request, RenderSession* session);
 
     std::unique_ptr<Reply> execute() override;
 
 private:
     GetActiveModalityRequest m_request;
-	RenderSession* m_session;
+    RenderSession* m_session;
 };
 
 class SetActiveTimestepHdl : public ICommandHandler {
 public:
-    SetActiveTimestepHdl(const SetActiveTimestepRequest&request, RenderSession* session);
+    SetActiveTimestepHdl(const SetActiveTimestepRequest& request, RenderSession* session);
 
     std::unique_ptr<Reply> execute() override;
 
 private:
     SetActiveTimestepRequest m_request;
-	RenderSession* m_session;
+    RenderSession* m_session;
 };
 
 class GetActiveTimestepHdl : public ICommandHandler {
 public:
-    GetActiveTimestepHdl(const GetActiveTimestepRequest&request, RenderSession* session);
+    GetActiveTimestepHdl(const GetActiveTimestepRequest& request, RenderSession* session);
 
     std::unique_ptr<Reply> execute() override;
 
 private:
     GetActiveTimestepRequest m_request;
-	RenderSession* m_session;
+    RenderSession* m_session;
 };
 
-/* AUTOGEN ProcCommandHandlerHeader */
+class GetModalityCountProcHdl : public ICommandHandler {
+public:
+    GetModalityCountProcHdl(const GetModalityCountProcRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetModalityCountProcRequest m_request;
+    RenderSession* m_session;
+};
+
+/* AUTOGEN CommandNameHdl */
 }

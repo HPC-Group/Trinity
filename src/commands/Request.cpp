@@ -36,8 +36,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetActiveTimestepRequest>("req");
     } else if (type == GetActiveTimestepRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetActiveTimestepRequest>("req");
+    } else if (type == GetModalityCountProcRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetModalityCountProcRequest>("req");
     }
-	/* AUTOGEN ProcRequestFactoryEntry */
+    /* AUTOGEN ProcRequestFactoryEntry */
 
     // IO commands
     else if (type == ListFilesRequest::Ifc::Type) {
@@ -93,7 +95,7 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
     } else if (type == GetDefault1DTransferFunctionRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionRequest>("req");
     }
-	/* AUTOGEN IORequestFactoryEntry */
+    /* AUTOGEN IORequestFactoryEntry */
 
     throw TrinityError("Invalid request type", __FILE__, __LINE__);
 }

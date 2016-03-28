@@ -10,7 +10,6 @@
 #include "mocca/base/Error.h"
 #include "mocca/base/StringTools.h"
 
-
 namespace trinity {
 
 // visualization command language types
@@ -64,6 +63,7 @@ enum class VclType {
     MaxMinForKey,
     GetNumberOfTimesteps,
     GetDomainSize,
+    GetModalityCountProc,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -139,8 +139,9 @@ private:
         m_cmdMap.insert("GetActiveModality", VclType::GetActiveModality);
         m_cmdMap.insert("SetActiveTimestep", VclType::SetActiveTimestep);
         m_cmdMap.insert("GetActiveTimestep", VclType::GetActiveTimestep);
+        m_cmdMap.insert("GetModalityCountProc", VclType::GetModalityCountProc);
         /* AUTOGEN VclMapEntry */
-		
+
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));
         m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));
 
@@ -151,7 +152,6 @@ private:
     std::map<int, std::string> m_errorCodeMap;
     void assertCompleteLanguage() const;
 };
-
 
 // the trinity protocol uses request- and session id's (rid and sid)
 class IDGenerator {

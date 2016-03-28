@@ -36,7 +36,6 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
     }
 }
 
-
 SetIsoValueHdl::SetIsoValueHdl(const SetIsoValueRequest& request, RenderSession* session)
     : m_session(session)
     , m_isoValue(request.getParams().getIsoValue())
@@ -47,7 +46,6 @@ std::unique_ptr<Reply> SetIsoValueHdl::execute() {
     renderer.setIsoValue(m_isoValue);
     return nullptr;
 }
-
 
 InitContextHdl::InitContextHdl(const InitContextRequest& request, RenderSession* session)
     : m_session(session)
@@ -60,8 +58,8 @@ std::unique_ptr<Reply> InitContextHdl::execute() {
 }
 
 ZoomCameraHdl::ZoomCameraHdl(const ZoomCameraRequest& request, RenderSession* session)
-    : m_request(request), m_session(session) {
-    }
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> ZoomCameraHdl::execute() {
     auto& renderer = m_session->getRenderer();
@@ -70,7 +68,8 @@ std::unique_ptr<Reply> ZoomCameraHdl::execute() {
 }
 
 SetRenderModeHdl::SetRenderModeHdl(const SetRenderModeRequest& request, RenderSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> SetRenderModeHdl::execute() {
     m_session->getRenderer().setRenderMode(m_request.getParams().getRenderMode());
@@ -78,7 +77,8 @@ std::unique_ptr<Reply> SetRenderModeHdl::execute() {
 }
 
 SupportsRenderModeHdl::SupportsRenderModeHdl(const SupportsRenderModeRequest& request, RenderSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> SupportsRenderModeHdl::execute() {
     SupportsRenderModeCmd::ReplyParams params(m_session->getRenderer().supportsRenderMode(m_request.getParams().getRenderMode()));
@@ -86,7 +86,8 @@ std::unique_ptr<Reply> SupportsRenderModeHdl::execute() {
 }
 
 SetActiveModalityHdl::SetActiveModalityHdl(const SetActiveModalityRequest& request, RenderSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> SetActiveModalityHdl::execute() {
     m_session->getRenderer().setActiveModality(m_request.getParams().getModality());
@@ -94,7 +95,8 @@ std::unique_ptr<Reply> SetActiveModalityHdl::execute() {
 }
 
 GetActiveModalityHdl::GetActiveModalityHdl(const GetActiveModalityRequest& request, RenderSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetActiveModalityHdl::execute() {
     GetActiveModalityCmd::ReplyParams params(m_session->getRenderer().getActiveModality());
@@ -102,7 +104,8 @@ std::unique_ptr<Reply> GetActiveModalityHdl::execute() {
 }
 
 SetActiveTimestepHdl::SetActiveTimestepHdl(const SetActiveTimestepRequest& request, RenderSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> SetActiveTimestepHdl::execute() {
     m_session->getRenderer().setActiveTimestep(m_request.getParams().getTimestep());
@@ -110,11 +113,21 @@ std::unique_ptr<Reply> SetActiveTimestepHdl::execute() {
 }
 
 GetActiveTimestepHdl::GetActiveTimestepHdl(const GetActiveTimestepRequest& request, RenderSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetActiveTimestepHdl::execute() {
     GetActiveTimestepCmd::ReplyParams params(m_session->getRenderer().getActiveTimestep());
     return mocca::make_unique<GetActiveTimestepReply>(params, m_request.getRid(), m_session->getSid());
+}
+
+GetModalityCountProcHdl::GetModalityCountProcHdl(const GetModalityCountProcRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetModalityCountProcHdl::execute() {
+    GetModalityCountProcCmd::ReplyParams params(m_session->getRenderer().getModalityCount());
+    return mocca::make_unique<GetModalityCountProcReply>(params, m_request.getRid(), m_session->getSid());
 }
 
 /* AUTOGEN ProcCommandHandlerImpl */

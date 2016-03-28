@@ -45,19 +45,22 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::SupportsRenderMode:
         return mocca::make_unique<SupportsRenderModeHdl>(static_cast<const SupportsRenderModeRequest&>(request), session);
         break;
-	case VclType::SetActiveModality:
-		return mocca::make_unique<SetActiveModalityHdl>(static_cast<const SetActiveModalityRequest&>(request), session);
-		break;
-	case VclType::GetActiveModality:
-		return mocca::make_unique<GetActiveModalityHdl>(static_cast<const GetActiveModalityRequest&>(request), session);
-		break;
-	case VclType::SetActiveTimestep:
-		return mocca::make_unique<SetActiveTimestepHdl>(static_cast<const SetActiveTimestepRequest&>(request), session);
-		break;
-	case VclType::GetActiveTimestep:
-		return mocca::make_unique<GetActiveTimestepHdl>(static_cast<const GetActiveTimestepRequest&>(request), session);
-		break;
-        /* AUTOGEN ProcCommandFactoryEntry */
+    case VclType::SetActiveModality:
+        return mocca::make_unique<SetActiveModalityHdl>(static_cast<const SetActiveModalityRequest&>(request), session);
+        break;
+    case VclType::GetActiveModality:
+        return mocca::make_unique<GetActiveModalityHdl>(static_cast<const GetActiveModalityRequest&>(request), session);
+        break;
+    case VclType::SetActiveTimestep:
+        return mocca::make_unique<SetActiveTimestepHdl>(static_cast<const SetActiveTimestepRequest&>(request), session);
+        break;
+    case VclType::GetActiveTimestep:
+        return mocca::make_unique<GetActiveTimestepHdl>(static_cast<const GetActiveTimestepRequest&>(request), session);
+        break;
+    case VclType::GetModalityCountProc:
+        return mocca::make_unique<GetModalityCountProcHdl>(static_cast<const GetModalityCountProcRequest&>(request), session);
+        break;
+    /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }
