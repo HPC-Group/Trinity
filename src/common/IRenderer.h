@@ -39,7 +39,7 @@ public:
 
     struct PhongColorTriple : public SerializableTemplate<PhongColorTriple> {
         PhongColorTriple() = default;
-        PhongColorTriple(const Core::Math::Vec4ui8& a, Core::Math::Vec4ui8& d, Core::Math::Vec4ui8& s)
+        PhongColorTriple(const Core::Math::Vec4ui8& a, const Core::Math::Vec4ui8& d, const Core::Math::Vec4ui8& s)
             : ambient(a)
             , diffuse(d)
             , specular(s) {}
