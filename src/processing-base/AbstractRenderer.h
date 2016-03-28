@@ -51,9 +51,9 @@ namespace trinity {
     Core::Math::Vec2f getRange(uint64_t modality) const override;
 
     // CLEARVIEW FUNCTIONS
-    virtual void setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos);
-    virtual void setClearViewRadius(float radius);
-    virtual void setClearBorderSize(float borderSize);
+    void setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos) override;
+    void setClearViewRadius(float radius) override;
+    void setClearBorderSize(float borderSize) override;
     // isovalues and colors are set using the iso functions with surface index 1
 
     // LIGTHING FUNCTIONS

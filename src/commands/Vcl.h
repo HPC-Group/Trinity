@@ -73,6 +73,9 @@ enum class VclType {
     SetIsosurfaceColor,
     GetIsosurfaceColor,
     GetRangeProc,
+    SetClearViewPosition,
+    SetClearViewRadius,
+    SetClearBorderSize,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -158,6 +161,9 @@ private:
         m_cmdMap.insert("SetIsosurfaceColor", VclType::SetIsosurfaceColor);
         m_cmdMap.insert("GetIsosurfaceColor", VclType::GetIsosurfaceColor);
         m_cmdMap.insert("GetRangeProc", VclType::GetRangeProc);
+        m_cmdMap.insert("SetClearViewPosition", VclType::SetClearViewPosition);
+        m_cmdMap.insert("SetClearViewRadius", VclType::SetClearViewRadius);
+        m_cmdMap.insert("SetClearBorderSize", VclType::SetClearBorderSize);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

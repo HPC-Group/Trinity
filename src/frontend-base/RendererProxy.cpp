@@ -154,4 +154,22 @@ Core::Math::Vec2f RendererProxy::getRange(uint64_t modality) const {
     return reply->getParams().getResult();
 }
 
+void RendererProxy::setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos) {
+    SetClearViewPositionCmd::RequestParams params(vNormalizedWindowPos);
+    SetClearViewPositionRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::setClearViewRadius(float radius) {
+    SetClearViewRadiusCmd::RequestParams params(radius);
+    SetClearViewRadiusRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::setClearBorderSize(float borderSize) {
+    SetClearBorderSizeCmd::RequestParams params(borderSize);
+    SetClearBorderSizeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
 /* AUTOGEN RendererProxyImpl */

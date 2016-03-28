@@ -213,4 +213,31 @@ std::unique_ptr<Reply> GetRangeProcHdl::execute() {
     return mocca::make_unique<GetRangeProcReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+SetClearViewPositionHdl::SetClearViewPositionHdl(const SetClearViewPositionRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetClearViewPositionHdl::execute() {
+    m_session->getRenderer().setClearViewPosition(m_request.getParams().getVNormalizedWindowPos());
+    return nullptr;
+}
+
+SetClearViewRadiusHdl::SetClearViewRadiusHdl(const SetClearViewRadiusRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetClearViewRadiusHdl::execute() {
+    m_session->getRenderer().setClearViewRadius(m_request.getParams().getRadius());
+    return nullptr;
+}
+
+SetClearBorderSizeHdl::SetClearBorderSizeHdl(const SetClearBorderSizeRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetClearBorderSizeHdl::execute() {
+    m_session->getRenderer().setClearBorderSize(m_request.getParams().getBorderSize());
+    return nullptr;
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

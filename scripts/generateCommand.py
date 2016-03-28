@@ -98,7 +98,7 @@ r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
-    {{CommandNameCmd}}::ReplyParams params(m_session->getRenderer().{{InterfaceMethod}}(/* TODO */));
+    {{CommandNameCmd}}::ReplyParams params(m_session->getRenderer().{{InterfaceMethod}}({{ParamsFromRequest}}));
     return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
 }
 
@@ -109,7 +109,7 @@ r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
-    {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceMethod}}(/* TODO */);
+    {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceMethod}}({{ParamsFromRequest}});
     return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
 }
 
@@ -370,6 +370,10 @@ r''' else if (type == {{CommandNameReply}}::Ifc::Type) {
 	return reader->getSerializablePtr<{{CommandNameReply}}>("rep");
 }''',
 
+## LOWER LEVEL COMMAND HANDLER IMPL VARIABLES
+
+"ParamsFromRequest": lambda input: makeParamsFromRequest(input.params),
+
 ## LOWER LEVEL PROXY HEADER VARIABLES
 
 "InterfaceOverride": lambda input : makeInterfaceOverride(input),
@@ -437,6 +441,13 @@ def makeArguments(params):
 	items = []
 	for i in xrange(0, len(params), 2):
 		items.append(params[i + 1])
+	return ", ".join(items)	
+
+def makeParamsFromRequest(params):
+	items = []
+	for i in xrange(0, len(params), 2):
+		name = params[i + 1]
+		items.append("m_request.getParams().get" + title(name) + "()")
 	return ", ".join(items)	
 	
 def makeMemberList(params):

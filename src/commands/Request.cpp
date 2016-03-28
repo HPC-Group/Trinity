@@ -56,6 +56,12 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetIsosurfaceColorRequest>("req");
     } else if (type == GetRangeProcRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetRangeProcRequest>("req");
+    } else if (type == SetClearViewPositionRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetClearViewPositionRequest>("req");
+    } else if (type == SetClearViewRadiusRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetClearViewRadiusRequest>("req");
+    } else if (type == SetClearBorderSizeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetClearBorderSizeRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

@@ -78,6 +78,11 @@ public:
     virtual Core::Math::Vec3ui8 getIsosurfaceColor(uint8_t surfaceIndex) const = 0;
     virtual Core::Math::Vec2f getRange(uint64_t modality) const = 0;
 
+    // CLEARVIEW FUNCTIONS
+    virtual void setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos) = 0;
+    virtual void setClearViewRadius(float radius) = 0;
+    virtual void setClearBorderSize(float borderSize) = 0;
+
 
     virtual void zoomCamera(float f) = 0;
 

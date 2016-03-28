@@ -37,6 +37,9 @@ public:
     void setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor) override;
     Core::Math::Vec3ui8 getIsosurfaceColor(uint8_t surfaceIndex) const override;
     Core::Math::Vec2f getRange(uint64_t modality) const override;
+    void setClearViewPosition(const Core::Math::Vec2f& vNormalizedWindowPos) override;
+    void setClearViewRadius(float radius) override;
+    void setClearBorderSize(float borderSize) override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

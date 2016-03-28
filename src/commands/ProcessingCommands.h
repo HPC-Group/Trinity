@@ -781,5 +781,80 @@ bool operator==(const GetRangeProcCmd::ReplyParams& lhs, const GetRangeProcCmd::
 std::ostream& operator<<(std::ostream& os, const GetRangeProcCmd::ReplyParams& obj);
 using GetRangeProcReply = ReplyTemplate<GetRangeProcCmd>;
 
+struct SetClearViewPositionCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Vec2f& vNormalizedWindowPos);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Vec2f getVNormalizedWindowPos() const;
+
+    private:
+        Core::Math::Vec2f m_vNormalizedWindowPos;
+    };
+};
+
+bool operator==(const SetClearViewPositionCmd::RequestParams& lhs, const SetClearViewPositionCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetClearViewPositionCmd::RequestParams& obj);
+using SetClearViewPositionRequest = RequestTemplate<SetClearViewPositionCmd>;
+
+struct SetClearViewRadiusCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(float radius);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        float getRadius() const;
+
+    private:
+        float m_radius;
+    };
+};
+
+bool operator==(const SetClearViewRadiusCmd::RequestParams& lhs, const SetClearViewRadiusCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetClearViewRadiusCmd::RequestParams& obj);
+using SetClearViewRadiusRequest = RequestTemplate<SetClearViewRadiusCmd>;
+
+struct SetClearBorderSizeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(float borderSize);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        float getBorderSize() const;
+
+    private:
+        float m_borderSize;
+    };
+};
+
+bool operator==(const SetClearBorderSizeCmd::RequestParams& lhs, const SetClearBorderSizeCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetClearBorderSizeCmd::RequestParams& obj);
+using SetClearBorderSizeRequest = RequestTemplate<SetClearBorderSizeCmd>;
+
 /* AUTOGEN CommandHeader */
 }

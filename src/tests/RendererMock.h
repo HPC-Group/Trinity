@@ -24,4 +24,7 @@ public:
     MOCK_METHOD2(setIsosurfaceColor, void(uint8_t, const Core::Math::Vec3ui8&));
     MOCK_CONST_METHOD1(getIsosurfaceColor, Core::Math::Vec3ui8(uint8_t));
     MOCK_CONST_METHOD1(getRange, Core::Math::Vec2f(uint64_t));
+    MOCK_METHOD1(setClearViewPosition, void(const Core::Math::Vec2f&));
+    MOCK_METHOD1(setClearViewRadius, void(float));
+    MOCK_METHOD1(setClearBorderSize, void(float));
 };

@@ -914,6 +914,93 @@ std::string GetRangeProcCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// SetClearViewPositionCmd //////////////
+
+VclType SetClearViewPositionCmd::Type = VclType::SetClearViewPosition;
+
+SetClearViewPositionCmd::RequestParams::RequestParams(const Core::Math::Vec2f& vNormalizedWindowPos)
+    : m_vNormalizedWindowPos(vNormalizedWindowPos) {}
+
+void SetClearViewPositionCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("vNormalizedWindowPos", m_vNormalizedWindowPos);
+}
+
+void SetClearViewPositionCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_vNormalizedWindowPos = reader.getSerializable<Core::Math::Vec2f>("vNormalizedWindowPos");
+}
+
+bool SetClearViewPositionCmd::RequestParams::equals(const SetClearViewPositionCmd::RequestParams& other) const {
+    return m_vNormalizedWindowPos == other.m_vNormalizedWindowPos;
+}
+
+Core::Math::Vec2f SetClearViewPositionCmd::RequestParams::getVNormalizedWindowPos() const {
+    return m_vNormalizedWindowPos;
+}
+
+std::string SetClearViewPositionCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "vNormalizedWindowPos: " << m_vNormalizedWindowPos;
+    return stream.str();
+}
+
+////////////// SetClearViewRadiusCmd //////////////
+
+VclType SetClearViewRadiusCmd::Type = VclType::SetClearViewRadius;
+
+SetClearViewRadiusCmd::RequestParams::RequestParams(float radius)
+    : m_radius(radius) {}
+
+void SetClearViewRadiusCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendFloat("radius", m_radius);
+}
+
+void SetClearViewRadiusCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_radius = reader.getFloat("radius");
+}
+
+bool SetClearViewRadiusCmd::RequestParams::equals(const SetClearViewRadiusCmd::RequestParams& other) const {
+    return m_radius == other.m_radius;
+}
+
+float SetClearViewRadiusCmd::RequestParams::getRadius() const {
+    return m_radius;
+}
+
+std::string SetClearViewRadiusCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "radius: " << m_radius;
+    return stream.str();
+}
+
+////////////// SetClearBorderSizeCmd //////////////
+
+VclType SetClearBorderSizeCmd::Type = VclType::SetClearBorderSize;
+
+SetClearBorderSizeCmd::RequestParams::RequestParams(float borderSize)
+    : m_borderSize(borderSize) {}
+
+void SetClearBorderSizeCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendFloat("borderSize", m_borderSize);
+}
+
+void SetClearBorderSizeCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_borderSize = reader.getFloat("borderSize");
+}
+
+bool SetClearBorderSizeCmd::RequestParams::equals(const SetClearBorderSizeCmd::RequestParams& other) const {
+    return m_borderSize == other.m_borderSize;
+}
+
+float SetClearBorderSizeCmd::RequestParams::getBorderSize() const {
+    return m_borderSize;
+}
+
+std::string SetClearBorderSizeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "borderSize: " << m_borderSize;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1142,6 +1229,27 @@ bool operator==(const GetRangeProcCmd::ReplyParams& lhs, const GetRangeProcCmd::
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetRangeProcCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetClearViewPositionCmd::RequestParams& lhs, const SetClearViewPositionCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetClearViewPositionCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetClearViewRadiusCmd::RequestParams& lhs, const SetClearViewRadiusCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetClearViewRadiusCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetClearBorderSizeCmd::RequestParams& lhs, const SetClearBorderSizeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetClearBorderSizeCmd::RequestParams& obj) {
     return os << obj.toString();
 }
 

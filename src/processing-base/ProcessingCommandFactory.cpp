@@ -89,6 +89,15 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::GetRangeProc:
         return mocca::make_unique<GetRangeProcHdl>(static_cast<const GetRangeProcRequest&>(request), session);
         break;
+    case VclType::SetClearViewPosition:
+        return mocca::make_unique<SetClearViewPositionHdl>(static_cast<const SetClearViewPositionRequest&>(request), session);
+        break;
+    case VclType::SetClearViewRadius:
+        return mocca::make_unique<SetClearViewRadiusHdl>(static_cast<const SetClearViewRadiusRequest&>(request), session);
+        break;
+    case VclType::SetClearBorderSize:
+        return mocca::make_unique<SetClearBorderSizeHdl>(static_cast<const SetClearBorderSizeRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

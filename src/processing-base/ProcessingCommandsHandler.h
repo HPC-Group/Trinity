@@ -232,5 +232,38 @@ private:
     RenderSession* m_session;
 };
 
+class SetClearViewPositionHdl : public ICommandHandler {
+public:
+    SetClearViewPositionHdl(const SetClearViewPositionRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetClearViewPositionRequest m_request;
+    RenderSession* m_session;
+};
+
+class SetClearViewRadiusHdl : public ICommandHandler {
+public:
+    SetClearViewRadiusHdl(const SetClearViewRadiusRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetClearViewRadiusRequest m_request;
+    RenderSession* m_session;
+};
+
+class SetClearBorderSizeHdl : public ICommandHandler {
+public:
+    SetClearBorderSizeHdl(const SetClearBorderSizeRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetClearBorderSizeRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }
