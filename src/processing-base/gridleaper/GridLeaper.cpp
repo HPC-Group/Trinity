@@ -546,7 +546,7 @@ void GridLeaper::compose(){
 
     m_targetBinder->Unbind();
 
-    auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size() * sizeof(Vec4ui8));
+    auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
     getVisStream()->put(std::move(f1));
 }
 
