@@ -47,6 +47,10 @@ public:
     Core::Math::Vec3f getLightDirection() const override;
     void setSampleRateModifier(float fSampleRateModifier) override;
     float getSampleRateModifier() const override;
+    void setBoundingBoxMode(BBoxMode mode) override;
+    BBoxMode getBoundingBoxMode() const override;
+    void setRendererSpecials(const std::vector<uint64_t>& params) override;
+    std::vector<uint64_t> getRendererSpecials() const override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

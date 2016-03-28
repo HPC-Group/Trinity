@@ -68,12 +68,11 @@ namespace trinity {
     float getSampleRateModifier() const override;
 
     // render parameters
-    virtual void setBoundingBoxMode(BBoxMode mode);
-    virtual BBoxMode getBoundingBoxMode() const;
+    void setBoundingBoxMode(BBoxMode mode) override;
+    BBoxMode getBoundingBoxMode() const override;
 
-    virtual void setRendererSpecials(const std::vector<uint64_t>& params);
-    virtual std::vector<uint64_t> getRendererSpecials() const;
-
+    void setRendererSpecials(const std::vector<uint64_t>& params) override;
+    std::vector<uint64_t> getRendererSpecials() const override;
 
     virtual void setBackgroundColors(std::pair<Core::Math::Vec3ui8, Core::Math::Vec3ui8> colors);
     virtual std::pair<Core::Math::Vec3ui8, Core::Math::Vec3ui8> getBackgroundColors() const;

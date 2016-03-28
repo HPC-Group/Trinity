@@ -27,6 +27,16 @@ const IRenderer::RenderModeMapper& IRenderer::renderModeMapper() {
     return mapper;
 }
 
+const IRenderer::BBoxModeMapper& IRenderer::bboxModeMapper() {
+    static BBoxModeMapper mapper;
+    if (mapper.empty()) {
+        mapper.insert(BBoxMode::BBM_NONE, "None");
+        mapper.insert(BBoxMode::BBM_DATASET, "Dataset");
+        mapper.insert(BBoxMode::BBM_BRICKS, "Bricks");
+    }
+    return mapper;
+}
+
 void IRenderer::PhongColorTriple::serialize(ISerialWriter& writer) const {
     writer.appendObject("ambient", ambient);
     writer.appendObject("diffuse", diffuse);

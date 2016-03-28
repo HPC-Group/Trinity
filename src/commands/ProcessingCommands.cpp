@@ -1243,6 +1243,150 @@ std::string GetSampleRateModifierCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// SetBoundingBoxModeCmd //////////////
+
+VclType SetBoundingBoxModeCmd::Type = VclType::SetBoundingBoxMode;
+
+SetBoundingBoxModeCmd::RequestParams::RequestParams(IRenderer::BBoxMode mode)
+    : m_mode(mode) {}
+
+void SetBoundingBoxModeCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendString("mode", IRenderer::bboxModeMapper().getByFirst(m_mode));
+}
+
+void SetBoundingBoxModeCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_mode = IRenderer::bboxModeMapper().getBySecond(reader.getString("mode"));
+}
+
+bool SetBoundingBoxModeCmd::RequestParams::equals(const SetBoundingBoxModeCmd::RequestParams& other) const {
+    return m_mode == other.m_mode;
+}
+
+IRenderer::BBoxMode SetBoundingBoxModeCmd::RequestParams::getMode() const {
+    return m_mode;
+}
+
+std::string SetBoundingBoxModeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "mode: " << IRenderer::bboxModeMapper().getByFirst(m_mode);
+    return stream.str();
+}
+
+////////////// GetBoundingBoxModeCmd //////////////
+
+VclType GetBoundingBoxModeCmd::Type = VclType::GetBoundingBoxMode;
+
+void GetBoundingBoxModeCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetBoundingBoxModeCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetBoundingBoxModeCmd::RequestParams::equals(const GetBoundingBoxModeCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetBoundingBoxModeCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetBoundingBoxModeCmd::ReplyParams::ReplyParams(const IRenderer::BBoxMode& result)
+    : m_result(result) {}
+
+void GetBoundingBoxModeCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendString("result", IRenderer::bboxModeMapper().getByFirst(m_result));
+}
+
+void GetBoundingBoxModeCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = IRenderer::bboxModeMapper().getBySecond(reader.getString("result"));
+}
+
+bool GetBoundingBoxModeCmd::ReplyParams::equals(const GetBoundingBoxModeCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+IRenderer::BBoxMode GetBoundingBoxModeCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetBoundingBoxModeCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << IRenderer::bboxModeMapper().getByFirst(m_result);
+    return stream.str();
+}
+
+////////////// SetRendererSpecialsCmd //////////////
+
+VclType SetRendererSpecialsCmd::Type = VclType::SetRendererSpecials;
+
+SetRendererSpecialsCmd::RequestParams::RequestParams(const std::vector<uint64_t>& params)
+    : m_params(params) {}
+
+void SetRendererSpecialsCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendIntVec("params", m_params);
+}
+
+void SetRendererSpecialsCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_params = reader.getUInt64Vec("params");
+}
+
+bool SetRendererSpecialsCmd::RequestParams::equals(const SetRendererSpecialsCmd::RequestParams& other) const {
+    return m_params == other.m_params;
+}
+
+std::vector<uint64_t> SetRendererSpecialsCmd::RequestParams::getParams() const {
+    return m_params;
+}
+
+std::string SetRendererSpecialsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "params: ";
+    ::operator<<(stream, m_params);
+    return stream.str();
+}
+
+////////////// GetRendererSpecialsCmd //////////////
+
+VclType GetRendererSpecialsCmd::Type = VclType::GetRendererSpecials;
+
+void GetRendererSpecialsCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetRendererSpecialsCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetRendererSpecialsCmd::RequestParams::equals(const GetRendererSpecialsCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetRendererSpecialsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetRendererSpecialsCmd::ReplyParams::ReplyParams(const std::vector<uint64_t>& result)
+    : m_result(result) {}
+
+void GetRendererSpecialsCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendIntVec("result", m_result);
+}
+
+void GetRendererSpecialsCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getUInt64Vec("result");
+}
+
+bool GetRendererSpecialsCmd::ReplyParams::equals(const GetRendererSpecialsCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+std::vector<uint64_t> GetRendererSpecialsCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetRendererSpecialsCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: ";
+    ::operator<<(stream, m_result);
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1559,6 +1703,46 @@ bool operator==(const GetSampleRateModifierCmd::ReplyParams& lhs, const GetSampl
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetSampleRateModifierCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetBoundingBoxModeCmd::RequestParams& lhs, const SetBoundingBoxModeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetBoundingBoxModeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBoundingBoxModeCmd::RequestParams& lhs, const GetBoundingBoxModeCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBoundingBoxModeCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetBoundingBoxModeCmd::ReplyParams& lhs, const GetBoundingBoxModeCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBoundingBoxModeCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetRendererSpecialsCmd::RequestParams& lhs, const SetRendererSpecialsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetRendererSpecialsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetRendererSpecialsCmd::RequestParams& lhs, const GetRendererSpecialsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetRendererSpecialsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetRendererSpecialsCmd::ReplyParams& lhs, const GetRendererSpecialsCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetRendererSpecialsCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

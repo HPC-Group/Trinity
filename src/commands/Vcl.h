@@ -83,6 +83,10 @@ enum class VclType {
     GetLightDirection,
     SetSampleRateModifier,
     GetSampleRateModifier,
+    SetBoundingBoxMode,
+    GetBoundingBoxMode,
+    SetRendererSpecials,
+    GetRendererSpecials,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -178,6 +182,10 @@ private:
         m_cmdMap.insert("GetLightDirection", VclType::GetLightDirection);
         m_cmdMap.insert("SetSampleRateModifier", VclType::SetSampleRateModifier);
         m_cmdMap.insert("GetSampleRateModifier", VclType::GetSampleRateModifier);
+        m_cmdMap.insert("SetBoundingBoxMode", VclType::SetBoundingBoxMode);
+        m_cmdMap.insert("GetBoundingBoxMode", VclType::GetBoundingBoxMode);
+        m_cmdMap.insert("SetRendererSpecials", VclType::SetRendererSpecials);
+        m_cmdMap.insert("GetRendererSpecials", VclType::GetRendererSpecials);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

@@ -76,6 +76,14 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<SetSampleRateModifierRequest>("req");
     } else if (type == GetSampleRateModifierRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetSampleRateModifierRequest>("req");
+    } else if (type == SetBoundingBoxModeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetBoundingBoxModeRequest>("req");
+    } else if (type == GetBoundingBoxModeRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetBoundingBoxModeRequest>("req");
+    } else if (type == SetRendererSpecialsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<SetRendererSpecialsRequest>("req");
+    } else if (type == GetRendererSpecialsRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetRendererSpecialsRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

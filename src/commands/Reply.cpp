@@ -47,6 +47,10 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetLightDirectionReply>("rep");
     } else if (type == GetSampleRateModifierReply::Ifc::Type) {
         return reader->getSerializablePtr<GetSampleRateModifierReply>("rep");
+    } else if (type == GetBoundingBoxModeReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetBoundingBoxModeReply>("rep");
+    } else if (type == GetRendererSpecialsReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetRendererSpecialsReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 

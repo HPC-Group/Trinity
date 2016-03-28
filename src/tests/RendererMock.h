@@ -34,4 +34,8 @@ public:
     MOCK_CONST_METHOD0(getLightDirection, Core::Math::Vec3f());
     MOCK_METHOD1(setSampleRateModifier, void(float));
     MOCK_CONST_METHOD0(getSampleRateModifier, float());
+    MOCK_METHOD1(setBoundingBoxMode, void(BBoxMode));
+    MOCK_CONST_METHOD0(getBoundingBoxMode, BBoxMode());
+    MOCK_METHOD1(setRendererSpecials, void(const std::vector<uint64_t>&));
+    MOCK_CONST_METHOD0(getRendererSpecials, std::vector<uint64_t>());
 };

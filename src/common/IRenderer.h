@@ -51,7 +51,10 @@ public:
 
     using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;
     static const RenderModeMapper& renderModeMapper();
-    
+
+    using BBoxModeMapper = mocca::BidirectionalMap<BBoxMode, std::string>;
+    static const BBoxModeMapper& bboxModeMapper();
+
     IRenderer() = default;
 
     // all renderers need a vis stream
@@ -105,6 +108,13 @@ public:
     // SAMPLE RATE FUNCTIONS
     virtual void setSampleRateModifier(float fSampleRateModifier) = 0;
     virtual float getSampleRateModifier() const = 0;
+
+    // render parameters
+    virtual void setBoundingBoxMode(BBoxMode mode) = 0;
+    virtual BBoxMode getBoundingBoxMode() const = 0;
+
+    virtual void setRendererSpecials(const std::vector<uint64_t>& params) = 0;
+    virtual std::vector<uint64_t> getRendererSpecials() const = 0;
 
 
     virtual void zoomCamera(float f) = 0;

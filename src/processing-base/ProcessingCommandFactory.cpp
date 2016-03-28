@@ -119,6 +119,18 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::GetSampleRateModifier:
         return mocca::make_unique<GetSampleRateModifierHdl>(static_cast<const GetSampleRateModifierRequest&>(request), session);
         break;
+    case VclType::SetBoundingBoxMode:
+        return mocca::make_unique<SetBoundingBoxModeHdl>(static_cast<const SetBoundingBoxModeRequest&>(request), session);
+        break;
+    case VclType::GetBoundingBoxMode:
+        return mocca::make_unique<GetBoundingBoxModeHdl>(static_cast<const GetBoundingBoxModeRequest&>(request), session);
+        break;
+    case VclType::SetRendererSpecials:
+        return mocca::make_unique<SetRendererSpecialsHdl>(static_cast<const SetRendererSpecialsRequest&>(request), session);
+        break;
+    case VclType::GetRendererSpecials:
+        return mocca::make_unique<GetRendererSpecialsHdl>(static_cast<const GetRendererSpecialsRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

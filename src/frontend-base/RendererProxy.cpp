@@ -217,4 +217,30 @@ float RendererProxy::getSampleRateModifier() const {
     return reply->getParams().getResult();
 }
 
+void RendererProxy::setBoundingBoxMode(BBoxMode mode) {
+    SetBoundingBoxModeCmd::RequestParams params(mode);
+    SetBoundingBoxModeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+IRenderer::BBoxMode RendererProxy::getBoundingBoxMode() const {
+    GetBoundingBoxModeCmd::RequestParams params;
+    GetBoundingBoxModeRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
+void RendererProxy::setRendererSpecials(const std::vector<uint64_t>& params) {
+    SetRendererSpecialsCmd::RequestParams requestParams(params);
+    SetRendererSpecialsRequest request(requestParams, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+std::vector<uint64_t> RendererProxy::getRendererSpecials() const {
+    GetRendererSpecialsCmd::RequestParams params;
+    GetRendererSpecialsRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

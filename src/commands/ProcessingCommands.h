@@ -1076,5 +1076,135 @@ bool operator==(const GetSampleRateModifierCmd::ReplyParams& lhs, const GetSampl
 std::ostream& operator<<(std::ostream& os, const GetSampleRateModifierCmd::ReplyParams& obj);
 using GetSampleRateModifierReply = ReplyTemplate<GetSampleRateModifierCmd>;
 
+struct SetBoundingBoxModeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(IRenderer::BBoxMode mode);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        IRenderer::BBoxMode getMode() const;
+
+    private:
+        IRenderer::BBoxMode m_mode;
+    };
+};
+
+bool operator==(const SetBoundingBoxModeCmd::RequestParams& lhs, const SetBoundingBoxModeCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetBoundingBoxModeCmd::RequestParams& obj);
+using SetBoundingBoxModeRequest = RequestTemplate<SetBoundingBoxModeCmd>;
+
+struct GetBoundingBoxModeCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const IRenderer::BBoxMode& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        IRenderer::BBoxMode getResult() const;
+
+    private:
+        IRenderer::BBoxMode m_result;
+    };
+};
+
+bool operator==(const GetBoundingBoxModeCmd::RequestParams& lhs, const GetBoundingBoxModeCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBoundingBoxModeCmd::RequestParams& obj);
+using GetBoundingBoxModeRequest = RequestTemplate<GetBoundingBoxModeCmd>;
+
+bool operator==(const GetBoundingBoxModeCmd::ReplyParams& lhs, const GetBoundingBoxModeCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBoundingBoxModeCmd::ReplyParams& obj);
+using GetBoundingBoxModeReply = ReplyTemplate<GetBoundingBoxModeCmd>;
+
+struct SetRendererSpecialsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const std::vector<uint64_t>& params);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        std::vector<uint64_t> getParams() const;
+
+    private:
+        std::vector<uint64_t> m_params;
+    };
+};
+
+bool operator==(const SetRendererSpecialsCmd::RequestParams& lhs, const SetRendererSpecialsCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetRendererSpecialsCmd::RequestParams& obj);
+using SetRendererSpecialsRequest = RequestTemplate<SetRendererSpecialsCmd>;
+
+struct GetRendererSpecialsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const std::vector<uint64_t>& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        std::vector<uint64_t> getResult() const;
+
+    private:
+        std::vector<uint64_t> m_result;
+    };
+};
+
+bool operator==(const GetRendererSpecialsCmd::RequestParams& lhs, const GetRendererSpecialsCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetRendererSpecialsCmd::RequestParams& obj);
+using GetRendererSpecialsRequest = RequestTemplate<GetRendererSpecialsCmd>;
+
+bool operator==(const GetRendererSpecialsCmd::ReplyParams& lhs, const GetRendererSpecialsCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetRendererSpecialsCmd::ReplyParams& obj);
+using GetRendererSpecialsReply = ReplyTemplate<GetRendererSpecialsCmd>;
+
 /* AUTOGEN CommandHeader */
 }

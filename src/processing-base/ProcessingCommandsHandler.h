@@ -342,5 +342,49 @@ private:
     RenderSession* m_session;
 };
 
+class SetBoundingBoxModeHdl : public ICommandHandler {
+public:
+    SetBoundingBoxModeHdl(const SetBoundingBoxModeRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetBoundingBoxModeRequest m_request;
+    RenderSession* m_session;
+};
+
+class GetBoundingBoxModeHdl : public ICommandHandler {
+public:
+    GetBoundingBoxModeHdl(const GetBoundingBoxModeRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetBoundingBoxModeRequest m_request;
+    RenderSession* m_session;
+};
+
+class SetRendererSpecialsHdl : public ICommandHandler {
+public:
+    SetRendererSpecialsHdl(const SetRendererSpecialsRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetRendererSpecialsRequest m_request;
+    RenderSession* m_session;
+};
+
+class GetRendererSpecialsHdl : public ICommandHandler {
+public:
+    GetRendererSpecialsHdl(const GetRendererSpecialsRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetRendererSpecialsRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

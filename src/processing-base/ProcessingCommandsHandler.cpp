@@ -303,4 +303,40 @@ std::unique_ptr<Reply> GetSampleRateModifierHdl::execute() {
     return mocca::make_unique<GetSampleRateModifierReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+SetBoundingBoxModeHdl::SetBoundingBoxModeHdl(const SetBoundingBoxModeRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetBoundingBoxModeHdl::execute() {
+    m_session->getRenderer().setBoundingBoxMode(m_request.getParams().getMode());
+    return nullptr;
+}
+
+GetBoundingBoxModeHdl::GetBoundingBoxModeHdl(const GetBoundingBoxModeRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetBoundingBoxModeHdl::execute() {
+    GetBoundingBoxModeCmd::ReplyParams params(m_session->getRenderer().getBoundingBoxMode());
+    return mocca::make_unique<GetBoundingBoxModeReply>(params, m_request.getRid(), m_session->getSid());
+}
+
+SetRendererSpecialsHdl::SetRendererSpecialsHdl(const SetRendererSpecialsRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetRendererSpecialsHdl::execute() {
+    m_session->getRenderer().setRendererSpecials(m_request.getParams().getParams());
+    return nullptr;
+}
+
+GetRendererSpecialsHdl::GetRendererSpecialsHdl(const GetRendererSpecialsRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetRendererSpecialsHdl::execute() {
+    GetRendererSpecialsCmd::ReplyParams params(m_session->getRenderer().getRendererSpecials());
+    return mocca::make_unique<GetRendererSpecialsReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */
