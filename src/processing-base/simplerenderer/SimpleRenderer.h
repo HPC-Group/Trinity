@@ -35,7 +35,7 @@ namespace trinity {
     void loadTransferFunction();
     void initFrameBuffers();
 
-    std::vector<Core::Math::Vec4ui8>  m_bufferData;
+    std::vector<std::array<uint8_t, 4>>  m_bufferData;
     
     std::unique_ptr<GLTexture1D>      m_texTransferFunc;
     std::unique_ptr<GLTexture3D>      m_texVolume;
