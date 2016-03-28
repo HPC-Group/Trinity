@@ -38,7 +38,7 @@ void AbstractRenderer::initValueDefaults(){
   m_fSampleRateModifier = 1.0f;
   m_BBoxMode = BBoxMode::BBM_NONE;
   m_RendererSpecials = std::vector<uint64_t>();
-  m_backgroundColors = std::make_pair(Vec3ui8(0,0,0),Vec3ui8(0,0,0));
+  m_backgroundColors = BackgroundColors(Vec3ui8(0,0,0),Vec3ui8(0,0,0));
   m_enableClipping = false;
   m_clipVolumeMin = Vec3f(0.0f,0.0f,0.0f);
   m_clipVolumeMax = Vec3f(1.0f,1.0f,1.0f);
@@ -245,12 +245,12 @@ std::vector<uint64_t> AbstractRenderer::getRendererSpecials() const {
   return m_RendererSpecials;
 }
 
-void AbstractRenderer::setBackgroundColors(std::pair<Vec3ui8, Vec3ui8> colors) {
+void AbstractRenderer::setBackgroundColors(const BackgroundColors& colors) {
   m_backgroundColors = colors;
   paint();
 }
 
-std::pair<Vec3ui8, Vec3ui8> AbstractRenderer::getBackgroundColors() const {
+IRenderer::BackgroundColors AbstractRenderer::getBackgroundColors() const {
   return m_backgroundColors;
 }
 

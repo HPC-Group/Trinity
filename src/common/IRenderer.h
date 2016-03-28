@@ -31,6 +31,12 @@ public:
         PL_RECOMPOSE
     };
 
+    using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;
+    static const RenderModeMapper& renderModeMapper();
+
+    using BBoxModeMapper = mocca::BidirectionalMap<BBoxMode, std::string>;
+    static const BBoxModeMapper& bboxModeMapper();
+
     struct PhongColorTriple : public SerializableTemplate<PhongColorTriple> {
         PhongColorTriple() = default;
         PhongColorTriple(const Core::Math::Vec4ui8& a, Core::Math::Vec4ui8& d, Core::Math::Vec4ui8& s)
@@ -49,11 +55,21 @@ public:
         void deserialize(const ISerialReader& reader) override;
     };
 
-    using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;
-    static const RenderModeMapper& renderModeMapper();
+    struct BackgroundColors : public SerializableTemplate<PhongColorTriple> {
+        BackgroundColors() = default;
+        BackgroundColors(const Core::Math::Vec3ui8& c1, const Core::Math::Vec3ui8& c2)
+            : colorOne(c1)
+            , colorTwo(c2) {}
 
-    using BBoxModeMapper = mocca::BidirectionalMap<BBoxMode, std::string>;
-    static const BBoxModeMapper& bboxModeMapper();
+        Core::Math::Vec3ui8 colorOne;
+        Core::Math::Vec3ui8 colorTwo;
+
+        bool equals(const BackgroundColors& other) const;
+        std::string toString() const;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+    };
 
     IRenderer() = default;
 
@@ -131,4 +147,6 @@ protected:
 bool operator==(const IRenderer::PhongColorTriple& lhs, const IRenderer::PhongColorTriple& rhs);
 std::ostream& operator<<(std::ostream& os, const IRenderer::PhongColorTriple& obj);
 
+bool operator==(const IRenderer::BackgroundColors& lhs, const IRenderer::BackgroundColors& rhs);
+std::ostream& operator<<(std::ostream& os, const IRenderer::BackgroundColors& obj);
 }

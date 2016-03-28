@@ -533,8 +533,8 @@ void GridLeaper::compose(){
     glCullFace(GL_BACK);
     m_programCompose->Enable();
     m_programCompose->SetTexture2D("compose", m_pFBOFinalColor->GetTextureHandle(), 0);
-    m_programCompose->Set("ColorOne", m_backgroundColors.first);
-    m_programCompose->Set("ColorTwo", m_backgroundColors.second);
+    m_programCompose->Set("ColorOne", m_backgroundColors.colorOne);
+    m_programCompose->Set("ColorTwo", m_backgroundColors.colorTwo);
 
     m_nearPlane->paint();
     m_programCompose->Disable();

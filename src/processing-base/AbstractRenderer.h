@@ -74,8 +74,8 @@ namespace trinity {
     void setRendererSpecials(const std::vector<uint64_t>& params) override;
     std::vector<uint64_t> getRendererSpecials() const override;
 
-    virtual void setBackgroundColors(std::pair<Core::Math::Vec3ui8, Core::Math::Vec3ui8> colors);
-    virtual std::pair<Core::Math::Vec3ui8, Core::Math::Vec3ui8> getBackgroundColors() const;
+    virtual void setBackgroundColors(const BackgroundColors& colors);
+    virtual BackgroundColors getBackgroundColors() const;
 
     // CLIPPING
     virtual void enableClipping(bool enable);
@@ -131,7 +131,7 @@ namespace trinity {
     float                                               m_fSampleRateModifier;
     BBoxMode                                            m_BBoxMode;
     std::vector<uint64_t>                               m_RendererSpecials;
-    std::pair<Core::Math::Vec3ui8, Core::Math::Vec3ui8> m_backgroundColors;
+    BackgroundColors                                    m_backgroundColors;
     bool                                                m_enableClipping;
     Core::Math::Vec3f                                   m_clipVolumeMin;
     Core::Math::Vec3f                                   m_clipVolumeMax;

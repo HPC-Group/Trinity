@@ -66,3 +66,31 @@ bool trinity::operator==(const IRenderer::PhongColorTriple& lhs, const IRenderer
 std::ostream& trinity::operator<<(std::ostream& os, const IRenderer::PhongColorTriple& obj) {
     return os << obj.toString();
 }
+
+void IRenderer::BackgroundColors::serialize(ISerialWriter& writer) const {
+    writer.appendObject("colorOne", colorOne);
+    writer.appendObject("colorTwo", colorTwo);
+}
+
+void IRenderer::BackgroundColors::deserialize(const ISerialReader& reader) {
+    colorOne = reader.getSerializable<Core::Math::Vec3ui8>("colorOne");
+    colorTwo = reader.getSerializable<Core::Math::Vec3ui8>("colorTwo");
+}
+
+bool IRenderer::BackgroundColors::equals(const BackgroundColors& other) const {
+    return colorOne == other.colorOne && colorTwo == other.colorTwo;
+}
+
+std::string IRenderer::BackgroundColors::toString() const {
+    std::stringstream stream;
+    stream << "colorOne: " << colorOne << "; colorTwo: " << colorTwo;
+    return stream.str();
+}
+
+bool trinity::operator==(const IRenderer::BackgroundColors& lhs, const IRenderer::BackgroundColors& rhs) {
+    return lhs.equals(rhs);
+}
+
+std::ostream& trinity::operator<<(std::ostream& os, const IRenderer::BackgroundColors& obj) {
+    return os << obj.toString();
+}
