@@ -177,4 +177,13 @@ std::unique_ptr<Reply> Get1DHistogramProcHdl::execute() {
     return mocca::make_unique<Get1DHistogramProcReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetIsoValueHdl::GetIsoValueHdl(const GetIsoValueRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetIsoValueHdl::execute() {
+    GetIsoValueCmd::ReplyParams params(m_session->getRenderer().getIsoValue(m_request.getParams().getSurfaceIndex()));
+    return mocca::make_unique<GetIsoValueReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

@@ -127,4 +127,11 @@ std::vector<uint64_t> RendererProxy::get1DHistogram() const {
     return reply->getParams().getResult();
 }
 
+float RendererProxy::getIsoValue(uint8_t surfaceIndex) const {
+    GetIsoValueCmd::RequestParams params(surfaceIndex);
+    GetIsoValueRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

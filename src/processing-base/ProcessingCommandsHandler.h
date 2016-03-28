@@ -188,5 +188,16 @@ private:
     RenderSession* m_session;
 };
 
+class GetIsoValueHdl : public ICommandHandler {
+public:
+    GetIsoValueHdl(const GetIsoValueRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetIsoValueRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

@@ -616,5 +616,51 @@ bool operator==(const Get1DHistogramProcCmd::ReplyParams& lhs, const Get1DHistog
 std::ostream& operator<<(std::ostream& os, const Get1DHistogramProcCmd::ReplyParams& obj);
 using Get1DHistogramProcReply = ReplyTemplate<Get1DHistogramProcCmd>;
 
+struct GetIsoValueCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint8_t surfaceIndex);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint8_t getSurfaceIndex() const;
+
+    private:
+        uint8_t m_surfaceIndex;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(float result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        float getResult() const;
+
+    private:
+        float m_result;
+    };
+};
+
+bool operator==(const GetIsoValueCmd::RequestParams& lhs, const GetIsoValueCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetIsoValueCmd::RequestParams& obj);
+using GetIsoValueRequest = RequestTemplate<GetIsoValueCmd>;
+
+bool operator==(const GetIsoValueCmd::ReplyParams& lhs, const GetIsoValueCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetIsoValueCmd::ReplyParams& obj);
+using GetIsoValueReply = ReplyTemplate<GetIsoValueCmd>;
+
 /* AUTOGEN CommandHeader */
 }

@@ -407,6 +407,9 @@ def tokenizeSource(source):
 			result.append(Token(TokenType.text, token))
 	return result
 
+def title(s):
+	return s[0].upper() + s[1:]
+	
 def untitle(s):
 	return s[0].lower() + s[1:]
 	
@@ -451,7 +454,7 @@ def makeGetterDeclarations(params):
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append(type + " get" + name.title() + "() const;")
+		items.append(type + " get" + title(name) + "() const;")
 	return "\n".join(items)
 	
 def makeGetterDefinitions(commandName, params, className):
@@ -459,7 +462,7 @@ def makeGetterDefinitions(commandName, params, className):
 	for i in xrange(0, len(params), 2):
 		type = params[i]
 		name = params[i + 1]
-		items.append(type + "  {{CommandNameCmd}}::" + className + "::get" + name.title() + "() const {\n return " + member(name) + ";\n}")
+		items.append(type + "  {{CommandNameCmd}}::" + className + "::get" + title(name) + "() const {\n return " + member(name) + ";\n}")
 	return "\n\n".join(items)
 	
 def makeInitializerList(params):

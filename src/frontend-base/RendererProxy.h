@@ -33,6 +33,7 @@ public:
     TransferFunction1D getDefault1DTransferFunction(uint64_t index) const override;
     uint64_t getDefault1DTransferFunctionCount() const override;
     std::vector<uint64_t> get1DHistogram() const override;
+    float getIsoValue(uint8_t surfaceIndex) const override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

@@ -711,6 +711,61 @@ std::vector<uint64_t> Get1DHistogramProcCmd::ReplyParams::getResult() const {
 
 std::string Get1DHistogramProcCmd::ReplyParams::toString() const {
     std::stringstream stream;
+    stream << "result: ";
+    ::operator<<(stream, m_result);
+    return stream.str();
+}
+
+////////////// GetIsoValueCmd //////////////
+
+VclType GetIsoValueCmd::Type = VclType::GetIsoValue;
+
+GetIsoValueCmd::RequestParams::RequestParams(uint8_t surfaceIndex)
+    : m_surfaceIndex(surfaceIndex) {}
+
+void GetIsoValueCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("surfaceIndex", m_surfaceIndex);
+}
+
+void GetIsoValueCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_surfaceIndex = reader.getUInt8("surfaceIndex");
+}
+
+bool GetIsoValueCmd::RequestParams::equals(const GetIsoValueCmd::RequestParams& other) const {
+    return m_surfaceIndex == other.m_surfaceIndex;
+}
+
+uint8_t GetIsoValueCmd::RequestParams::getSurfaceIndex() const {
+    return m_surfaceIndex;
+}
+
+std::string GetIsoValueCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "surfaceIndex: " << m_surfaceIndex;
+    return stream.str();
+}
+
+GetIsoValueCmd::ReplyParams::ReplyParams(float result)
+    : m_result(result) {}
+
+void GetIsoValueCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendFloat("result", m_result);
+}
+
+void GetIsoValueCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getFloat("result");
+}
+
+bool GetIsoValueCmd::ReplyParams::equals(const GetIsoValueCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+float GetIsoValueCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetIsoValueCmd::ReplyParams::toString() const {
+    std::stringstream stream;
     stream << "result: " << m_result;
     return stream.str();
 }
@@ -897,6 +952,19 @@ bool operator==(const Get1DHistogramProcCmd::ReplyParams& lhs, const Get1DHistog
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const Get1DHistogramProcCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetIsoValueCmd::RequestParams& lhs, const GetIsoValueCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetIsoValueCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetIsoValueCmd::ReplyParams& lhs, const GetIsoValueCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetIsoValueCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

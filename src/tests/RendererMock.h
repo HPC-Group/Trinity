@@ -6,7 +6,6 @@ class RendererMock : public trinity::IRenderer {
 public:
     MOCK_METHOD1(setRenderMode, void(IRenderer::ERenderMode));
     MOCK_METHOD1(supportsRenderMode, bool(IRenderer::ERenderMode));
-    MOCK_METHOD2(setIsoValue, void(uint8_t, float));
     MOCK_METHOD1(zoomCamera, void(float));
     MOCK_METHOD0(initContext, void());
     MOCK_METHOD0(deleteContext, void());
@@ -20,4 +19,6 @@ public:
     MOCK_CONST_METHOD1(getDefault1DTransferFunction, TransferFunction1D(uint64_t));
     MOCK_CONST_METHOD0(getDefault1DTransferFunctionCount, uint64_t());
     MOCK_CONST_METHOD0(get1DHistogram, std::vector<uint64_t>());
+    MOCK_METHOD2(setIsoValue, void(uint8_t, float));
+    MOCK_CONST_METHOD1(getIsoValue, float(uint8_t));
 };

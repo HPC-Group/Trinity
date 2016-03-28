@@ -48,6 +48,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetDefault1DTransferFunctionCountProcRequest>("req");
     } else if (type == Get1DHistogramProcRequest::Ifc::Type) {
         return reader->getSerializablePtr<Get1DHistogramProcRequest>("req");
+    } else if (type == GetIsoValueRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetIsoValueRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 
