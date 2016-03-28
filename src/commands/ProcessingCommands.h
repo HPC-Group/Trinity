@@ -460,5 +460,30 @@ bool operator==(const GetTimestepCountProcCmd::ReplyParams& lhs, const GetTimest
 std::ostream& operator<<(std::ostream& os, const GetTimestepCountProcCmd::ReplyParams& obj);
 using GetTimestepCountProcReply = ReplyTemplate<GetTimestepCountProcCmd>;
 
+struct Set1DTransferFunctionCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const TransferFunction1D& tf);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        TransferFunction1D getTf() const;
+
+    private:
+        TransferFunction1D m_tf;
+    };
+};
+
+bool operator==(const Set1DTransferFunctionCmd::RequestParams& lhs, const Set1DTransferFunctionCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const Set1DTransferFunctionCmd::RequestParams& obj);
+using Set1DTransferFunctionRequest = RequestTemplate<Set1DTransferFunctionCmd>;
+
 /* AUTOGEN CommandHeader */
 }

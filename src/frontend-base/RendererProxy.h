@@ -29,6 +29,7 @@ public:
     int getRemoteSessionId() const;
     uint64_t getModalityCount() const override;
     uint64_t getTimestepCount() const override;
+    void set1DTransferFunction(const TransferFunction1D& tf) override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

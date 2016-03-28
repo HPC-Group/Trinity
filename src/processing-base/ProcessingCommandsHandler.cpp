@@ -139,4 +139,13 @@ std::unique_ptr<Reply> GetTimestepCountProcHdl::execute() {
     return mocca::make_unique<GetTimestepCountProcReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+Set1DTransferFunctionHdl::Set1DTransferFunctionHdl(const Set1DTransferFunctionRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> Set1DTransferFunctionHdl::execute() {
+    m_session->getRenderer().set1DTransferFunction(m_request.getParams().getTf());
+    return nullptr;
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

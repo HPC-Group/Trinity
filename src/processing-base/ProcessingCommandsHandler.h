@@ -145,5 +145,16 @@ private:
     RenderSession* m_session;
 };
 
+class Set1DTransferFunctionHdl : public ICommandHandler {
+public:
+    Set1DTransferFunctionHdl(const Set1DTransferFunctionRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    Set1DTransferFunctionRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

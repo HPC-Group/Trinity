@@ -30,7 +30,7 @@ namespace trinity {
     uint64_t getTimestepCount() const override;
     
     // 1D TF
-    virtual void set1DTransferFunction(const TransferFunction1D& tf);
+    void set1DTransferFunction(const TransferFunction1D& tf) override;
     virtual TransferFunction1D getDefault1DTransferFunction(uint64_t index) const;
     virtual uint64_t getDefault1DTransferFunctionCount() const;
     virtual std::vector<uint64_t> get1DHistogram() const;

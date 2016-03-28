@@ -65,6 +65,7 @@ enum class VclType {
     GetDomainSize,
     GetModalityCountProc,
     GetTimestepCountProc,
+    Set1DTransferFunction,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -142,6 +143,7 @@ private:
         m_cmdMap.insert("GetActiveTimestep", VclType::GetActiveTimestep);
         m_cmdMap.insert("GetModalityCountProc", VclType::GetModalityCountProc);
         m_cmdMap.insert("GetTimestepCountProc", VclType::GetTimestepCountProc);
+        m_cmdMap.insert("Set1DTransferFunction", VclType::Set1DTransferFunction);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

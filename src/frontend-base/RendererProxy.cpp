@@ -100,4 +100,10 @@ uint64_t RendererProxy::getTimestepCount() const {
     return reply->getParams().getResult();
 }
 
+void RendererProxy::set1DTransferFunction(const TransferFunction1D& tf) {
+    Set1DTransferFunctionCmd::RequestParams params(tf);
+    Set1DTransferFunctionRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
 /* AUTOGEN RendererProxyImpl */

@@ -63,6 +63,9 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::GetTimestepCountProc:
         return mocca::make_unique<GetTimestepCountProcHdl>(static_cast<const GetTimestepCountProcRequest&>(request), session);
         break;
+    case VclType::Set1DTransferFunction:
+        return mocca::make_unique<Set1DTransferFunctionHdl>(static_cast<const Set1DTransferFunctionRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

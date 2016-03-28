@@ -539,6 +539,35 @@ std::string GetTimestepCountProcCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// Set1DTransferFunctionCmd //////////////
+
+VclType Set1DTransferFunctionCmd::Type = VclType::Set1DTransferFunction;
+
+Set1DTransferFunctionCmd::RequestParams::RequestParams(const TransferFunction1D& tf)
+    : m_tf(tf) {}
+
+void Set1DTransferFunctionCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("tf", m_tf);
+}
+
+void Set1DTransferFunctionCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_tf = reader.getSerializable<TransferFunction1D>("tf");
+}
+
+bool Set1DTransferFunctionCmd::RequestParams::equals(const Set1DTransferFunctionCmd::RequestParams& other) const {
+    return m_tf == other.m_tf;
+}
+
+TransferFunction1D Set1DTransferFunctionCmd::RequestParams::getTf() const {
+    return m_tf;
+}
+
+std::string Set1DTransferFunctionCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "tf: " << m_tf;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -672,6 +701,13 @@ bool operator==(const GetTimestepCountProcCmd::ReplyParams& lhs, const GetTimest
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetTimestepCountProcCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const Set1DTransferFunctionCmd::RequestParams& lhs, const Set1DTransferFunctionCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const Set1DTransferFunctionCmd::RequestParams& obj) {
     return os << obj.toString();
 }
 

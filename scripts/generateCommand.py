@@ -570,7 +570,7 @@ def makeCtorDeclaration(params, ctorName):
 		return ctorName + "(" + makeArgumentList(params) + ")"	
 
 def makeInterfaceOverride(input):
-	return "{{ReturnType}} {{InterfaceMethod}} ({{RequestArguments}}) const override;"
+	return "{{ReturnType}} {{InterfaceMethod}} ({{RequestArgumentsList}}) const override;"
 		
 def expandVariable(variable, input):
 	global templates
