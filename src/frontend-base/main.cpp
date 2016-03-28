@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
 
     renderer->initContext();
     // sending commands
-    renderer->setIsoValue(22);
+    renderer->setIsoValue(0, 22);
 
     //wait for 2 seconds
     std::this_thread::sleep_for(std::chrono::seconds(2));

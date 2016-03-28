@@ -12,13 +12,13 @@ protected:
 };
 
 TEST_F(RequestTest, GetType) {
-    SetIsoValueCmd::RequestParams requestParams(3.14f);
+    SetIsoValueCmd::RequestParams requestParams(2, 3.14f);
     SetIsoValueRequest request(requestParams, 0, 0);
     ASSERT_EQ(VclType::SetIsoValue, request.getType());
 }
 
 TEST_F(RequestTest, Serialization) {
-    SetIsoValueCmd::RequestParams requestParams(3.14f);
+    SetIsoValueCmd::RequestParams requestParams(2, 3.14f);
     SetIsoValueRequest request(requestParams, 0, 0);
     auto serialized = Request::createByteArray(request);
 
@@ -29,7 +29,7 @@ TEST_F(RequestTest, Serialization) {
 }
 
 TEST_F(RequestTest, SerializationWithBinary) {
-    SetIsoValueCmd::RequestParams requestParams(3.14f);
+    SetIsoValueCmd::RequestParams requestParams(2, 3.14f);
     auto binary = std::make_shared<std::vector<uint8_t>>();
     binary->push_back(0xAA);
     binary->push_back(0xBB);

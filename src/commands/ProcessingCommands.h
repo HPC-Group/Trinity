@@ -93,17 +93,19 @@ struct SetIsoValueCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
-        explicit RequestParams(float value);
+        explicit RequestParams(uint8_t surfaceIndex, float value);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
+        uint8_t getSurfaceIndex() const;
         float getIsoValue() const;
 
         std::string toString() const;
         bool equals(const RequestParams& other) const;
 
     private:
+        uint8_t m_surfaceIndex;
         float m_isoValue;
     };
 };

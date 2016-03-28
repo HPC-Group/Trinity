@@ -38,12 +38,11 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
 
 SetIsoValueHdl::SetIsoValueHdl(const SetIsoValueRequest& request, RenderSession* session)
     : m_session(session)
-    , m_isoValue(request.getParams().getIsoValue())
-    , m_sid(request.getSid()) {}
+    , m_request(request) {}
 
 std::unique_ptr<Reply> SetIsoValueHdl::execute() {
     auto& renderer = m_session->getRenderer();
-    renderer.setIsoValue(m_isoValue);
+    renderer.setIsoValue(m_request.getParams().getSurfaceIndex(), m_request.getParams().getIsoValue());
     return nullptr;
 }
 

@@ -47,7 +47,7 @@ TEST_F(ProcessingCommandsTest, InitProcessingSessionCmd) {
 }
 
 TEST_F(ProcessingCommandsTest, SetIsoValueCmd) {
-    SetIsoValueCmd::RequestParams target(3.14f);
+    SetIsoValueCmd::RequestParams target(17, 3.14f);
     auto result = trinity::testing::writeAndRead(target);
     ASSERT_EQ(target, result);
 }

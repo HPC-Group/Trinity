@@ -135,15 +135,22 @@ std::string InitProcessingSessionCmd::ReplyParams::toString() const {
 
 VclType SetIsoValueCmd::Type = VclType::SetIsoValue;
 
-SetIsoValueCmd::RequestParams::RequestParams(float value)
-    : m_isoValue(value) {}
+SetIsoValueCmd::RequestParams::RequestParams(uint8_t surfaceIndex, float value)
+    : m_surfaceIndex(surfaceIndex)
+    , m_isoValue(value) {}
 
 void SetIsoValueCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("surfaceIndex", m_surfaceIndex);
     writer.appendFloat("isovalue", m_isoValue);
 }
 
 void SetIsoValueCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_surfaceIndex = reader.getUInt8("surfaceIndex");
     m_isoValue = reader.getFloat("isovalue");
+}
+
+uint8_t SetIsoValueCmd::RequestParams::getSurfaceIndex() const {
+    return m_surfaceIndex;
 }
 
 float SetIsoValueCmd::RequestParams::getIsoValue() const {
@@ -151,12 +158,12 @@ float SetIsoValueCmd::RequestParams::getIsoValue() const {
 }
 
 bool SetIsoValueCmd::RequestParams::equals(const RequestParams& other) const {
-    return m_isoValue == other.m_isoValue;
+    return m_surfaceIndex == other.m_surfaceIndex && m_isoValue == other.m_isoValue;
 }
 
 std::string SetIsoValueCmd::RequestParams::toString() const {
     std::stringstream stream;
-    stream << "isoValue: " << m_isoValue;
+    stream << "surfaceIndex :" << m_surfaceIndex << "; isoValue: " << m_isoValue;
     return stream.str();
 }
 

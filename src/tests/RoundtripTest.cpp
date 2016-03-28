@@ -125,7 +125,7 @@ TEST_F(NodeTest, SetIsoValueOnSimpleRendererTest) {
 
     StreamingParams params(2048, 1000);
     auto renderer = proxy.initRenderer(VclType::DummyRenderer, "FractalData@3", ioEndpoint, params);
-    renderer->setIsoValue(123);
+    renderer->setIsoValue(0, 123);
 
     processingNode->join();
     ioNode->join();
@@ -165,7 +165,7 @@ TEST_F(NodeTest, CallLodFromDummyRendererTest) {
     StreamingParams params(2048, 1000);
     auto renderer = proxy.initRenderer(VclType::DummyRenderer, "FractalData@3", ioEndpoint, params);
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    renderer->setIsoValue(123);
+    renderer->setIsoValue(0, 123);
 
     processingNode->join();
     ioNode->join();

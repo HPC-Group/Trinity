@@ -44,10 +44,7 @@ namespace trinity {
      */
 
     // ISO-SURFACE FUNCTIONS
-
-    virtual void setIsoValue(float fIsoValue) override {setIsoValue(0,fIsoValue);}   // HACK: needs to be replaced by the function below
-    virtual void setIsoValue(uint8_t surfaceIndex, float fIsoValue) ;
-
+    void setIsoValue(uint8_t surfaceIndex, float fIsoValue) override;
     virtual float getIsoValue(uint8_t surfaceIndex) const;
     virtual void setIsosurfaceColor(uint8_t surfaceIndex, const Core::Math::Vec3ui8& vColor);
     virtual Core::Math::Vec3ui8 getIsosurfaceColor(uint8_t surfaceIndex) const;

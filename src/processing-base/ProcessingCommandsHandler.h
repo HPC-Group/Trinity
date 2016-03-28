@@ -31,8 +31,7 @@ public:
 
 private:
     RenderSession* m_session;
-    float m_isoValue;
-    int m_sid;
+    SetIsoValueRequest m_request;
 };
 
 class InitContextHdl : public ICommandHandler {

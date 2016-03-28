@@ -71,7 +71,10 @@ public:
     virtual uint64_t getDefault1DTransferFunctionCount() const = 0;
     virtual std::vector<uint64_t> get1DHistogram() const = 0;
 
-    virtual void setIsoValue(float) = 0;
+    // ISO-SURFACE FUNCTIONS
+    virtual void setIsoValue(uint8_t surfaceIndex, float) = 0;
+
+
     virtual void zoomCamera(float f) = 0;
 
 	// postponed init and delete due to opengl specific things

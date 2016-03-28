@@ -149,7 +149,7 @@ void Window::on_PRconnectIP_clicked() {
 static float rot = 0.0f;
 void Window::update() {
   if (_initDone && _renderer) {
-    _renderer->setIsoValue(rot);
+    _renderer->setIsoValue(0, rot);
     rot += 0.01f;
     
     auto frameNullable = _renderer->getVisStream()->get();

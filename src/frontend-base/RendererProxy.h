@@ -22,7 +22,7 @@ public:
     void setActiveTimestep(uint64_t timestep) override;
     uint64_t getActiveTimestep() const override;
 
-    void setIsoValue(float) override;
+    void setIsoValue(uint8_t, float) override;
     void initContext() override;
     void deleteContext() override{}; // that does not to go over network... bad design, however
     void zoomCamera(float f) override;

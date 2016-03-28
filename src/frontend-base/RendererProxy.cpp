@@ -28,8 +28,8 @@ int RendererProxy::getRemoteSessionId() const {
     return m_remoteSid;
 }
 
-void RendererProxy::setIsoValue(float value) {
-    SetIsoValueCmd::RequestParams requestParams(value);
+void RendererProxy::setIsoValue(uint8_t surfaceIndex, float value) {
+    SetIsoValueCmd::RequestParams requestParams(surfaceIndex, value);
     SetIsoValueRequest request(requestParams, IDGenerator::nextID(), m_remoteSid);
     m_inputChannel.sendRequest(request);
 }
