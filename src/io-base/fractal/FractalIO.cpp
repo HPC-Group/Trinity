@@ -11,7 +11,7 @@ using namespace trinity;
 FractalIO::FractalIO(const std::string& fileId, const IListData& listData)
 : m_fractalGenerator(nullptr)
 #ifdef CACHE_BRICKS
-, m_bc(".","fractal")
+, m_bc(".",fileId)
 #endif
 {
   LINFO("(fractalio) initializing fractal for file id " + fileId);
