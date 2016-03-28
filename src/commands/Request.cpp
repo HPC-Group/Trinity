@@ -44,6 +44,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<Set1DTransferFunctionRequest>("req");
     } else if (type == GetDefault1DTransferFunctionProcRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionProcRequest>("req");
+    } else if (type == GetDefault1DTransferFunctionCountProcRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetDefault1DTransferFunctionCountProcRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

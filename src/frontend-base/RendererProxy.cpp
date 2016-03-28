@@ -113,4 +113,11 @@ TransferFunction1D RendererProxy::getDefault1DTransferFunction(uint64_t index) c
     return reply->getParams().getResult();
 }
 
+uint64_t RendererProxy::getDefault1DTransferFunctionCount() const {
+    GetDefault1DTransferFunctionCountProcCmd::RequestParams params;
+    GetDefault1DTransferFunctionCountProcRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

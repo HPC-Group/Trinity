@@ -70,6 +70,10 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
         return mocca::make_unique<GetDefault1DTransferFunctionProcHdl>(static_cast<const GetDefault1DTransferFunctionProcRequest&>(request),
                                                                        session);
         break;
+    case VclType::GetDefault1DTransferFunctionCountProc:
+        return mocca::make_unique<GetDefault1DTransferFunctionCountProcHdl>(
+            static_cast<const GetDefault1DTransferFunctionCountProcRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

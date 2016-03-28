@@ -167,5 +167,16 @@ private:
     RenderSession* m_session;
 };
 
+class GetDefault1DTransferFunctionCountProcHdl : public ICommandHandler {
+public:
+    GetDefault1DTransferFunctionCountProcHdl(const GetDefault1DTransferFunctionCountProcRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetDefault1DTransferFunctionCountProcRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }

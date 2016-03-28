@@ -31,6 +31,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetTimestepCountProcReply>("rep");
     } else if (type == GetDefault1DTransferFunctionProcReply::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionProcReply>("rep");
+    } else if (type == GetDefault1DTransferFunctionCountProcReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetDefault1DTransferFunctionCountProcReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 

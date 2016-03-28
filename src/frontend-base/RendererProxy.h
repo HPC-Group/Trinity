@@ -31,6 +31,7 @@ public:
     uint64_t getTimestepCount() const override;
     void set1DTransferFunction(const TransferFunction1D& tf) override;
     TransferFunction1D getDefault1DTransferFunction(uint64_t index) const override;
+    uint64_t getDefault1DTransferFunctionCount() const override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

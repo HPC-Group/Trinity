@@ -32,7 +32,7 @@ namespace trinity {
     // 1D TF
     void set1DTransferFunction(const TransferFunction1D& tf) override;
     TransferFunction1D getDefault1DTransferFunction(uint64_t index) const override;
-    virtual uint64_t getDefault1DTransferFunctionCount() const;
+    uint64_t getDefault1DTransferFunctionCount() const override;
     virtual std::vector<uint64_t> get1DHistogram() const;
 
     /*

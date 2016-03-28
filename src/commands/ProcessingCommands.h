@@ -532,5 +532,47 @@ bool operator==(const GetDefault1DTransferFunctionProcCmd::ReplyParams& lhs, con
 std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionProcCmd::ReplyParams& obj);
 using GetDefault1DTransferFunctionProcReply = ReplyTemplate<GetDefault1DTransferFunctionProcCmd>;
 
+struct GetDefault1DTransferFunctionCountProcCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(uint64_t result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        uint64_t getResult() const;
+
+    private:
+        uint64_t m_result;
+    };
+};
+
+bool operator==(const GetDefault1DTransferFunctionCountProcCmd::RequestParams& lhs,
+                const GetDefault1DTransferFunctionCountProcCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountProcCmd::RequestParams& obj);
+using GetDefault1DTransferFunctionCountProcRequest = RequestTemplate<GetDefault1DTransferFunctionCountProcCmd>;
+
+bool operator==(const GetDefault1DTransferFunctionCountProcCmd::ReplyParams& lhs,
+                const GetDefault1DTransferFunctionCountProcCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCountProcCmd::ReplyParams& obj);
+using GetDefault1DTransferFunctionCountProcReply = ReplyTemplate<GetDefault1DTransferFunctionCountProcCmd>;
+
 /* AUTOGEN CommandHeader */
 }
