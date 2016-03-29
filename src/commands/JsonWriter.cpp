@@ -53,42 +53,49 @@ void JsonWriter::appendObject(const std::string& key, const ISerializable& obj) 
 }
 
 void JsonWriter::appendFloatVec(const std::string& key, const std::vector<float>& vec) {
+    m_root[key] = JsonCpp::Value(JsonCpp::arrayValue);
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = vec[i];
     }
 }
 
 void JsonWriter::appendIntVec(const std::string& key, const std::vector<uint8_t>& vec) {
+    m_root[key] = JsonCpp::Value(JsonCpp::arrayValue);
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = JsonCpp::UInt(vec[i]); // uint8 not supported by JSON
     }
 }
 
 void JsonWriter::appendIntVec(const std::string& key, const std::vector<int32_t>& vec) {
+    m_root[key] = JsonCpp::Value(JsonCpp::arrayValue);
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = JsonCpp::Int(vec[i]);
     }
 }
 
 void JsonWriter::appendIntVec(const std::string& key, const std::vector<uint64_t>& vec) {
+    m_root[key] = JsonCpp::Value(JsonCpp::arrayValue);
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = JsonCpp::UInt64(vec[i]);
     }
 }
 
 void JsonWriter::appendBoolVec(const std::string& key, const std::vector<bool>& vec) {
+    m_root[key] = JsonCpp::Value(JsonCpp::arrayValue);
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = JsonCpp::Value(vec[i]);
     }
 }
 
 void JsonWriter::appendStringVec(const std::string& key, const std::vector<std::string>& vec) {
+    m_root[key] = JsonCpp::Value(JsonCpp::arrayValue);
     for (uint32_t i = 0; i < vec.size(); ++i) {
         m_root[key][i] = vec[i];
     }
 }
 
 void JsonWriter::appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) {
+    m_root[key] = JsonCpp::Value(JsonCpp::arrayValue);
     for (uint32_t i = 0; i < vec.size(); ++i) {
         JsonWriter subObject;
         vec[i]->serialize(subObject);

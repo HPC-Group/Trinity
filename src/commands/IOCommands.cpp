@@ -54,13 +54,7 @@ void ListFilesCmd::ReplyParams::serialize(ISerialWriter& writer) const {
 }
 
 void ListFilesCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-
-    // fixme apparently, we cannot receive empty vectors
-    try {
-        m_ioData = reader.getSerializableVec<IOData>("iodata");
-    } catch (const TrinityError& e) {
-        LWARNING("(list) list data might be empty or corrupted: " << e.what());
-    }
+    m_ioData = reader.getSerializableVec<IOData>("iodata");
 }
 
 std::vector<IOData> ListFilesCmd::ReplyParams::getIOData() const {

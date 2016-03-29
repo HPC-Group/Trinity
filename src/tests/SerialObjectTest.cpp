@@ -155,6 +155,16 @@ TYPED_TEST(SerialObjectTest, VectorSubObject) {
     ASSERT_EQ("World", res[1].myString);
 }
 
+TYPED_TEST(SerialObjectTest, EmptyVector) {
+    TypeParam factory;
+    auto writer = factory.createWriter();
+    writer->appendIntVec("int32", std::vector<int>{});
+    auto serialized = writer->write();
+    auto reader = factory.createReader(serialized);
+    auto res = reader->getInt32Vec("int32");
+    ASSERT_TRUE(res.empty());
+}
+
 TYPED_TEST(SerialObjectTest, BinaryData) {
     TypeParam factory;
     auto writer = factory.createWriter();
