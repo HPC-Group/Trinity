@@ -98,9 +98,6 @@ namespace trinity {
     void startRendering() override;
     void stopRendering() override;
 
-    bool isIdle() override;
-    bool proceedRendering() override;
-
     /*******  Non RPC IRenderer Interface **********/
 
     virtual void initContext() override = 0;
