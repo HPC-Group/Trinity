@@ -99,6 +99,8 @@ void AbstractRenderer::set1DTransferFunction(const TransferFunction1D& tf){
   if  (! (m_1Dtf == tf)) {
     m_1Dtf = tf;
     paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
+  } else {
+    paint(IRenderer::PaintLevel::PL_RECOMPOSE);
   }
 }
 
@@ -119,23 +121,25 @@ std::vector<uint64_t> AbstractRenderer::get1DHistogram() const {
  // TODO: 2D TF
 
  void AbstractRenderer::set2DTransferFunction(const TransferFunction2D& tf){
- if  (! m_2Dtf == tf) {
-  m_2Dtf = tf;
-  paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
- }
+   if  (! m_2Dtf == tf) {
+     m_2Dtf = tf;
+     paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
+   } else {
+     paint(IRenderer::PaintLevel::PL_RECOMPOSE);
+   }
  }
 
  TransferFunction2D
  AbstractRenderer::getDefaul2DTransferFunction(uint64_t index) const{
- return m_io->getDefaul21DTransferFunction(index);
+   return m_io->getDefaul21DTransferFunction(index);
  }
 
  const uint64_t AbstractRenderer::getDefault2DTransferFunctionCount() const{
- return m_io->getDefault2DTransferFunctionCount();
+   return m_io->getDefault2DTransferFunctionCount();
  }
 
  std::vector<uint64_t> AbstractRenderer::get2DHistogram() const {
- return m_io->get2DHistogram();
+   return m_io->get2DHistogram();
  }
  */
 
@@ -150,6 +154,8 @@ void AbstractRenderer::setIsoValue(uint8_t surfaceIndex, float fIsoValue) {
   if (m_isoValue[surfaceIndex] != fIsoValue) {
     m_isoValue[surfaceIndex] = fIsoValue;
     paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
+  } else {
+    paint(IRenderer::PaintLevel::PL_RECOMPOSE);
   }
   */
 
