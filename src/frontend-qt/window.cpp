@@ -130,7 +130,6 @@ void Window::initRenderer() {
   
   std::this_thread::sleep_for(std::chrono::seconds(1));
   _initDone = true;
-  m_renderer->setIsoValue(0, .0f);
 }
 
 void Window::on_IOconnectIP_clicked() {
@@ -149,7 +148,6 @@ void Window::on_PRconnectIP_clicked() {
 }
 
 void Window::update() {
-  static float rot = 0.0f;
   if (_initDone && m_renderer) {
     auto frameNullable = m_renderer->getVisStream()->get();
     if (!frameNullable.isNull()) {
