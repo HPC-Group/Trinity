@@ -122,6 +122,7 @@ void Window::initRenderer() {
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
     _initDone = true;
+    m_renderer->setIsoValue(0, .0f);
 }
 
 void Window::on_IOconnectIP_clicked() {
