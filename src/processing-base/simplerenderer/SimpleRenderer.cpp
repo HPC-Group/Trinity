@@ -227,7 +227,6 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   
   m_context->makeCurrent();
 
-  LERROR("(p) paint simple!");
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();  
   GL_CHECK(glViewport(0, 0, width, height));
