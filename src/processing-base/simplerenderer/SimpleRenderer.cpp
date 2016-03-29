@@ -227,7 +227,7 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   
   m_context->makeCurrent();
 
-  
+  LERROR("(p) paint simple!");
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();  
   GL_CHECK(glViewport(0, 0, width, height));
@@ -282,8 +282,11 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   m_raycastShader->Disable();
   
   m_backfaceBuffer->FinishRead();
-  
+  //auto t1 = std::chrono::high_resolution_clock::now();
   m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
+  //auto t2 = std::chrono::high_resolution_clock::now();
+  //LINFO("Time " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
+
   
   m_targetBinder->Unbind();
   

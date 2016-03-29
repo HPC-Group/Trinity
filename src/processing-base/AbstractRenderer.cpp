@@ -146,9 +146,17 @@ void AbstractRenderer::setIsoValue(uint8_t surfaceIndex, float fIsoValue) {
     throw TrinityError("invalid surfaceIndex", __FILE__, __LINE__);
   }
 
+  /* original jens
   if (m_isoValue[surfaceIndex] != fIsoValue) {
     m_isoValue[surfaceIndex] = fIsoValue;
     paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
+  }
+  */
+
+  // andrey, otherwise simplerenderer won't work
+  if (true) {
+	  m_isoValue[surfaceIndex] = fIsoValue;
+	  paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
   }
 }
 

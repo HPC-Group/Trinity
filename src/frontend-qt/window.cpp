@@ -109,7 +109,7 @@ void Window::initRenderer() {
                       ui->IOaddressPortedit->text().toStdString());
   
   // the file id will be available after implementing the listdata command
-  std::string fileId = "FractalData@5a"; // fixme: should be selectable from the gui
+  std::string fileId = "FractalData@3a"; // fixme: should be selectable from the gui
   //std::string fileId = "UVFData@c60.uvf"; // fixme: should be selectable from the gui
   
   printDataTree("FractalData");
@@ -120,7 +120,7 @@ void Window::initRenderer() {
   try {
     _renderer = _processingNode->initRenderer(trinity::VclType::SimpleRenderer,
                                               fileId, endpointIO, params);
-    _renderer->initContext();
+   // _renderer->initContext();
   } catch (const trinity::TrinityError&) {
     LERROR("(qt) no connection to a renderer");
   }

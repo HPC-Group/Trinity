@@ -43,7 +43,7 @@ void VisStreamSender::run() {
     }
 
     LINFO("(p) vis sender was bound");
-    JPEGEncoder jpeg(75, JPEGEncoder::Subsample_422);
+    JPEGEncoder jpeg(75, JPEGEncoder::Subsample_420);
     
     while (!isInterrupted()) {
         if(!m_connection->isConnected()) {
@@ -58,8 +58,10 @@ void VisStreamSender::run() {
                 auto const& params = m_visStream->getStreamingParams();
                 frameNullable = jpeg.encode(frameNullable, params.getResX(), params.getResY());
                 
-                if(!frameNullable.isNull())
-                    m_connection->send(std::move(frameNullable.release()));
+				if (!frameNullable.isNull()) {
+					m_connection->send(std::move(frameNullable.release()));
+					//LINFO("(p) frame out");
+				}
  	} catch (const mocca::net::NetworkError& err) {
                 LERROR("(p) cannot send vis: " << err.what());
 		interrupt();

@@ -33,6 +33,8 @@ void AbstractSession::run() {
         return;
     }
 
+
+	performThreadSpecificInit();
     try {
         while (!isInterrupted()) {
             auto bytepacket = m_controlConnection->receive();

@@ -272,7 +272,7 @@
         var y = 0.0;
         var deltax = 0.0;
         var deltay = 0.0;
-        var rot = 0.0;
+        var rot = 0.00;
 
 
 
@@ -296,7 +296,12 @@
             },
 
             sendRotation() {
-                TRI_Frontend.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "isovalue": ' + rot + ' } } }');
+                
+               TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"direction":{"x": ' +rot+ ',"y":0,"z":0}},"rid":108,"sid":1},"type":"MoveCamera"}');
+                rot = 0.0;
+                
+                
+                //TRI_Frontend.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "surfaceIndex": 0, "isovalue": ' + rot + ' } } }');
             },
 
 
@@ -326,8 +331,9 @@
             onOpen: function(evt) {
                 console.log("Websocket CONNECTED to " + TRI_Frontend.VisControlConnector.controlConnectionUri);
                 $("#div_connect_success").fadeIn('slow', TRI_Frontend.hideConnectMessage);
-                TRI_Frontend.VisControlConnector.doSend('{"type": "InitContext", "req": { "rid": 1, "sid": 3, "params": { "dummy": 1} } }');
-                TRI_Frontend.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "isovalue": 0 } } }');
+                //TRI_Frontend.VisControlConnector.doSend('{"type": "InitContext", "req": { "rid": 1, "sid": 3, "params": { "dummy": 1} } }');
+                
+                TRI_Frontend.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "surfaceIndex": 0, "isovalue": 0.0 } } }');
 
                 $("#div_connect_success").fadeIn('slow', TRI_Frontend.hideConnectMessage);
 
@@ -359,7 +365,7 @@
             },
 
             doSend: function(message) {
-                //console.log("Sent: " + message);
+                console.log("Sent: " + message);
                 websocketControl.send(message);
             }
         };
@@ -421,7 +427,7 @@
             },
 
             onMessage: function(evt) {
-                //console.log("gim in!");
+                console.log("gim in!");
                 //console.log(evt.data);
 
                 img.onload = function() {
