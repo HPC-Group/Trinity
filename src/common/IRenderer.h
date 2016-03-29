@@ -159,11 +159,10 @@ namespace trinity {
     virtual void resetObject() = 0;
 
     virtual void startRendering() = 0;
-    virtual bool proceedRendering() {return true;} // NEW (dummy implementation, remove)
+    virtual bool proceedRendering() = 0;
     virtual void stopRendering() = 0;
 
-    virtual bool isIdle() {return true;} // NEW (dummy implementation, remove)
-    
+    virtual bool isIdle() = 0;
 
     // postponed init and delete due to opengl specific things
     virtual void initContext() = 0;

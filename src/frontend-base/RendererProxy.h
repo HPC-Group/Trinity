@@ -6,8 +6,8 @@
 #include "frontend-base/VisStreamReceiver.h"
 
 namespace trinity {
-  class RendererProxy : public IRenderer {
-  public:
+class RendererProxy : public IRenderer {
+public:
     /// local proxy to a remote render session
     RendererProxy(std::shared_ptr<VisStream> stream, mocca::net::Endpoint controlEndpoint, mocca::net::Endpoint visEndpoint,
                   unsigned int sessionId);
@@ -26,7 +26,7 @@ namespace trinity {
 
     void initContext() override;
     void deleteContext() override{}; // that does not to go over network... bad design, however
-    void resizeFramebuffer() override {};
+    void resizeFramebuffer() override{};
 
     void zoomCamera(float f) override;
     int getRemoteSessionId() const;
@@ -68,11 +68,13 @@ namespace trinity {
     void resetObject() override;
     void startRendering() override;
     void stopRendering() override;
+    bool isIdle() override;
+    bool proceedRendering() override;
     /* AUTOGEN RendererInterfaceOverride */
 
-  private:
+private:
     CommandInputChannel m_inputChannel;
     VisStreamReceiver m_visReceiver;
     int m_remoteSid;
-  };
+};
 }

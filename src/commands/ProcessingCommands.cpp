@@ -1779,6 +1779,90 @@ std::string StopRenderingCmd::RequestParams::toString() const {
     return stream.str();
 }
 
+////////////// IsIdleCmd //////////////
+
+VclType IsIdleCmd::Type = VclType::IsIdle;
+
+void IsIdleCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void IsIdleCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool IsIdleCmd::RequestParams::equals(const IsIdleCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string IsIdleCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+IsIdleCmd::ReplyParams::ReplyParams(bool result)
+    : m_result(result) {}
+
+void IsIdleCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendBool("result", m_result);
+}
+
+void IsIdleCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getBool("result");
+}
+
+bool IsIdleCmd::ReplyParams::equals(const IsIdleCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+bool IsIdleCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string IsIdleCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
+////////////// ProceedRenderingCmd //////////////
+
+VclType ProceedRenderingCmd::Type = VclType::ProceedRendering;
+
+void ProceedRenderingCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void ProceedRenderingCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool ProceedRenderingCmd::RequestParams::equals(const ProceedRenderingCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string ProceedRenderingCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+ProceedRenderingCmd::ReplyParams::ReplyParams(bool result)
+    : m_result(result) {}
+
+void ProceedRenderingCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendBool("result", m_result);
+}
+
+void ProceedRenderingCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getBool("result");
+}
+
+bool ProceedRenderingCmd::ReplyParams::equals(const ProceedRenderingCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+bool ProceedRenderingCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string ProceedRenderingCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -2239,6 +2323,32 @@ bool operator==(const StopRenderingCmd::RequestParams& lhs, const StopRenderingC
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const StopRenderingCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const IsIdleCmd::RequestParams& lhs, const IsIdleCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const IsIdleCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const IsIdleCmd::ReplyParams& lhs, const IsIdleCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const IsIdleCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const ProceedRenderingCmd::RequestParams& lhs, const ProceedRenderingCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const ProceedRenderingCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const ProceedRenderingCmd::ReplyParams& lhs, const ProceedRenderingCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const ProceedRenderingCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

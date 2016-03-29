@@ -112,6 +112,10 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<StartRenderingRequest>("req");
     } else if (type == StopRenderingRequest::Ifc::Type) {
         return reader->getSerializablePtr<StopRenderingRequest>("req");
+    } else if (type == IsIdleRequest::Ifc::Type) {
+        return reader->getSerializablePtr<IsIdleRequest>("req");
+    } else if (type == ProceedRenderingRequest::Ifc::Type) {
+        return reader->getSerializablePtr<ProceedRenderingRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 
@@ -168,6 +172,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetUserDefinedSemanticRequest>("req");
     } else if (type == GetDefault1DTransferFunctionRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionRequest>("req");
+    } else if (type == GetDomainScaleRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetDomainScaleRequest>("req");
     }
     /* AUTOGEN IORequestFactoryEntry */
 

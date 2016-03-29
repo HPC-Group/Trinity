@@ -104,7 +104,10 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
         return mocca::make_unique<GetDefault1DTransferFunctionHdl>(static_cast<const GetDefault1DTransferFunctionRequest&>(request),
                                                                    session);
         break;
-        /* AUTOGEN IOCommandFactoryEntry */
+    case VclType::GetDomainScale:
+        return mocca::make_unique<GetDomainScaleHdl>(static_cast<const GetDomainScaleRequest&>(request), session);
+        break;
+    /* AUTOGEN IOCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }

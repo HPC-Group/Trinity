@@ -8,7 +8,6 @@
 
 #include <memory>
 
-
 namespace trinity {
 
 class IOSessionProxy : public IIO {
@@ -25,7 +24,7 @@ public:
     Core::Math::Vec3ui getBrickOverlapSize() const override;
     uint64_t getLargestSingleBrickLOD(uint64_t modality) const override;
     Core::Math::Vec3ui getBrickVoxelCounts(const BrickKey& brickKey) const override;
-    Core::Math::Vec3f getBrickExtents(const BrickKey & brickKey) const override;
+    Core::Math::Vec3f getBrickExtents(const BrickKey& brickKey) const override;
     Core::Math::Vec3ui getBrickLayout(uint64_t lod, uint64_t modality) const override;
     uint64_t getModalityCount() const override;
     uint64_t getComponentCount(uint64_t modality) const override;
@@ -40,6 +39,7 @@ public:
     std::vector<uint64_t> get2DHistogram() const override;
     TransferFunction1D getDefault1DTransferFunction(uint64_t index) const override;
     std::string getUserDefinedSemantic(uint64_t modality) const override;
+    Core::Math::Vec3f getDomainScale(uint64_t modality) const override;
     /* AUTOGEN IOInterfaceOverride */
 
 private:

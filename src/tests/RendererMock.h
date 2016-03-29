@@ -53,4 +53,6 @@ public:
   MOCK_METHOD0(resetObject, void());
   MOCK_METHOD0(startRendering, void());
   MOCK_METHOD0(stopRendering, void());
+  MOCK_METHOD0(isIdle, bool());
+  MOCK_METHOD0(proceedRendering, bool());
 };

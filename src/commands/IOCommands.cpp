@@ -35,7 +35,6 @@ std::string ListFilesCmd::RequestParams::getDirID() const {
     return m_dirID;
 }
 
-
 ListFilesCmd::ReplyParams::ReplyParams(const std::vector<IOData>& ioData)
     : m_ioData(ioData) {}
 
@@ -55,20 +54,18 @@ void ListFilesCmd::ReplyParams::serialize(ISerialWriter& writer) const {
 }
 
 void ListFilesCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-	
-	// fixme apparently, we cannot receive empty vectors
-	try {
-		m_ioData = reader.getSerializableVec<IOData>("iodata");
-	}
-	catch (const TrinityError & e) {
-		LWARNING("(list) list data might be empty or corrupted: " << e.what());
-	}
+
+    // fixme apparently, we cannot receive empty vectors
+    try {
+        m_ioData = reader.getSerializableVec<IOData>("iodata");
+    } catch (const TrinityError& e) {
+        LWARNING("(list) list data might be empty or corrupted: " << e.what());
+    }
 }
 
 std::vector<IOData> ListFilesCmd::ReplyParams::getIOData() const {
     return m_ioData;
 }
-
 
 ////////////// InitIOSessionCmd //////////////
 
@@ -269,7 +266,6 @@ Core::Math::Vec3ui64 GetMaxUsedBrickSizesCmd::ReplyParams::getMaxUsedBrickSizes(
     return m_maxUsedBrickSizes;
 }
 
-
 ////////////// MaxMinForKeyCmd //////////////
 
 VclType MaxMinForKeyCmd::Type = VclType::MaxMinForKey;
@@ -324,7 +320,6 @@ MinMaxBlock MaxMinForKeyCmd::ReplyParams::getMinMaxBlock() const {
     return m_minMaxBock;
 }
 
-
 ////////////// GetNumberOfTimestepsCmd //////////////
 
 VclType GetNumberOfTimestepsCmd::Type = VclType::GetNumberOfTimesteps;
@@ -366,7 +361,6 @@ std::string GetNumberOfTimestepsCmd::ReplyParams::toString() const {
 uint64_t GetNumberOfTimestepsCmd::ReplyParams::getNumberOfTimesteps() const {
     return m_numberOfTimesteps;
 }
-
 
 ////////////// GetDomainSizeCmd //////////////
 
@@ -428,7 +422,6 @@ std::string GetDomainSizeCmd::ReplyParams::toString() const {
 Core::Math::Vec3ui64 GetDomainSizeCmd::ReplyParams::getDomainSize() const {
     return m_domainSize;
 }
-
 
 ////////////// GetTransformationCmd //////////////
 
@@ -580,7 +573,6 @@ uint64_t GetLargestSingleBrickLODCmd::ReplyParams::getLargestSingleBrickLOD() co
     return m_largestSingleBrickLOD;
 }
 
-
 ////////////// GetBrickVoxelCountsCmd //////////////
 
 VclType GetBrickVoxelCountsCmd::Type = VclType::GetBrickVoxelCounts;
@@ -635,7 +627,6 @@ Core::Math::Vec3ui GetBrickVoxelCountsCmd::ReplyParams::getBrickVoxelCounts() co
     return m_brickVoxelCounts;
 }
 
-
 ////////////// GetBrickExtentsCmd //////////////
 
 VclType GetBrickExtentsCmd::Type = VclType::GetBrickExtents;
@@ -689,7 +680,6 @@ std::string GetBrickExtentsCmd::ReplyParams::toString() const {
 Core::Math::Vec3f GetBrickExtentsCmd::ReplyParams::getBrickExtents() const {
     return m_brickExtents;
 }
-
 
 ////////////// GetBrickOverlapSizeCmd //////////////
 
@@ -752,7 +742,6 @@ Core::Math::Vec3ui GetBrickLayoutCmd::ReplyParams::getBrickLayout() const {
     return m_brickLayout;
 }
 
-
 ////////////// GetBrickOverlapSizeCmd //////////////
 
 VclType GetModalityCountCmd::Type = VclType::GetModalityCount;
@@ -794,7 +783,6 @@ std::string GetModalityCountCmd::ReplyParams::toString() const {
 uint64_t GetModalityCountCmd::ReplyParams::getModalityCount() const {
     return m_modalityCount;
 }
-
 
 ////////////// GetComponentCountCmd //////////////
 
@@ -850,7 +838,6 @@ uint64_t GetComponentCountCmd::ReplyParams::getComponentCount() const {
     return m_componentCount;
 }
 
-
 ////////////// GetRangeCmd //////////////
 
 VclType GetRangeCmd::Type = VclType::GetRange;
@@ -905,7 +892,6 @@ Core::Math::Vec2f GetRangeCmd::ReplyParams::getRange() const {
     return m_range;
 }
 
-
 ////////////// GetTotalBrickCountCmd //////////////
 
 VclType GetTotalBrickCountCmd::Type = VclType::GetTotalBrickCount;
@@ -959,7 +945,6 @@ std::string GetTotalBrickCountCmd::ReplyParams::toString() const {
 uint64_t GetTotalBrickCountCmd::ReplyParams::getTotalBrickCount() const {
     return m_totalBrickCount;
 }
-
 
 ////////////// GetBrickCmd //////////////
 
@@ -1024,7 +1009,6 @@ std::shared_ptr<const std::vector<uint8_t>> GetBrickCmd::ReplyParams::getBrick()
     return m_brick;
 }
 
-
 ////////////// GetTypeCmd //////////////
 
 VclType GetTypeCmd::Type = VclType::GetType;
@@ -1078,7 +1062,6 @@ std::string GetTypeCmd::ReplyParams::toString() const {
 IIO::ValueType trinity::GetTypeCmd::ReplyParams::getValueType() const {
     return m_valueType;
 }
-
 
 ////////////// GetSemanticCmd //////////////
 
@@ -1134,7 +1117,6 @@ IIO::Semantic GetSemanticCmd::ReplyParams::getSemantic() const {
     return m_semantic;
 }
 
-
 ////////////// GetDefault1DTransferFunctionCountCmd //////////////
 
 VclType GetDefault1DTransferFunctionCountCmd::Type = VclType::GetDefault1DTransferFunctionCount;
@@ -1177,7 +1159,6 @@ uint64_t GetDefault1DTransferFunctionCountCmd::ReplyParams::getCount() const {
     return m_count;
 }
 
-
 ////////////// GetDefault2DTransferFunctionCountCmd //////////////
 
 VclType GetDefault2DTransferFunctionCountCmd::Type = VclType::GetDefault2DTransferFunctionCount;
@@ -1219,7 +1200,6 @@ std::string GetDefault2DTransferFunctionCountCmd::ReplyParams::toString() const 
 uint64_t GetDefault2DTransferFunctionCountCmd::ReplyParams::getCount() const {
     return m_count;
 }
-
 
 ////////////// Get1DHistogramCmd //////////////
 
@@ -1306,7 +1286,6 @@ std::string Get2DHistogramCmd::ReplyParams::toString() const {
 std::vector<uint64_t> Get2DHistogramCmd::ReplyParams::getHistogram() const {
     return m_histogram;
 }
-
 
 ////////////// GetUserDefinedSemanticCmd //////////////
 
@@ -1414,6 +1393,60 @@ std::string GetDefault1DTransferFunctionCmd::ReplyParams::toString() const {
 
 TransferFunction1D GetDefault1DTransferFunctionCmd::ReplyParams::getFunction() const {
     return m_function;
+}
+
+////////////// GetDomainScaleCmd //////////////
+
+VclType GetDomainScaleCmd::Type = VclType::GetDomainScale;
+
+GetDomainScaleCmd::RequestParams::RequestParams(uint64_t modality)
+    : m_modality(modality) {}
+
+void GetDomainScaleCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+}
+
+void GetDomainScaleCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+}
+
+bool GetDomainScaleCmd::RequestParams::equals(const GetDomainScaleCmd::RequestParams& other) const {
+    return m_modality == other.m_modality;
+}
+
+uint64_t GetDomainScaleCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+std::string GetDomainScaleCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality;
+    return stream.str();
+}
+
+GetDomainScaleCmd::ReplyParams::ReplyParams(const Core::Math::Vec3f& result)
+    : m_result(result) {}
+
+void GetDomainScaleCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("result", m_result);
+}
+
+void GetDomainScaleCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializable<Core::Math::Vec3f>("result");
+}
+
+bool GetDomainScaleCmd::ReplyParams::equals(const GetDomainScaleCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+Core::Math::Vec3f GetDomainScaleCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetDomainScaleCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
 }
 
 /* AUTOGEN CommandImpl */
@@ -1779,6 +1812,19 @@ std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCmd
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetDefault1DTransferFunctionCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetDomainScaleCmd::RequestParams& lhs, const GetDomainScaleCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetDomainScaleCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetDomainScaleCmd::ReplyParams& lhs, const GetDomainScaleCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetDomainScaleCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

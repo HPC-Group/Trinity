@@ -109,7 +109,7 @@ r'''{{CommandNameHdl}}::{{CommandNameHdl}}(const {{CommandNameRequest}}& request
     : m_request(request), m_session(session) {}
 
 std::unique_ptr<Reply> {{CommandNameHdl}}::execute() {
-    {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceMethod}}({{ParamsFromRequest}});
+    {{CommandNameCmd}}::ReplyParams params(m_session->getIO().{{InterfaceMethod}}({{ParamsFromRequest}}));
     return mocca::make_unique<{{CommandNameReply}}>(params, m_request.getRid(), m_session->getSid());
 }
 

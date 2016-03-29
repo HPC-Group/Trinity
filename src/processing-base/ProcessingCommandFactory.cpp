@@ -173,6 +173,12 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::StopRendering:
         return mocca::make_unique<StopRenderingHdl>(static_cast<const StopRenderingRequest&>(request), session);
         break;
+    case VclType::IsIdle:
+        return mocca::make_unique<IsIdleHdl>(static_cast<const IsIdleRequest&>(request), session);
+        break;
+    case VclType::ProceedRendering:
+        return mocca::make_unique<ProceedRenderingHdl>(static_cast<const ProceedRenderingRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

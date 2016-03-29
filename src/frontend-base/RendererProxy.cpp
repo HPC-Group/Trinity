@@ -328,4 +328,18 @@ void RendererProxy::stopRendering() {
     m_inputChannel.sendRequest(request);
 }
 
+bool RendererProxy::isIdle() {
+    IsIdleCmd::RequestParams params;
+    IsIdleRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
+bool RendererProxy::proceedRendering() {
+    ProceedRenderingCmd::RequestParams params;
+    ProceedRenderingRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN RendererProxyImpl */

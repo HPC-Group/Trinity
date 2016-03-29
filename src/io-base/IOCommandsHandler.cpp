@@ -9,26 +9,26 @@
 using namespace trinity;
 
 InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request, IONode* node)
-    : m_node(node), m_request(request) {}
+    : m_node(node)
+    , m_request(request) {}
 
 std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     auto requestParams = m_request.getParams();
 
     auto fileID = requestParams.getFileId();
     auto& listData = m_node->getListDataForID(fileID);
-    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(),
-                                                 listData.createIO(fileID));
+    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), listData.createIO(fileID));
     session->start();
-    
+
     InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());
     std::unique_ptr<Reply> reply = mocca::make_unique<InitIOSessionReply>(replyParams, m_request.getRid(), session->getSid());
     m_node->addSession(std::move(session));
     return reply;
 }
 
-
 GetLODLevelCountHdl::GetLODLevelCountHdl(const GetLODLevelCountRequest& request, IOSession* session)
-    : m_session(session), m_request(request) {}
+    : m_session(session)
+    , m_request(request) {}
 
 std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
     const auto& io = m_session->getIO();
@@ -36,9 +36,9 @@ std::unique_ptr<Reply> GetLODLevelCountHdl::execute() {
     return mocca::make_unique<GetLODLevelCountReply>(replyParams, m_request.getRid(), m_request.getSid());
 }
 
-
 ListFilesHdl::ListFilesHdl(const ListFilesRequest& request, IONode* node)
-    : m_node(node), m_request(request) {}
+    : m_node(node)
+    , m_request(request) {}
 
 std::unique_ptr<Reply> ListFilesHdl::execute() {
     std::vector<IOData> ioDataVec;
@@ -49,7 +49,8 @@ std::unique_ptr<Reply> ListFilesHdl::execute() {
 }
 
 GetMaxBrickSizeHdl::GetMaxBrickSizeHdl(const GetMaxBrickSizeRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetMaxBrickSizeHdl::execute() {
     GetMaxBrickSizeCmd::ReplyParams params(m_session->getIO().getMaxBrickSize());
@@ -57,7 +58,8 @@ std::unique_ptr<Reply> GetMaxBrickSizeHdl::execute() {
 }
 
 GetMaxUsedBrickSizesHdl::GetMaxUsedBrickSizesHdl(const GetMaxUsedBrickSizesRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetMaxUsedBrickSizesHdl::execute() {
     GetMaxUsedBrickSizesCmd::ReplyParams params(m_session->getIO().getMaxUsedBrickSizes());
@@ -65,7 +67,8 @@ std::unique_ptr<Reply> GetMaxUsedBrickSizesHdl::execute() {
 }
 
 MaxMinForKeyHdl::MaxMinForKeyHdl(const MaxMinForKeyRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> MaxMinForKeyHdl::execute() {
     auto brickKey = m_request.getParams().getBrickKey();
@@ -75,7 +78,8 @@ std::unique_ptr<Reply> MaxMinForKeyHdl::execute() {
 }
 
 GetNumberOfTimestepsHdl::GetNumberOfTimestepsHdl(const GetNumberOfTimestepsRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetNumberOfTimestepsHdl::execute() {
     GetNumberOfTimestepsCmd::ReplyParams params(m_session->getIO().getNumberOfTimesteps());
@@ -83,7 +87,8 @@ std::unique_ptr<Reply> GetNumberOfTimestepsHdl::execute() {
 }
 
 GetDomainSizeHdl::GetDomainSizeHdl(const GetDomainSizeRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetDomainSizeHdl::execute() {
     auto lod = m_request.getParams().getLod();
@@ -93,7 +98,8 @@ std::unique_ptr<Reply> GetDomainSizeHdl::execute() {
 }
 
 GetTransformationHdl::GetTransformationHdl(const GetTransformationRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetTransformationHdl::execute() {
     GetTransformationCmd::ReplyParams params(m_session->getIO().getTransformation(m_request.getParams().getModality()));
@@ -101,7 +107,8 @@ std::unique_ptr<Reply> GetTransformationHdl::execute() {
 }
 
 GetBrickOverlapSizeHdl::GetBrickOverlapSizeHdl(const GetBrickOverlapSizeRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetBrickOverlapSizeHdl::execute() {
     GetBrickOverlapSizeCmd::ReplyParams params(m_session->getIO().getBrickOverlapSize());
@@ -109,7 +116,8 @@ std::unique_ptr<Reply> GetBrickOverlapSizeHdl::execute() {
 }
 
 GetLargestSingleBrickLODHdl::GetLargestSingleBrickLODHdl(const GetLargestSingleBrickLODRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetLargestSingleBrickLODHdl::execute() {
     auto modality = m_request.getParams().getModality();
@@ -118,7 +126,8 @@ std::unique_ptr<Reply> GetLargestSingleBrickLODHdl::execute() {
 }
 
 GetBrickVoxelCountsHdl::GetBrickVoxelCountsHdl(const GetBrickVoxelCountsRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetBrickVoxelCountsHdl::execute() {
     GetBrickVoxelCountsCmd::ReplyParams params(m_session->getIO().getBrickVoxelCounts(m_request.getParams().getBrickKey()));
@@ -126,7 +135,8 @@ std::unique_ptr<Reply> GetBrickVoxelCountsHdl::execute() {
 }
 
 GetBrickExtentsHdl::GetBrickExtentsHdl(const GetBrickExtentsRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetBrickExtentsHdl::execute() {
     GetBrickExtentsCmd::ReplyParams params(m_session->getIO().getBrickExtents(m_request.getParams().getBrickKey()));
@@ -134,7 +144,8 @@ std::unique_ptr<Reply> GetBrickExtentsHdl::execute() {
 }
 
 GetBrickLayoutHdl::GetBrickLayoutHdl(const GetBrickLayoutRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetBrickLayoutHdl::execute() {
     auto lod = m_request.getParams().getLod();
@@ -144,7 +155,8 @@ std::unique_ptr<Reply> GetBrickLayoutHdl::execute() {
 }
 
 GetModalityCountHdl::GetModalityCountHdl(const GetModalityCountRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetModalityCountHdl::execute() {
     GetModalityCountCmd::ReplyParams params(m_session->getIO().getModalityCount());
@@ -152,7 +164,8 @@ std::unique_ptr<Reply> GetModalityCountHdl::execute() {
 }
 
 GetComponentCountHdl::GetComponentCountHdl(const GetComponentCountRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetComponentCountHdl::execute() {
     GetComponentCountCmd::ReplyParams params(m_session->getIO().getComponentCount(m_request.getParams().getModality()));
@@ -160,7 +173,8 @@ std::unique_ptr<Reply> GetComponentCountHdl::execute() {
 }
 
 GetRangeHdl::GetRangeHdl(const GetRangeRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetRangeHdl::execute() {
     GetRangeCmd::ReplyParams params(m_session->getIO().getRange(m_request.getParams().getModality()));
@@ -168,7 +182,8 @@ std::unique_ptr<Reply> GetRangeHdl::execute() {
 }
 
 GetTotalBrickCountHdl::GetTotalBrickCountHdl(const GetTotalBrickCountRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetTotalBrickCountHdl::execute() {
     GetTotalBrickCountCmd::ReplyParams params(m_session->getIO().getTotalBrickCount(m_request.getParams().getModality()));
@@ -176,7 +191,8 @@ std::unique_ptr<Reply> GetTotalBrickCountHdl::execute() {
 }
 
 GetBrickHdl::GetBrickHdl(const GetBrickRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetBrickHdl::execute() {
     auto brickKey = m_request.getParams().getBrickKey();
@@ -187,7 +203,8 @@ std::unique_ptr<Reply> GetBrickHdl::execute() {
 }
 
 GetTypeHdl::GetTypeHdl(const GetTypeRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetTypeHdl::execute() {
     GetTypeCmd::ReplyParams params(m_session->getIO().getType(m_request.getParams().getModality()));
@@ -195,23 +212,28 @@ std::unique_ptr<Reply> GetTypeHdl::execute() {
 }
 
 GetSemanticHdl::GetSemanticHdl(const GetSemanticRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetSemanticHdl::execute() {
     GetSemanticCmd::ReplyParams params(m_session->getIO().getSemantic(m_request.getParams().getModality()));
     return mocca::make_unique<GetSemanticReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-GetDefault1DTransferFunctionCountHdl::GetDefault1DTransferFunctionCountHdl(const GetDefault1DTransferFunctionCountRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+GetDefault1DTransferFunctionCountHdl::GetDefault1DTransferFunctionCountHdl(const GetDefault1DTransferFunctionCountRequest& request,
+                                                                           IOSession* session)
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetDefault1DTransferFunctionCountHdl::execute() {
     GetDefault1DTransferFunctionCountCmd::ReplyParams params(m_session->getIO().getDefault1DTransferFunctionCount());
     return mocca::make_unique<GetDefault1DTransferFunctionCountReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-GetDefault2DTransferFunctionCountHdl::GetDefault2DTransferFunctionCountHdl(const GetDefault2DTransferFunctionCountRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+GetDefault2DTransferFunctionCountHdl::GetDefault2DTransferFunctionCountHdl(const GetDefault2DTransferFunctionCountRequest& request,
+                                                                           IOSession* session)
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetDefault2DTransferFunctionCountHdl::execute() {
     GetDefault2DTransferFunctionCountCmd::ReplyParams params(m_session->getIO().getDefault2DTransferFunctionCount());
@@ -219,7 +241,8 @@ std::unique_ptr<Reply> GetDefault2DTransferFunctionCountHdl::execute() {
 }
 
 Get1DHistogramHdl::Get1DHistogramHdl(const Get1DHistogramRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> Get1DHistogramHdl::execute() {
     Get1DHistogramCmd::ReplyParams params(m_session->getIO().get1DHistogram());
@@ -227,7 +250,8 @@ std::unique_ptr<Reply> Get1DHistogramHdl::execute() {
 }
 
 Get2DHistogramHdl::Get2DHistogramHdl(const Get2DHistogramRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> Get2DHistogramHdl::execute() {
     Get2DHistogramCmd::ReplyParams params(m_session->getIO().get2DHistogram());
@@ -235,7 +259,8 @@ std::unique_ptr<Reply> Get2DHistogramHdl::execute() {
 }
 
 GetUserDefinedSemanticHdl::GetUserDefinedSemanticHdl(const GetUserDefinedSemanticRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetUserDefinedSemanticHdl::execute() {
     GetUserDefinedSemanticCmd::ReplyParams params(m_session->getIO().getUserDefinedSemantic(m_request.getParams().getModality()));
@@ -243,11 +268,21 @@ std::unique_ptr<Reply> GetUserDefinedSemanticHdl::execute() {
 }
 
 GetDefault1DTransferFunctionHdl::GetDefault1DTransferFunctionHdl(const GetDefault1DTransferFunctionRequest& request, IOSession* session)
-    : m_request(request), m_session(session) {}
+    : m_request(request)
+    , m_session(session) {}
 
 std::unique_ptr<Reply> GetDefault1DTransferFunctionHdl::execute() {
     GetDefault1DTransferFunctionCmd::ReplyParams params(m_session->getIO().getDefault1DTransferFunction(m_request.getParams().getIndex()));
     return mocca::make_unique<GetDefault1DTransferFunctionReply>(params, m_request.getRid(), m_session->getSid());
+}
+
+GetDomainScaleHdl::GetDomainScaleHdl(const GetDomainScaleRequest& request, IOSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetDomainScaleHdl::execute() {
+    GetDomainScaleCmd::ReplyParams params(m_session->getIO().getDomainScale(m_request.getParams().getModality()));
+    return mocca::make_unique<GetDomainScaleReply>(params, m_request.getRid(), m_session->getSid());
 }
 
 /* AUTOGEN IOCommandHandlerImpl */

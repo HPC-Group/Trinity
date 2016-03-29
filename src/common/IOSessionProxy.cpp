@@ -8,7 +8,6 @@
 
 #include "mocca/log/LogManager.h"
 
-
 using namespace trinity;
 
 IOSessionProxy::IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint)
@@ -195,6 +194,13 @@ TransferFunction1D IOSessionProxy::getDefault1DTransferFunction(uint64_t index) 
     GetDefault1DTransferFunctionRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getFunction();
+}
+
+Core::Math::Vec3f IOSessionProxy::getDomainScale(uint64_t modality) const {
+    GetDomainScaleCmd::RequestParams params(modality);
+    GetDomainScaleRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
 }
 
 /* AUTOGEN IOSessionProxyImpl */

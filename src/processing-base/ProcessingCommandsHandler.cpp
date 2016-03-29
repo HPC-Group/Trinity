@@ -466,4 +466,22 @@ std::unique_ptr<Reply> StopRenderingHdl::execute() {
     return nullptr;
 }
 
+IsIdleHdl::IsIdleHdl(const IsIdleRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> IsIdleHdl::execute() {
+    IsIdleCmd::ReplyParams params(m_session->getRenderer().isIdle());
+    return mocca::make_unique<IsIdleReply>(params, m_request.getRid(), m_session->getSid());
+}
+
+ProceedRenderingHdl::ProceedRenderingHdl(const ProceedRenderingRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> ProceedRenderingHdl::execute() {
+    ProceedRenderingCmd::ReplyParams params(m_session->getRenderer().proceedRendering());
+    return mocca::make_unique<ProceedRenderingReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN ProcCommandHandlerImpl */

@@ -367,3 +367,10 @@ void AbstractRenderer::stopRendering() {
   m_bPaitingActive = false;
 }
 
+bool AbstractRenderer::isIdle() {
+    return true; // TODO: dummy implementation
+}
+
+bool AbstractRenderer::proceedRendering() {
+    return true;  // TODO: dummy implementation
+}

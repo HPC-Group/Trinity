@@ -101,6 +101,9 @@ enum class VclType {
     ResetObject,
     StartRendering,
     StopRendering,
+    IsIdle,
+    ProceedRendering,
+    GetDomainScale,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -214,6 +217,9 @@ private:
         m_cmdMap.insert("ResetObject", VclType::ResetObject);
         m_cmdMap.insert("StartRendering", VclType::StartRendering);
         m_cmdMap.insert("StopRendering", VclType::StopRendering);
+        m_cmdMap.insert("IsIdle", VclType::IsIdle);
+        m_cmdMap.insert("ProceedRendering", VclType::ProceedRendering);
+        m_cmdMap.insert("GetDomainScale", VclType::GetDomainScale);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

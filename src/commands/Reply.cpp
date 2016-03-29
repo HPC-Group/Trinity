@@ -53,6 +53,10 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetRendererSpecialsReply>("rep");
     } else if (type == GetBackgroundColorsReply::Ifc::Type) {
         return reader->getSerializablePtr<GetBackgroundColorsReply>("rep");
+    } else if (type == IsIdleReply::Ifc::Type) {
+        return reader->getSerializablePtr<IsIdleReply>("rep");
+    } else if (type == ProceedRenderingReply::Ifc::Type) {
+        return reader->getSerializablePtr<ProceedRenderingReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 
@@ -109,6 +113,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetUserDefinedSemanticReply>("rep");
     } else if (type == GetDefault1DTransferFunctionReply::Ifc::Type) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionReply>("rep");
+    } else if (type == GetDomainScaleReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetDomainScaleReply>("rep");
     }
     /* AUTOGEN IOReplyFactoryEntry */
 

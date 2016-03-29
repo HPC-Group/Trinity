@@ -1553,5 +1553,85 @@ bool operator==(const StopRenderingCmd::RequestParams& lhs, const StopRenderingC
 std::ostream& operator<<(std::ostream& os, const StopRenderingCmd::RequestParams& obj);
 using StopRenderingRequest = RequestTemplate<StopRenderingCmd>;
 
+struct IsIdleCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(bool result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        bool getResult() const;
+
+    private:
+        bool m_result;
+    };
+};
+
+bool operator==(const IsIdleCmd::RequestParams& lhs, const IsIdleCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const IsIdleCmd::RequestParams& obj);
+using IsIdleRequest = RequestTemplate<IsIdleCmd>;
+
+bool operator==(const IsIdleCmd::ReplyParams& lhs, const IsIdleCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const IsIdleCmd::ReplyParams& obj);
+using IsIdleReply = ReplyTemplate<IsIdleCmd>;
+
+struct ProceedRenderingCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(bool result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        bool getResult() const;
+
+    private:
+        bool m_result;
+    };
+};
+
+bool operator==(const ProceedRenderingCmd::RequestParams& lhs, const ProceedRenderingCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ProceedRenderingCmd::RequestParams& obj);
+using ProceedRenderingRequest = RequestTemplate<ProceedRenderingCmd>;
+
+bool operator==(const ProceedRenderingCmd::ReplyParams& lhs, const ProceedRenderingCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ProceedRenderingCmd::ReplyParams& obj);
+using ProceedRenderingReply = ReplyTemplate<ProceedRenderingCmd>;
+
 /* AUTOGEN CommandHeader */
 }

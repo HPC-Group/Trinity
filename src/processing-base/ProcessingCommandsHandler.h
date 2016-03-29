@@ -540,5 +540,27 @@ private:
     RenderSession* m_session;
 };
 
+class IsIdleHdl : public ICommandHandler {
+public:
+    IsIdleHdl(const IsIdleRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    IsIdleRequest m_request;
+    RenderSession* m_session;
+};
+
+class ProceedRenderingHdl : public ICommandHandler {
+public:
+    ProceedRenderingHdl(const ProceedRenderingRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    ProceedRenderingRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }
