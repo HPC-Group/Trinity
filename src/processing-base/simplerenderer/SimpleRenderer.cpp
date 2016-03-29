@@ -292,6 +292,13 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
 }
 
 bool SimpleRenderer::isIdle() {
+  // this renderer is progressive
   return true;
 }
+
+bool SimpleRenderer::proceedRendering() {
+  // this renderer is progressive
+  return !isIdle();
+}
+
 

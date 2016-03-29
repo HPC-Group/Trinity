@@ -27,7 +27,9 @@ namespace trinity {
     virtual void initContext() override;
     virtual void deleteContext() override;
     virtual bool isIdle() override;
+    virtual bool proceedRendering() override;
 
+    
     void set1DTransferFunction(const TransferFunction1D& tf) override;
     //void set2DTransferFunction(const TransferFunction2D& tf) override;
 

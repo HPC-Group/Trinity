@@ -425,37 +425,40 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
 
   m_context->makeCurrent(); // todo: check if we need this
 
-  if (paintlevel == IRenderer::PaintLevel::PL_REDRAW_VISCHANGE)
-    RecomputeBrickVisibility(false);
-
-  if (paintlevel != IRenderer::PaintLevel::PL_RECOMPOSE){
-    fillRayEntryBuffer();
-    m_isIdle = true;
+  // fall through an purpose
+  switch (paintlevel) {
+    case IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE :
+      RecomputeBrickVisibility(false);
+    case IRenderer::PaintLevel::PL_REDRAW :
+      fillRayEntryBuffer();
+      m_isIdle = false;
+    case IRenderer::PaintLevel::PL_CONTINUE :
+    case IRenderer::PaintLevel::PL_RECOMPOSE :
+      break;
   }
 
-
   if(!m_isIdle){
-
     // raycast
     m_hashTable->clearData();
     raycast();
     swapToNextBuffer();
 
+    // compose (sends data to frontend)
     compose();
 
     // update volumepool
     std::vector<Vec4ui> hash = m_hashTable->getData();
-    if (hash.size() > 0){
+    if (hash.size() > 0) {
       m_volumePool->uploadBricks(hash,
                                  m_visibilityState,
                                  *m_io,
                                  m_activeModality);
     } else {
-      m_isIdle = false;
+      m_isIdle = true;
     }
 
   } else {
-    compose();
+    if (paintlevel == IRenderer::PaintLevel::PL_RECOMPOSE) compose();
   }
 
 }
@@ -835,3 +838,11 @@ void GridLeaper::setClipVolume(const Core::Math::Vec3f& minValues,
 }
 
 
+bool GridLeaper::proceedRendering() {
+  if (isIdle()) {
+    return false;
+  } else {
+    paintInternal(IRenderer::PaintLevel::PL_CONTINUE);
+    return true;
+  }
+}

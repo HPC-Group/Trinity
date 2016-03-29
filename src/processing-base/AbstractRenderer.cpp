@@ -59,7 +59,7 @@ void AbstractRenderer::setRenderMode(ERenderMode mode){
     throw TrinityError("unsuported rendermode requested", __FILE__, __LINE__);
   }
   m_renderMode = mode;
-  paint(IRenderer::PaintLevel::PL_REDRAW_VISCHANGE);
+  paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
 }
 
 // by default we support only 1D TF
@@ -98,7 +98,7 @@ uint64_t AbstractRenderer::getActiveTimestep() const {
 void AbstractRenderer::set1DTransferFunction(const TransferFunction1D& tf){
   if  (! (m_1Dtf == tf)) {
     m_1Dtf = tf;
-    paint(IRenderer::PaintLevel::PL_REDRAW_VISCHANGE);
+    paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
   }
 }
 
@@ -121,7 +121,7 @@ std::vector<uint64_t> AbstractRenderer::get1DHistogram() const {
  void AbstractRenderer::set2DTransferFunction(const TransferFunction2D& tf){
  if  (! m_2Dtf == tf) {
   m_2Dtf = tf;
-  paint(IRenderer::PaintLevel::PL_REDRAW_VISCHANGE);
+  paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
  }
  }
 
@@ -148,7 +148,7 @@ void AbstractRenderer::setIsoValue(uint8_t surfaceIndex, float fIsoValue) {
 
   if (m_isoValue[surfaceIndex] != fIsoValue) {
     m_isoValue[surfaceIndex] = fIsoValue;
-    paint(IRenderer::PaintLevel::PL_REDRAW_VISCHANGE);
+    paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
   }
 }
 

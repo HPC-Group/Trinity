@@ -12,11 +12,26 @@ namespace trinity {
   class IRenderer {
 
   public:
-    enum class ERenderMode { RM_1DTRANS = 0, RM_2DTRANS, RM_ISOSURFACE, RM_CLEARVIEW, RM_INVALID };
+    enum class ERenderMode {
+      RM_1DTRANS = 0,
+      RM_2DTRANS,
+      RM_ISOSURFACE,
+      RM_CLEARVIEW,
+      RM_INVALID
+    };
 
-    enum class BBoxMode { BBM_NONE = 0, BBM_DATASET, BBM_BRICKS };
+    enum class BBoxMode {
+      BBM_NONE = 0,
+      BBM_DATASET,
+      BBM_BRICKS
+    };
 
-    enum class PaintLevel {  PL_REDRAW_VISCHANGE = 0, PL_REDRAW, PL_RECOMPOSE };
+    enum class PaintLevel {
+      PL_REDRAW_VISIBILITY_CHANGE = 0,
+      PL_REDRAW,
+      PL_CONTINUE,
+      PL_RECOMPOSE
+    };
 
     using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;
     static const RenderModeMapper& renderModeMapper();
@@ -144,9 +159,11 @@ namespace trinity {
     virtual void resetObject() = 0;
 
     virtual void startRendering() = 0;
+    virtual bool proceedRendering() {return true;} // NEW (dummy implementation, remove)
     virtual void stopRendering() = 0;
 
     virtual bool isIdle() {return true;} // NEW (dummy implementation, remove)
+    
 
     // postponed init and delete due to opengl specific things
     virtual void initContext() = 0;
