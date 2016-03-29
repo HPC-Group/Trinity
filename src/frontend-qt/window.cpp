@@ -161,6 +161,8 @@ void Window::update() {
 void Window::repaint() {}
 
 void Window::wheelEvent(QWheelEvent* event) {
+  if (!_initDone) return;
+  
   static float isoValue = 0;
   isoValue += event->delta() / 2400.f;
   m_renderer->setIsoValue(0, isoValue);
@@ -172,6 +174,8 @@ void Window::mousePressEvent(QMouseEvent* event) {
 }
 
 void Window::mouseMoveEvent(QMouseEvent* event) {
+  if (!_initDone) return;
+  
   float deltaX = (m_mousePosX - event->localPos().x()) / 200.f;
   float deltaY = (m_mousePosY - event->localPos().y()) / 200.f;
   if (event->buttons() & Qt::LeftButton) {
