@@ -26,6 +26,15 @@ namespace trinity {
 
     virtual void initContext() override;
     virtual void deleteContext() override;
+    virtual bool isIdle() override;
+
+    void set1DTransferFunction(const TransferFunction1D& tf) override;
+    //void set2DTransferFunction(const TransferFunction2D& tf) override;
+
+    virtual void enableClipping(bool enable) override;
+    virtual void setClipVolume(const Core::Math::Vec3f& minValues,
+                               const Core::Math::Vec3f& maxValues) override;
+
 
   protected:
     virtual void paintInternal(PaintLevel paintlevel) override;
@@ -97,8 +106,11 @@ namespace trinity {
 
     Core::Math::Vec3ui64            m_IODomainSize;
     float                           m_fLODFactor;
-    bool                            m_bFinished;
-    bool                            m_bCompleteRedraw;
+    bool                            m_isIdle;
+
+    IIO::ValueType                  m_type;
+    IIO::Semantic                   m_semantic;
+
 
 
   };

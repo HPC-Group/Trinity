@@ -9,11 +9,6 @@
 #include <silverbullet/time/Timer.h>
 #include <common/IIO.h>
 
-//#define GLVOLUMEPOOL_PROFILE // define to measure some timings
-
-#ifdef GLVOLUMEPOOL_PROFILE
-#include "Basics/AvgMinMaxTracker.h"
-#endif
 
 #include "PoolSlotData.h"
 #include "BrickElemInfo.h"
@@ -58,12 +53,10 @@ public:
   // returns number of bricks paged in that must not be equal to given
   // number of brick IDs especially if async updater is busy we'll get
   // requests for empty bricks too that won't be paged in
-  /// @param brickDebug write out md5sums of bricks as we read them.
   uint32_t uploadBricks(const std::vector<Core::Math::Vec4ui>& vBrickIDs,
                         VisibilityState const& visibility,
                         trinity::IIO& pDataset,
-                        uint64_t modality,
-                        bool brickDebug);
+                        uint64_t modality);
 
   void uploadFirstBrick(const BrickKey& bkey, trinity::IIO& pDataset);
 
@@ -136,13 +129,6 @@ protected:
   bool m_bVisibilityUpdated;
 
   void* lastbrick;
-
-#ifdef GLVOLUMEPOOL_PROFILE
-  Timer m_Timer;
-  AvgMinMaxTracker<float> m_TimesRecomputeVisibilityForBrickPool;
-  AvgMinMaxTracker<float> m_TimesMetaTextureUpload;
-  AvgMinMaxTracker<float> m_TimesRecomputeVisibility;
-#endif
 
   std::vector<uint32_t>     m_vBrickMetadata;  // ref by iBrickID, size of total brick count + some unused 2d texture padding
   std::vector<PoolSlotData> m_vPoolSlotData;   // size of available pool slots

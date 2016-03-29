@@ -189,7 +189,17 @@ void SimpleRenderer::loadTransferFunction() {
 }
 
 void SimpleRenderer::loadGeometry() {
-  m_bbBox = mocca::make_unique<GLVolumeBox>();
+  Core::Math::Vec3ui64 vDomainSize = m_io->getDomainSize(0,0);
+  Core::Math::Vec3f    vScale = Core::Math::Vec3f(m_io->getDomainScale(0));
+
+  Core::Math::Vec3f vExtend = Core::Math::Vec3f(vDomainSize) * vScale;
+  vExtend /= vExtend.maxVal();
+
+  Core::Math::Vec3f vMinPoint, vMaxPoint;
+  vMinPoint = -vExtend/2.0;
+  vMaxPoint =  vExtend/2.0;
+
+  m_bbBox = mocca::make_unique<GLVolumeBox>(vMinPoint, vMaxPoint);
 }
 
 void SimpleRenderer::initFrameBuffers() {
@@ -280,3 +290,8 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
   getVisStream()->put(std::move(f1));
 }
+
+bool SimpleRenderer::isIdle() {
+  return true;
+}
+

@@ -10,8 +10,8 @@
 
 namespace trinity {
 
-class IIO {
-public:
+  class IIO {
+  public:
     virtual ~IIO() {}
 
     enum class Semantic { Scalar, Vector, Color };
@@ -31,6 +31,7 @@ public:
     virtual uint64_t getLODLevelCount(uint64_t modality) const = 0;
     virtual uint64_t getNumberOfTimesteps() const = 0;
     virtual Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality) const = 0;
+    virtual Core::Math::Vec3f getDomainScale(uint64_t modality) const {return Core::Math::Vec3f(1,1,1);};    // NEW (dummy implementation, remove)
     virtual Core::Math::Mat4d getTransformation(uint64_t modality) const = 0;
     virtual Core::Math::Vec3ui getBrickOverlapSize() const = 0;
     virtual uint64_t getLargestSingleBrickLOD(uint64_t modality) const = 0;
@@ -50,5 +51,5 @@ public:
     virtual std::vector<uint64_t> get2DHistogram() const = 0;
     virtual TransferFunction1D getDefault1DTransferFunction(uint64_t index) const = 0;
     virtual std::string getUserDefinedSemantic(uint64_t modality) const = 0;
-};
+  };
 }

@@ -5,17 +5,17 @@
 #include "silverbullet/math/Vectors.h"
 #include "silverbullet/io/FileTools.h"
 
-
-
 #include "mocca/log/LogManager.h"
 
 #include <thread>
 #include <vector>
 
+// this is used when the NVIDIA specific getGPUMem call fails
+#define DEFAULT_GPU_MEM 2048
+
 using namespace trinity;
 using namespace Core::Math;
 using namespace std;
-
 
 GridLeaper::GridLeaper(std::shared_ptr<VisStream> stream,
                        std::unique_ptr<IIO> ioSession) :
@@ -54,8 +54,7 @@ m_context(nullptr),
 m_visibilityState(),
 m_IODomainSize(0,0,0),
 m_fLODFactor(0),
-m_bFinished(false),
-m_bCompleteRedraw(false)
+m_isIdle(true)
 {
 }
 
@@ -76,7 +75,7 @@ void GridLeaper::deleteContext() {
   m_bbBox = nullptr;
   m_nearPlane = nullptr;
   m_context = nullptr;
-  
+
   m_programRenderFrontFaces = nullptr;
   m_programRenderFrontFacesNearPlane = nullptr;
   m_programRayCast1D = nullptr;
@@ -100,47 +99,46 @@ void GridLeaper::initContext() {
   std::thread::id threadId = std::this_thread::get_id();
   LINFO("gridleaper performs cotext init from thread " << threadId);
   m_context = mocca::make_unique<OpenGlHeadlessContext>();
-  
+
   if (!m_context->isValid()) {
     LERROR("(p) can't create opengl context");
     m_context = nullptr;
     return;
   }
 
+  m_type = m_io->getType(m_activeModality);
+  m_semantic = m_io->getSemantic(m_activeModality);
   m_IODomainSize = m_io->getDomainSize(
-                      m_io->getLargestSingleBrickLOD(m_activeModality),
-                      m_activeModality
-                      );
-  
+                                       m_io->getLargestSingleBrickLOD(m_activeModality),
+                                       m_activeModality
+                                       );
+
   initHashTable();
   initVolumePool(getFreeGPUMemory());
-  
+
   resizeFramebuffer();
   loadShaders(GLVolumePool::MissingBrickStrategy::RequestAll); //todo guess we could use the "renderspecials" here
   loadGeometry();
   loadTransferFunction();
-  
+
   m_targetBinder = mocca::make_unique<GLTargetBinder>();
   LINFO("(p) grid leaper created. OpenGL Version " << m_context->getVersion());
 }
 
 void GridLeaper::resizeFramebuffer() {
   AbstractRenderer::resizeFramebuffer();
-  
+
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
   m_bufferData.resize(width * height);
 
-  m_fLODFactor = 2.0f * tan(45.0f *
-                 ((3.1416f / 180.0f) / 2.0f)) *
-                 1.0f / float(width);
+  m_fLODFactor = 2.0f * tan(m_viewAngle *
+                            ((3.1416f / 180.0f) / 2.0f)) * 1.0f / float(width);
 
   if (!m_context) {
     LWARNING("(p) resizeFramebuffer called without a valid context");
     return;
   }
-  
-  m_nearPlane = mocca::make_unique<GLRenderPlane>(Vec2ui(width,height));
 
   initFrameBuffers();
 
@@ -151,9 +149,9 @@ void GridLeaper::resizeFramebuffer() {
 do { \
 p = std::unique_ptr<GLProgram>(GLProgram::FromFiles(searchDirs,__VA_ARGS__));\
 if (!p) { \
-  LINFO("(p) invalid shader program " << #p); \
-  p = nullptr; \
-  return false; \
+LINFO("(p) invalid shader program " << #p); \
+p = nullptr; \
+return false; \
 } \
 } while (0)
 
@@ -162,7 +160,7 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   searchDirs.push_back(".");
   searchDirs.push_back("shader");
   searchDirs.push_back("../../../src/processing-base/gridleaper/shader");
-  
+
   LOADSHADER(m_programCompose,
              "ComposeVS.glsl",NULL,"ComposeFS.glsl",NULL);
   LOADSHADER(m_programComposeColorDebugMix,
@@ -175,16 +173,16 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
              "CubeVertex.glsl",NULL,"CubeFragment.glsl",NULL);
   LOADSHADER(m_programRenderFrontFacesNearPlane,
              "NearPlaneVS.glsl",NULL,"NearPlaneFS.glsl",NULL);
-  
+
   // Load the traversal shaders
   const std::string poolFragment = m_volumePool->getShaderFragment(
                                                                    3, 4,
                                                                    GLVolumePool::MissingBrickStrategy(brickStrategy)
                                                                    );
   const std::string hashFragment = m_hashTable->getShaderFragment(5);
-  
+
   std::vector<std::string> vs, fs;
-  
+
   vs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D.glsl", searchDirs));
@@ -192,16 +190,16 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   ShaderDescriptor sd(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
-  
+
   m_programRayCast1D = mocca::make_unique<GLProgram>();
   m_programRayCast1D->Load(sd);
-  
+
   if (!m_programRayCast1D->IsValid()) {
     LERROR("(p) invalid cube shader program");
     m_programRayCast1D = nullptr;
     return false;
   }
-  
+
   fs.clear();
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D-color.glsl", searchDirs));
@@ -209,16 +207,16 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
-  
+
   m_programRayCast1DColor = mocca::make_unique<GLProgram>();
   m_programRayCast1DColor->Load(sd);
-  
+
   if (!m_programRayCast1DColor->IsValid()) {
     LERROR("(p) invalid cube shader program");
     m_programRayCast1DColor = nullptr;
     return false;
   }
-  
+
   fs.clear();
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D-L.glsl", searchDirs));
@@ -228,16 +226,16 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
-  
+
   m_programRayCast1DLighting = mocca::make_unique<GLProgram>();
   m_programRayCast1DLighting->Load(sd);
-  
+
   if (!m_programRayCast1DLighting->IsValid()) {
     LERROR("(p) invalid cube shader program");
     m_programRayCast1DLighting = nullptr;
     return false;
   }
-  
+
   fs.clear();
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
@@ -245,16 +243,16 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
-  
+
   m_programRayCastISO = mocca::make_unique<GLProgram>();
   m_programRayCastISO->Load(sd);
-  
+
   if (!m_programRayCastISO->IsValid()) {
     LERROR("(p) invalid cube shader program");
     m_programRayCastISO = nullptr;
     return false;
   }
-  
+
   fs.clear();
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso-color.glsl", searchDirs));
@@ -262,16 +260,16 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
-  
+
   m_programRayCastISOColor = mocca::make_unique<GLProgram>();
   m_programRayCastISOColor->Load(sd);
-  
+
   if (!m_programRayCastISOColor->IsValid()) {
     LERROR("(p) invalid cube shader program");
     m_programRayCastISOColor = nullptr;
     return false;
   }
-  
+
   fs.clear();
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso-lighting.glsl", searchDirs));
   fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
@@ -279,30 +277,30 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
-  
+
   m_programRayCastISOLighting = mocca::make_unique<GLProgram>();
   m_programRayCastISOLighting->Load(sd);
-  
+
   if (!m_programRayCastISOLighting->IsValid()) {
     LERROR("(p) invalid cube shader program");
     m_programRayCastISOLighting = nullptr;
     return false;
   }
-  
+
   return true;
 }
 
 void GridLeaper::loadTransferFunction() {
   LINFO("(p) creating transfer function");
-  
+
   uint64_t maxIndex = m_io->getDefault1DTransferFunctionCount()-1;
-  
+
   LINFO("(p) using default function " << maxIndex);
-  
+
   TransferFunction1D tf = m_io->getDefault1DTransferFunction(maxIndex);
-  
+
   LINFO("(p) filling openGL resource");
-  
+
   m_texTransferFunc = mocca::make_unique<GLTexture1D>(tf.getSize(),
                                                       GL_RGBA,
                                                       GL_RGBA,
@@ -312,7 +310,19 @@ void GridLeaper::loadTransferFunction() {
 }
 
 void GridLeaper::loadGeometry() {
-  m_bbBox = mocca::make_unique<GLVolumeBox>();
+  Core::Math::Vec3ui64 vDomainSize = m_io->getDomainSize(0,0);
+  Core::Math::Vec3f    vScale = Core::Math::Vec3f(m_io->getDomainScale(0));
+
+  Core::Math::Vec3f vExtend = Core::Math::Vec3f(vDomainSize) * vScale;
+  vExtend /= vExtend.maxVal();
+
+  Core::Math::Vec3f vMinPoint, vMaxPoint;
+  vMinPoint = -vExtend/2.0;
+  vMaxPoint =  vExtend/2.0;
+
+  m_bbBox = mocca::make_unique<GLVolumeBox>(vMinPoint, vMaxPoint);
+
+
   m_nearPlane = mocca::make_unique<GLRenderPlane>();
 }
 
@@ -321,16 +331,16 @@ void GridLeaper::initFrameBuffers() {
   const uint32_t height = m_visStream->getStreamingParams().getResY();
 
   m_pFBORayStart = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
-                                                GL_CLAMP_TO_EDGE,
-                                                width, height,
-                                                GL_RGBA, GL_RGBA,
-                                                GL_FLOAT, true, 1);
+                                              GL_CLAMP_TO_EDGE,
+                                              width, height,
+                                              GL_RGBA, GL_RGBA,
+                                              GL_FLOAT, false, 1);
 
   m_pFBORayStartNext = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
-                                                GL_CLAMP_TO_EDGE,
-                                                width, height,
-                                                GL_RGBA, GL_RGBA,
-                                                GL_FLOAT, true, 1);
+                                                  GL_CLAMP_TO_EDGE,
+                                                  width, height,
+                                                  GL_RGBA, GL_RGBA,
+                                                  GL_FLOAT, false, 1);
 
   m_pFBOStartColor = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE,
@@ -339,10 +349,10 @@ void GridLeaper::initFrameBuffers() {
                                                 GL_FLOAT, true, 1);
 
   m_pFBOStartColorNext = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
-                                                GL_CLAMP_TO_EDGE,
-                                                width, height,
-                                                GL_RGBA, GL_RGBA,
-                                                GL_FLOAT, true, 1);
+                                                    GL_CLAMP_TO_EDGE,
+                                                    width, height,
+                                                    GL_RGBA, GL_RGBA,
+                                                    GL_FLOAT, true, 1);
 
   m_pFBOFinalColor = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE,
@@ -351,304 +361,301 @@ void GridLeaper::initFrameBuffers() {
                                                 GL_FLOAT, true, 1);
 
   m_pFBOFinalColorNext = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
-                                                GL_CLAMP_TO_EDGE,
-                                                width, height,
-                                                GL_RGBA, GL_RGBA,
-                                                GL_FLOAT, true, 1);
+                                                    GL_CLAMP_TO_EDGE,
+                                                    width, height,
+                                                    GL_RGBA, GL_RGBA,
+                                                    GL_FLOAT, true, 1);
 #ifdef GLGRIDLEAPER_DEBUGVIEW
   m_pFBODebug = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
-                                                GL_CLAMP_TO_EDGE,
-                                                width, height,
-                                                GL_RGBA, GL_RGBA,
-                                                GL_FLOAT, true, 1);
+                                           GL_CLAMP_TO_EDGE,
+                                           width, height,
+                                           GL_RGBA, GL_RGBA,
+                                           GL_FLOAT, true, 1);
 
   m_pFBODebugNext = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
-                                                GL_CLAMP_TO_EDGE,
-                                                width, height,
-                                                GL_RGBA, GL_RGBA,
-                                                GL_FLOAT, true, 1);
+                                               GL_CLAMP_TO_EDGE,
+                                               width, height,
+                                               GL_RGBA, GL_RGBA,
+                                               GL_FLOAT, true, 1);
 #endif
+
+
+  m_resultBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+                                              GL_CLAMP_TO_EDGE,
+                                              width, height,
+                                              GL_RGBA, GL_RGBA,
+                                              GL_FLOAT, false, 1);
 }
 
 void GridLeaper::initHashTable() {
-  Vec3ui const finestBrickLayout(m_io->getBrickLayout(0, 0));
-  
-  unsigned ht_size = 509; // default taken out of old mastercontroller
-  if (ht_size == 0){ // with default value this will never get executed !
-    const float rmax = m_io->getMaxBrickSize().volume() / 32768.;
-    unsigned ht_size = std::max<unsigned>(512, static_cast<unsigned>(509 / rmax));
-  }
-  LDEBUGC("GLGridLeaper" , "Using " << ht_size <<"-element hash table.");
-  
-  uint32_t rehashcount = 10; // default taken out of old mastercontroller
-  m_hashTable = mocca::make_unique<GLHashTable>(finestBrickLayout, uint32_t(ht_size), rehashcount);
+  Vec3ui const finestBrickLayout(m_io->getBrickLayout(0, m_activeModality));
+  m_hashTable = mocca::make_unique<GLHashTable>(finestBrickLayout);
   m_hashTable->initGL();
 }
 
 void GridLeaper::initVolumePool(uint64_t gpuMemorySizeInByte) {
   //CalculateUsedGPUMemory();
   Vec3ui volumepoolsize = calculateVolumePoolSize(gpuMemorySizeInByte,0);
-  
+
   //todo how?
-  m_volumePool =  mocca::make_unique<GLVolumePool>(volumepoolsize, *m_io,m_activeModality, GL_LINEAR);
-  
-  
+  m_volumePool = mocca::make_unique<GLVolumePool>(volumepoolsize, *m_io,
+                                                  m_activeModality, GL_LINEAR);
+
   if (m_volumePool){
     // upload a brick that covers the entire domain to make sure have
     // something to render
-    
+
     // find lowest LoD with only a single brick
     uint64_t singleBrickLoD = m_io->getLargestSingleBrickLOD(0);
-    
-    BrickKey brickKey(0, 0, singleBrickLoD, 0);
-    
+
+    BrickKey brickKey(m_activeModality, m_activeTimestep, singleBrickLoD, 0);
+
     m_volumePool->uploadFirstBrick(brickKey,*m_io);
-    
+
     RecomputeBrickVisibility(false);
   }
 }
 
 void GridLeaper::paintInternal(PaintLevel paintlevel) {
-  
+
   if (!m_context) {
     LERROR("(p) incomplete OpenGL initialization");
     return;
   }
-  
-  m_context->makeCurrent();
-  
-  if(!m_bFinished){
 
-      // check for new framestart
-      //RecreateAfterResize();
-      if (m_bCompleteRedraw){
-          fillRayEntryBuffer();
-          m_bCompleteRedraw = false;
-      }
+  m_context->makeCurrent(); // todo: check if we need this
 
-      // raycast
-      m_hashTable->clearData();
-      raycast();
-      swapToNextBuffer();
+  if (paintlevel == IRenderer::PaintLevel::PL_REDRAW_VISCHANGE)
+    RecomputeBrickVisibility(false);
 
-      // update volumepool
-      std::vector<Vec4ui> hash = m_hashTable->getData();
-      if (hash.size() > 0){
-          m_volumePool->uploadBricks(hash,
-                                     m_visibilityState,
-                                     *m_io,
-                                     m_activeModality,
-                                     true);
-          m_bFinished = false;
-      }
-
-      if(hash.size() == 0){
-          m_bFinished = true;
-      }
-
-      // compose
-      compose();
+  if (paintlevel != IRenderer::PaintLevel::PL_RECOMPOSE){
+    fillRayEntryBuffer();
+    m_isIdle = true;
   }
+
+
+  if(!m_isIdle){
+
+    // raycast
+    m_hashTable->clearData();
+    raycast();
+    swapToNextBuffer();
+
+    compose();
+
+    // update volumepool
+    std::vector<Vec4ui> hash = m_hashTable->getData();
+    if (hash.size() > 0){
+      m_volumePool->uploadBricks(hash,
+                                 m_visibilityState,
+                                 *m_io,
+                                 m_activeModality);
+    } else {
+      m_isIdle = false;
+    }
+
+  } else {
+    compose();
+  }
+
 }
 
 void GridLeaper::fillRayEntryBuffer(){
 #ifdef GLGRIDLEAPER_DEBUGVIEW
-    m_targetBinder->bind(m_pFBOFinalColor, m_pFBOFinalColorNext, m_pFBOStartColor, m_pFBOStartColorNext);
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    m_targetBinder->bind(m_pFBODebug, m_pFBODebugNext,m_pFBORayStart,m_pFBORayStartNext);
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
+  m_targetBinder->bind(m_pFBOFinalColor, m_pFBOFinalColorNext, m_pFBOStartColor, m_pFBOStartColorNext);
+  glClearColor(0, 0, 0, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  m_targetBinder->bind(m_pFBODebug, m_pFBODebugNext,m_pFBORayStart,m_pFBORayStartNext);
+  glClearColor(0, 0, 0, 0);
+  glClear(GL_COLOR_BUFFER_BIT);
 #else
-    m_targetBinder->Bind(m_pFBOFinalColor, m_pFBOFinalColorNext, m_pFBOStartColor, m_pFBOStartColorNext);
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_targetBinder->Bind(m_pFBORayStart,m_pFBORayStartNext);
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
+  m_targetBinder->Bind(m_pFBOFinalColor, m_pFBOFinalColorNext, m_pFBOStartColor, m_pFBOStartColorNext);
+  glClearColor(0, 0, 0, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  m_targetBinder->Bind(m_pFBORayStart,m_pFBORayStartNext);
+  glClearColor(0, 0, 0, 0);
+  glClear(GL_COLOR_BUFFER_BIT);
 #endif
-    m_targetBinder->Unbind();
+  m_targetBinder->Unbind();
 
 
-    //bind the entrance buffer as target
-    m_targetBinder->Bind(m_pFBORayStart);
+  //bind the entrance buffer as target
+  m_targetBinder->Bind(m_pFBORayStart);
 
-    //! \todo add the statemanager here !
-    glCullFace(GL_BACK);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
-
-
-    m_programRenderFrontFacesNearPlane->Enable();
-    m_programRenderFrontFacesNearPlane->Set("viewMatrixInverse", m_view.inverse());
-    m_programRenderFrontFacesNearPlane->Set("projectionMatrixInverse", m_projection.inverse());
-    m_programRenderFrontFacesNearPlane->Set("worldMatrixInverse", m_model.inverse());
-
-    m_nearPlane->paint();
+  //! \todo add the statemanager here !
+  glCullFace(GL_BACK);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_BLEND);
 
 
-    m_programRenderFrontFaces->Enable();
-    m_programRenderFrontFaces->Set("worldMatrix", m_model);
-    m_programRenderFrontFaces->Set("viewMatrix", m_view);
-    m_programRenderFrontFaces->Set("projectionMatrix", m_projection);
+  m_programRenderFrontFacesNearPlane->Enable();
+  m_programRenderFrontFacesNearPlane->Set("viewMatrixInverse", m_view.inverse());
+  m_programRenderFrontFacesNearPlane->Set("projectionMatrixInverse", m_projection.inverse());
+  m_programRenderFrontFacesNearPlane->Set("worldMatrixInverse", m_model.inverse());
 
-    m_bbBox->paint();
+  m_nearPlane->paint();
 
-    //reset opengl
-    m_programRenderFrontFacesNearPlane->Disable();
-    m_targetBinder->Unbind();
-    m_pFBORayStart->FinishWrite();
+
+  m_programRenderFrontFaces->Enable();
+  m_programRenderFrontFaces->Set("worldMatrix", m_model);
+  m_programRenderFrontFaces->Set("viewMatrix", m_view);
+  m_programRenderFrontFaces->Set("projectionMatrix", m_projection);
+
+  m_bbBox->paint();
+
+  //reset opengl
+  m_programRenderFrontFacesNearPlane->Disable();
+  m_targetBinder->Unbind();
+  m_pFBORayStart->FinishWrite();
 }
 
 void GridLeaper::raycast(){
-    m_targetBinder->Bind(m_pFBORayStartNext);
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
+  m_targetBinder->Bind(m_pFBORayStartNext);
+  glClearColor(0, 0, 0, 0);
+  glClear(GL_COLOR_BUFFER_BIT);
 
 #ifdef GLGRIDLEAPER_DEBUGVIEW
-    m_pTargetBinder->Bind(	m_pFBOFinalColorNext,
-                            m_pFBOStartColorNext,
-                            m_pFBORayStartNext,
-                            m_pFBODebugNext);
+  m_pTargetBinder->Bind(m_pFBOFinalColorNext,
+                        m_pFBOStartColorNext,
+                        m_pFBORayStartNext,
+                        m_pFBODebugNext);
 #else
-    m_targetBinder->Bind(	m_pFBOFinalColorNext,
-                            m_pFBOStartColorNext,
-                            m_pFBORayStartNext);
+  m_targetBinder->Bind(m_pFBOFinalColorNext,
+                       m_pFBOStartColorNext,
+                       m_pFBORayStartNext);
 #endif
 
-    selectShader();
-    setupRaycastShader();
+  selectShader();
+  setupRaycastShader();
 
-    //set states
-    glCullFace(GL_FRONT);
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  //set states
+  glCullFace(GL_FRONT);
 
-    m_bbBox->paint();
+  // render
+  m_bbBox->paint();
 }
 
 void GridLeaper::compose(){
-    m_targetBinder->Bind(m_resultBuffer);
+  m_targetBinder->Bind(m_resultBuffer);
 
-    glCullFace(GL_BACK);
-    m_programCompose->Enable();
-    m_programCompose->SetTexture2D("compose", m_pFBOFinalColor->GetTextureHandle(), 0);
-    m_programCompose->Set("ColorOne", m_backgroundColors.colorOne);
-    m_programCompose->Set("ColorTwo", m_backgroundColors.colorTwo);
+  glCullFace(GL_BACK);
+  m_programCompose->Enable();
+  m_programCompose->SetTexture2D("compose", m_pFBOFinalColor->GetTextureHandle(), 0);
+  m_programCompose->Set("ColorOne", m_backgroundColors.colorOne);
+  m_programCompose->Set("ColorTwo", m_backgroundColors.colorTwo);
 
-    m_nearPlane->paint();
-    m_programCompose->Disable();
+  m_nearPlane->paint();
+  m_programCompose->Disable();
 
-    const uint32_t width = m_visStream->getStreamingParams().getResX();
-    const uint32_t height = m_visStream->getStreamingParams().getResY();
+  const uint32_t width = m_visStream->getStreamingParams().getResX();
+  const uint32_t height = m_visStream->getStreamingParams().getResY();
 
-    m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
+  m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
 
-    m_targetBinder->Unbind();
+  m_targetBinder->Unbind();
 
-    auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
-    getVisStream()->put(std::move(f1));
+  auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
+  getVisStream()->put(std::move(f1));
 }
 
 void GridLeaper::selectShader(){
-    //todo check this next days
-    if (m_renderMode == IRenderer::ERenderMode::RM_1DTRANS){
-        if (!m_enableLighting){
-            m_activeShaderProgram = m_programRayCast1D;
-        }
-        else{
-            if (false)
-                m_activeShaderProgram = m_programRayCast1DColor;
-            else
-                m_activeShaderProgram = m_programRayCast1DLighting;
-        }
+  if (m_renderMode == IRenderer::ERenderMode::RM_1DTRANS){
+    if (!m_enableLighting){
+      m_activeShaderProgram = m_programRayCast1D;
     }
-    else if (m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE){
-        if (false)
-            m_activeShaderProgram = m_programRayCastISOColor;
-        else
-            m_activeShaderProgram = m_programRayCastISOLighting;
+    else{
+      if (m_semantic == IIO::Semantic::Color)
+        m_activeShaderProgram = m_programRayCast1DColor;
+      else
+        m_activeShaderProgram = m_programRayCast1DLighting;
     }
+  }
+  else if (m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE){
+    if (m_semantic == IIO::Semantic::Color)
+      m_activeShaderProgram = m_programRayCastISOColor;
+    else
+      m_activeShaderProgram = m_programRayCastISOLighting;
+  }
 }
 
 void GridLeaper::setupRaycastShader(){
-    Mat4f mv = m_model*m_view;
-    Mat4f mvp = mv*m_projection;
-    Mat4f mvInverse = mv.inverse();
+  Mat4f mv = m_model*m_view;
+  Mat4f mvp = mv*m_projection;
+  Mat4f mvInverse = mv.inverse();
 
-    m_activeShaderProgram->Enable();
+  m_activeShaderProgram->Enable();
 
-    m_activeShaderProgram->Set("mModelViewProjection", mvp);
-    m_activeShaderProgram->Set("mModelView", mv);
+  m_activeShaderProgram->Set("mModelViewProjection", mvp);
+  m_activeShaderProgram->Set("mModelView", mv);
 
-    m_activeShaderProgram->Set("sampleRateModifier", getSampleRateModifier());
-    m_activeShaderProgram->Set("mEyeToModel", mvInverse);
-    m_activeShaderProgram->Set("mEyeToModel2", m_view.inverse());
-    m_activeShaderProgram->Set("vDomainScale", m_IODomainSize);
+  m_activeShaderProgram->Set("sampleRateModifier", getSampleRateModifier());
+  m_activeShaderProgram->Set("mEyeToModel", mvInverse);
+  m_activeShaderProgram->Set("mEyeToModel2", m_view.inverse());
+  m_activeShaderProgram->Set("vDomainScale", m_IODomainSize);
 
-    //setup textures
-    m_activeShaderProgram->SetTexture2D("rayStartPoint", m_pFBORayStart->GetTextureHandle(), 0);
-    m_activeShaderProgram->SetTexture2D("rayStartColor", m_pFBOStartColor->GetTextureHandle(), 1);
-
-
-    //todo FIX ASPECT RATIO AND EXTEND? WHERE IN IIO?
-    m_volumePool->enable(m_fLODFactor,
-                            Vec3f(0,0,0),       //todo vExtend
-                            Vec3f(0,0,0),     //todo vAspect
-                            m_activeShaderProgram);
-    m_hashTable->enable();
-
-    //todo why do we divide xyz by w?
-    if (m_enableLighting || m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE) {
-        Vec3ui8 a = m_lightingColors.ambient.xyz()*m_lightingColors.ambient.w;
-        Vec3ui8 d = m_lightingColors.diffuse.xyz()*m_lightingColors.diffuse.w;
-        Vec3ui8 s = m_lightingColors.specular.xyz()*m_lightingColors.specular.w;
-
-        m_activeShaderProgram->Set("vLightAmbient", a);
-        m_activeShaderProgram->Set("vLightDiffuse", d);
-        m_activeShaderProgram->Set("vLightSpecular", s);
-        m_activeShaderProgram->Set("vModelSpaceLightDir", m_lightDirection);
-        m_activeShaderProgram->Set("vModelSpaceEyePos", Vec3f(0,0,10));
-    }
+  //setup textures
+  m_activeShaderProgram->SetTexture2D("rayStartPoint", m_pFBORayStart->GetTextureHandle(), 0);
+  m_activeShaderProgram->SetTexture2D("rayStartColor", m_pFBOStartColor->GetTextureHandle(), 1);
 
 
-    if (m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE) {
-        m_activeShaderProgram->Set("fIsoval", getIsoValue(0));
+  //todo FIX ASPECT RATIO AND EXTEND? WHERE IN IIO?
+  m_volumePool->enable(m_fLODFactor,
+                       Vec3f(0,0,0),       //todo vExtend
+                       Vec3f(0,0,0),     //todo vAspect
+                       m_activeShaderProgram);
+  m_hashTable->enable();
 
-        m_activeShaderProgram->Set("mModelToEye", mvInverse.inverse());
-        m_activeShaderProgram->Set("mModelViewIT", mv.inverse());
-    }
-    else {
-        m_activeShaderProgram->Set("fTransScale", 1.0f);
-        m_activeShaderProgram->SetTexture1D("transferFunction",
-                                            m_texTransferFunc->GetGLID(),
-                                            2);
-    }
+  //todo why do we divide xyz by w?
+  if (m_enableLighting || m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE) {
+    Vec3ui8 a = m_lightingColors.ambient.xyz()*m_lightingColors.ambient.w;
+    Vec3ui8 d = m_lightingColors.diffuse.xyz()*m_lightingColors.diffuse.w;
+    Vec3ui8 s = m_lightingColors.specular.xyz()*m_lightingColors.specular.w;
+
+    m_activeShaderProgram->Set("vLightAmbient", a);
+    m_activeShaderProgram->Set("vLightDiffuse", d);
+    m_activeShaderProgram->Set("vLightSpecular", s);
+    m_activeShaderProgram->Set("vModelSpaceLightDir", m_lightDirection);
+    m_activeShaderProgram->Set("vModelSpaceEyePos", Vec3f(0,0,10));
+  }
+
+
+  if (m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE) {
+    m_activeShaderProgram->Set("fIsoval", getIsoValue(0));
+
+    m_activeShaderProgram->Set("mModelToEye", mv);
+    m_activeShaderProgram->Set("mModelViewIT", mv.inverse());
+  }
+  else {
+    m_activeShaderProgram->Set("fTransScale", 1.0f);
+    m_activeShaderProgram->SetTexture1D("transferFunction",
+                                        m_texTransferFunc->GetGLID(),
+                                        2);
+  }
 
 #ifdef GLGRIDLEAPER_DEBUGVIEW
-    m_activeShaderProgram->SetTexture2D("debugColor", m_pFBODebug->GetTextureHandle(), 6);
+  m_activeShaderProgram->SetTexture2D("debugColor", m_pFBODebug->GetTextureHandle(), 6);
 #endif
 }
 
 void GridLeaper::swapToNextBuffer(){
-    std::swap(m_pFBORayStart, m_pFBORayStartNext);
-    std::swap(m_pFBOStartColor, m_pFBOStartColorNext);
-    std::swap(m_pFBOFinalColor, m_pFBOFinalColorNext);
+  std::swap(m_pFBORayStart, m_pFBORayStartNext);
+  std::swap(m_pFBOStartColor, m_pFBOStartColorNext);
+  std::swap(m_pFBOFinalColor, m_pFBOFinalColorNext);
 #ifdef GLGRIDLEAPER_DEBUGVIEW
-    std::swap(m_pFBODebug, m_pFBODebugNext);
+  std::swap(m_pFBODebug, m_pFBODebugNext);
 #endif
 }
 
 Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,const uint64_t usedMemory){
-  IIO::ValueType type = m_io->getType(m_activeModality);
-  IIO::Semantic semantic = m_io->getSemantic(m_activeModality);
   uint64_t elementSize = 0;
-  switch(semantic){
+
+  // TODO: replace this switch-madness with more reasonable code
+  switch(m_semantic){
     case IIO::Semantic::Scalar : elementSize = 1; break;
     case IIO::Semantic::Vector : elementSize = 3; break;
     case IIO::Semantic::Color  : elementSize = 4; break;
   }
-  switch(type){
+  switch(m_type){
     case  IIO::ValueType::T_INT8 :
     case  IIO::ValueType::T_UINT8 : elementSize *= 8; break;
     case  IIO::ValueType::T_INT16 :
@@ -660,25 +667,25 @@ Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemoryS
     case  IIO::ValueType::T_UINT64 :
     case  IIO::ValueType::T_DOUBLE : elementSize *= 64; break;
   }
-  
+
   const Vec3ui vMaxBS = Vec3ui(m_io->getMaxUsedBrickSizes());
-  
+
   // Compute the pool size as a (almost) cubed texture that fits
   // into the user specified GPU mem, is a multiple of the bricksize
   // and is no bigger than what OpenGL tells us is possible
-  
+
   //Fake workaround for first :x \todo fix this
   uint64_t GPUmemoryInByte = GPUMemorySizeInByte;
-  
+
   GLint iMaxVolumeDims;
   glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &iMaxVolumeDims);
   const uint64_t iMaxGPUMem = GPUmemoryInByte - usedMemory;
-  
+
   const uint64_t iMaxVoxelCount = iMaxGPUMem / (elementSize / 8);
   const uint64_t r3Voxels = uint64_t(pow(double(iMaxVoxelCount), 1.0 / 3.0));
   Vec3ui maxBricksForGPU;
-  
-  
+
+
   // round the starting input size (r3Voxels) to the closest multiple brick size
   // to guarantee as cubic as possible volume pools and to better fill the
   // available amount of memory
@@ -688,44 +695,44 @@ Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemoryS
   if (multipleOfBrickSizeThatFitsInX > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInX = (iMaxVolumeDims / vMaxBS.x)*vMaxBS.x;
   maxBricksForGPU.x = (uint32_t)multipleOfBrickSizeThatFitsInX;
-  
+
   uint64_t multipleOfBrickSizeThatFitsInY = ((iMaxVoxelCount / (maxBricksForGPU.x*maxBricksForGPU.x)) / vMaxBS.y)*vMaxBS.y;
   if (multipleOfBrickSizeThatFitsInY > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInY = (iMaxVolumeDims / vMaxBS.y)*vMaxBS.y;
   maxBricksForGPU.y = (uint32_t)multipleOfBrickSizeThatFitsInY;
-  
+
   uint64_t multipleOfBrickSizeThatFitsInZ = ((iMaxVoxelCount / (maxBricksForGPU.x*maxBricksForGPU.y)) / vMaxBS.z)*vMaxBS.z;
   if (multipleOfBrickSizeThatFitsInZ > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInZ = (iMaxVolumeDims / vMaxBS.z)*vMaxBS.z;
   maxBricksForGPU.z = (uint32_t)multipleOfBrickSizeThatFitsInZ;
-  
+
   // the max brick layout required by the dataset
   const uint64_t iMaxBrickCount = m_io->getTotalBrickCount(m_activeModality);
   const uint64_t r3Bricks = uint64_t(pow(double(iMaxBrickCount), 1.0 / 3.0));
   Vec3ui64 maxBricksForDataset;
-  
+
   multipleOfBrickSizeThatFitsInX = vMaxBS.x*r3Bricks;
   if (multipleOfBrickSizeThatFitsInX > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInX = (iMaxVolumeDims / vMaxBS.x)*vMaxBS.x;
   maxBricksForDataset.x = (uint32_t)multipleOfBrickSizeThatFitsInX;
-  
+
   multipleOfBrickSizeThatFitsInY = vMaxBS.y*uint64_t(ceil(float(iMaxBrickCount) / ((maxBricksForDataset.x / vMaxBS.x) * (maxBricksForDataset.x / vMaxBS.x))));
   if (multipleOfBrickSizeThatFitsInY > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInY = (iMaxVolumeDims / vMaxBS.y)*vMaxBS.y;
   maxBricksForDataset.y = (uint32_t)multipleOfBrickSizeThatFitsInY;
-  
+
   multipleOfBrickSizeThatFitsInZ = vMaxBS.z*uint64_t(ceil(float(iMaxBrickCount) / ((maxBricksForDataset.x / vMaxBS.x) * (maxBricksForDataset.y / vMaxBS.y))));
   if (multipleOfBrickSizeThatFitsInZ > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInZ = (iMaxVolumeDims / vMaxBS.z)*vMaxBS.z;
   maxBricksForDataset.z = (uint32_t)multipleOfBrickSizeThatFitsInZ;
-  
+
   // now use the smaller of the two layouts, normally that
   // would be the maxBricksForGPU but for small datasets that
   // can be rendered entirely in-core we may need less space
   const Vec3ui poolSize = (maxBricksForDataset.volume() < Vec3ui64(maxBricksForGPU).volume())
   ? Vec3ui(maxBricksForDataset)
   : maxBricksForGPU;
-  
+
   return poolSize;
 }
 
@@ -733,10 +740,10 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
   // (totalProcessedBrickCount, emptyBrickCount, childEmptyBrickCount)
   Vec4ui vEmptyBrickCount(0, 0, 0, 0);
   if (!m_volumePool) return vEmptyBrickCount;
-  
+
   double const fMaxValue = (m_io->getRange(m_activeModality).x > m_io->getRange(m_activeModality).y) ? m_1Dtf.getSize() : m_io->getRange(m_activeModality).y;
   double const fRescaleFactor = fMaxValue / double(m_1Dtf.getSize() - 1);
-  
+
   // render mode dictates how we look at data ...
   switch (m_renderMode) {
     case ERenderMode::RM_1DTRANS: {
@@ -772,23 +779,59 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
 }
 
 const uint64_t GridLeaper::getFreeGPUMemory(){
-    GLint freememory = 0;
+  GLint freememory = DEFAULT_GPU_MEM;
 
-    std::string vendor = (char*)glGetString(GL_VENDOR);
-    LINFOC("GridLeaper", "gpu vendor: " << vendor);
-    if (vendor == "NVIDIA Corporation"){
+  std::string vendor = (char*)glGetString(GL_VENDOR);
+  LINFOC("GridLeaper", "gpu vendor: " << vendor);
+  if (vendor == "NVIDIA Corporation"){
 
-        // get the currently AVAILABLE!! free gpu memory
-        glGetIntegerv(0x9049, &freememory);
+    // get the currently AVAILABLE!! free gpu memory
+    glGetIntegerv(0x9049, &freememory);
 
-        //reduce useable memory by 100 MByte
-        freememory = freememory - (100 * 1024);
-        if (freememory < 0){
-            LWARNINGC("GridLeaper", "not enough free VRAM.");
-            return 0;
-        }
-
-        LINFOC("GridLeaper", "available VRAM in kb: " << freememory);
+    //reduce useable memory by 100 MByte
+    freememory = freememory - (102400);
+    if (freememory < 0){
+      LWARNINGC("GridLeaper", "not enough free VRAM.");
+      return 0;
     }
-    return freememory;
+
+    LINFOC("GridLeaper", "available VRAM in kb: " << freememory);
+  }
+  return freememory;
 }
+
+
+void GridLeaper::set1DTransferFunction(const TransferFunction1D& tf) {
+  if ( m_texTransferFunc ) {
+    m_texTransferFunc->SetData(0, tf.getSize(), tf.getRAWData().data());
+  }
+  AbstractRenderer::set1DTransferFunction(tf);
+}
+
+/*
+void GridLeaper::set2DTransferFunction(const TransferFunction2D& tf) {
+  if ( m_texTransferFunc2D ) {
+    m_texTransferFunc2D->SetData(0, tf.getSize(), tf.getRAWData().data());
+  }
+
+  AbstractRenderer::set2DTransferFunction(tf);
+}
+ */
+
+bool GridLeaper::isIdle() {
+  return m_isIdle;
+}
+
+
+void GridLeaper::enableClipping(bool enable) {
+  AbstractRenderer::enableClipping(enable);
+  // TODO: update m_bbBox
+}
+
+void GridLeaper::setClipVolume(const Core::Math::Vec3f& minValues,
+                               const Core::Math::Vec3f& maxValues)  {
+  AbstractRenderer::setClipVolume(minValues, maxValues);
+  // TODO: update m_bbBox
+}
+
+

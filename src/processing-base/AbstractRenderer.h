@@ -8,9 +8,9 @@
 
 namespace trinity {
 
-class AbstractRenderer : public IRenderer {
+  class AbstractRenderer : public IRenderer {
 
-public:
+  public:
     AbstractRenderer(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
     AbstractRenderer() = default;
 
@@ -103,14 +103,14 @@ public:
     virtual void initContext() override = 0;
     virtual void deleteContext() override = 0;
     virtual void paint(PaintLevel paintlevel = IRenderer::PaintLevel::PL_REDRAW) {
-        if (m_bPaitingActive)
-            paintInternal(paintlevel);
+      if (m_bPaitingActive)
+        paintInternal(paintlevel);
     }
-    virtual void resizeFramebuffer();
+    virtual void resizeFramebuffer() override;
 
     /*******  IRenderer Interface end **********/
 
-protected:
+  protected:
     virtual void paintInternal(PaintLevel paintlevel) = 0;
     virtual void recomputeProjectionMatrix();
 
@@ -140,10 +140,10 @@ protected:
     Core::Math::Mat4f m_projection;
     Core::Math::Mat4f m_view;
     Core::Math::Mat4f m_model;
-
-private:
+    
+  private:
     bool m_bPaitingActive;
-
+    
     void initValueDefaults();
-};
+  };
 }

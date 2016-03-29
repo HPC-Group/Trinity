@@ -19,8 +19,10 @@ typedef std::shared_ptr<GLTexture> GLTexturePtr;
 
 class GLHashTable {
 public:
-  GLHashTable(const Core::Math::Vec3ui& maxBrickCount, uint32_t iTableSize=509,
-              uint32_t iRehashCount=10, bool bUseGLCore=true,
+  GLHashTable(const Core::Math::Vec3ui& maxBrickCount,
+              uint32_t iTableSize=509,
+              uint32_t iRehashCount=10,  // Linear probing attempts
+              bool bUseGLCore=true,
               const std::string&  strPrefixName = "");
   virtual ~GLHashTable();
   

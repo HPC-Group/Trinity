@@ -20,7 +20,4 @@ GLRenderPlane::GLRenderPlane(){
   Initialize(PlaneData, PlaneIndices, 4, 6);
 }
 
-GLRenderPlane::GLRenderPlane(const Core::Math::Vec2ui screenResolution){
-    Initialize(PlaneData, PlaneIndices, 4, 6);
-}
 GLRenderPlane::~GLRenderPlane(){}

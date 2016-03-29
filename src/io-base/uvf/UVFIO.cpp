@@ -84,16 +84,12 @@ Vec3ui64 UVFIO::getDomainSize(uint64_t lod, uint64_t modality) const {
   return m_dataset->GetDomainSize(lod, 0);
 }
 
+Core::Math::Vec3f UVFIO::getDomainScale(uint64_t modality) const {
+  return Vec3f(m_dataset->GetScale());
+}
+
 Mat4d UVFIO::getTransformation(uint64_t) const {
-  Vec3d scale = m_dataset->GetScale();
-  Vec3d size = Vec3d(m_dataset->GetDomainSize(0, 0));
-  
-  size = size / size.maxVal();
-  
-  Mat4d trans;
-  trans.Scaling(float(scale.x*size.x), float(scale.y*size.y), float(scale.z*size.z));
-  
-  return trans;
+  return Mat4d();
 }
 
 Vec3ui UVFIO::getBrickOverlapSize() const {

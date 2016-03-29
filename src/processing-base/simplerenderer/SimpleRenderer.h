@@ -23,6 +23,7 @@ namespace trinity {
     virtual void initContext() override;
     virtual void deleteContext() override;
     virtual void resizeFramebuffer() override;
+    virtual bool isIdle() override;
 
   protected:
     virtual void paintInternal(PaintLevel paintlevel) override;

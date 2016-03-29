@@ -8,15 +8,15 @@
 #include <vector>
 
 namespace trinity {
-class VisStream;
-class IRenderer {
+  class VisStream;
+  class IRenderer {
 
-public:
+  public:
     enum class ERenderMode { RM_1DTRANS = 0, RM_2DTRANS, RM_ISOSURFACE, RM_CLEARVIEW, RM_INVALID };
 
     enum class BBoxMode { BBM_NONE = 0, BBM_DATASET, BBM_BRICKS };
 
-    enum class PaintLevel { PL_REDRAW = 0, PL_RECOMPOSE };
+    enum class PaintLevel {  PL_REDRAW_VISCHANGE = 0, PL_REDRAW, PL_RECOMPOSE };
 
     using RenderModeMapper = mocca::BidirectionalMap<ERenderMode, std::string>;
     static const RenderModeMapper& renderModeMapper();
@@ -25,37 +25,39 @@ public:
     static const BBoxModeMapper& bboxModeMapper();
 
     struct PhongColorTriple : public SerializableTemplate<PhongColorTriple> {
-        PhongColorTriple() = default;
-        PhongColorTriple(const Core::Math::Vec4ui8& a, const Core::Math::Vec4ui8& d, const Core::Math::Vec4ui8& s)
-            : ambient(a)
-            , diffuse(d)
-            , specular(s) {}
+      PhongColorTriple() = default;
+      PhongColorTriple(const Core::Math::Vec4ui8& a,
+                       const Core::Math::Vec4ui8& d,
+                       const Core::Math::Vec4ui8& s)
+      : ambient(a)
+      , diffuse(d)
+      , specular(s) {}
 
-        Core::Math::Vec4ui8 ambient;
-        Core::Math::Vec4ui8 diffuse;
-        Core::Math::Vec4ui8 specular;
+      Core::Math::Vec4ui8 ambient;
+      Core::Math::Vec4ui8 diffuse;
+      Core::Math::Vec4ui8 specular;
 
-        bool equals(const PhongColorTriple& other) const;
-        std::string toString() const;
+      bool equals(const PhongColorTriple& other) const;
+      std::string toString() const;
 
-        void serialize(ISerialWriter& writer) const override;
-        void deserialize(const ISerialReader& reader) override;
+      void serialize(ISerialWriter& writer) const override;
+      void deserialize(const ISerialReader& reader) override;
     };
 
     struct BackgroundColors : public SerializableTemplate<BackgroundColors> {
-        BackgroundColors() = default;
-        BackgroundColors(const Core::Math::Vec3ui8& c1, const Core::Math::Vec3ui8& c2)
-            : colorOne(c1)
-            , colorTwo(c2) {}
+      BackgroundColors() = default;
+      BackgroundColors(const Core::Math::Vec3ui8& c1, const Core::Math::Vec3ui8& c2)
+      : colorOne(c1)
+      , colorTwo(c2) {}
 
-        Core::Math::Vec3ui8 colorOne;
-        Core::Math::Vec3ui8 colorTwo;
+      Core::Math::Vec3ui8 colorOne;
+      Core::Math::Vec3ui8 colorTwo;
 
-        bool equals(const BackgroundColors& other) const;
-        std::string toString() const;
+      bool equals(const BackgroundColors& other) const;
+      std::string toString() const;
 
-        void serialize(ISerialWriter& writer) const override;
-        void deserialize(const ISerialReader& reader) override;
+      void serialize(ISerialWriter& writer) const override;
+      void deserialize(const ISerialReader& reader) override;
     };
 
     IRenderer() = default;
@@ -124,7 +126,8 @@ public:
 
     // CLIPPING
     virtual void enableClipping(bool enable) = 0;
-    virtual void setClipVolume(const Core::Math::Vec3f& minValues, const Core::Math::Vec3f& maxValues) = 0;
+    virtual void setClipVolume(const Core::Math::Vec3f& minValues,
+                               const Core::Math::Vec3f& maxValues) = 0;
 
     // TRANSFORMATION
     virtual void setViewParameters(float angle, float znear, float zfar) = 0;
@@ -143,18 +146,21 @@ public:
     virtual void startRendering() = 0;
     virtual void stopRendering() = 0;
 
+    virtual bool isIdle() {return true;} // NEW (dummy implementation, remove)
+
     // postponed init and delete due to opengl specific things
     virtual void initContext() = 0;
     virtual void deleteContext() = 0;
+    virtual void resizeFramebuffer() = 0;
 
-protected:
+  protected:
     std::shared_ptr<VisStream> m_visStream;
     std::unique_ptr<IIO> m_io;
-};
+  };
 
-bool operator==(const IRenderer::PhongColorTriple& lhs, const IRenderer::PhongColorTriple& rhs);
-std::ostream& operator<<(std::ostream& os, const IRenderer::PhongColorTriple& obj);
+  bool operator==(const IRenderer::PhongColorTriple& lhs, const IRenderer::PhongColorTriple& rhs);
+  std::ostream& operator<<(std::ostream& os, const IRenderer::PhongColorTriple& obj);
 
-bool operator==(const IRenderer::BackgroundColors& lhs, const IRenderer::BackgroundColors& rhs);
-std::ostream& operator<<(std::ostream& os, const IRenderer::BackgroundColors& obj);
+  bool operator==(const IRenderer::BackgroundColors& lhs, const IRenderer::BackgroundColors& rhs);
+  std::ostream& operator<<(std::ostream& os, const IRenderer::BackgroundColors& obj);
 }

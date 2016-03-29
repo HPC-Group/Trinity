@@ -107,6 +107,10 @@ Vec3ui64 FractalIO::getDomainSize(uint64_t lod, uint64_t modality) const {
   }
 }
 
+Core::Math::Vec3f FractalIO::getDomainScale(uint64_t modality) const {
+  return Vec3f(1,1,1);
+}
+
 Mat4d FractalIO::getTransformation(uint64_t) const {
   return Mat4d(); // always return identity matix for fractals
 }

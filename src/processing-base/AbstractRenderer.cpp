@@ -15,7 +15,7 @@ m_bPaitingActive(false)
 }
 
 void AbstractRenderer::initValueDefaults(){
-  
+
   m_renderMode = ERenderMode::RM_1DTRANS;
   m_activeModality = 0;
   m_activeTimestep = 0;
@@ -49,7 +49,7 @@ void AbstractRenderer::initValueDefaults(){
   recomputeProjectionMatrix();
   resetCamera();
   resetObject();
-  
+
   m_bPaitingActive = true;  // TODO change this to false after inital testing
 
 }
@@ -59,7 +59,7 @@ void AbstractRenderer::setRenderMode(ERenderMode mode){
     throw TrinityError("unsuported rendermode requested", __FILE__, __LINE__);
   }
   m_renderMode = mode;
-  paint();
+  paint(IRenderer::PaintLevel::PL_REDRAW_VISCHANGE);
 }
 
 // by default we support only 1D TF
@@ -96,8 +96,10 @@ uint64_t AbstractRenderer::getActiveTimestep() const {
 
 // 1D TF
 void AbstractRenderer::set1DTransferFunction(const TransferFunction1D& tf){
-  m_1Dtf = tf;
-  paint();
+  if  (! (m_1Dtf == tf)) {
+    m_1Dtf = tf;
+    paint(IRenderer::PaintLevel::PL_REDRAW_VISCHANGE);
+  }
 }
 
 TransferFunction1D
@@ -115,23 +117,25 @@ std::vector<uint64_t> AbstractRenderer::get1DHistogram() const {
 
 /*
  // TODO: 2D TF
- 
+
  void AbstractRenderer::set2DTransferFunction(const TransferFunction2D& tf){
-   m_2Dtf = tf;
-   paint();
+ if  (! m_2Dtf == tf) {
+  m_2Dtf = tf;
+  paint(IRenderer::PaintLevel::PL_REDRAW_VISCHANGE);
+ }
  }
 
- TransferFunction2D 
+ TransferFunction2D
  AbstractRenderer::getDefaul2DTransferFunction(uint64_t index) const{
-   return m_io->getDefaul21DTransferFunction(index);
+ return m_io->getDefaul21DTransferFunction(index);
  }
 
  const uint64_t AbstractRenderer::getDefault2DTransferFunctionCount() const{
-   return m_io->getDefault2DTransferFunctionCount();
+ return m_io->getDefault2DTransferFunctionCount();
  }
 
  std::vector<uint64_t> AbstractRenderer::get2DHistogram() const {
-   return m_io->get2DHistogram();
+ return m_io->get2DHistogram();
  }
  */
 
@@ -142,8 +146,10 @@ void AbstractRenderer::setIsoValue(uint8_t surfaceIndex, float fIsoValue) {
     throw TrinityError("invalid surfaceIndex", __FILE__, __LINE__);
   }
 
-  m_isoValue[surfaceIndex] = fIsoValue;
-  paint();
+  if (m_isoValue[surfaceIndex] != fIsoValue) {
+    m_isoValue[surfaceIndex] = fIsoValue;
+    paint(IRenderer::PaintLevel::PL_REDRAW_VISCHANGE);
+  }
 }
 
 float AbstractRenderer::getIsoValue(uint8_t surfaceIndex) const {
@@ -273,7 +279,7 @@ void AbstractRenderer::setViewParameters(float angle, float znear, float zfar) {
   m_viewAngle = angle;
   m_zNear = znear;
   m_zFar = zfar;
-  
+
   recomputeProjectionMatrix();
   paint();
 }
@@ -281,7 +287,7 @@ void AbstractRenderer::setViewParameters(float angle, float znear, float zfar) {
 void AbstractRenderer::recomputeProjectionMatrix() {
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
-  
+
   m_projection.Perspective(m_viewAngle, (float)width/(float)height,
                            m_zNear, m_zFar);
 }
@@ -342,7 +348,7 @@ void AbstractRenderer::resetCamera() {
    // TODO
    GL_CHECK(glViewport(0, 0, width, height));
    */
-  
+
   m_view.BuildLookAt(Vec3f(0, 0, 3), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
   paint();
 }
