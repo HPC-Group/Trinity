@@ -113,10 +113,14 @@ void OpenGLWidget::initializeGL() {
   createShaderProgram();
 }
 
+static bool toggle = true;
+
 void OpenGLWidget::paintGL() {
   // devicePixelRatio is needed for retina displays
   glViewport(0, 0, this->width()*devicePixelRatio(),
-             this->height()*devicePixelRatio());
+                   this->height()*devicePixelRatio());
+  
+  
   if (texture) {
     texture->bind(0);
     glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -124,6 +128,8 @@ void OpenGLWidget::paintGL() {
     glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT);
   }
-    
   
+  // make sure OpenGL has finished rendering before we return control back
+  // to Qt
+  glFinish();
 }
