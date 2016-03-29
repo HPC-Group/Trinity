@@ -49,9 +49,6 @@ void AbstractRenderer::initValueDefaults(){
   recomputeProjectionMatrix();
   resetCamera();
   resetObject();
-
-  m_bPaitingActive = true;  // TODO change this to false after inital testing
-
 }
 
 void AbstractRenderer::setRenderMode(ERenderMode mode){
