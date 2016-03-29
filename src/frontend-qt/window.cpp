@@ -168,8 +168,14 @@ void Window::mousePressEvent(QMouseEvent* event) {
 void Window::mouseMoveEvent(QMouseEvent* event) {
     float deltaX = (m_mousePosX - event->localPos().x()) / 200.f;
     float deltaY = (m_mousePosY - event->localPos().y()) / 200.f;
-    Core::Math::Vec3f vec(-deltaX, deltaY, .0f);
-    m_renderer->moveCamera(vec);
+    if (event->buttons() & Qt::LeftButton) {
+        Core::Math::Vec3f vec(-deltaX, deltaY, .0f);
+        m_renderer->moveCamera(vec);
+    }
+    else if (event->buttons() & Qt::RightButton) {
+        Core::Math::Vec3f vec(deltaY, deltaX, .0f);
+        m_renderer->rotateScene(vec);
+    }
     m_mousePosX = event->localPos().x();
     m_mousePosY = event->localPos().y();
 }
