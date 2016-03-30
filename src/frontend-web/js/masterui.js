@@ -48,10 +48,11 @@
                 }
             });
 
-
             canvas = document.getElementById('myCanvas'),
                 img = new Image(),
                 ctx = canvas.getContext('2d'),
+            /*
+
 
                 // registering mousemove while mousedown
                 $("#myCanvas").mousedown(function() {
@@ -74,6 +75,11 @@
             }, false);
 
             //TRI_Frontend.buildApplicationList();
+            */
+            
+        $("#myCanvas").on( "touchstart mousedown", function(e){TRI_Frontend.VisControlConnector.onDown(e)} );
+        $("#myCanvas").on( "touchmove mousemove", function(e){TRI_Frontend.VisControlConnector.onMove(e)} );
+        $("#myCanvas").on( "touchend mouseup", function(e){TRI_Frontend.VisControlConnector.onUp(e)} );
 
         },
 
@@ -268,6 +274,15 @@
 
         var websocketControl = undefined;
         var port = undefined;
+        
+        
+        var lastPadPositionX = undefined;
+        var lastPadPositionY = undefined;
+        var isPadMove = false;
+        var tmpX = 0.0;
+        var tmpY = 0.0;
+        
+        
         var x = 0.0;
         var y = 0.0;
         var deltax = 0.0;
@@ -281,7 +296,9 @@
 
             controlConnectionUri: "",
 
-            onMove: function(xnew, ynew) {
+            onMove: function(e) {
+                
+                /*
 
                 deltax = xnew - x;
                 deltay = ynew - y;
@@ -303,15 +320,60 @@
                     //console.log("x: " + deltax);
                     roty = roty + deltay * 0.001;
                 }
+                */
+
+        
+        if (isPadMove) 
+        {
+            //calculate deltas. mouse movement to the right and up is positive
+            if (e.type == "touchmove")
+            {
+                tmpX = e.originalEvent.touches[0].pageX - lastPadPositionX;
+                tmpY = lastPadPositionY - e.originalEvent.touches[0].pageY;
                 
+                lastPadPositionX = e.originalEvent.touches[0].pageX;
+                lastPadPositionY = e.originalEvent.touches[0].pageY;
+            } else {
+                tmpX += e.clientX - lastPadPositionX;
+                tmpY += lastPadPositionY - e.clientY;
+                
+                lastPadPositionX = e.clientX;
+                lastPadPositionY = e.clientY;
+            }
+            
+            //buildSendMessage(tmpX,tmpY,0);
+        }
 
             },
+            
+            onDown: function(e) {
+                e.preventDefault();
+        //console.log(e);
+        isPadMove = true;
+        if (e.type == "touchstart")
+        {
+            lastPadPositionX = e.originalEvent.touches[0].pageX;
+            lastPadPositionY = e.originalEvent.touches[0].pageY;
+        } else {
+            lastPadPositionX = e.clientX;
+            lastPadPositionY = e.clientY;
+        }
+
+            },
+            
+        onUp: function(e) {
+
+                isPadMove = false;
+            },
+            
+            
+            
 
             sendRotation() {
                 
-               TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' +roty+ ',"y":' + rotx + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
-                                rotx = 0.0;
-                roty = 0.0;
+               TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' +tmpY* (-0.001)+ ',"y":' + tmpX* 0.001 + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
+                tmpX = 0.0;
+                tmpY = 0.0;
                 
                 //TRI_Frontend.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "surfaceIndex": 0, "isovalue": ' + rot + ' } } }');
             },
