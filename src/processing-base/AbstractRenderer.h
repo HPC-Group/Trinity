@@ -112,7 +112,6 @@ namespace trinity {
 
   protected:
     virtual void paintInternal(PaintLevel paintlevel) = 0;
-    virtual void recomputeProjectionMatrix();
 
     ERenderMode m_renderMode;
     uint64_t m_activeModality;
@@ -137,13 +136,37 @@ namespace trinity {
     float m_viewAngle;
     float m_zNear;
     float m_zFar;
+    
+    // derived attributes
     Core::Math::Mat4f m_projection;
     Core::Math::Mat4f m_view;
     Core::Math::Mat4f m_model;
+    Core::Math::Mat4f m_modelView;
+    float m_1DTFScale;
+    float m_2DTFScale;
+    Core::Math::Vec3f m_vScale;
+    Core::Math::Vec3f m_vExtend;    
+    Core::Math::Vec3f m_eyePos;
+    
+    IIO::ValueType    m_type;
+    IIO::Semantic     m_semantic;
+
     
   private:
     bool m_bPaitingActive;
     
+    Core::Math::Mat4f m_camRotation;
+    Core::Math::Mat4f m_camTranslation;
+    Core::Math::Mat4f m_camZoom;
+    Core::Math::Mat4f m_rotation;
+    Core::Math::Mat4f m_translation;
+    Core::Math::Mat4f m_scale;
+
+    void recomputeProjectionMatrix();
+    void recomputeModelViewMatrix();
+
     void initValueDefaults();
+    
+    void calculateDerived();
   };
 }

@@ -6,6 +6,15 @@
 using namespace trinity;
 using namespace Core::Math;
 
+
+static const Core::Math::Vec3f s_vEye(0,0,1.6f);
+static const Core::Math::Vec3f s_vAt(0,0,0);
+static const Core::Math::Vec3f s_vUp(0,1,0);
+static const float s_fFOV = 50.0f;
+static const float s_fZNear = 0.01f;
+static const float s_fZFar = 1000.0f;
+
+
 AbstractRenderer::AbstractRenderer(std::shared_ptr<VisStream> stream,
                                    std::unique_ptr<IIO> ioSession)  :
 IRenderer(stream, std::move(ioSession)),
@@ -13,6 +22,43 @@ m_bPaitingActive(false)
 {
   initValueDefaults();
 }
+
+
+void AbstractRenderer::calculateDerived() {
+  m_type = m_io->getType(m_activeModality);
+  m_semantic = m_io->getSemantic(m_activeModality);
+  
+  Vec2f range = m_io->getRange(m_activeModality);
+  
+  float maxValue = (range.x > range.y) ? m_1Dtf.getSize() : range.y;
+  
+  m_1DTFScale = 1;
+  switch(m_type){
+    case  IIO::ValueType::T_INT8 : m_1DTFScale = float(std::numeric_limits<int8_t>::max()/maxValue); break;
+    case  IIO::ValueType::T_UINT8 : m_1DTFScale = float(std::numeric_limits<uint8_t>::max()/maxValue); break;
+    case  IIO::ValueType::T_INT16 : m_1DTFScale = float(std::numeric_limits<int16_t>::max()/maxValue); break;
+    case  IIO::ValueType::T_UINT16 : m_1DTFScale = float(std::numeric_limits<uint8_t>::max()/maxValue); break;
+    case  IIO::ValueType::T_INT32 : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
+    case  IIO::ValueType::T_UINT32 : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
+    case  IIO::ValueType::T_FLOAT : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
+    case  IIO::ValueType::T_INT64 : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
+    case  IIO::ValueType::T_UINT64 : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
+    case  IIO::ValueType::T_DOUBLE : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
+  }
+
+  /*
+  float m_2DTFScale = (m_pDataset->MaxGradientMagnitude() == 0) ?
+  1.0f : 1.0f/m_pDataset->MaxGradientMagnitude();
+  */
+  
+  Core::Math::Vec3ui64 vDomainSize = m_io->getDomainSize(0,0);
+  m_vScale = Core::Math::Vec3f(m_io->getDomainScale(0));
+  
+  m_vExtend = Core::Math::Vec3f(vDomainSize) * m_vScale;
+  m_vExtend /= m_vExtend.maxVal();
+  m_vScale /= m_vScale.minVal();
+}
+
 
 void AbstractRenderer::initValueDefaults(){
 
@@ -42,13 +88,16 @@ void AbstractRenderer::initValueDefaults(){
   m_enableClipping = false;
   m_clipVolumeMin = Vec3f(0.0f,0.0f,0.0f);
   m_clipVolumeMax = Vec3f(1.0f,1.0f,1.0f);
-  m_viewAngle = 45;
-  m_zNear = 0.01f;
-  m_zFar = 1000.0f;
+  m_viewAngle = s_fFOV;
+  m_zNear = s_fZNear;
+  m_zFar = s_fZFar;
+  m_eyePos = s_vEye;
 
-  recomputeProjectionMatrix();
+  calculateDerived();
+
   resetCamera();
   resetObject();
+  recomputeProjectionMatrix();
 }
 
 void AbstractRenderer::setRenderMode(ERenderMode mode){
@@ -295,6 +344,14 @@ void AbstractRenderer::setViewParameters(float angle, float znear, float zfar) {
   paint();
 }
 
+void AbstractRenderer::recomputeModelViewMatrix() {
+  m_view.BuildLookAt(m_eyePos, s_vAt, s_vUp);
+  
+  m_view = m_camRotation*m_camTranslation*m_camZoom*m_view;
+  m_model = m_rotation*m_translation*m_scale;
+  m_modelView = m_model*m_view;
+}
+
 void AbstractRenderer::recomputeProjectionMatrix() {
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
@@ -308,21 +365,24 @@ void AbstractRenderer::rotateCamera(Vec3f rotation) {
   rotX.RotationX(rotation.x);
   rotY.RotationY(rotation.y);
   rotZ.RotationZ(rotation.z);
-  m_view = m_view * rotX * rotY * rotZ;
+  m_camRotation = m_camRotation * rotX * rotY * rotZ;
+  recomputeModelViewMatrix();
   paint();
 }
 
 void AbstractRenderer::moveCamera(Vec3f direction) {
   Mat4f trans;
   trans.Translation(direction);
-  m_view = m_view * trans;
+  m_camTranslation = m_camTranslation * trans;
+  recomputeModelViewMatrix();
   paint();
 }
 
 void AbstractRenderer::zoomCamera(float zoom) {
   Mat4f scale;
   scale.Scaling(zoom,zoom,zoom);
-  m_view = m_view * scale;
+  m_camZoom = m_camZoom * scale;
+  recomputeModelViewMatrix();
   paint();
 }
 
@@ -331,21 +391,24 @@ void AbstractRenderer::rotateScene(Vec3f rotation) {
   rotX.RotationX(rotation.x);
   rotY.RotationY(rotation.y);
   rotZ.RotationZ(rotation.z);
-  m_model = m_model * rotX * rotY * rotZ;
+  m_rotation = m_rotation * rotX * rotY * rotZ;
+  recomputeModelViewMatrix();
   paint();
 }
 
 void AbstractRenderer::moveScene(Vec3f direction) {
   Mat4f trans;
   trans.Translation(direction);
-  m_model = m_model * trans;
+  m_translation = m_translation * trans;
+  recomputeModelViewMatrix();
   paint();
 }
 
 void AbstractRenderer::rescaleScene(float scale) {
   Mat4f matScale;
   matScale.Scaling(scale,scale,scale);
-  m_model = m_model * matScale;
+  m_scale = m_scale * matScale;
+  recomputeModelViewMatrix();
   paint();
 }
 
@@ -359,13 +422,21 @@ void AbstractRenderer::resetCamera() {
    // TODO
    GL_CHECK(glViewport(0, 0, width, height));
    */
-
-  m_view.BuildLookAt(Vec3f(0, 0, 3), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
+  
+  m_camRotation = Mat4f();
+  m_camTranslation = Mat4f();
+  m_camZoom = Mat4f();
+  
+  recomputeModelViewMatrix();
   paint();
 }
 
 void AbstractRenderer::resetObject() {
-  m_model = Mat4f();
+  m_rotation = Mat4f();
+  m_translation = Mat4f();
+  m_scale = Mat4f();
+
+  recomputeModelViewMatrix();
   paint();
 }
 
@@ -377,3 +448,4 @@ void AbstractRenderer::startRendering() {
 void AbstractRenderer::stopRendering() {
   m_bPaitingActive = false;
 }
+
