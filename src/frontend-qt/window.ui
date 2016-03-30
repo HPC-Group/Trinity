@@ -215,59 +215,44 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
          <column>
           <property name="text">
-           <string>Folder</string>
+           <string>Dataset</string>
           </property>
          </column>
          <item>
           <property name="text">
-           <string>bla</string>
+           <string>FractalData@3a</string>
           </property>
-          <item>
-           <property name="text">
-            <string>blabla</string>
-           </property>
-          </item>
          </item>
          <item>
           <property name="text">
-           <string>foo</string>
+           <string>UVFData@jet.uvf</string>
           </property>
          </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="selectDS">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>200</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="spacing">
-           <number>1</number>
+         <item>
+          <property name="text">
+           <string>UVFData@pim.uvf</string>
           </property>
-          <property name="leftMargin">
-           <number>1</number>
+         </item>
+         <item>
+          <property name="text">
+           <string>UVFData@c60.uvf</string>
           </property>
-          <property name="topMargin">
-           <number>1</number>
+         </item>
+         <item>
+          <property name="text">
+           <string>UVFData@engine.uvf</string>
           </property>
-          <property name="rightMargin">
-           <number>1</number>
+         </item>
+         <item>
+          <property name="text">
+           <string>UVFData@head512.uvf</string>
           </property>
-          <property name="bottomMargin">
-           <number>1</number>
-          </property>
-         </layout>
+         </item>
         </widget>
        </item>
       </layout>
