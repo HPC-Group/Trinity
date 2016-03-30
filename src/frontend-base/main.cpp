@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
     trinity::StreamingParams params(1024, 768);
     auto renderer = processingNode->initRenderer(trinity::VclType::SimpleRenderer, fileId, endpointIO, params);
 
-    renderer->initContext();
+    renderer->startRendering();
     // sending commands
     renderer->setIsoValue(0, 22);
 
