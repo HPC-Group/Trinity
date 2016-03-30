@@ -184,7 +184,7 @@ void Window::mouseMoveEvent(QMouseEvent* event) {
     m_renderer->moveCamera(vec);
   }
   else if (event->buttons() & Qt::LeftButton) {
-    Core::Math::Vec3f vec(deltaY, deltaX, .0f);
+    Core::Math::Vec3f vec(-deltaY, -deltaX, .0f);
     m_renderer->rotateScene(vec);
   }
   m_mousePosX = event->localPos().x();
