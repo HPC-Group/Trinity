@@ -27,7 +27,7 @@ add_executable(processingbase
 				$<TARGET_OBJECTS:jsoncpp>
 				$<TARGET_OBJECTS:tripeg>
 				$<TARGET_OBJECTS:opengl-base>)
-file(GLOB SHADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.glsl ${CMAKE_CURRENT_SOURCE_DIR}/gridleaper/*.glsl ${CMAKE_CURRENT_SOURCE_DIR}/simplerenderer/*.glsl)
+file(GLOB SHADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.glsl ${CMAKE_CURRENT_SOURCE_DIR}/gridleaper/shader/*.glsl ${CMAKE_CURRENT_SOURCE_DIR}/simplerenderer/*.glsl)
 file(COPY ${SHADERS} DESTINATION ${CMAKE_BINARY_DIR}/src/processing-base/)
 
 TARGET_LINK_LIBRARIES(processingbase ${OPENGL_LIBRARIES})
