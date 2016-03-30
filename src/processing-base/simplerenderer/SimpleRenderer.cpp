@@ -76,7 +76,7 @@ void SimpleRenderer::resizeFramebuffer() {
   const uint32_t height = m_visStream->getStreamingParams().getResY();
   m_bufferData.resize(width * height);
   LINFO("(p) resolution: " << width << " x " << height);
-
+  
   initFrameBuffers();
 }
 
@@ -103,7 +103,7 @@ bool SimpleRenderer::loadShaders() {
              "vertex.glsl",NULL,"backfaceFragment.glsl",NULL);
   LOADSHADER(m_raycastShader,
              "vertex.glsl",NULL,"raycastFragment.glsl",NULL);
-    
+  
   return true;
 }
 
@@ -131,7 +131,7 @@ void SimpleRenderer::loadVolumeData() {
       return;
     }
   }
-
+  
   // this simple renderer cannot handle bricks, so we render the
   // "best" LoD that consists of a single brick
   uint64_t singleBrickLoD = m_io->getLargestSingleBrickLOD(0);
@@ -164,13 +164,8 @@ void SimpleRenderer::loadVolumeData() {
                                                 GL_LINEAR, GL_LINEAR);
   
   LINFO("(p) volume created");
-  
-  m_transferFuncScaleValue = MathTools::pow2(byteWidth*8)/m_io->getRange(0).y;
-  
+    
   m_domainTransform = Core::Math::Mat4f(m_io->getTransformation(0));
-  
-  LINFO("(p) m_domainTransform=" << m_domainTransform);
-  
 }
 
 void SimpleRenderer::loadTransferFunction() {
@@ -189,16 +184,10 @@ void SimpleRenderer::loadTransferFunction() {
 }
 
 void SimpleRenderer::loadGeometry() {
-  Core::Math::Vec3ui64 vDomainSize = m_io->getDomainSize(0,0);
-  Core::Math::Vec3f    vScale = Core::Math::Vec3f(m_io->getDomainScale(0));
-
-  Core::Math::Vec3f vExtend = Core::Math::Vec3f(vDomainSize) * vScale;
-  vExtend /= vExtend.maxVal();
-
   Core::Math::Vec3f vMinPoint, vMaxPoint;
-  vMinPoint = -vExtend/2.0;
-  vMaxPoint =  vExtend/2.0;
-
+  vMinPoint = -m_vExtend/2.0;
+  vMaxPoint =  m_vExtend/2.0;
+  
   m_bbBox = mocca::make_unique<GLVolumeBox>(vMinPoint, vMaxPoint);
 }
 
@@ -226,68 +215,75 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
   }
   
   m_context->makeCurrent();
+  
+  if (paintlevel == IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE ||
+      paintlevel == IRenderer::PaintLevel::PL_REDRAW)  {
+    
+    const uint32_t width = m_visStream->getStreamingParams().getResX();
+    const uint32_t height = m_visStream->getStreamingParams().getResY();
+    GL_CHECK(glViewport(0, 0, width, height));
 
-  const uint32_t width = m_visStream->getStreamingParams().getResX();
-  const uint32_t height = m_visStream->getStreamingParams().getResY();  
-  GL_CHECK(glViewport(0, 0, width, height));
-  
-  Mat4f world;
-  Mat4f rotx, roty;  
-  rotx.RotationX(m_isoValue[0]);
-  roty.RotationY(m_isoValue[0] * 1.14f);
-  world = rotx * roty;
-   
-  
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_FRONT);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
-  
-  m_texTransferFunc->Bind(0);
-  m_texVolume->Bind(1);
-  
-  // pass 1: backface (i.e. ray exit coordinates)
-  
-  m_targetBinder->Bind(m_backfaceBuffer);
-  m_backfaceBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
-  
-  m_backfaceShader->Enable();
-  m_backfaceShader->Set("projectionMatrix", m_projection);
-  m_backfaceShader->Set("viewMatrix", m_view);
-  m_backfaceShader->Set("worldMatrix", m_domainTransform*m_model*world);
-  m_bbBox->paint();
-  m_backfaceShader->Disable();
-  
-  
-  // pass 2: raycasting
-  
-  m_backfaceBuffer->Read(2);
-  
-  m_targetBinder->Bind(m_resultBuffer);
-  glCullFace(GL_BACK);
-  m_resultBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
-  
-  m_raycastShader->Enable();
-  m_raycastShader->Set("projectionMatrix", m_projection);
-  m_raycastShader->Set("viewMatrix", m_view);
-  m_raycastShader->Set("worldMatrix", m_domainTransform*m_model*world);
-  m_raycastShader->Set("transferFuncScaleValue", m_transferFuncScaleValue);
-  
-  m_raycastShader->ConnectTextureID("transferfunc", 0);
-  m_raycastShader->ConnectTextureID("volume", 1);
-  m_raycastShader->ConnectTextureID("rayExit", 2);
-  
-  m_bbBox->paint();
-  m_raycastShader->Disable();
-  
-  m_backfaceBuffer->FinishRead();
-  //auto t1 = std::chrono::high_resolution_clock::now();
-  m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
-  //auto t2 = std::chrono::high_resolution_clock::now();
-  //LINFO("Time " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
-
-  
-  m_targetBinder->Unbind();
+    /*
+     DEBUG CODE
+    Mat4f world;
+    Mat4f rotx, roty;
+    rotx.RotationX(m_isoValue[0]);
+    roty.RotationY(m_isoValue[0] * 1.14f);
+    world = rotx * roty;
+     */
+    
+    
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    
+    m_texTransferFunc->Bind(0);
+    m_texVolume->Bind(1);
+    
+    // pass 1: backface (i.e. ray exit coordinates)
+    
+    m_targetBinder->Bind(m_backfaceBuffer);
+    m_backfaceBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
+    
+    m_backfaceShader->Enable();
+    m_backfaceShader->Set("projectionMatrix", m_projection);
+    m_backfaceShader->Set("viewMatrix", m_view);
+    m_backfaceShader->Set("worldMatrix", m_domainTransform*m_model);
+    m_bbBox->paint();
+    m_backfaceShader->Disable();
+    
+    
+    // pass 2: raycasting
+    
+    m_backfaceBuffer->Read(2);
+    
+    m_targetBinder->Bind(m_resultBuffer);
+    glCullFace(GL_BACK);
+    
+    m_resultBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
+    
+    m_raycastShader->Enable();
+    m_raycastShader->Set("projectionMatrix", m_projection);
+    m_raycastShader->Set("viewMatrix", m_view);
+    m_raycastShader->Set("worldMatrix", m_domainTransform*m_model);
+    m_raycastShader->Set("transferFuncScaleValue", m_1DTFScale);
+    
+    m_raycastShader->ConnectTextureID("transferfunc", 0);
+    m_raycastShader->ConnectTextureID("volume", 1);
+    m_raycastShader->ConnectTextureID("rayExit", 2);
+    
+    m_bbBox->paint();
+    m_raycastShader->Disable();
+    
+    m_backfaceBuffer->FinishRead();
+    //auto t1 = std::chrono::high_resolution_clock::now();
+    m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
+    //auto t2 = std::chrono::high_resolution_clock::now();
+    //LINFO("Time " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
+    
+    m_targetBinder->Unbind();
+  }
   
   auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
   getVisStream()->put(std::move(f1));
@@ -299,8 +295,12 @@ bool SimpleRenderer::isIdle() {
 }
 
 bool SimpleRenderer::proceedRendering() {
-  // this renderer is progressive
-  return !isIdle();
+  if (isIdle()) {
+    return false;
+  } else {
+    paintInternal(IRenderer::PaintLevel::PL_CONTINUE);
+    return true;
+  }
 }
 
 
