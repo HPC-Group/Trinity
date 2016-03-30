@@ -16,6 +16,7 @@
 using namespace trinity;
 using namespace Core::Math;
 using namespace std;
+using namespace Core::IO::FileTools;
 
 GridLeaper::GridLeaper(std::shared_ptr<VisStream> stream,
                        std::unique_ptr<IIO> ioSession) :
@@ -27,9 +28,13 @@ m_programRenderFrontFacesNearPlane(nullptr),
 m_programRayCast1D(nullptr),
 m_programRayCast1DColor(nullptr),
 m_programRayCast1DLighting(nullptr),
-m_programRayCastISO(nullptr),
+m_programRayCast1DLightingColor(nullptr),
+m_programRayCast2D(nullptr),
+m_programRayCast2DColor(nullptr),
+m_programRayCast2DLighting(nullptr),
+m_programRayCast2DLightingColor(nullptr),
 m_programRayCastISOLighting(nullptr),
-m_programRayCastISOColor(nullptr),
+m_programRayCastISOColorLighting(nullptr),
 m_programCompose(nullptr),
 m_programComposeColorDebugMix(nullptr),
 m_programComposeColorDebugMixAlpha(nullptr),
@@ -80,9 +85,13 @@ void GridLeaper::deleteContext() {
   m_programRayCast1D = nullptr;
   m_programRayCast1DColor = nullptr;
   m_programRayCast1DLighting = nullptr;
-  m_programRayCastISO = nullptr;
+  m_programRayCast1DLightingColor = nullptr;
+  m_programRayCast2D = nullptr;
+  m_programRayCast2DColor = nullptr;
+  m_programRayCast2DLighting = nullptr;
+  m_programRayCast2DLightingColor = nullptr;
   m_programRayCastISOLighting = nullptr;
-  m_programRayCastISOColor = nullptr;
+  m_programRayCastISOColorLighting = nullptr;
   m_programCompose = nullptr;
   m_programComposeColorDebugMix = nullptr;
   m_programComposeColorDebugMixAlpha = nullptr;
@@ -137,7 +146,7 @@ void GridLeaper::resizeFramebuffer() {
   LINFO("(p) resolution: " << width << " x " << height);
 }
 
-#define LOADSHADER(p, ...)  \
+#define LOAD_SHADER(p, ...)  \
 do { \
 p = std::unique_ptr<GLProgram>(GLProgram::FromFiles(searchDirs,__VA_ARGS__));\
 if (!p) { \
@@ -147,26 +156,43 @@ return false; \
 } \
 } while (0)
 
+#define LOAD_SHADER_WITH_FRAGMENT(p,sd,id)  \
+do { \
+  p = mocca::make_unique<GLProgram>();\
+  p->Load(sd);\
+  if (!p->IsValid()) {\
+    LERROR("(p) invalid "<< id <<" shader program");\
+    p = nullptr;\
+    return false;\
+  } \
+} while (0)
+
 bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   std::vector<std::string> searchDirs;
   searchDirs.push_back(".");
   searchDirs.push_back("shader");
   searchDirs.push_back("../../../src/processing-base/gridleaper/shader");
 
-  LOADSHADER(m_programCompose,
-             "ComposeVS.glsl",NULL,"ComposeFS.glsl",NULL);
-  LOADSHADER(m_programComposeColorDebugMix,
-             "ComposeVS.glsl",NULL,"ComposeVS.glsl",NULL);
-  LOADSHADER(m_programComposeColorDebugMixAlpha,
-             "ComposeVS.glsl",NULL,"ComposeFSColorDebugAlpha.glsl",NULL);
-  LOADSHADER(m_programComposeClearViewIso,
-             "ComposeVS.glsl",NULL,"ComposeFS_CViso.glsl",NULL);
-  LOADSHADER(m_programRenderFrontFaces,
-             "CubeVertex.glsl",NULL,"CubeFragment.glsl",NULL);
-  LOADSHADER(m_programRenderFrontFacesNearPlane,
-             "NearPlaneVS.glsl",NULL,"NearPlaneFS.glsl",NULL);
 
-  // Load the traversal shaders
+  // COMPOSE SHADERS
+
+  LOAD_SHADER(m_programCompose,
+             "ComposeVS.glsl",NULL,"ComposeFS.glsl",NULL);
+  LOAD_SHADER(m_programComposeColorDebugMix,
+             "ComposeVS.glsl",NULL,"ComposeFSColorDebug.glsl",NULL);
+  LOAD_SHADER(m_programComposeColorDebugMixAlpha,
+             "ComposeVS.glsl",NULL,"ComposeFSColorDebugAlpha.glsl",NULL);
+  LOAD_SHADER(m_programComposeClearViewIso,
+             "ComposeVS.glsl",NULL,"ComposeFS_CViso.glsl",NULL);
+
+
+  // FIRST PASS SHADERS
+  LOAD_SHADER(m_programRenderFrontFaces,
+             "GLGridLeaper-entry-VS.glsl",NULL,"GLGridLeaper-frontfaces-FS.glsl",NULL);
+  LOAD_SHADER(m_programRenderFrontFacesNearPlane,
+             "GLGridLeaper-NearPlane-VS.glsl",NULL,"GLGridLeaper-frontfaces-FS.glsl",NULL);
+
+  // TRAVERSAL SHADERS
   const std::string poolFragment = m_volumePool->getShaderFragment(
                                                                    3, 4,
                                                                    GLVolumePool::MissingBrickStrategy(brickStrategy)
@@ -174,110 +200,117 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
   const std::string hashFragment = m_hashTable->getShaderFragment(5);
 
   std::vector<std::string> vs, fs;
-
-  vs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("Compositing.glsl", searchDirs));
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-1D.glsl", searchDirs));
+  fs.push_back(findFileInDirs("Compositing.glsl", searchDirs));
   ShaderDescriptor sd(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCast1D, sd, "1D TF");
 
-  m_programRayCast1D = mocca::make_unique<GLProgram>();
-  m_programRayCast1D->Load(sd);
 
-  if (!m_programRayCast1D->IsValid()) {
-    LERROR("(p) invalid cube shader program");
-    m_programRayCast1D = nullptr;
-    return false;
-  }
-
-  fs.clear();
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D-color.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("Compositing.glsl", searchDirs));
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-1D-color.glsl", searchDirs));
+  fs.push_back(findFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCast1DColor, sd, "Color 1D TF");
 
-  m_programRayCast1DColor = mocca::make_unique<GLProgram>();
-  m_programRayCast1DColor->Load(sd);
 
-  if (!m_programRayCast1DColor->IsValid()) {
-    LERROR("(p) invalid cube shader program");
-    m_programRayCast1DColor = nullptr;
-    return false;
-  }
-
-  fs.clear();
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-1D-L.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("lighting.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("Compositing.glsl", searchDirs));
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-1D-L.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(findFileInDirs("lighting.glsl", searchDirs));
+  fs.push_back(findFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCast1DLighting, sd, "1D TF lighting");
 
-  m_programRayCast1DLighting = mocca::make_unique<GLProgram>();
-  m_programRayCast1DLighting->Load(sd);
 
-  if (!m_programRayCast1DLighting->IsValid()) {
-    LERROR("(p) invalid cube shader program");
-    m_programRayCast1DLighting = nullptr;
-    return false;
-  }
-
-  fs.clear();
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-1D-L-color.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(findFileInDirs("lighting.glsl", searchDirs));
+  fs.push_back(findFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCast1DLightingColor, sd, "Color 1D TF lighting");
 
-  m_programRayCastISO = mocca::make_unique<GLProgram>();
-  m_programRayCastISO->Load(sd);
-
-  if (!m_programRayCastISO->IsValid()) {
-    LERROR("(p) invalid cube shader program");
-    m_programRayCastISO = nullptr;
-    return false;
-  }
-
-  fs.clear();
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso-color.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-2D.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(findFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCast2D, sd, "2D TF");
 
-  m_programRayCastISOColor = mocca::make_unique<GLProgram>();
-  m_programRayCastISOColor->Load(sd);
-
-  if (!m_programRayCastISOColor->IsValid()) {
-    LERROR("(p) invalid cube shader program");
-    m_programRayCastISOColor = nullptr;
-    return false;
-  }
-
-  fs.clear();
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-iso-lighting.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
-  fs.push_back(Core::IO::FileTools::findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-2D-color.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(findFileInDirs("Compositing.glsl", searchDirs));
   sd = ShaderDescriptor(vs, fs);
   sd.AddFragmentShaderString(poolFragment);
   sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCast2DColor, sd, "Color 2D TF");
 
-  m_programRayCastISOLighting = mocca::make_unique<GLProgram>();
-  m_programRayCastISOLighting->Load(sd);
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-2D-L.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(findFileInDirs("lighting.glsl", searchDirs));
+  fs.push_back(findFileInDirs("Compositing.glsl", searchDirs));
+  sd = ShaderDescriptor(vs, fs);
+  sd.AddFragmentShaderString(poolFragment);
+  sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCast2DLighting, sd, "2D TF lighting");
 
-  if (!m_programRayCastISOLighting->IsValid()) {
-    LERROR("(p) invalid cube shader program");
-    m_programRayCastISOLighting = nullptr;
-    return false;
-  }
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-blend.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-2D-L-color.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  fs.push_back(findFileInDirs("lighting.glsl", searchDirs));
+  fs.push_back(findFileInDirs("Compositing.glsl", searchDirs));
+  sd = ShaderDescriptor(vs, fs);
+  sd.AddFragmentShaderString(poolFragment);
+  sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCast2DLightingColor, sd, "Color 2D TF lighting");
+
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-iso.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  sd = ShaderDescriptor(vs, fs);
+  sd.AddFragmentShaderString(poolFragment);
+  sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCastISOLighting, sd, "Isosurface");
+
+  vs.clear(); fs.clear();
+  vs.push_back(findFileInDirs("GLGridLeaper-entry-VS.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-iso.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-Method-iso-color.glsl", searchDirs));
+  fs.push_back(findFileInDirs("GLGridLeaper-GradientTools.glsl", searchDirs));
+  sd = ShaderDescriptor(vs, fs);
+  sd.AddFragmentShaderString(poolFragment);
+  sd.AddFragmentShaderString(hashFragment);
+  LOAD_SHADER_WITH_FRAGMENT(m_programRayCastISOColorLighting, sd, "Color Isosurface");
 
   return true;
 }
@@ -557,20 +590,85 @@ void GridLeaper::compose(){
 
 
 void GridLeaper::selectShader(){
+  if (m_semantic == IIO::Semantic::Color){
+    if (m_enableLighting){
+      switch (m_renderMode) {
+        case  IRenderer::ERenderMode::RM_1DTRANS :
+          m_activeShaderProgram = m_programRayCast1DLightingColor;
+          break;
+        case  IRenderer::ERenderMode::RM_2DTRANS :
+          m_activeShaderProgram = m_programRayCast1DLightingColor;
+          break;
+        case  IRenderer::ERenderMode::RM_ISOSURFACE :
+          m_activeShaderProgram = m_programRayCastISOColorLighting;
+          break;
+        default:
+          throw TrinityError("Rendermode not yet implemented", __FILE__, __LINE__);
+      }
+    } else {
+      switch (m_renderMode) {
+        case  IRenderer::ERenderMode::RM_1DTRANS :
+          m_activeShaderProgram = m_programRayCast1DColor;
+          break;
+        case  IRenderer::ERenderMode::RM_2DTRANS :
+          m_activeShaderProgram = m_programRayCast2DColor;
+          break;
+        case  IRenderer::ERenderMode::RM_ISOSURFACE :
+          m_activeShaderProgram = m_programRayCastISOColorLighting;  // invalid rendermode -> use lighiting instead
+          break;
+        default:
+          throw TrinityError("Rendermode not yet implemented", __FILE__, __LINE__);
+      }
+    }
+  } else {
+    if (m_enableLighting){
+      switch (m_renderMode) {
+        case  IRenderer::ERenderMode::RM_1DTRANS :
+          m_activeShaderProgram = m_programRayCast1DLighting;
+          break;
+        case  IRenderer::ERenderMode::RM_2DTRANS :
+          m_activeShaderProgram = m_programRayCast1DLighting;
+          break;
+        case  IRenderer::ERenderMode::RM_ISOSURFACE :
+          m_activeShaderProgram = m_programRayCastISOLighting;
+          break;
+        default:
+          throw TrinityError("Rendermode not yet implemented", __FILE__, __LINE__);
+      }
+    } else {
+      switch (m_renderMode) {
+        case  IRenderer::ERenderMode::RM_1DTRANS :
+          m_activeShaderProgram = m_programRayCast1D;
+          break;
+        case  IRenderer::ERenderMode::RM_2DTRANS :
+          m_activeShaderProgram = m_programRayCast2D;
+          break;
+        case  IRenderer::ERenderMode::RM_ISOSURFACE :
+          m_activeShaderProgram = m_programRayCastISOLighting;  // invalid rendermode -> use lighiting instead
+          break;
+        default:
+          throw TrinityError("Rendermode not yet implemented", __FILE__, __LINE__);
+      }
+    }
+  }
+
+
   if (m_renderMode == IRenderer::ERenderMode::RM_1DTRANS){
     if (!m_enableLighting){
-      m_activeShaderProgram = m_programRayCast1D;
-    }
-    else{
       if (m_semantic == IIO::Semantic::Color)
-        m_activeShaderProgram = m_programRayCast1DColor;
+        m_activeShaderProgram = m_programRayCast1D;
       else
         m_activeShaderProgram = m_programRayCast1DLighting;
+    } else {
+      if (m_semantic == IIO::Semantic::Color)
+        m_activeShaderProgram = m_programRayCast1DLighting;
+      else
+        m_activeShaderProgram = m_programRayCast1DLightingColor;
     }
   }
   else if (m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE){
     if (m_semantic == IIO::Semantic::Color)
-      m_activeShaderProgram = m_programRayCastISOColor;
+      m_activeShaderProgram = m_programRayCastISOColorLighting;
     else
       m_activeShaderProgram = m_programRayCastISOLighting;
   }

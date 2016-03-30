@@ -85,9 +85,13 @@ namespace trinity {
     std::shared_ptr<GLProgram>        m_programRayCast1D;
     std::shared_ptr<GLProgram>        m_programRayCast1DColor;
     std::shared_ptr<GLProgram>        m_programRayCast1DLighting;
-    std::shared_ptr<GLProgram>        m_programRayCastISO;
+    std::shared_ptr<GLProgram>        m_programRayCast1DLightingColor;
+    std::shared_ptr<GLProgram>        m_programRayCast2D;
+    std::shared_ptr<GLProgram>        m_programRayCast2DColor;
+    std::shared_ptr<GLProgram>        m_programRayCast2DLighting;
+    std::shared_ptr<GLProgram>        m_programRayCast2DLightingColor;
     std::shared_ptr<GLProgram>        m_programRayCastISOLighting;
-    std::shared_ptr<GLProgram>        m_programRayCastISOColor;
+    std::shared_ptr<GLProgram>        m_programRayCastISOColorLighting;
     std::shared_ptr<GLProgram>        m_programCompose;
     std::shared_ptr<GLProgram>        m_programComposeColorDebugMix;
     std::shared_ptr<GLProgram>        m_programComposeColorDebugMixAlpha;
