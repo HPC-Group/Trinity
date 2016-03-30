@@ -115,7 +115,7 @@ void GridLeaper::initContext() {
   }
 
   initHashTable();
-  initVolumePool(getFreeGPUMemory());
+  initVolumePool(getFreeGPUMemory()*1024);
 
   resizeFramebuffer();
   loadShaders(GLVolumePool::MissingBrickStrategy::RequestAll); //todo guess we could use the "renderspecials" here
@@ -526,6 +526,7 @@ void GridLeaper::fillRayEntryBuffer() {
   
   m_nearPlane->paint();
 
+  m_programRenderFrontFaces->Enable();
   m_programRenderFrontFaces->Set("mEyeToModel", m_EyeToModelMatrix);
   m_programRenderFrontFaces->Set("mModelView", m_modelView);
   m_programRenderFrontFaces->Set("mModelViewProjection", m_modelView*m_projection);
