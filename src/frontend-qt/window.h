@@ -1,15 +1,16 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <QMainWindow>
-#include <memory>
+#include "common/IONodeProxy.h"
+#include "frontend-base/ProcessingNodeProxy.h"
 
 #include "mocca/base/ByteArray.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 
-#include "common/IONodeProxy.h"
-#include "frontend-base/ProcessingNodeProxy.h"
+#include <QMainWindow>
+
+#include <memory>
 
 namespace Ui {
 class Window;
@@ -25,10 +26,13 @@ public:
 
 private:
     void initRenderer();
+    void printDataTree(const std::string& dataId, const std::string& indent = "") const;
 
 private slots:
     void on_IOconnectIP_clicked();
     void on_PRconnectIP_clicked();
+
+    void currentItemChanged(const QModelIndex& current, const QModelIndex& previous);
 
     void update();
     void wheelEvent(QWheelEvent* event) override;
@@ -48,8 +52,7 @@ private:
 
     std::unique_ptr<trinity::RendererProxy> m_renderer;
     bool _initDone;
-
-    void printDataTree(const std::string& dataId, const std::string& indent = "") const;
+    std::string m_dataID;
 };
 
 #endif // WINDOW_H

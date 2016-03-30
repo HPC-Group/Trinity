@@ -204,55 +204,14 @@
             </item>
            </layout>
           </item>
+          <item>
+           <widget class="QTreeView" name="dsWidget">
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+           </widget>
+          </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTreeWidget" name="dsWidget">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-         <column>
-          <property name="text">
-           <string>Dataset</string>
-          </property>
-         </column>
-         <item>
-          <property name="text">
-           <string>FractalData@3a</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>UVFData@jet.uvf</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>UVFData@pim.uvf</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>UVFData@c60.uvf</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>UVFData@engine.uvf</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>UVFData@head512.uvf</string>
-          </property>
-         </item>
         </widget>
        </item>
       </layout>
