@@ -779,10 +779,10 @@ void GLVolumePool::enable(float fLoDFactor, const FLOATVECTOR3& vExtend,
   //m_pPoolMetadataTexture->Bind(m_iMetaTextureUnit);
   // m_pPoolDataTexture->Bind(m_iDataTextureUnit);
 
+  pShaderProgram->Enable();
   pShaderProgram->SetTexture3D("metaData", m_pPoolMetadataTexture->GetGLID(), 3);
   pShaderProgram->SetTexture3D("volumePool", m_pPoolDataTexture->GetGLID(), 4);
 
-  pShaderProgram->Enable();
   pShaderProgram->Set("fLoDFactor",fLoDFactor);
   //  pShaderProgram->Set("volumeAspect",vAspect.x, vAspect.y, vAspect.z);
 
