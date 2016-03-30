@@ -32,27 +32,26 @@ private slots:
     void on_IOconnectIP_clicked();
     void on_PRconnectIP_clicked();
 
-    void currentItemChanged(const QModelIndex& current, const QModelIndex& previous);
-
     void update();
     void wheelEvent(QWheelEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
 
+    void enableWidgets();
+
 private:
-    Ui::Window* ui;
-    uint32_t _renderWidth;
-    uint32_t _renderHeight;
+    Ui::Window* m_ui;
+    uint32_t m_renderWidth;
+    uint32_t m_renderHeight;
 
     int m_mousePosX;
     int m_mousePosY;
 
-    std::unique_ptr<trinity::ProcessingNodeProxy> _processingNode;
-    std::unique_ptr<trinity::IONodeProxy> _ioNode;
+    std::unique_ptr<trinity::ProcessingNodeProxy> m_processingNode;
+    std::unique_ptr<trinity::IONodeProxy> m_ioNode;
 
     std::unique_ptr<trinity::RendererProxy> m_renderer;
-    bool _initDone;
-    std::string m_dataID;
+    bool m_initDone;
 };
 
 #endif // WINDOW_H
