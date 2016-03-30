@@ -34,8 +34,7 @@ add_library(iobaselib OBJECT ${IOBASE_HEADER} ${IOBASE_SOURCE})
 
 add_executable(iobase 
 				${CMAKE_CURRENT_LIST_DIR}/main.cpp
-				${IOBASE_HEADER} 
-				${IOBASE_SOURCE}
+				$<TARGET_OBJECTS:iobaselib>
 				$<TARGET_OBJECTS:common>
 				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:mocca>

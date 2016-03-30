@@ -19,8 +19,7 @@ add_library(processingbaselib OBJECT ${PROCESSINGBASE_HEADER} ${PROCESSINGBASE_S
 
 add_executable(processingbase 
 				${CMAKE_CURRENT_LIST_DIR}/main.cpp
-				${PROCESSINGBASE_HEADER} 
-				${PROCESSINGBASE_SOURCE}
+				$<TARGET_OBJECTS:processingbaselib>
 				$<TARGET_OBJECTS:common>
 				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:mocca>
