@@ -371,7 +371,7 @@
 
             sendRotation() {
                 
-               TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' +tmpY* (-0.001)+ ',"y":' + tmpX* 0.001 + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
+               TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' +tmpY* (-0.01)+ ',"y":' + tmpX* 0.01 + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
                 tmpX = 0.0;
                 tmpY = 0.0;
                 
