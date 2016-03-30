@@ -73,6 +73,8 @@ public:
     return 1;
   }
   
+  bool isEnabled() const;
+  
 private:
   bool                Initialize(void); // to old ??
   bool                WriteInfoLog(const char*, GLuint, bool);
@@ -83,7 +85,6 @@ private:
   bool                m_bInitialized;
   
   GLuint              m_ShaderProgramm;
-  GLuint              m_currentVariableLocation;
   
   GLuint              m_VertexShaderHandle;
   GLuint              m_FragmentShaderHandle;
