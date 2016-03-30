@@ -3,8 +3,10 @@
 in vec3 vPosInViewCoords;
 uniform mat4x4 mEyeToModel;
 
+layout (location = 0) out vec4 fragColor;
+
 void main() {
-   gl_FragColor = vec4((mEyeToModel * vec4(vPosInViewCoords.x, vPosInViewCoords.y, vPosInViewCoords.z, 1.0)).xyz, vPosInViewCoords.z);
+   fragColor = vec4((mEyeToModel * vec4(vPosInViewCoords.x, vPosInViewCoords.y, vPosInViewCoords.z, 1.0)).xyz, vPosInViewCoords.z);
 }
 
 
