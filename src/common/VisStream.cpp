@@ -12,9 +12,15 @@ const StreamingParams& VisStream::getStreamingParams() const {
 }
 
 void VisStream::put(Frame frame) {
-    m_queue.enqueue(std::move(frame));
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_frame = std::move(frame);
+    m_cv.notify_one();
 }
 
 mocca::Nullable<Frame> VisStream::get() {
-    return m_queue.dequeue(std::chrono::milliseconds(100));
+    std::unique_lock<std::mutex> lock(m_mutex);
+    if (!m_cv.wait_for(lock, std::chrono::milliseconds(10), [&] { return !m_frame.isEmpty(); })) {
+        return mocca::Nullable<Frame>();
+    }
+    return mocca::Nullable<Frame>(std::move(m_frame));
 }

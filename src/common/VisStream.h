@@ -1,14 +1,12 @@
 #pragma once
-#include <atomic>
-#include <cassert>
-#include <memory>
-#include <thread>
-
-#include "mocca/base/ByteArray.h"
-#include "mocca/base/MessageQueue.h"
 
 #include "commands/ProcessingCommands.h"
-#include "commands/Vcl.h"
+
+#include "mocca/base/ByteArray.h"
+#include "mocca/base/Nullable.h"
+
+#include <condition_variable>
+#include <mutex>
 
 namespace trinity {
 
@@ -20,11 +18,13 @@ public:
 
     const StreamingParams& getStreamingParams() const;
 
-    void put(Frame frame); // false if stream full
+    void put(Frame frame);
     mocca::Nullable<Frame> get();
 
 private:
     StreamingParams m_streamingParams;
-    mocca::MessageQueue<Frame> m_queue;
+    Frame m_frame;
+    std::mutex m_mutex;
+    std::condition_variable m_cv;
 };
 }
