@@ -47,8 +47,10 @@ public:
   void Set(const char *name, const Core::Math::Vec3ui8 value);
   void Set(const char *name, const Core::Math::Vec3ui64 value);
   
-  void Set(const char *name, const Core::Math::Mat4f& value);
-  void Set(const char *name, const std::vector<Core::Math::Mat4f>& value);
+  void Set(const char *name, const Core::Math::Mat4f& value,
+           bool bTranspose=false);
+  void Set(const char *name, const std::vector<Core::Math::Mat4f>& value,
+           bool bTranspose=false);
   
   void SetTexture3D(const char *name, const GLuint value, const uint8_t id);
   

@@ -154,14 +154,16 @@ void GLProgram::Set(const char *name, const Core::Math::Vec4i value){
   glUniform4i(m_currentVariableLocation, value.x, value.y,value.z,value.w);
 }
 
-void GLProgram::Set(const char *name, const Core::Math::Mat4f& value){
+void GLProgram::Set(const char *name, const Core::Math::Mat4f& value,
+                    bool bTranspose){
     m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-    glUniformMatrix4fv(m_currentVariableLocation, 1, false, (float*) &value.array[0]);
+    glUniformMatrix4fv(m_currentVariableLocation, 1, bTranspose, (float*) &value.array[0]);
 }
 
-void GLProgram::Set(const char *name, const std::vector<Core::Math::Mat4f>& value){
+void GLProgram::Set(const char *name, const std::vector<Core::Math::Mat4f>& value,
+                    bool bTranspose){
     m_currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-    glUniformMatrix4fv(m_currentVariableLocation, value.size(), false, (float*) &((value[0]).array[0]));
+    glUniformMatrix4fv(m_currentVariableLocation, value.size(), bTranspose, (float*) &((value[0]).array[0]));
 }
 
 void GLProgram::SetTexture3D(const char *name, const GLuint value, const uint8_t id){
