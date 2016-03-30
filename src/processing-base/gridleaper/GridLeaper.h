@@ -53,6 +53,8 @@ namespace trinity {
     void fillRayEntryBuffer();
     void raycast();
     void compose();
+    
+    void computeEyeToModelMatrix();
 
     //help functions move to new GridLeaperTools class?
     Core::Math::Vec3ui calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,const uint64_t usedMemory);
@@ -106,12 +108,10 @@ namespace trinity {
 
     VisibilityState                 m_visibilityState;
 
-    Core::Math::Vec3ui64            m_IODomainSize;
     float                           m_fLODFactor;
     bool                            m_isIdle;
-
-    IIO::ValueType                  m_type;
-    IIO::Semantic                   m_semantic;
+    
+    Core::Math::Mat4f               m_EyeToModelMatrix;
 
 
 
