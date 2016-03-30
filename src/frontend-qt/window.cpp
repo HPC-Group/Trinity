@@ -155,6 +155,7 @@ void Window::update() {
       ui->openGLWidget->setData(_renderWidth, _renderHeight, frame.data());
       ui->openGLWidget->repaint();
     }
+    m_renderer->proceedRendering();
   }
 }
 
