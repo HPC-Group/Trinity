@@ -569,10 +569,14 @@ void GridLeaper::raycast(){
 void GridLeaper::compose(){
   m_targetBinder->Bind(m_resultBuffer);
 
-  // glClearColor(1, 0, 0, 1);
-  // glClear(GL_COLOR_BUFFER_BIT);
+  GL_CHECK(glClearColor(1, 0, 0, 1));
+  GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
-  glCullFace(GL_BACK);
+  GL_CHECK(glCullFace(GL_BACK));
+  GL_CHECK(glDisable(GL_DEPTH_TEST));
+  GL_CHECK(glDepthMask(GL_FALSE));
+  
+  
   m_programCompose->Enable();
   m_programCompose->SetTexture2D("compose", m_pFBOFinalColor->GetTextureHandle(), 0);
   m_programCompose->Set("ColorOne", m_backgroundColors.colorOne);
@@ -588,6 +592,9 @@ void GridLeaper::compose(){
 
   m_targetBinder->Unbind();
 
+  GL_CHECK(glEnable(GL_DEPTH_TEST));
+  GL_CHECK(glDepthMask(GL_TRUE));
+  
   auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size());
   getVisStream()->put(std::move(f1));
 }
