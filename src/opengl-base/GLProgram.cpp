@@ -5,6 +5,8 @@
 #include "silverbullet/io/FileTools.h"
 #include "mocca/log/LogManager.h"
 
+#include <opengl-base/OpenGLError.h>
+
 #include <iostream>
 #include <cstdio>
 #include <cstdarg>
@@ -25,8 +27,8 @@ bool GLProgram::isEnabled() const {
 
 bool GLProgram::CompileShader(GLuint& handle, const char* source, GLenum type ){
   handle = glCreateShader(type);
-  glShaderSource(handle, 1, &source, NULL);
-  glCompileShader(handle);
+  GL_CHECK(glShaderSource(handle, 1, &source, NULL));
+  GL_CHECK(glCompileShader(handle));
   
   if (WriteInfoLog("shader\n", handle, false))
   {
@@ -40,25 +42,25 @@ bool GLProgram::CompileShader(GLuint& handle, const char* source, GLenum type ){
 
 bool GLProgram::CheckProgramStatus(){
   int status;
-  glGetProgramiv(m_ShaderProgramm, GL_LINK_STATUS, &status);
+  GL_CHECK(glGetProgramiv(m_ShaderProgramm, GL_LINK_STATUS, &status));
   if (status != 1)
   {
     std::cout << "Could not create programm " << std::endl;
     
     GLint maxLength = 0;
-    glGetProgramiv(m_ShaderProgramm, GL_INFO_LOG_LENGTH, &maxLength);
+    GL_CHECK(glGetProgramiv(m_ShaderProgramm, GL_INFO_LOG_LENGTH, &maxLength));
     
     
     std::cout << maxLength<< std::endl;
     //The maxLength includes the NULL character
     std::vector<GLchar> infoLog(maxLength);
-    glGetProgramInfoLog(m_ShaderProgramm, maxLength, &maxLength, &infoLog[0]);
+    GL_CHECK(glGetProgramInfoLog(m_ShaderProgramm, maxLength, &maxLength, &infoLog[0]));
     
     for(int i = 0; i < maxLength;++i){
       std::cout << infoLog[i];
     }
     //The program is useless now. So delete it.
-    glDeleteProgram(m_ShaderProgramm);
+    GL_CHECK(glDeleteProgram(m_ShaderProgramm));
     return false;
   }
   return true;
@@ -72,16 +74,16 @@ bool GLProgram::Load(ShaderDescriptor& sd){
   for (uint32_t i = 0; i < sd.GetVertexElementSize(); ++i){
     GLuint vsHandle = GL_INVALID_INDEX;
     if (!CompileShader(vsHandle, sd.GetVertexSource(i).c_str(), GL_VERTEX_SHADER)) return false;
-    glAttachShader(m_ShaderProgramm, vsHandle);
+    GL_CHECK(glAttachShader(m_ShaderProgramm, vsHandle));
   }
   for (uint32_t i = 0; i < sd.GetFragmentElementSize(); ++i){
     GLuint fsHandle = GL_INVALID_INDEX;
     if (!CompileShader(fsHandle, sd.GetFragmentSource(i).c_str(), GL_FRAGMENT_SHADER)) return false;
-    glAttachShader(m_ShaderProgramm, fsHandle);
+    GL_CHECK(glAttachShader(m_ShaderProgramm, fsHandle));
   }
   
   // Link the shader program
-  glLinkProgram(m_ShaderProgramm);
+  GL_CHECK(glLinkProgram(m_ShaderProgramm));
   
   
   if(WriteInfoLog("programm\n", m_ShaderProgramm, true)) return false;
@@ -101,11 +103,11 @@ bool GLProgram::Load(ShaderDescriptor& sd){
 
 void GLProgram::Enable(){
   if(m_bInitialized){
-    glUseProgram(m_ShaderProgramm);
+    GL_CHECK(glUseProgram(m_ShaderProgramm));
   }
 }
 void GLProgram::Disable(){
-  glUseProgram(0);
+  GL_CHECK(glUseProgram(0));
 }
 
 bool GLProgram::IsValid() const{
@@ -115,89 +117,89 @@ bool GLProgram::IsValid() const{
 void GLProgram::Set(const char *name, const float value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform1f(currentVariableLocation, value);
+  GL_CHECK(glUniform1f(currentVariableLocation, value));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec2f value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform2f(currentVariableLocation, value.x, value.y);
+  GL_CHECK(glUniform2f(currentVariableLocation, value.x, value.y));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec3f value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform3f(currentVariableLocation, value.x, value.y,value.z);
+  GL_CHECK(glUniform3f(currentVariableLocation, value.x, value.y,value.z));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec4f value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform4f(currentVariableLocation, value.x, value.y,value.z,value.w);
+  GL_CHECK(glUniform4f(currentVariableLocation, value.x, value.y,value.z,value.w));
 }
 
 void GLProgram::Set(const char *name, const int32_t value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform1i(currentVariableLocation, value);
+  GL_CHECK(glUniform1i(currentVariableLocation, value));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec2i value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform2i(currentVariableLocation, value.x, value.y);
+  GL_CHECK(glUniform2i(currentVariableLocation, value.x, value.y));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec3i value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform3i(currentVariableLocation, value.x, value.y,value.z);
+  GL_CHECK(glUniform3i(currentVariableLocation, value.x, value.y,value.z));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec3ui value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform3ui(currentVariableLocation, value.x, value.y,value.z);
+  GL_CHECK(glUniform3ui(currentVariableLocation, value.x, value.y,value.z));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec3ui8 value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform3ui(currentVariableLocation, value.x, value.y,value.z);
+  GL_CHECK(glUniform3ui(currentVariableLocation, value.x, value.y,value.z));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec3ui64 value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform3ui(currentVariableLocation, value.x, value.y,value.z);
+  GL_CHECK(glUniform3ui(currentVariableLocation, value.x, value.y,value.z));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec4i value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform4i(currentVariableLocation, value.x, value.y,value.z,value.w);
+  GL_CHECK(glUniform4i(currentVariableLocation, value.x, value.y,value.z,value.w));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Mat4f& value,
                     bool bTranspose){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniformMatrix4fv(currentVariableLocation, 1, bTranspose, (float*) &value.array[0]);
+  GL_CHECK(glUniformMatrix4fv(currentVariableLocation, 1, bTranspose, (float*) &value.array[0]));
 }
 
 void GLProgram::Set(const char *name, const std::vector<Core::Math::Mat4f>& value,
                     bool bTranspose){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniformMatrix4fv(currentVariableLocation, value.size(), bTranspose, (float*) &((value[0]).array[0]));
+  GL_CHECK(glUniformMatrix4fv(currentVariableLocation, value.size(), bTranspose, (float*) &((value[0]).array[0])));
 }
 
 void GLProgram::SetTexture3D(const char *name, const GLuint value, const uint8_t id){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  glUniform1i(currentVariableLocation, id);
-  glActiveTexture(GL_TEXTURE0+id);
-  glBindTexture(GL_TEXTURE_3D, value);
+  GL_CHECK(glUniform1i(currentVariableLocation, id));
+  GL_CHECK(glActiveTexture(GL_TEXTURE0+id));
+  GL_CHECK(glBindTexture(GL_TEXTURE_3D, value));
 }
 
 void GLProgram::SetTexture(const string& name,
@@ -250,32 +252,32 @@ void GLProgram::SetTexture(const std::string& name, const GLuint value) {
     std::cout << "ID FOR : " << name << " - " << iUnusedTexUnit << std::endl;
     
     GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name.c_str());
-    glUniform1i(currentVariableLocation, iUnusedTexUnit);
-    glActiveTexture(GLenum(GL_TEXTURE0 + iUnusedTexUnit));
-    glBindTexture(GL_TEXTURE_2D, value);
+    GL_CHECK(glUniform1i(currentVariableLocation, iUnusedTexUnit));
+    GL_CHECK(glActiveTexture(GLenum(GL_TEXTURE0 + iUnusedTexUnit)));
+    GL_CHECK(glBindTexture(GL_TEXTURE_2D, value));
     
   } else {
     GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name.c_str());
-    glUniform1i(currentVariableLocation, m_mBindings[name]);
-    glActiveTexture(GLenum(GL_TEXTURE0 + m_mBindings[name]));
-    glBindTexture(GL_TEXTURE_2D, value);
+    GL_CHECK(glUniform1i(currentVariableLocation, m_mBindings[name]));
+    GL_CHECK(glActiveTexture(GLenum(GL_TEXTURE0 + m_mBindings[name])));
+    GL_CHECK(glBindTexture(GL_TEXTURE_2D, value));
   }
 }
 
 void GLProgram::SetTexture1D(const std::string& name, const GLuint value, const GLuint shaderLocation){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name.c_str());
-  glUniform1i(currentVariableLocation, shaderLocation);
-  glActiveTexture(GLenum(GL_TEXTURE0 + shaderLocation));
-  glBindTexture(GL_TEXTURE_1D, value);
+  GL_CHECK(glUniform1i(currentVariableLocation, shaderLocation));
+  GL_CHECK(glActiveTexture(GLenum(GL_TEXTURE0 + shaderLocation)));
+  GL_CHECK(glBindTexture(GL_TEXTURE_1D, value));
 }
 
 void GLProgram::SetTexture2D(const std::string& name, const GLuint value, const GLuint shaderLocation){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name.c_str());
-  glUniform1i(currentVariableLocation, shaderLocation);
-  glActiveTexture(GLenum(GL_TEXTURE0 + shaderLocation));
-  glBindTexture(GL_TEXTURE_2D, value);
+  GL_CHECK(glUniform1i(currentVariableLocation, shaderLocation));
+  GL_CHECK(glActiveTexture(GLenum(GL_TEXTURE0 + shaderLocation)));
+  GL_CHECK(glBindTexture(GL_TEXTURE_2D, value));
 }
 
 void GLProgram::ConnectTextureID(const string& name,
@@ -285,7 +287,7 @@ void GLProgram::ConnectTextureID(const string& name,
   
   GLint location = GetLocation(name.c_str());
   CheckSamplerType(name.c_str());
-  glUniform1i(location,iUnit);
+  GL_CHECK(glUniform1i(location,iUnit));
 }
 
 #ifdef GLSL_DEBUG
