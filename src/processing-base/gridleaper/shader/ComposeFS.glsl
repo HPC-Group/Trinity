@@ -10,7 +10,7 @@ uniform vec3 ColorTwo;
 in vec2 vScreenPosition;
 
 // OUTPUT VARIABLES
-out vec4 outputColor;
+layout(location=0) out vec4 outputColor;
 
 // Pixel Shader
 void main(void)
@@ -19,7 +19,5 @@ void main(void)
   vec3 BackgroundColor = ColorOne * vScreenPosition.y + ColorTwo*(1-vScreenPosition.y);
   
   outputColor = Color * Color.w + vec4(BackgroundColor,1) * (1-Color.w);
-
-outputColor = texture(compose,vScreenPosition);
 }
 
