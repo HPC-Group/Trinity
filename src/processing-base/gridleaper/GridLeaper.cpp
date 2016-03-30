@@ -397,11 +397,9 @@ void GridLeaper::initFrameBuffers() {
                                                GL_FLOAT, true, 1);
 #endif
 
-
   m_resultBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
-                                              GL_CLAMP_TO_EDGE,
-                                              width, height,
-                                              GL_RGBA, GL_RGBA,
+	  GL_CLAMP_TO_EDGE, width, height,
+	  GL_RGBA, GL_RGBA,
 	  GL_UNSIGNED_BYTE, true, 1);
 }
 
@@ -443,6 +441,11 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
 
   m_context->makeCurrent(); // todo: check if we need this
 
+  const uint32_t width = m_visStream->getStreamingParams().getResX();
+  const uint32_t height = m_visStream->getStreamingParams().getResY();
+  GL_CHECK(glViewport(0, 0, width, height));
+
+
   // fall through an purpose
   switch (paintlevel) {
     case IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE :
@@ -461,10 +464,10 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     m_hashTable->clearData();
     raycast();
     swapToNextBuffer();
-
+	
     // compose (sends data to frontend)
     compose();
-
+	
     // update volumepool
     std::vector<Vec4ui> hash = m_hashTable->getData();
     if (hash.size() > 0) {
@@ -475,7 +478,6 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     } else {
       m_isIdle = true;
     }
-
   } else {
     if (paintlevel == IRenderer::PaintLevel::PL_RECOMPOSE) compose();
   }
@@ -518,12 +520,10 @@ void GridLeaper::fillRayEntryBuffer() {
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
 
-
   m_programRenderFrontFacesNearPlane->Enable();
   m_programRenderFrontFacesNearPlane->Set("mEyeToModel", m_EyeToModelMatrix);
   m_programRenderFrontFacesNearPlane->Set("mInvProjection", m_projection.inverse());
-  
-  
+    
   m_nearPlane->paint();
 
   m_programRenderFrontFaces->Enable();
@@ -536,7 +536,7 @@ void GridLeaper::fillRayEntryBuffer() {
   //reset opengl
   m_programRenderFrontFacesNearPlane->Disable();
   m_targetBinder->Unbind();
-  m_pFBORayStart->FinishWrite();
+//  m_pFBORayStart->FinishWrite();
 }
 
                                   
@@ -567,23 +567,35 @@ void GridLeaper::raycast(){
 }
 
 void GridLeaper::compose(){
+	
   m_targetBinder->Bind(m_resultBuffer);
 
-  GL_CHECK(glClearColor(1, 0, 0, 1));
-  GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+  GL_CHECK(glClearColor(0, 0, 1, 1));
+  GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-  GL_CHECK(glCullFace(GL_BACK));
-  GL_CHECK(glDisable(GL_DEPTH_TEST));
-  GL_CHECK(glDepthMask(GL_FALSE));
+  GL_CHECK(glCullFace(GL_FRONT));
+  GL_CHECK(glDisable(GL_CULL_FACE));
+//  GL_CHECK(glDisable(GL_DEPTH_TEST));
+//  GL_CHECK(glDepthMask(GL_FALSE));
+  GL_CHECK(glDisable(GL_BLEND));
   
-  
+
   m_programCompose->Enable();
   m_programCompose->SetTexture2D("compose", m_pFBOFinalColor->GetTextureHandle(), 0);
-  m_programCompose->Set("ColorOne", m_backgroundColors.colorOne);
-  m_programCompose->Set("ColorTwo", m_backgroundColors.colorTwo);
+
+  Vec3f c1 = Vec3f(m_backgroundColors.colorOne)/255.0f;
+  Vec3f c2 = Vec3f(m_backgroundColors.colorTwo)/255.0f;
+
+  m_programCompose->Set("ColorOne", c1);
+  m_programCompose->Set("ColorTwo", c2);
 
   m_nearPlane->paint();
+
   m_programCompose->Disable();
+
+  GL_CHECK(glEnable(GL_CULL_FACE));
+  GL_CHECK(glEnable(GL_DEPTH_TEST));
+  GL_CHECK(glDepthMask(GL_TRUE));
 
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
@@ -662,27 +674,6 @@ void GridLeaper::selectShader(){
       }
     }
   }
-
-
-  if (m_renderMode == IRenderer::ERenderMode::RM_1DTRANS){
-    if (!m_enableLighting){
-      if (m_semantic == IIO::Semantic::Color)
-        m_activeShaderProgram = m_programRayCast1D;
-      else
-        m_activeShaderProgram = m_programRayCast1DLighting;
-    } else {
-      if (m_semantic == IIO::Semantic::Color)
-        m_activeShaderProgram = m_programRayCast1DLighting;
-      else
-        m_activeShaderProgram = m_programRayCast1DLightingColor;
-    }
-  }
-  else if (m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE){
-    if (m_semantic == IIO::Semantic::Color)
-      m_activeShaderProgram = m_programRayCastISOColorLighting;
-    else
-      m_activeShaderProgram = m_programRayCastISOLighting;
-  }
 }
 
 void GridLeaper::setupRaycastShader() {
@@ -691,7 +682,11 @@ void GridLeaper::setupRaycastShader() {
                         m_vExtend,
                         m_vScale,
                         m_activeShaderProgram); // bound to 3 and 4
+  GL_CHECK_EXT();
+ 
   m_hashTable->enable(); // bound to 5
+
+  GL_CHECK_EXT();
 
 #ifdef GLGRIDLEAPER_DEBUGVIEW
   if (m_iDebugView == 2)
@@ -700,17 +695,17 @@ void GridLeaper::setupRaycastShader() {
 #ifdef GLGRIDLEAPER_WORKINGSET
   m_pWorkingSetTable->Enable(); // bound to 7
 #endif
-  
+
   // set shader parameters
   m_activeShaderProgram->Enable();
   m_activeShaderProgram->Set("sampleRateModifier", m_fSampleRateModifier);
   m_activeShaderProgram->Set("mEyeToModel", m_EyeToModelMatrix);
   m_activeShaderProgram->Set("mModelView", m_modelView);
   m_activeShaderProgram->Set("mModelViewProjection", m_modelView*m_projection);
-  
+
   if (m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE) {
     m_activeShaderProgram->Set("fIsoval", m_isoValue[0]);
-    FLOATVECTOR3 invScale = 1.0f/m_vScale;
+    Vec3f invScale = 1.0f/m_vScale;
     m_activeShaderProgram->Set("vDomainScale",invScale);
     m_activeShaderProgram->Set("mModelToEye",m_EyeToModelMatrix.inverse());
     m_activeShaderProgram->Set("mModelViewIT", m_modelView.inverse(), true);
@@ -719,12 +714,16 @@ void GridLeaper::setupRaycastShader() {
     if (m_renderMode == IRenderer::ERenderMode::RM_2DTRANS) {
       // m_activeShaderProgram->Set("fGradientScale",m_2DTFScale);
     }
-    
+
     if (m_enableLighting) {
-      Vec3ui8 a = m_lightingColors.ambient.xyz()*m_lightingColors.ambient.w;
-      Vec3ui8 d = m_lightingColors.diffuse.xyz()*m_lightingColors.diffuse.w;
-      Vec3ui8 s = m_lightingColors.specular.xyz()*m_lightingColors.specular.w;
+      Vec3f a(m_lightingColors.ambient.xyz()*m_lightingColors.ambient.w);
+      Vec3f d(m_lightingColors.diffuse.xyz()*m_lightingColors.diffuse.w);
+      Vec3f s(m_lightingColors.specular.xyz()*m_lightingColors.specular.w);
       
+	  a = a / 255.f;
+	  d = d / 255.f;
+	  s = s / 255.f;
+
       Vec3f invScale = 1.0f/m_vScale;
       
       Vec3f vModelSpaceLightDir = (Vec4f(m_lightDirection,0.0f) * m_EyeToModelMatrix ).xyz().normalized();
@@ -738,70 +737,6 @@ void GridLeaper::setupRaycastShader() {
       m_activeShaderProgram->Set("vDomainScale",invScale);
     }
   }
-
-  
-  
-  
-  /*
-  
-  
-  Mat4f mvp = m_modelView*m_projection;
-  Mat4f mvInverse = m_modelView.inverse();
-
-  m_activeShaderProgram->Enable();
-
-  m_activeShaderProgram->Set("mModelViewProjection", mvp);
-  m_activeShaderProgram->Set("mModelView", m_modelView);
-
-  m_activeShaderProgram->Set("sampleRateModifier", getSampleRateModifier());
-  m_activeShaderProgram->Set("mEyeToModel", mvInverse);
-  m_activeShaderProgram->Set("mEyeToModel2", m_view.inverse());
-  m_activeShaderProgram->Set("vDomainScale", m_IODomainSize);
-
-  //setup textures
-  m_activeShaderProgram->SetTexture2D("rayStartPoint", m_pFBORayStart->GetTextureHandle(), 0);
-  m_activeShaderProgram->SetTexture2D("rayStartColor", m_pFBOStartColor->GetTextureHandle(), 1);
-
-
-  //todo FIX ASPECT RATIO AND EXTEND? WHERE IN IIO?
-  m_volumePool->enable(m_fLODFactor,
-                       Vec3f(0,0,0),       //todo vExtend
-                       Vec3f(0,0,0),     //todo vAspect
-                       m_activeShaderProgram);
-  m_hashTable->enable();
-
-  //todo why do we divide xyz by w?
-  if (m_enableLighting || m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE) {
-    Vec3ui8 a = m_lightingColors.ambient.xyz()*m_lightingColors.ambient.w;
-    Vec3ui8 d = m_lightingColors.diffuse.xyz()*m_lightingColors.diffuse.w;
-    Vec3ui8 s = m_lightingColors.specular.xyz()*m_lightingColors.specular.w;
-
-    m_activeShaderProgram->Set("vLightAmbient", a);
-    m_activeShaderProgram->Set("vLightDiffuse", d);
-    m_activeShaderProgram->Set("vLightSpecular", s);
-    m_activeShaderProgram->Set("vModelSpaceLightDir", m_lightDirection);
-    m_activeShaderProgram->Set("vModelSpaceEyePos", Vec3f(0,0,10));
-  }
-
-
-  if (m_renderMode == IRenderer::ERenderMode::RM_ISOSURFACE) {
-    m_activeShaderProgram->Set("fIsoval", getIsoValue(0));
-
-    m_activeShaderProgram->Set("mModelToEye", m_modelView);
-    m_activeShaderProgram->Set("mModelViewIT", m_modelView.inverse());
-  }
-  else {
-    m_activeShaderProgram->Set("fTransScale", 1.0f);
-    m_activeShaderProgram->SetTexture1D("transferFunction",
-                                        m_texTransferFunc->GetGLID(),
-                                        2);
-  }
-
-#ifdef GLGRIDLEAPER_DEBUGVIEW
-  m_activeShaderProgram->SetTexture2D("debugColor", m_pFBODebug->GetTextureHandle(), 6);
-#endif
-   
-   */
 }
 
 void GridLeaper::swapToNextBuffer(){
