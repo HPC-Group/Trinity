@@ -272,7 +272,8 @@
         var y = 0.0;
         var deltax = 0.0;
         var deltay = 0.0;
-        var rot = 0.00;
+        var rotx = 0.00;
+        var roty = 0.00;
 
 
 
@@ -283,6 +284,7 @@
             onMove: function(xnew, ynew) {
 
                 deltax = xnew - x;
+                deltay = ynew - y;
 
                 if (deltax > 2.0 || deltax < -2.0) {
                     x = xnew;
@@ -290,16 +292,26 @@
                     //console.log("x: " + deltax);
                     x = xnew;
                     //console.log("x: " + deltax);
-                    rot = rot + deltax * 0.001;
+                    rotx = rotx + deltax * 0.001;
                 }
+                
+                if (deltay > 2.0 || deltay < -2.0) {
+                    y = ynew;
+                } else {
+                    //console.log("x: " + deltax);
+                    y = ynew;
+                    //console.log("x: " + deltax);
+                    roty = roty + deltay * 0.001;
+                }
+                
 
             },
 
             sendRotation() {
                 
-               TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"direction":{"x": ' +rot+ ',"y":0,"z":0}},"rid":108,"sid":1},"type":"MoveCamera"}');
-                rot = 0.0;
-                
+               TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' +roty+ ',"y":' + rotx + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
+                                rotx = 0.0;
+                roty = 0.0;
                 
                 //TRI_Frontend.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "surfaceIndex": 0, "isovalue": ' + rot + ' } } }');
             },
@@ -331,9 +343,9 @@
             onOpen: function(evt) {
                 console.log("Websocket CONNECTED to " + TRI_Frontend.VisControlConnector.controlConnectionUri);
                 $("#div_connect_success").fadeIn('slow', TRI_Frontend.hideConnectMessage);
-                //TRI_Frontend.VisControlConnector.doSend('{"type": "InitContext", "req": { "rid": 1, "sid": 3, "params": { "dummy": 1} } }');
+                TRI_Frontend.VisControlConnector.doSend('{"type": "StartRendering", "req": { "rid": 1, "sid": 3, "params": {} } }');
                 
-                TRI_Frontend.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "surfaceIndex": 0, "isovalue": 0.0 } } }');
+
 
                 $("#div_connect_success").fadeIn('slow', TRI_Frontend.hideConnectMessage);
 
