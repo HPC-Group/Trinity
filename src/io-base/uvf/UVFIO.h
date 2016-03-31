@@ -50,5 +50,7 @@ namespace trinity {
   private:
     std::unique_ptr<UVFDataset> m_dataset;
     std::string                 m_filename;
+    
+    Core::Math::Vec3ui64 getEffectiveBricksize() const;
   };
 }

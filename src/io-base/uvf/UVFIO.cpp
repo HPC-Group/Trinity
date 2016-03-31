@@ -105,9 +105,28 @@ Vec3f UVFIO::getBrickExtents(const BrickKey& key) const {
   return m_dataset->GetBrickExtents(key);
 }
 
+Vec3ui64 UVFIO::getEffectiveBricksize() const {
+  return getMaxUsedBrickSizes()-Vec3ui64(getBrickOverlapSize()*2);
+}
+
 Vec3f UVFIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
-  // TODO
-  return Vec3f(1.0f, 1.0f, 1.0f);
+  const Vec3ui bricks = getBrickLayout(lod, modality);
+  const Vec3ui brickIndex = bricks-Vec3ui(1,1,1);
+  const BrickKey k(modality, 0, lod, brickIndex.volume());
+  const Vec3ui effectiveLastBrickInLevelSize = getBrickVoxelCounts(k)-getBrickOverlapSize();
+  
+  Vec3f floatBrickLayout = Vec3f(effectiveLastBrickInLevelSize)/Vec3f(getEffectiveBricksize());
+  
+  // subtract smallest possible floating point epsilon from
+  // integer values that would mess up the brick index computation in the shader
+  if (float(uint32_t(floatBrickLayout.x)) == floatBrickLayout.x)
+    floatBrickLayout.x -= floatBrickLayout.x * std::numeric_limits<float>::epsilon();
+  if (float(uint32_t(floatBrickLayout.y)) == floatBrickLayout.y)
+    floatBrickLayout.y -= floatBrickLayout.y * std::numeric_limits<float>::epsilon();
+  if (float(uint32_t(floatBrickLayout.z)) == floatBrickLayout.z)
+    floatBrickLayout.z -= floatBrickLayout.z * std::numeric_limits<float>::epsilon();
+  
+  return floatBrickLayout;
 }
 
 Vec3ui UVFIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
