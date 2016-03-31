@@ -77,10 +77,10 @@ void AbstractRenderer::initValueDefaults(){
   m_enableLighting = true;
   m_lightingColors = PhongColorTriple{
     Vec4ui8(25,25,25,255),
-    Vec4ui8(128,128,128,255),
+    Vec4ui8(255,255,255,255),
     Vec4ui8(255,255,255,255)
   };
-  m_lightDirection = Vec3f(0.0f,0.0f,1.0f);
+  m_lightDirection = Vec3f(0.0f,0.0f,-1.0f);
   m_fSampleRateModifier = 1.0f;
   m_BBoxMode = BBoxMode::BBM_NONE;
   m_RendererSpecials = std::vector<uint64_t>();
