@@ -215,7 +215,6 @@
 
                 try {
                     messageResult = JSON.parse(evt.data);
-                    console.log(messageResult);
                 } catch (error) {
                     console.log("ERROR: Error while parsing Message response to JSON")
                 }
@@ -485,6 +484,7 @@
                 try {
                     messageResult = JSON.parse(evt.data);
                     console.log(messageResult);
+                    console.log("incoming: " + messageResult.rep.params.result);
                 } catch (error) {
                     console.log("ERROR: Error while parsing Message response to JSON")
                 }
