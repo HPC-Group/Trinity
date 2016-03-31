@@ -64,7 +64,7 @@ public:
   void ReadBackPixels(int x, int y, int sX, int sY, void* pData, int iBuffer=0);
 
   template <typename T>
-  void toString() const {
+  std::string toString() const {
 	  std::vector<T> pData(gl_components(m_format)*m_iSizeX*m_iSizeY);
 	  GL_CHECK(glReadBuffer(GL_COLOR_ATTACHMENT0));
 	  GL_CHECK(glReadPixels(0, 0, m_iSizeX, m_iSizeY, m_format, m_type, pData.data()));
@@ -80,7 +80,7 @@ public:
 		  }
 		  ss << "\n";
 	  }
-    return ss.str()
+    return ss.str();
   }
 
 
