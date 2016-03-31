@@ -1,5 +1,4 @@
 #include "mocca/log/LogManager.h"
-
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
@@ -7,6 +6,9 @@
 #include <limits>
 #include <stdexcept>
 #include <sstream>
+
+//#define WRITE_SHADERS 1
+
 #ifdef WRITE_SHADERS
 # include <fstream>
 # include <iterator>
@@ -315,7 +317,6 @@ std::string GLVolumePool::getShaderFragment(uint32_t iMetaTextureUnit,
 
   std::stringstream ss;
 
-  //#define WRITE_SHADERS
 #ifdef WRITE_SHADERS
   const char* shname = "volpool.glsl";
   std::ifstream shader(shname);
@@ -777,14 +778,13 @@ void GLVolumePool::enable(float fLoDFactor, const FLOATVECTOR3& vExtend,
                           const FLOATVECTOR3& /*vAspect */,
                           GLProgramPtr pShaderProgram) const {
   //m_pPoolMetadataTexture->Bind(m_iMetaTextureUnit);
-  // m_pPoolDataTexture->Bind(m_iDataTextureUnit);
+  //m_pPoolDataTexture->Bind(m_iDataTextureUnit);
 
   pShaderProgram->Enable();
-  pShaderProgram->SetTexture3D("metaData", m_pPoolMetadataTexture->GetGLID(), 3);
-  pShaderProgram->SetTexture3D("volumePool", m_pPoolDataTexture->GetGLID(), 4);
+  pShaderProgram->Set("fLoDFactor", fLoDFactor);
 
-  pShaderProgram->Set("fLoDFactor",fLoDFactor);
-  //  pShaderProgram->Set("volumeAspect",vAspect.x, vAspect.y, vAspect.z);
+  pShaderProgram->SetTexture3D("metaData", m_pPoolMetadataTexture->GetGLID(), m_iMetaTextureUnit);
+  pShaderProgram->SetTexture3D("volumePool", m_pPoolDataTexture->GetGLID(), m_iDataTextureUnit);
 
 
   float fLevelZeroWorldSpaceError = (vExtend/Vec3f(m_volumeSize)).maxVal();
@@ -1325,7 +1325,7 @@ namespace {
                                     const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
     uint32_t iPagedBricks = 0;
-    std::vector<uint8_t> vUploadMem(maxUsedBrickVoxelCount);
+	std::vector<uint8_t> vUploadMem(maxUsedBrickVoxelCount);
 
     for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
 
@@ -1342,8 +1342,6 @@ namespace {
         break;
       else
         iPagedBricks++;
-      vUploadMem.clear();
-
     }
     return iPagedBricks;
   }
