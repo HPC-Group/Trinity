@@ -16,6 +16,7 @@
 #include <iostream>
 
 #include <silverbullet/math/MathTools.h>
+#include "common/MemBlockPool.h"
 #include <common/TrinityError.h>
 #include "VisibilityState.h"
 #include <opengl-base/GLProgram.h>
@@ -711,14 +712,12 @@ namespace {
                          uint8_t byteCount
                          ) {
     const Vec3ui vVoxelCount = pDataset.getBrickVoxelCounts(bkey);
-    std::vector<uint8_t> vUploadMem(vVoxelCount.volume()*byteCount);
 
-    {
-      //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
-      pDataset.getBrick(bkey, vUploadMem);
-    }
+    //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
+    bool success;
+    auto vUploadMem = pDataset.getBrick(bkey, success);
 
-    pool.uploadFirstBrick(vVoxelCount, &vUploadMem[0]);
+    pool.uploadFirstBrick(vVoxelCount, const_cast<std::vector<uint8_t>*>(vUploadMem.get()));
   }
 
 }
@@ -1326,7 +1325,7 @@ namespace {
                                     const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
     uint32_t iPagedBricks = 0;
-	std::vector<uint8_t> vUploadMem(maxUsedBrickVoxelCount);
+
 
     for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
 
@@ -1335,11 +1334,10 @@ namespace {
       BrickKey const key = IndexFrom4D(pDataset,modality,vBrickID, iTimestep);
       Vec3ui const vVoxelSize = pDataset.getBrickVoxelCounts(key);
       // upload brick core
-      {
-        pDataset.getBrick(key, vUploadMem);
-      }
+      bool success;
+      auto vUploadMem = pDataset.getBrick(key, success);
 
-      if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), &vUploadMem[0]))
+      if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), const_cast<std::vector<uint8_t>*>(vUploadMem.get())))
         break;
       else
         iPagedBricks++;
@@ -1397,7 +1395,6 @@ namespace {
                                                const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
     uint32_t iPagedBricks = 0;
-    std::vector<uint8_t> vUploadMem(maxUsedBrickVoxelCount);
 
     // now iterate over the missing bricks and upload them to the GPU
     // todo: consider batching this if it turns out to make a difference
@@ -1416,11 +1413,12 @@ namespace {
         if (bContainsData) {
 
           // upload brick core
-          {
+          
             //Tuvok::StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
-            pDataset.getBrick(key, vUploadMem);
-          }
-          if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), &vUploadMem[0]))
+            bool success;
+            auto vUploadMem = pDataset.getBrick(key, success);
+          
+          if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), const_cast<std::vector<uint8_t>*>(vUploadMem.get())))
             return iPagedBricks;
           else
             iPagedBricks++;

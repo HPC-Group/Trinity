@@ -1,5 +1,6 @@
 #include "io-base/IOCommandsHandler.h"
 
+#include "common/MemBlockPool.h"
 #include "common/TrinityError.h"
 #include "io-base/IOCommandFactory.h"
 #include "io-base/IOSession.h"
@@ -196,8 +197,8 @@ GetBrickHdl::GetBrickHdl(const GetBrickRequest& request, IOSession* session)
 
 std::unique_ptr<Reply> GetBrickHdl::execute() {
     auto brickKey = m_request.getParams().getBrickKey();
-    auto brick = std::make_shared<std::vector<uint8_t>>();
-    auto success = m_session->getIO().getBrick(brickKey, *brick);
+    bool success;
+    auto brick = m_session->getIO().getBrick(brickKey, success);
     GetBrickCmd::ReplyParams params(brick, success);
     return mocca::make_unique<GetBrickReply>(params, m_request.getRid(), m_session->getSid());
 }

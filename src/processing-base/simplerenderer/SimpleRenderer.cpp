@@ -1,5 +1,6 @@
 #include "SimpleRenderer.h"
 
+#include "common/MemBlockPool.h"
 #include "common/VisStream.h"
 #include "opengl-base/OpenGLError.h"
 #include "silverbullet/math/Vectors.h"
@@ -142,17 +143,11 @@ void SimpleRenderer::loadVolumeData() {
   
   LINFO("(p) found suitable volume with single brick of size " << brickSize);
   
+  bool success;
+  auto volume = m_io->getBrick(brickKey, success);
   
-  std::vector<uint8_t> volume;
-  
-  // HACK:
-  // getBrick should resize the vector, but for now we have to do this manually
-  volume.resize(brickSize.volume()*byteWidth);
-  
-  m_io->getBrick(brickKey, volume);
-  
-  if (volume.size() != brickSize.volume()*byteWidth) {
-    LERROR("invalid volume data vector. size should be " << brickSize.volume()*byteWidth << " but is " << volume.size());
+  if (volume->size() != brickSize.volume()*byteWidth) {
+    LERROR("invalid volume data vector. size should be " << brickSize.volume()*byteWidth << " but is " << volume->size());
     return;
   } else {
     LINFO("(p) volume size data ok");
@@ -160,7 +155,7 @@ void SimpleRenderer::loadVolumeData() {
   
   m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x, brickSize.y,
                                                 brickSize.z, GL_RED, GL_RED,
-                                                format, volume.data(),
+                                                format, volume->data(),
                                                 GL_LINEAR, GL_LINEAR);
   
   LINFO("(p) volume created");

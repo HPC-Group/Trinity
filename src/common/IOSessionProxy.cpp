@@ -130,14 +130,13 @@ uint64_t IOSessionProxy::getTotalBrickCount(uint64_t modality) const {
     return reply->getParams().getTotalBrickCount();
 }
 
-bool IOSessionProxy::getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const {
+std::shared_ptr<const std::vector<uint8_t>> IOSessionProxy::getBrick(const BrickKey& brickKey, bool& success) const {
     GetBrickCmd::RequestParams params(brickKey);
     GetBrickRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     const auto& replyParams = reply->getParams();
-    auto brick = replyParams.getBrick();
-    std::copy(begin(*brick), end(*brick), begin(data)); // fixme: avoid copying of brick
-    return replyParams.getSuccess();
+    success = replyParams.getSuccess();
+    return replyParams.getBrick();
 }
 
 IIO::ValueType IOSessionProxy::getType(uint64_t modality) const {

@@ -491,16 +491,16 @@ TEST_F(IOCommandsTest, GetBrickCmd) {
 
 TEST_F(IOCommandsTest, GetBrickReqRep) {
     auto session = createMockSession();
-    std::vector<uint8_t> brick{0x12, 0x34, 0x56, 0x78, 0x9A};
+    auto brick = std::make_shared<std::vector<uint8_t>>();
+    *brick = { 0x12, 0x34, 0x56, 0x78, 0x9A };
     EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getBrick(BrickKey(1, 2, 3, 4), _))
         .Times(1)
-        .WillOnce(DoAll(SetArgReferee<1>(brick), Return(true)));
+        .WillOnce(Return(brick));
 
     GetBrickCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
     GetBrickRequest request(requestParams, 1, 2);
     auto reply = trinity::testing::handleRequest<GetBrickHdl>(request, session.get());
-    ASSERT_EQ(true, reply.getParams().getSuccess());
-    ASSERT_EQ(brick, *reply.getParams().getBrick());
+    ASSERT_EQ(*brick, *reply.getParams().getBrick());
 }
 
 TEST_F(IOCommandsTest, GetTypeCmd) {

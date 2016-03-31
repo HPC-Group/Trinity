@@ -42,7 +42,7 @@ namespace trinity {
     virtual uint64_t getComponentCount(uint64_t modality) const = 0;
     virtual Core::Math::Vec2f getRange(uint64_t modality) const = 0;
     virtual uint64_t getTotalBrickCount(uint64_t modality) const = 0;
-    virtual bool getBrick(const BrickKey& brickKey, std::vector<uint8_t>& data) const = 0;
+    virtual std::shared_ptr<const std::vector<uint8_t>> getBrick(const BrickKey& brickKey, bool& success) const = 0;
     virtual ValueType getType(uint64_t modality) const = 0;
     virtual Semantic getSemantic(uint64_t modality) const = 0;
     virtual uint64_t getDefault1DTransferFunctionCount() const = 0;

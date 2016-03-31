@@ -1,9 +1,11 @@
-#include "io-base/FractalListData.h"
 #include "io-base/fractal/FractalIO.h"
 
+#include "common/MemBlockPool.h"
 #include "common/TrinityError.h"
-#include "mocca/log/LogManager.h"
+#include "io-base/FractalListData.h"
+
 #include "mocca/base/Error.h"
+#include "mocca/log/LogManager.h"
 
 using namespace Core::Math;
 using namespace trinity;
@@ -66,10 +68,10 @@ MinMaxBlock FractalIO::maxMinForKey(const BrickKey& key) const {
 #endif
 
   if (!m_bFlat) {
-    std::vector<uint8_t> data;
-    getBrick(key, data);
+    bool success;
+    auto data = getBrick(key, success);
     
-    for (uint8_t v : data) {
+    for (uint8_t v : *data) {
       if (v < min) min = v;
       if (v > max) max = v;
       if (min == 0 && max == 255) break;
@@ -306,17 +308,15 @@ uint64_t FractalIO::getTotalBrickCount(uint64_t modality) const {
   }
 }
 
-bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
-  bool created = false;
+std::shared_ptr<const std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& key, bool& success) const {
+  success = false;
 
-  if (data.capacity() < getMaxBrickSize().volume()) {
-    data.reserve(getMaxBrickSize().volume());
-    created = true;
-  }
+  auto data = MemBlockPool::instance().get(getMaxBrickSize().volume());
 
 #ifdef CACHE_BRICKS
-  if (m_bc.getBrick<uint8_t>(key, data)) {
-    return created;
+  if (m_bc.getBrick<uint8_t>(key, *data)) {
+    success = true;
+    return data;
   }
 #endif
   
@@ -327,36 +327,37 @@ bool FractalIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
     genBrickParams(key, start, step, size);
     pos = start;
     Vec3d dStart = Vec3d(start);
-    data.resize(size.volume());
+    data->resize(size.volume());
 #pragma omp parallel for
     for (int z = 0; z < size.z; ++z) {
       for (int y = 0; y < size.y; ++y) {
         for (int x = 0; x < size.x; ++x) {
           const size_t i = size_t(x + y * size.x + z * size.x * size.y);
           const Vec3ui64 pos = Vec3ui64(dStart + step * Vec3d(x,y,z));
-          data[i] = m_fractalGenerator->computePoint(pos.x, pos.y, pos.z);
+          (*data)[i] = m_fractalGenerator->computePoint(pos.x, pos.y, pos.z);
         }
       }
     }
   } else {
-    data.resize(m_totalSize.volume());
+    data->resize(m_totalSize.volume());
 #pragma omp parallel for
     for (int z = 0; z < m_totalSize.z; ++z) {
       for (int y = 0; y < m_totalSize.y; ++y) {
         for (int x = 0; x < m_totalSize.x; ++x) {
           const size_t i = size_t(x + y * m_totalSize.x + z *
                                   m_totalSize.x * m_totalSize.y);
-          data[i] = m_fractalGenerator->computePoint(x, y, z);
+          (*data)[i] = m_fractalGenerator->computePoint(x, y, z);
         }
       }
     }
   }
 
 #ifdef CACHE_BRICKS
-  m_bc.setBrick<uint8_t>(key, data);
+  m_bc.setBrick<uint8_t>(key, *data);
 #endif
   
-  return created;
+  success = true;
+  return data;
 }
 
 IIO::ValueType FractalIO::getType(uint64_t modality) const {

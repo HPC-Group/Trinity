@@ -1,4 +1,6 @@
 #include "UVFIO.h"
+
+#include "common/MemBlockPool.h"
 #include "io-base/UVFListData.h"
 #include "silverbullet/io/FileTools.h"
 #include "silverbullet/base/StringTools.h"
@@ -207,8 +209,10 @@ uint64_t UVFIO::getTotalBrickCount(uint64_t modality) const {
   return m_dataset->GetTotalBrickCount();
 }
 
-bool UVFIO::getBrick(const BrickKey& key, std::vector<uint8_t>& data) const{
-  return m_dataset->GetBrick(key, data);
+std::shared_ptr<const std::vector<uint8_t>> UVFIO::getBrick(const BrickKey& key, bool& success) const {
+    auto data = MemBlockPool::instance().get(getBrickVoxelCounts(key).volume() * 2); // fixme: what is the right way to calculate the capacity?
+    m_dataset->GetBrick(key, *data);
+    return data;
 }
 
 Vec3ui UVFIO::getBrickVoxelCounts(const BrickKey& key) const {
