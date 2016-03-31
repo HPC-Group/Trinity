@@ -30,8 +30,8 @@
             $("#io_ip").val("127.0.0.1");
             $("#io_port").val("6679");
             $("#proc_ip").val("127.0.0.1");
-            $("#x_res").val(document.body.clientWidth);
-            $("#y_res").val(window.innerHeight);
+            $("#x_res").val(1024);
+            $("#y_res").val(768);
             $("#proc_port").val("8679");
 
             $("#connect_ip").keyup(function(event) {
@@ -39,9 +39,9 @@
                     $("#btn_connect").click();
                 }
             });
-            
-            
-            
+
+
+
             $("#connect_port").keyup(function(event) {
                 if (event.keyCode == 13) {
                     $("#btn_connect").click();
@@ -51,35 +51,23 @@
             canvas = document.getElementById('myCanvas'),
                 img = new Image(),
                 ctx = canvas.getContext('2d'),
-            /*
-
-
-                // registering mousemove while mousedown
-                $("#myCanvas").mousedown(function() {
-                    $(this).mousemove(function(evt) {
-                        TRI_Frontend.VisControlConnector.onMove(evt.clientX, evt.clientY);
-                    });
-
-                }).mouseup(function() {
-                    $(this).unbind('mousemove');
-                }).mouseout(function() {
-
-                    $(this).unbind('mousemove');
+                $("#myCanvas").on("touchstart mousedown", function(e) {
+                    TRI_Frontend.VisControlConnector.onDown(e)
                 });
             
-            canvas.addEventListener("touchmove", function(e) {
-                e.preventDefault();
-                TRI_Frontend.VisControlConnector.onMove(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
-                
-        //alert(e.changedTouches[0].pageX) // alert pageX coordinate of touch point
-            }, false);
-
-            //TRI_Frontend.buildApplicationList();
-            */
             
-        $("#myCanvas").on( "touchstart mousedown", function(e){TRI_Frontend.VisControlConnector.onDown(e)} );
-        $("#myCanvas").on( "touchmove mousemove", function(e){TRI_Frontend.VisControlConnector.onMove(e)} );
-        $("#myCanvas").on( "touchend mouseup", function(e){TRI_Frontend.VisControlConnector.onUp(e)} );
+              canvas.style.width ='100%';
+            canvas.style.height='100%';
+  // ...then set the internal size to match
+            canvas.width  = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            $("#myCanvas").on("touchmove mousemove", function(e) {
+                TRI_Frontend.VisControlConnector.onMove(e)
+            });
+            $("#myCanvas").on("touchend mouseup", function(e) {
+                TRI_Frontend.VisControlConnector.onUp(e)
+            });
 
         },
 
@@ -274,21 +262,16 @@
 
         var websocketControl = undefined;
         var port = undefined;
-        
-        
-        var lastPadPositionX = undefined;
-        var lastPadPositionY = undefined;
-        var isPadMove = false;
-        var tmpX = 0.0;
-        var tmpY = 0.0;
-        
-        
-        var x = 0.0;
-        var y = 0.0;
-        var deltax = 0.0;
-        var deltay = 0.0;
-        var rotx = 0.00;
-        var roty = 0.00;
+
+
+        var lastX = undefined;
+        var lastY = undefined;
+        var isRotating = false;
+        var deltaX = 0.0;
+        var deltaY = 0.0;
+        var stoppedSending = false;
+        var rotMode = true;
+
 
 
 
@@ -297,85 +280,83 @@
             controlConnectionUri: "",
 
             onMove: function(e) {
-                
-                /*
 
-                deltax = xnew - x;
-                deltay = ynew - y;
+                if (isRotating)  {
+                    //calculate deltas. mouse movement to the right and up is positive
+                    if (e.type == "touchmove") {
+                        deltaX = e.originalEvent.touches[0].pageX - lastX;
+                        deltaY = lastY - e.originalEvent.touches[0].pageY;
 
-                if (deltax > 2.0 || deltax < -2.0) {
-                    x = xnew;
-                } else {
-                    //console.log("x: " + deltax);
-                    x = xnew;
-                    //console.log("x: " + deltax);
-                    rotx = rotx + deltax * 0.001;
+                        lastX = e.originalEvent.touches[0].pageX;
+                        lastY = e.originalEvent.touches[0].pageY;
+                    } else {
+                        deltaX += e.clientX - lastX;
+                        deltaY += lastY - e.clientY;
+                    
+
+                        lastX = e.clientX;
+                        lastY = e.clientY;
+                    }
+
+                    //buildSendMessage(deltaX,deltaY,0);
+                    if(stoppedSending) {
+                        stoppedSending = false;
+                        TRI_Frontend.VisControlConnector.sendRotation();
+                        
+                    }
                 }
-                
-                if (deltay > 2.0 || deltay < -2.0) {
-                    y = ynew;
-                } else {
-                    //console.log("x: " + deltax);
-                    y = ynew;
-                    //console.log("x: " + deltax);
-                    roty = roty + deltay * 0.001;
-                }
-                */
-
-        
-        if (isPadMove) 
-        {
-            //calculate deltas. mouse movement to the right and up is positive
-            if (e.type == "touchmove")
-            {
-                tmpX = e.originalEvent.touches[0].pageX - lastPadPositionX;
-                tmpY = lastPadPositionY - e.originalEvent.touches[0].pageY;
-                
-                lastPadPositionX = e.originalEvent.touches[0].pageX;
-                lastPadPositionY = e.originalEvent.touches[0].pageY;
-            } else {
-                tmpX += e.clientX - lastPadPositionX;
-                tmpY += lastPadPositionY - e.clientY;
-                
-                lastPadPositionX = e.clientX;
-                lastPadPositionY = e.clientY;
-            }
-            
-            //buildSendMessage(tmpX,tmpY,0);
-        }
 
             },
             
+            switchMode: function() {
+                //rotMode = !rotMode;
+                if(rotMode) {
+                    rotMode = false;
+                    $("#rotate").text('Move');
+                } else {
+                    rotMode = true;
+                    $("#rotate").text('Rotate');
+                }
+            },
+
             onDown: function(e) {
                 e.preventDefault();
-        //console.log(e);
-        isPadMove = true;
-        if (e.type == "touchstart")
-        {
-            lastPadPositionX = e.originalEvent.touches[0].pageX;
-            lastPadPositionY = e.originalEvent.touches[0].pageY;
-        } else {
-            lastPadPositionX = e.clientX;
-            lastPadPositionY = e.clientY;
-        }
+                //console.log(e);
+                
+                isRotating = true;
+                if (e.type == "touchstart") {
+                    lastX = e.originalEvent.touches[0].pageX;
+                    lastY = e.originalEvent.touches[0].pageY;
+                } else {
+                    lastX = e.clientX;
+                    lastY = e.clientY;
+                }
 
             },
-            
-        onUp: function(e) {
 
-                isPadMove = false;
+            onUp: function(e) {
+
+                isRotating = false;
             },
-            
-            
-            
+
+
+
 
             sendRotation() {
-                
-               TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' +tmpY* (-0.01)+ ',"y":' + tmpX* 0.01 + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
-                tmpX = 0.0;
-                tmpY = 0.0;
-                
-                //TRI_Frontend.VisControlConnector.doSend('{"type": "SetIsoValue", "req": { "rid": 1, "sid": 3, "params": { "surfaceIndex": 0, "isovalue": ' + rot + ' } } }');
+
+                if(Math.abs(deltaX) < 0.0001 && Math.abs(deltaY) < 0.0001) {
+                    stoppedSending = true;
+                } else {
+                    
+                    if(rotMode) {
+                TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' + deltaY * (-0.01) + ',"y":' + deltaX * 0.01 + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
+                    } else {
+                TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"direction":{"x": ' + deltaX * (0.001) + ',"y":' + deltaY * 0.001 + ',"z":0}},"rid":108,"sid":1},"type":"MoveCamera"}');
+                        }
+                deltaX = 0.0;
+                deltaY = 0.0;
+                }
+
             },
 
 
@@ -406,7 +387,7 @@
                 console.log("Websocket CONNECTED to " + TRI_Frontend.VisControlConnector.controlConnectionUri);
                 $("#div_connect_success").fadeIn('slow', TRI_Frontend.hideConnectMessage);
                 TRI_Frontend.VisControlConnector.doSend('{"type": "StartRendering", "req": { "rid": 1, "sid": 3, "params": {} } }');
-                
+
 
 
                 $("#div_connect_success").fadeIn('slow', TRI_Frontend.hideConnectMessage);
@@ -439,7 +420,7 @@
             },
 
             doSend: function(message) {
-                console.log("Sent: " + message);
+                //console.log("Sent: " + message);
                 websocketControl.send(message);
             }
         };
@@ -483,10 +464,8 @@
                 websocketStream.onerror = function(evt) {
                     TRI_Frontend.StreamConnector.onError(evt)
                 };
-                document.getElementById("myCanvas").style["display"] = "block";
-                document.getElementById("myCanvas").style["border"] = "0px";
-                document.getElementById("myCanvas").style["margin"] = "0px";
-                document.getElementById("myCanvas").style["padding"] = "0px";
+                document.getElementById("vis_panel").style["display"] = "block";
+
 
             },
 

@@ -38,14 +38,23 @@
 <body onload="TRI_Frontend.init()">
 
 
-    <nav class="navbar navbar-inverse navbar-embossed" role="navigation">
+    <nav class="navbar navbar-inverse navbar-embossed" role="navigation" id="navigon">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
                 <span class="sr-only">Toggle navigation</span>
               </button>
             <a class="navbar-brand disabled" href="#"><img alt="Brand" style="margin-top:-7px; margin-right:10px; max-height:150%;" src="web_icon.png"></a>
+            
+            
+            
         </div>
+        
         <div class="collapse navbar-collapse" id="navbar-collapse-01">
+            <ul class="nav navbar-nav navbar-left" id="renderctrl" style="display:none">
+                <li><a href="#rotate" data-toggle="modal" data-target="#aboutModal">Rotate</a></li>
+                <li><a href="#next" data-toggle="modal" data-target="#aboutModal">Next</a></li>
+                <li><a href="#previous" data-toggle="modal" data-target="#aboutModal">Previous</a></li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#" data-toggle="modal" data-target="#aboutModal">About</a></li>
             </ul>
@@ -68,8 +77,8 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Select your rendering and data locations to proceed</h3>
             </div>
-                <div class="panel-body">
-                
+            <div class="panel-body">
+
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">I/O (data server)</h3>
@@ -80,58 +89,57 @@
 
 
                         <span class="input-group-addon" id="basic-addon1">
-                        <span class="fui-login" aria-hidden="true"></span>
-                        IP:
+                        <span class="fui-login" aria-hidden="true"></span> IP:
                         </span>
                         <input id="io_ip" type="text" class="form-control" placeholder="127.0.0.1" aria-describedby="basic-addon1">
 
                         <span class="input-group-addon" id="port">Port:</span>
                         <input id="io_port" type="text" class="form-control" placeholder="8080" aria-describedby="basic-addon1">
 
-                        
+
                     </div>
                     <br>
-                                <div align="center">
-                <button id="btn_browse" type="submit" class="btn btn-primary btn-medium" onclick="TRI_Frontend.buildApplicationList()"> <span class="fui-folder" aria-hidden="true"></span> browse datasets </button>
-            </div>
+                    <div align="center">
+                        <button id="btn_browse" type="submit" class="btn btn-primary btn-medium" onclick="TRI_Frontend.buildApplicationList()"> <span class="fui-folder" aria-hidden="true"></span> browse datasets </button>
+                    </div>
                     <br>
-                    
-                            <!-- use  style="display:none" to hide sth -->
-        <div id="apps" class="panel panel-default">
-            
-            <div class="panel-heading">
-                <h3 class="panel-title">Datasets</h3>
-            </div>
-            <div class="panel-body">
-                <div id="applicationCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                    <!-- Indicators -->
-                    <ol id="carousel_indicators" class="carousel-indicators">
-                        <li data-target="#applicationCarousel" data-slide-to="0" class="active"></li>
-                    </ol>
 
-                    <!-- Wrapper for slides -->
-                    <div id="carousel_slides" class="carousel-inner" role="listbox">
-                        <div class="item active">
-                            <img src="" alt="Chania">
+                    <!-- use  style="display:none" to hide sth -->
+                    <div id="apps" class="panel panel-default">
 
-                            <div class="carousel-caption">
-                                <h1>ImageVis.</h1>
-                                <p>An example application for doctors.</p>
-                                <p><a class="btn btn-lg btn-primary" role="button" onclick="TRI_Frontend.applicationSelected()">Select</a></p>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Datasets</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="applicationCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                                <!-- Indicators -->
+                                <ol id="carousel_indicators" class="carousel-indicators">
+                                    <li data-target="#applicationCarousel" data-slide-to="0" class="active"></li>
+                                </ol>
+
+                                <!-- Wrapper for slides -->
+                                <div id="carousel_slides" class="carousel-inner" role="listbox">
+                                    <div class="item active">
+                                        <img src="" alt="Chania">
+
+                                        <div class="carousel-caption">
+                                            <h1>ImageVis.</h1>
+                                            <p>An example application for doctors.</p>
+                                            <p><a class="btn btn-lg btn-primary" role="button" onclick="TRI_Frontend.applicationSelected()">Select</a></p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- Left and right controls -->
+                                <a class="left carousel-control" href="#applicationCarousel" role="button" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a>
+                                <a class="right carousel-control" href="#applicationCarousel" role="button" data-slide="next"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <span class="sr-only">Next</span> </a>
                             </div>
-
                         </div>
                     </div>
-                    <!-- Left and right controls -->
-                    <a class="left carousel-control" href="#applicationCarousel" role="button" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a>
-                    <a class="right carousel-control" href="#applicationCarousel" role="button" data-slide="next"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <span class="sr-only">Next</span> </a>
+
+
                 </div>
-            </div>
-        </div>
-                    
-                    
-                </div>
-                    <br>
+                <br>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">processing (renderer)</h3>
@@ -148,14 +156,12 @@
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">
 
-                        <span class="fui-resize" aria-hidden="true"></span>
-                         width:
+                        <span class="fui-resize" aria-hidden="true"></span> width:
 
                         </span>
                         <input id="x_res" type="text" class="form-control" placeholder="127.0.0.1" aria-describedby="basic-addon1">
                         <span class="input-group-addon" id="port">
-                        	<span class="fui-resize" aria-hidden="true"></span>
-                        height:
+                        	<span class="fui-resize" aria-hidden="true"></span> height:
                         </span>
                         <input id="y_res" type="text" class="form-control" placeholder="8080" aria-describedby="basic-addon1">
 
@@ -180,12 +186,10 @@
         </div>
 
 
-       
 
 
 
-
-        <!-- build uis -->
+        <!-- build uis --
         <div id="panel_requirements" class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">UI</h3>
@@ -208,7 +212,7 @@
         </div>
     </div>
 
-    <!-- Modal with about dialogue -->
+    <!-- Modal with about dialogue --
     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -227,7 +231,7 @@
         </div>
     </div>
 
-    <!-- Modal with running uis dialogue -->
+    <!-- Modal with running uis dialogue --
     <div class="modal fade" id="uisModal" tabindex="-1" role="dialog" aria-labelledby="uisModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -264,7 +268,28 @@
             </div>
         </div>
     </div>
- <canvas id="myCanvas" width="100" height="100" style="display:none"></canvas>
+    
+        
+        
+        <div class="panel panel-default" id="vis_panel" style="display:none">
+<div class="panel-heading clearfix">
+      <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Visualization</h4>
+    
+    
+    
+      <div class="btn-group pull-right">
+        <a href="#rot_button" id="rotate" class="btn btn-default btn-sm" onclick="TRI_Frontend.VisControlConnector.switchMode()" >
+            Move</a>
+        <a href="#" class="btn btn-default btn-sm">Previous</a>
+        <a href="#" class="btn btn-default btn-sm">Next</a>
+      </div>
+    </div>
+            <div class="panel-body">
+<canvas id="myCanvas" width="0" height="0""></canvas>
+                </div>
+            <p>
+
+        </div>
 
     <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
     <script src="dist/js/vendor/jquery.min.js"></script>
