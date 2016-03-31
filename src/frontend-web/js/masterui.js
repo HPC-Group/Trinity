@@ -335,6 +335,22 @@
                 document.activeElement.blur();
 
             },
+            
+            zoomIn: function() {
+                document.activeElement.blur();
+                for(var i = 0; i < 20; i++) {
+                TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"zoom": 1.007},"rid":108,"sid":1},"type":"ZoomCamera"}');
+                }
+
+            },
+
+            zoomOut: function() {
+                document.activeElement.blur();
+                for(var i = 0; i < 20; i++) {
+                    TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"zoom": 0.993},"rid":108,"sid":1},"type":"ZoomCamera"}');
+                }
+
+            },
 
             onDown: function(e) {
                 e.preventDefault();
@@ -451,6 +467,7 @@
         var websocketStream = undefined;
         var port = undefined;
         var rot = 0.0;
+        var url = undefined;
 
 
 
@@ -497,17 +514,21 @@
             },
 
             onMessage: function(evt) {
-                console.log("gim in!");
+                //console.log("gim in!");
                 //console.log(evt.data);
+                if(url != undefined)
+                    URL.revokeObjectURL(url);
 
                 img.onload = function() {
                         //console.log("drawing...");
                         ctx.drawImage(img, 0, 0);
                     }
                     //console.log("replacing image source");
-
-                img.src = URL.createObjectURL(evt.data);
+                
+                url = URL.createObjectURL(evt.data);
+                img.src = url;
                 TRI_Frontend.VisControlConnector.sendRotation();
+                //URL.revokeObjectURL(url);
                 //rot += 0.01;
 
             },
