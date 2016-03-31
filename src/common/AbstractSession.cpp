@@ -31,7 +31,10 @@ void AbstractSession::run() {
         LERROR("(session) cannot bind the render session: " << err.what());
         return;
     }
-    LDEBUG("Initiated session of type " << typeid(*this).name() << " with connection ID " << *m_controlConnection->connectionID());
+    
+    if (m_controlConnection) {
+        LDEBUG("Initiated session of type " << typeid(*this).name() << " with connection ID " << *m_controlConnection->connectionID());
+    }
 
     performThreadSpecificInit();
     try {
