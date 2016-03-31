@@ -200,6 +200,17 @@ Vec3f FractalIO::getBrickExtents(const BrickKey& key) const {
   }
 }
 
+Vec3f FractalIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
+  if (!m_bFlat) {
+    const Vec3ui64 effectiveBricksize = getEffectiveBricksize();
+    const Vec3ui64 voxelSize = getDomainSize(lod, modality);
+    
+    return Vec3f(voxelSize) / Vec3f(effectiveBricksize);
+  } else {
+    return Vec3f(1.0f, 1.0f, 1.0f);
+  }
+}
+
 Vec3ui FractalIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
   if (modality != 0 )
     throw TrinityError("invalid modality", __FILE__, __LINE__);

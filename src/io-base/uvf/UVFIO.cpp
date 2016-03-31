@@ -105,6 +105,11 @@ Vec3f UVFIO::getBrickExtents(const BrickKey& key) const {
   return m_dataset->GetBrickExtents(key);
 }
 
+Vec3f UVFIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
+  // TODO
+  return Vec3f(1.0f, 1.0f, 1.0f);
+}
+
 Vec3ui UVFIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
   // HACK: assume all timesteps have same layout
   return m_dataset->GetBrickLayout(lod, 0);
