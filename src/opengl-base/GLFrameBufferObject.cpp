@@ -1,7 +1,4 @@
 #include "GLFrameBufferObject.h"
-#include "GLCommon.h"
-
-#include <opengl-base/OpenGLError.h>
 
 #ifdef WIN32
   #ifndef DEBUG

@@ -1,7 +1,10 @@
 #pragma once
 
 #include <opengl-base/OpenGLincludes.h>
+#include <opengl-base/OpenGLError.h>
 #include <silverbullet/math/Vectors.h>
+#include "GLCommon.h"
+
 
 class GLFBOTex{
 public:
@@ -48,6 +51,25 @@ public:
   static void FourDrawBuffers();
 
   void ReadBackPixels(int x, int y, int sX, int sY, void* pData, int iBuffer=0);
+
+  template <typename T>
+  void debugOut() const {
+	  std::vector<T> pData(gl_components(m_format)*m_iSizeX*m_iSizeY);
+	  GL_CHECK(glReadBuffer(GL_COLOR_ATTACHMENT0));
+	  GL_CHECK(glReadPixels(0, 0, m_iSizeX, m_iSizeY, m_format, m_type, pData.data()));
+	  for (size_t y = 0; y < m_iSizeY; ++y) {
+		  for (size_t x = 0; x < m_iSizeX; ++x) {
+			  std::cout << "[";
+			  for (size_t comp = 0; comp < gl_components(m_format); ++comp) {
+				  std::cout << pData[comp + gl_components(m_format)*(x + m_iSizeX*y)] << ",";
+			  }
+			  std::cout << "] ";
+		  }
+		  std::cout << std::endl;
+	  }
+  }
+
+
   GLuint Width() const {return m_iSizeX;}
   GLuint Height() const {return m_iSizeY;}
 
