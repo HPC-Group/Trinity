@@ -17,7 +17,6 @@ void main(void)
 {
   vec4 Color = texture(compose,vScreenPosition);
   vec3 BackgroundColor = ColorOne * vScreenPosition.y + ColorTwo*(1-vScreenPosition.y);
-  
   outputColor = Color * Color.w + vec4(BackgroundColor,1) * (1-Color.w);
 }
 
