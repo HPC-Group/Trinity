@@ -271,6 +271,8 @@
         var deltaY = 0.0;
         var stoppedSending = false;
         var rotMode = true;
+        var zoomCounter = 0;
+        var zoomOutNeeded = true;
 
 
 
@@ -337,20 +339,47 @@
             },
             
             zoomIn: function() {
+                zoomOutNeeded = false;
                 document.activeElement.blur();
-                for(var i = 0; i < 20; i++) {
-                TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"zoom": 1.007},"rid":108,"sid":1},"type":"ZoomCamera"}');
-                }
+                zoomCounter = 20;
+                TRI_Frontend.VisControlConnector.sendZoomIn();
+    
 
             },
-
+            
+            needsZoom: function() {
+                if(zoomCounter != 0)
+                    return true;
+                else return false;
+            },
+            
+            needsZoomOut: function() {
+                return zoomOutNeeded;
+            },
+            
             zoomOut: function() {
+                zoomOutNeeded = true;
                 document.activeElement.blur();
-                for(var i = 0; i < 20; i++) {
-                    TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"zoom": 0.993},"rid":108,"sid":1},"type":"ZoomCamera"}');
-                }
-
+                zoomCounter = 20;
+                TRI_Frontend.VisControlConnector.sendZoomOut();
+                
+                    
+                
             },
+            
+            sendZoomIn: function() {
+                zoomCounter--;
+                if(zoomCounter > 0)
+                    TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"zoom": 1.007},"rid":108,"sid":1},"type":"ZoomCamera"}');
+            },
+            
+            sendZoomOut: function() {
+                zoomCounter--;
+                if(zoomCounter > 0)
+                    TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"zoom": 0.993},"rid":108,"sid":1},"type":"ZoomCamera"}');
+            },
+
+
 
             onDown: function(e) {
                 e.preventDefault();
@@ -527,7 +556,20 @@
                 
                 url = URL.createObjectURL(evt.data);
                 img.src = url;
-                TRI_Frontend.VisControlConnector.sendRotation();
+                
+                if(TRI_Frontend.VisControlConnector.needsZoom()) {
+                    
+                    if(TRI_Frontend.VisControlConnector.needsZoomOut()) {
+                        TRI_Frontend.VisControlConnector.sendZoomOut();
+                    } else {
+                        TRI_Frontend.VisControlConnector.sendZoomIn();
+                    }
+                    
+                } else {
+                
+                    TRI_Frontend.VisControlConnector.sendRotation();
+                }
+                
                 //URL.revokeObjectURL(url);
                 //rot += 0.01;
 
