@@ -1563,7 +1563,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, trin
     //WARNING("%u of %u bricks were processed during synchronous visibility recomputation!");
   }
   uint32_t const iLeafBrickCount = pDataset.getBrickLayout(0, 0).volume();
-  uint32_t const iInternalBrickCount = m_iTotalBrickCount - iLeafBrickCount;
+  uint32_t const iInternalBrickCount = m_iTotalBrickCount - iLeafBrickCount == 0 ? 1 : m_iTotalBrickCount - iLeafBrickCount;  // avoid division by zero
 
 
   LDEBUGC("GLVolumePool","Synchronously recomputed brick visibility for "
@@ -1571,22 +1571,22 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, trin
 
   LDEBUGC("GLVolumePool",vEmptyBrickCount.y<<" inner bricks are EMPTY ("
           << ((static_cast<float>(vEmptyBrickCount.y)/iInternalBrickCount)*100.0f)
-          <<" of inner bricks,"
+          <<" % of inner bricks,"
           <<((static_cast<float>(vEmptyBrickCount.y)/m_iTotalBrickCount)*100.0f)
-          <<" of all bricks)");
+          <<" % of all bricks)");
 
 
   LDEBUGC("GLVolumePool",vEmptyBrickCount.z<<" inner bricks are CHILD_EMPTY ("
           <<(static_cast<float>(vEmptyBrickCount.z)/iInternalBrickCount)*100.0f
-          <<" of inner bricks, "
+          <<" % of inner bricks, "
           <<(static_cast<float>(vEmptyBrickCount.z)/m_iTotalBrickCount)*100.0f
-          <<" of all bricks)");
+          <<" % of all bricks)");
 
   LDEBUGC("GLVolumePool",vEmptyBrickCount.w<<" leaf bricks are empty  ("
           <<(static_cast<float>(vEmptyBrickCount.w)/iLeafBrickCount)*100.0f
-          <<" of leaf bricks, "
+          <<" % of leaf bricks, "
           <<(static_cast<float>(vEmptyBrickCount.w)/m_iTotalBrickCount)*100.0f
-          <<" of all bricks)");
+          <<" % of all bricks)");
 
 
   // upload new metadata to GPU
