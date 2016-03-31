@@ -246,7 +246,7 @@
                 if (requestTypes.indexOf(requestType) != -1) {
                     // look like type: InitRenderer; rid: 1; sid: 0; params: { protocol: tcp.prefixed; rendertype: SimpleRenderer; fileid: FractalData@3; ioendpoint: tcp.prefixed:127.0.0.1:6678; streamingparams: { xres: 800; yres: 600 } }
                     console.log("Sending: " + requestType);
-                    TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "FractalData@3a", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                    TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "GridLeapingRenderer", "fileid": "UVFData@./Bonsai-SCANLINE-132-lz4.uvf", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
 
                 }
 
@@ -299,6 +299,7 @@
                         lastX = e.clientX;
                         lastY = e.clientY;
                     }
+                    
 
                     //buildSendMessage(deltaX,deltaY,0);
                     if (stoppedSending) {
@@ -326,6 +327,13 @@
                     document.activeElement.blur();
                 }
             },
+            
+            sendingWasStopped: function() {
+                stoppedSending = true;
+    
+
+            },
+            
 
 
             prevTF: function() {
@@ -400,13 +408,20 @@
 
                 isRotating = false;
             },
+            
+           needsRotation: function(e) {
+
+                if (Math.abs(deltaX) < 0.0001 && Math.abs(deltaY) < 0.0001)
+                    return false;
+               else return true;
+            },
 
 
 
 
             sendRotation() {
 
-                if (Math.abs(deltaX) < 0.0001 && Math.abs(deltaY) < 0.0001) {
+                if (!TRI_Frontend.VisControlConnector.needsRotation()) {
                     stoppedSending = true;
                 } else {
 
@@ -565,10 +580,20 @@
                         TRI_Frontend.VisControlConnector.sendZoomIn();
                     }
                     
-                } else {
+                } else { if(TRI_Frontend.VisControlConnector.needsRotation()) {
                 
+                    //console.log("need rot");
                     TRI_Frontend.VisControlConnector.sendRotation();
+                    
+                } else {
+                    //console.log("refining");
+                    TRI_Frontend.VisControlConnector.doSend('{"type": "ProceedRendering", "req": { "rid": 1, "sid": 3, "params": {} } }');
+                    TRI_Frontend.VisControlConnector.sendingWasStopped();
+                    
+                } 
                 }
+                
+                
                 
                 //URL.revokeObjectURL(url);
                 //rot += 0.01;
