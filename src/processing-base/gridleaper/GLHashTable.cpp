@@ -1,6 +1,9 @@
 
 #include "GLHashTable.h"
 #define GLHASHTABLE_PROFILE
+
+//#define WRITE_SHADERS 1
+
 #ifdef WRITE_SHADERS
 # include <fstream>
 # include <iterator>
