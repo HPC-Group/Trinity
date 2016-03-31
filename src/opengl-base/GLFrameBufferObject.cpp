@@ -6,14 +6,34 @@
   #endif
 #endif
 
-GLFBOTex::GLFBOTex( GLenum minfilter,
+GLFBO::GLFBO() {
+  glGenFramebuffers(1, &m_hFBO);
+  GLenum glerr = glGetError();
+  if (GL_NO_ERROR != glerr) {
+    GL_CHECK(glDeleteFramebuffers(1, &m_hFBO));
+    m_hFBO = 0;
+    return;
+  }
+}
+
+GLFBO::~GLFBO() {
+  GL_CHECK(glDeleteFramebuffers(1, &m_hFBO));
+}
+
+GLuint GLFBO::getGLID() const {
+  return m_hFBO;
+}
+
+
+GLRenderTexture::GLRenderTexture(std::shared_ptr<GLFBO> glFBO,
+                   GLenum minfilter,
                    GLenum magfilter, GLenum wrapmode, GLsizei width,
                    GLsizei height, GLenum intformat, GLenum format, GLenum type,
                    bool bHaveDepth, int iNumBuffers) :
   m_iSizeX(width),
   m_iSizeY(height),
   m_hTexture(new GLuint[iNumBuffers]),
-  m_hFBO(0),
+  m_glFBO(glFBO),
   m_LastTexUnit(NULL),
   m_LastDepthTextUnit(0),
   m_iNumBuffers(iNumBuffers),
@@ -33,18 +53,6 @@ GLFBOTex::GLFBOTex( GLenum minfilter,
     m_LastAttachment[i]=GL_COLOR_ATTACHMENT0+i;
     m_hTexture[i]=0;
   }
-  while(glGetError() != GL_NO_ERROR) { ; } // clear error state.
-   initFBO();
-
-  {
-    GLenum glerr = glGetError();
-    if(GL_NO_ERROR != glerr) {
-      //T_ERROR("Error '%d' during FBO creation!", static_cast<int>(glerr));
-      GL_CHECK(glDeleteFramebuffers(1,&m_hFBO));
-      m_hFBO=0;
-      return;
-    }
-  }
 
   while(glGetError() != GL_NO_ERROR) { ; } // clear error state.
   if (!initTextures(minfilter,magfilter,wrapmode,width,height,intformat, format, type))
@@ -56,7 +64,7 @@ GLFBOTex::GLFBOTex( GLenum minfilter,
       return;
   }
   if (bHaveDepth) {
-#ifdef GLFBOTEX_DEPTH_RENDERBUFFER
+#ifdef GLRenderTexture_DEPTH_RENDERBUFFER
     GL_CHECK(glGenRenderbuffers(1,&m_hDepthBuffer));
     GL_CHECK(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
                                 width,height));
@@ -77,9 +85,9 @@ GLFBOTex::GLFBOTex( GLenum minfilter,
 
 /**
  * Destructor: Delete texture object. If no more instances of
- * GLFBOTex are around, the FBO is deleted as well.
+ * GLRenderTexture are around, the FBO is deleted as well.
  */
-GLFBOTex::~GLFBOTex(void) {
+GLRenderTexture::~GLRenderTexture(void) {
   if (m_hTexture) {
     GL_CHECK(glDeleteTextures(m_iNumBuffers,m_hTexture));
     delete[] m_hTexture;
@@ -91,14 +99,13 @@ GLFBOTex::~GLFBOTex(void) {
   delete[] m_LastAttachment;
   m_LastAttachment=NULL;
 
-#ifdef GLFBOTEX_DEPTH_RENDERBUFFER
+#ifdef GLRenderTexture_DEPTH_RENDERBUFFER
   if (m_hDepthBuffer) GL_CHECK(glDeleteRenderbuffers(1,&m_hDepthBuffer));
 #else
   if (m_hDepthBuffer) GL_CHECK(glDeleteTextures(1,&m_hDepthBuffer));
 #endif
   m_hDepthBuffer=0;
-  GL_CHECK(glDeleteFramebuffers(1,&m_hFBO));
-  m_hFBO=0;
+  m_glFBO = nullptr;
 }
 
 
@@ -106,7 +113,7 @@ GLFBOTex::~GLFBOTex(void) {
 /**
  * Build a dummy texture according to the parameters.
  */
-bool GLFBOTex::initTextures(GLenum minfilter, GLenum magfilter,
+bool GLRenderTexture::initTextures(GLenum minfilter, GLenum magfilter,
                             GLenum wrapmode, GLsizei width, GLsizei height,
                             GLenum intformat, GLenum format, GLenum type) {
 
@@ -143,21 +150,10 @@ bool GLFBOTex::initTextures(GLenum minfilter, GLenum magfilter,
   return true;
 }
 
-
-/**
- * Build a new FBO.
- */
-void GLFBOTex::initFBO(void) {
-  //MESSAGE("Initializing FBO...");
-  // Don't wrap this in a `GL()'!  The caller is expected to query the GL
-  // error state to see if this worked.
-  glGenFramebuffers(1, &m_hFBO);
-}
-
 /**
  * Check the FBO for consistency.
  */
-bool GLFBOTex::CheckFBO(const char* method) {
+bool GLRenderTexture::CheckFBO(const char* method) {
   GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   switch(status) {
     case GL_FRAMEBUFFER_COMPLETE:
@@ -181,22 +177,22 @@ bool GLFBOTex::CheckFBO(const char* method) {
   }
 }
 
-void GLFBOTex::SetViewport() {
+void GLRenderTexture::SetViewport() {
     GL_CHECK(glViewport(0, 0, m_iSizeX, m_iSizeY));
 }
 
 /**
  * Lock texture for writing. Texture may not be bound any more!
  */
-void GLFBOTex::Write(unsigned int iTargetBuffer, int iBuffer, bool bCheckBuffer) {
+void GLRenderTexture::Write(unsigned int iTargetBuffer, int iBuffer, bool bCheckBuffer) {
   GLenum target = GL_COLOR_ATTACHMENT0 + iTargetBuffer;
 
-  if (!m_hFBO) {
+  if (!m_glFBO->getGLID()) {
     //T_ERROR("FBO not initialized!");
     return;
   }
 
-  GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER,m_hFBO));
+  GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER,m_glFBO->getGLID()));
   assert(iBuffer>=0);
   assert(iBuffer<m_iNumBuffers);
   m_LastAttachment[iBuffer]=target;
@@ -212,10 +208,10 @@ void GLFBOTex::Write(unsigned int iTargetBuffer, int iBuffer, bool bCheckBuffer)
   }
 }
 
-void GLFBOTex::FinishWrite(int iBuffer) {
+void GLRenderTexture::FinishWrite(int iBuffer) {
   assert(iBuffer>=0);
   assert(iBuffer<m_iNumBuffers);
-  GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER,m_hFBO));
+  GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER,m_glFBO->getGLID()));
   GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, m_LastAttachment[iBuffer],
                                GL_TEXTURE_2D, 0, 0));
   if (m_hDepthBuffer)
@@ -224,7 +220,7 @@ void GLFBOTex::FinishWrite(int iBuffer) {
   GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void GLFBOTex::Read(unsigned int iTargetUnit, int iBuffer) {
+void GLRenderTexture::Read(unsigned int iTargetUnit, int iBuffer) {
   GLenum texunit = GL_TEXTURE0 + iTargetUnit;
 #ifdef _DEBUG
   if (m_LastTexUnit[iBuffer]!=0) {
@@ -238,7 +234,7 @@ void GLFBOTex::Read(unsigned int iTargetUnit, int iBuffer) {
   GL_CHECK(glBindTexture(GL_TEXTURE_2D,m_hTexture[iBuffer]));
 }
 
-void GLFBOTex::ReadDepth(unsigned int iTargetUnit) {
+void GLRenderTexture::ReadDepth(unsigned int iTargetUnit) {
   GLenum texunit = GL_TEXTURE0 + iTargetUnit;
 #ifdef _DEBUG
   if (m_LastDepthTextUnit!=0) {
@@ -251,14 +247,14 @@ void GLFBOTex::ReadDepth(unsigned int iTargetUnit) {
 }
 
 // Finish reading from the depth texture
-void GLFBOTex::FinishDepthRead() {
+void GLRenderTexture::FinishDepthRead() {
   GL_CHECK(glActiveTexture(m_LastDepthTextUnit));
   GL_CHECK(glBindTexture(GL_TEXTURE_2D,0));
   m_LastDepthTextUnit=0;
 }
 
-void GLFBOTex::CopyToFramebuffer(unsigned int iBuffer) {
-  GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_hFBO));
+void GLRenderTexture::CopyToFramebuffer(unsigned int iBuffer) {
+  GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_glFBO->getGLID()));
   GL_CHECK(glReadBuffer(GL_COLOR_ATTACHMENT0+iBuffer));
 
   GL_CHECK(glBlitFramebuffer(0,0,m_iSizeX, m_iSizeY,
@@ -268,13 +264,13 @@ void GLFBOTex::CopyToFramebuffer(unsigned int iBuffer) {
   GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
 }
 
-void GLFBOTex::CopyToFramebuffer(unsigned int x, unsigned int w,
+void GLRenderTexture::CopyToFramebuffer(unsigned int x, unsigned int w,
                                  unsigned int y, unsigned int h,
                                  unsigned int tx, unsigned int tw,
                                  unsigned int ty, unsigned int th,
                                  unsigned int iBuffer,
                                  GLenum eFilter) {
-  GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_hFBO));
+  GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_glFBO->getGLID()));
   GL_CHECK(glReadBuffer(GL_COLOR_ATTACHMENT0+iBuffer));
 
   GL_CHECK(glBlitFramebuffer(x, y, x+w, y+h,
@@ -285,28 +281,28 @@ void GLFBOTex::CopyToFramebuffer(unsigned int x, unsigned int w,
 }
 
 
-void GLFBOTex::NoDrawBuffer() {
+void GLRenderTexture::NoDrawBuffer() {
   GL_CHECK(glDrawBuffer(GL_NONE));
 }
 
-void GLFBOTex::OneDrawBuffer() {
+void GLRenderTexture::OneDrawBuffer() {
   GL_CHECK(glDrawBuffer(GL_COLOR_ATTACHMENT0));
 }
 
-void GLFBOTex::TwoDrawBuffers() {
+void GLRenderTexture::TwoDrawBuffers() {
   GLenum twobuffers[]  = { GL_COLOR_ATTACHMENT0,
                            GL_COLOR_ATTACHMENT1 };
   GL_CHECK(glDrawBuffers(2, twobuffers));
 }
 
-void GLFBOTex::ThreeDrawBuffers() {
+void GLRenderTexture::ThreeDrawBuffers() {
   GLenum threebuffers[]  = {GL_COLOR_ATTACHMENT0,
                             GL_COLOR_ATTACHMENT1,
                             GL_COLOR_ATTACHMENT2};
   GL_CHECK(glDrawBuffers(3, threebuffers));
 }
 
-void GLFBOTex::FourDrawBuffers() {
+void GLRenderTexture::FourDrawBuffers() {
   GLenum fourbuffers[]  = { GL_COLOR_ATTACHMENT0,
                             GL_COLOR_ATTACHMENT1,
                             GL_COLOR_ATTACHMENT2,
@@ -315,7 +311,7 @@ void GLFBOTex::FourDrawBuffers() {
 }
 
 // Finish reading from this texture
-void GLFBOTex::FinishRead(int iBuffer) {
+void GLRenderTexture::FinishRead(int iBuffer) {
   assert(iBuffer>=0);
   assert(iBuffer<m_iNumBuffers);
   GL_CHECK(glActiveTexture(m_LastTexUnit[iBuffer]));
@@ -324,35 +320,35 @@ void GLFBOTex::FinishRead(int iBuffer) {
 }
 
 
-void GLFBOTex::ReadBackPixels(int x, int y, int sX, int sY, void* pData, int iBuffer) {
+void GLRenderTexture::ReadBackPixels(int x, int y, int sX, int sY, void* pData, int iBuffer) {
   GL_CHECK(glReadBuffer(GL_COLOR_ATTACHMENT0+iBuffer));
   GL_CHECK(glReadPixels(x, y, sX, sY, m_format, m_type, pData));
 }
 
-uint64_t GLFBOTex::GetCPUSize() const {
+uint64_t GLRenderTexture::GetCPUSize() const {
     return EstimateCPUSize(m_iSizeX, m_iSizeY, gl_byte_width(m_type) * gl_components(m_format),
                            m_hDepthBuffer!=0, m_iNumBuffers);
 }
 
-uint64_t GLFBOTex::GetGPUSize() const {
+uint64_t GLRenderTexture::GetGPUSize() const {
     return EstimateGPUSize(m_iSizeX, m_iSizeY, gl_byte_width(m_type) * gl_components(m_format),
                            m_hDepthBuffer!=0, m_iNumBuffers);
 }
 
-uint64_t GLFBOTex::EstimateCPUSize(GLsizei width, GLsizei height,
+uint64_t GLRenderTexture::EstimateCPUSize(GLsizei width, GLsizei height,
                                   size_t iSizePerElement,
                                   bool bHaveDepth, int iNumBuffers) {
     return iNumBuffers*width*height*iSizePerElement +
            ((bHaveDepth) ? width*height*4 : 0);
 }
-uint64_t GLFBOTex::EstimateGPUSize(GLsizei width, GLsizei height,
+uint64_t GLRenderTexture::EstimateGPUSize(GLsizei width, GLsizei height,
                               size_t iSizePerElement,
                               bool bHaveDepth, int iNumBuffers) {
   return EstimateCPUSize(width, height, iSizePerElement, bHaveDepth,
                           iNumBuffers);
 }
 
-void GLFBOTex::SetData(const Core::Math::Vec2ui& offset, const Core::Math::Vec2ui& size, const void *pixels, int iBuffer, bool bRestoreBinding) {
+void GLRenderTexture::SetData(const Core::Math::Vec2ui& offset, const Core::Math::Vec2ui& size, const void *pixels, int iBuffer, bool bRestoreBinding) {
   GL_CHECK(glPixelStorei(GL_PACK_ALIGNMENT ,1));
   GL_CHECK(glPixelStorei(GL_UNPACK_ALIGNMENT ,1));
 
@@ -368,7 +364,7 @@ void GLFBOTex::SetData(const Core::Math::Vec2ui& offset, const Core::Math::Vec2u
   if (bRestoreBinding && GLuint(prevTex) != m_hTexture[iBuffer]) glBindTexture(GL_TEXTURE_2D, prevTex);
 }
 
-void GLFBOTex::SetData(const void *pixels, int iBuffer, bool bRestoreBinding) {
+void GLRenderTexture::SetData(const void *pixels, int iBuffer, bool bRestoreBinding) {
   GL_CHECK(glPixelStorei(GL_PACK_ALIGNMENT ,1));
   GL_CHECK(glPixelStorei(GL_UNPACK_ALIGNMENT ,1));
 
@@ -382,7 +378,7 @@ void GLFBOTex::SetData(const void *pixels, int iBuffer, bool bRestoreBinding) {
   if (bRestoreBinding && GLuint(prevTex) != m_hTexture[iBuffer]) GL_CHECK(glBindTexture(GL_TEXTURE_2D, prevTex));
 }
 
-void GLFBOTex::ClearPixels(float r, float g, float b, float a){
+void GLRenderTexture::ClearPixels(float r, float g, float b, float a){
     GL_CHECK(glClearColor(r, g, b, a));
     GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 }

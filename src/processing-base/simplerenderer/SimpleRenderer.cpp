@@ -195,13 +195,15 @@ void SimpleRenderer::initFrameBuffers() {
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
   
-  m_resultBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  std::shared_ptr<GLFBO> fbo = std::make_shared<GLFBO>();
+
+  m_resultBuffer = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                               GL_CLAMP_TO_EDGE, width, height,
                                               GL_RGBA, GL_RGBA,
                                               GL_UNSIGNED_BYTE, true, 1);
   
   // TODO: check if we need depth (the true below)
-  m_backfaceBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_backfaceBuffer = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE, width, height,
                                                 GL_RGBA, GL_RGBA,
                                                 GL_FLOAT, true, 1);

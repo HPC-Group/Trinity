@@ -45,8 +45,8 @@ namespace trinity {
     std::unique_ptr<GLTargetBinder>   m_targetBinder;
     std::unique_ptr<GLProgram>        m_backfaceShader;
     std::unique_ptr<GLProgram>        m_raycastShader;
-    std::shared_ptr<GLFBOTex>         m_backfaceBuffer;
-    std::shared_ptr<GLFBOTex>         m_resultBuffer;
+    std::shared_ptr<GLRenderTexture>         m_backfaceBuffer;
+    std::shared_ptr<GLRenderTexture>         m_resultBuffer;
     std::unique_ptr<GLVolumeBox>      m_bbBox;
     std::shared_ptr<OpenGlHeadlessContext> m_context;
     

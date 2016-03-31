@@ -68,7 +68,9 @@ namespace trinity {
     std::vector<uint8_t>  m_bufferData;
 
     std::unique_ptr<GLTexture1D>      m_texTransferFunc;
-    std::unique_ptr<GLTargetBinder>   m_targetBinder;
+//	std::unique_ptr<GLTexture2D>      m_texTransfer2DFunc;
+
+	std::unique_ptr<GLTargetBinder>   m_targetBinder;
 
 
     std::unique_ptr<GLVolumeBox>      m_bbBox;
@@ -98,16 +100,16 @@ namespace trinity {
     std::shared_ptr<GLProgram>        m_programComposeClearViewIso;
 
     //Buffers
-    std::shared_ptr<GLFBOTex>       m_resultBuffer;
-    std::shared_ptr<GLFBOTex>       m_pFBORayStart;
-    std::shared_ptr<GLFBOTex>       m_pFBORayStartNext;
-    std::shared_ptr<GLFBOTex>       m_pFBOStartColor;
-    std::shared_ptr<GLFBOTex>       m_pFBOStartColorNext;
-    std::shared_ptr<GLFBOTex>       m_pFBOFinalColor;
-    std::shared_ptr<GLFBOTex>       m_pFBOFinalColorNext;
+    std::shared_ptr<GLRenderTexture>       m_resultBuffer;
+    std::shared_ptr<GLRenderTexture>       m_pFBORayStart;
+    std::shared_ptr<GLRenderTexture>       m_pFBORayStartNext;
+    std::shared_ptr<GLRenderTexture>       m_pFBOStartColor;
+	std::shared_ptr<GLRenderTexture>       m_pFBOStartColorNext;
+    std::shared_ptr<GLRenderTexture>       m_pFBOFinalColor;
+    std::shared_ptr<GLRenderTexture>       m_pFBOFinalColorNext;
 #ifdef GLGRIDLEAPER_DEBUGVIEW
-    std::shared_ptr<GLFBOTex>       m_pFBODebug;
-    std::shared_ptr<GLFBOTex>       m_pFBODebugNext;
+    std::shared_ptr<GLRenderTexture>       m_pFBODebug;
+    std::shared_ptr<GLRenderTexture>       m_pFBODebugNext;
 #endif
 
     VisibilityState                 m_visibilityState;

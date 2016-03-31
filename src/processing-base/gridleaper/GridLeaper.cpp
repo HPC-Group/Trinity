@@ -118,7 +118,7 @@ void GridLeaper::initContext() {
   initVolumePool(getFreeGPUMemory()*1024);
 
   resizeFramebuffer();
-  loadShaders(GLVolumePool::MissingBrickStrategy::RequestAll); //todo guess we could use the "renderspecials" here
+  loadShaders(GLVolumePool::MissingBrickStrategy::SkipTwoLevels);
   loadGeometry();
   loadTransferFunction();
 
@@ -348,56 +348,59 @@ void GridLeaper::initFrameBuffers() {
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
 
-  m_pFBORayStart = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  std::shared_ptr<GLFBO> fbo = std::make_shared<GLFBO>();
+
+  m_pFBORayStart = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                               GL_CLAMP_TO_EDGE,
                                               width, height,
                                               GL_RGBA, GL_RGBA,
-                                              GL_FLOAT, false, 1);
+                                              GL_FLOAT, true, 1);
 
-  m_pFBORayStartNext = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_pFBORayStartNext = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                   GL_CLAMP_TO_EDGE,
                                                   width, height,
                                                   GL_RGBA, GL_RGBA,
-                                                  GL_FLOAT, false, 1);
+                                                  GL_FLOAT, true, 1);
 
-  m_pFBOStartColor = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_pFBOStartColor = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE,
                                                 width, height,
                                                 GL_RGBA, GL_RGBA,
                                                 GL_FLOAT, true, 1);
 
-  m_pFBOStartColorNext = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_pFBOStartColorNext = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                     GL_CLAMP_TO_EDGE,
                                                     width, height,
                                                     GL_RGBA, GL_RGBA,
                                                     GL_FLOAT, true, 1);
 
-  m_pFBOFinalColor = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_pFBOFinalColor = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE,
                                                 width, height,
                                                 GL_RGBA, GL_RGBA,
                                                 GL_FLOAT, true, 1);
 
-  m_pFBOFinalColorNext = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_pFBOFinalColorNext = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                     GL_CLAMP_TO_EDGE,
                                                     width, height,
                                                     GL_RGBA, GL_RGBA,
                                                     GL_FLOAT, true, 1);
+
 #ifdef GLGRIDLEAPER_DEBUGVIEW
-  m_pFBODebug = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_pFBODebug = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                            GL_CLAMP_TO_EDGE,
                                            width, height,
                                            GL_RGBA, GL_RGBA,
                                            GL_FLOAT, true, 1);
 
-  m_pFBODebugNext = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_pFBODebugNext = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                GL_CLAMP_TO_EDGE,
                                                width, height,
                                                GL_RGBA, GL_RGBA,
                                                GL_FLOAT, true, 1);
 #endif
 
-  m_resultBuffer = std::make_shared<GLFBOTex>(GL_NEAREST, GL_NEAREST,
+  m_resultBuffer = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
 	  GL_CLAMP_TO_EDGE, width, height,
 	  GL_RGBA, GL_RGBA,
 	  GL_UNSIGNED_BYTE, true, 1);
@@ -439,6 +442,7 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     return;
   }
 
+  glClearColor(0, 0, 0, 0);
   m_context->makeCurrent(); // todo: check if we need this
 
   const uint32_t width = m_visStream->getStreamingParams().getResX();
@@ -451,8 +455,8 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     case IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE :
       RecomputeBrickVisibility(false);
     case IRenderer::PaintLevel::PL_REDRAW :
-      fillRayEntryBuffer();
-      computeEyeToModelMatrix();
+	  computeEyeToModelMatrix();
+	  fillRayEntryBuffer();
       m_isIdle = false;
     case IRenderer::PaintLevel::PL_CONTINUE :
     case IRenderer::PaintLevel::PL_RECOMPOSE :
@@ -460,14 +464,14 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
   }
 
   if(!m_isIdle){
-    // raycast
     m_hashTable->clearData();
     raycast();
-    swapToNextBuffer();
 	
     // compose (sends data to frontend)
     compose();
-	
+
+	swapToNextBuffer();
+
     // update volumepool
     std::vector<Vec4ui> hash = m_hashTable->getData();
     if (hash.size() > 0) {
@@ -496,17 +500,13 @@ void GridLeaper::computeEyeToModelMatrix() {
 void GridLeaper::fillRayEntryBuffer() {
 #ifdef GLGRIDLEAPER_DEBUGVIEW
   m_targetBinder->bind(m_pFBOFinalColor, m_pFBOFinalColorNext, m_pFBOStartColor, m_pFBOStartColorNext);
-  glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  m_targetBinder->bind(m_pFBODebug, m_pFBODebugNext,m_pFBORayStart,m_pFBORayStartNext);
-  glClearColor(0, 0, 0, 0);
+  m_targetBinder->bind(m_pFBODebug, m_pFBODebugNext, m_pFBORayStart, m_pFBORayStartNext);
   glClear(GL_COLOR_BUFFER_BIT);
 #else
   m_targetBinder->Bind(m_pFBOFinalColor, m_pFBOFinalColorNext, m_pFBOStartColor, m_pFBOStartColorNext);
-  glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  m_targetBinder->Bind(m_pFBORayStart,m_pFBORayStartNext);
-  glClearColor(0, 0, 0, 0);
+  m_targetBinder->Bind(m_pFBORayStart, m_pFBORayStartNext);
   glClear(GL_COLOR_BUFFER_BIT);
 #endif
   m_targetBinder->Unbind();
@@ -515,9 +515,7 @@ void GridLeaper::fillRayEntryBuffer() {
   m_targetBinder->Bind(m_pFBORayStart);
 
   //! \todo add the statemanager here !
-  glCullFace(GL_BACK);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+  GL_CHECK(glDisable(GL_CULL_FACE));
 
   m_programRenderFrontFacesNearPlane->Enable();
   m_programRenderFrontFacesNearPlane->Set("mEyeToModel", m_EyeToModelMatrix);
@@ -530,58 +528,69 @@ void GridLeaper::fillRayEntryBuffer() {
   m_programRenderFrontFaces->Set("mModelView", m_modelView);
   m_programRenderFrontFaces->Set("mModelViewProjection", m_modelView*m_projection);
 
+  GL_CHECK(glEnable(GL_CULL_FACE));
+  GL_CHECK(glCullFace(GL_BACK));
+  GL_CHECK(glDisable(GL_DEPTH_TEST));
+  GL_CHECK(glDisable(GL_BLEND));
+
   m_bbBox->paint();
 
   m_programRenderFrontFaces->Disable();
 
   m_targetBinder->Unbind();
-//  m_pFBORayStart->FinishWrite();
 }
 
                                   
 void GridLeaper::raycast(){
-  m_targetBinder->Bind(m_pFBORayStartNext);
-  glClearColor(0, 0, 0, 0);
-  glClear(GL_COLOR_BUFFER_BIT);
+  selectShader();
+  setupRaycastShader();
+
+  m_targetBinder->Unbind();
 
 #ifdef GLGRIDLEAPER_DEBUGVIEW
-  m_pTargetBinder->Bind(m_pFBOFinalColorNext,
+  m_targetBinder->Bind(m_pFBOFinalColorNext,
                         m_pFBOStartColorNext,
                         m_pFBORayStartNext,
                         m_pFBODebugNext);
 #else
-  m_targetBinder->Bind(m_pFBOFinalColorNext,
-                       m_pFBOStartColorNext,
-                       m_pFBORayStartNext);
+  m_targetBinder->Bind(m_pFBOFinalColorNext, m_pFBOStartColorNext, m_pFBORayStartNext);
 #endif
 
-  selectShader();
-  setupRaycastShader();
+  m_pFBORayStart->Read(0);
+  m_pFBOStartColor->Read(1);
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
   //set states
-  glCullFace(GL_FRONT);
+  GL_CHECK(glEnable(GL_CULL_FACE));
+  GL_CHECK(glCullFace(GL_FRONT));
+  GL_CHECK(glDisable(GL_DEPTH_TEST));
+  GL_CHECK(glDepthMask(GL_FALSE));
 
   // render
   m_bbBox->paint();
+
+  m_volumePool->disable();
+
+  m_pFBORayStart->FinishRead();
+  m_pFBOStartColor->FinishRead();
+
+  m_targetBinder->Unbind();
 }
 
 void GridLeaper::compose(){
-	
   m_targetBinder->Bind(m_resultBuffer);
-
-  GL_CHECK(glClearColor(0, 0, 1, 1));
-  GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
   GL_CHECK(glCullFace(GL_FRONT));
   GL_CHECK(glDisable(GL_CULL_FACE));
-//  GL_CHECK(glDisable(GL_DEPTH_TEST));
-//  GL_CHECK(glDepthMask(GL_FALSE));
+  GL_CHECK(glDisable(GL_DEPTH_TEST));
+  GL_CHECK(glDepthMask(GL_FALSE));
   GL_CHECK(glDisable(GL_BLEND));
   
-
   m_programCompose->Enable();
-  m_programCompose->SetTexture2D("compose", m_pFBOFinalColor->GetTextureHandle(), 0);
-//  m_programCompose->SetTexture2D("compose", m_pFBORayStart->GetTextureHandle(), 0);
+
+  m_programCompose->SetTexture2D("compose", m_pFBOFinalColorNext->GetTextureHandle(), 0);
 
   Vec3f c1 = Vec3f(m_backgroundColors.colorOne)/255.0f;
   Vec3f c2 = Vec3f(m_backgroundColors.colorTwo)/255.0f;
@@ -593,19 +602,11 @@ void GridLeaper::compose(){
 
   m_programCompose->Disable();
 
-  GL_CHECK(glEnable(GL_CULL_FACE));
-  GL_CHECK(glEnable(GL_DEPTH_TEST));
-  GL_CHECK(glDepthMask(GL_TRUE));
-
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
-
   m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
 
   m_targetBinder->Unbind();
-
-  GL_CHECK(glEnable(GL_DEPTH_TEST));
-  GL_CHECK(glDepthMask(GL_TRUE));
   
   auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size());
   getVisStream()->put(std::move(f1));
@@ -617,10 +618,12 @@ void GridLeaper::selectShader(){
     if (m_enableLighting){
       switch (m_renderMode) {
         case  IRenderer::ERenderMode::RM_1DTRANS :
-          m_activeShaderProgram = m_programRayCast1DLightingColor;
+			m_texTransferFunc->Bind(2);
+			m_activeShaderProgram = m_programRayCast1DLightingColor;
           break;
         case  IRenderer::ERenderMode::RM_2DTRANS :
-          m_activeShaderProgram = m_programRayCast1DLightingColor;
+		//	m_texTransfer2DFunc->Bind(2);
+			m_activeShaderProgram = m_programRayCast1DLightingColor;
           break;
         case  IRenderer::ERenderMode::RM_ISOSURFACE :
           m_activeShaderProgram = m_programRayCastISOColorLighting;
@@ -631,10 +634,12 @@ void GridLeaper::selectShader(){
     } else {
       switch (m_renderMode) {
         case  IRenderer::ERenderMode::RM_1DTRANS :
-          m_activeShaderProgram = m_programRayCast1DColor;
+			m_texTransferFunc->Bind(2);
+			m_activeShaderProgram = m_programRayCast1DColor;
           break;
         case  IRenderer::ERenderMode::RM_2DTRANS :
-          m_activeShaderProgram = m_programRayCast2DColor;
+			//	m_texTransfer2DFunc->Bind(2);
+			m_activeShaderProgram = m_programRayCast2DColor;
           break;
         case  IRenderer::ERenderMode::RM_ISOSURFACE :
           m_activeShaderProgram = m_programRayCastISOColorLighting;  // invalid rendermode -> use lighiting instead
@@ -647,10 +652,12 @@ void GridLeaper::selectShader(){
     if (m_enableLighting){
       switch (m_renderMode) {
         case  IRenderer::ERenderMode::RM_1DTRANS :
-          m_activeShaderProgram = m_programRayCast1DLighting;
+			m_texTransferFunc->Bind(2);
+			m_activeShaderProgram = m_programRayCast1DLighting;
           break;
         case  IRenderer::ERenderMode::RM_2DTRANS :
-          m_activeShaderProgram = m_programRayCast1DLighting;
+			//	m_texTransfer2DFunc->Bind(2);
+			m_activeShaderProgram = m_programRayCast2DLighting;
           break;
         case  IRenderer::ERenderMode::RM_ISOSURFACE :
           m_activeShaderProgram = m_programRayCastISOLighting;
@@ -661,10 +668,12 @@ void GridLeaper::selectShader(){
     } else {
       switch (m_renderMode) {
         case  IRenderer::ERenderMode::RM_1DTRANS :
-          m_activeShaderProgram = m_programRayCast1D;
+			m_texTransferFunc->Bind(2);
+			m_activeShaderProgram = m_programRayCast1D;
           break;
         case  IRenderer::ERenderMode::RM_2DTRANS :
-          m_activeShaderProgram = m_programRayCast2D;
+			//	m_texTransfer2DFunc->Bind(2);
+			m_activeShaderProgram = m_programRayCast2D;
           break;
         case  IRenderer::ERenderMode::RM_ISOSURFACE :
           m_activeShaderProgram = m_programRayCastISOLighting;  // invalid rendermode -> use lighiting instead
@@ -716,9 +725,9 @@ void GridLeaper::setupRaycastShader() {
     }
 
     if (m_enableLighting) {
-      Vec3f a(m_lightingColors.ambient.xyz()*m_lightingColors.ambient.w);
-      Vec3f d(m_lightingColors.diffuse.xyz()*m_lightingColors.diffuse.w);
-      Vec3f s(m_lightingColors.specular.xyz()*m_lightingColors.specular.w);
+      Vec3f a(Vec3f(m_lightingColors.ambient.xyz())*(m_lightingColors.ambient.w / 255.f));
+      Vec3f d(Vec3f(m_lightingColors.diffuse.xyz())*(m_lightingColors.diffuse.w / 255.f));
+      Vec3f s(Vec3f(m_lightingColors.specular.xyz())*(m_lightingColors.specular.w / 255.f));
       
 	  a = a / 255.f;
 	  d = d / 255.f;

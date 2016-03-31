@@ -5,14 +5,26 @@
 #include <silverbullet/math/Vectors.h>
 #include "GLCommon.h"
 
-
-class GLFBOTex{
+class GLFBO {
 public:
-  GLFBOTex(GLenum minfilter,
+  GLFBO();
+  ~GLFBO(); 
+  GLuint getGLID() const;
+
+  bool valid() const { return m_hFBO != 0; }
+
+private:
+  GLuint m_hFBO;
+};
+
+class GLRenderTexture{
+public:
+  GLRenderTexture(std::shared_ptr<GLFBO> glFBO,
+           GLenum minfilter,
            GLenum magfilter, GLenum wrapmode, GLsizei width, GLsizei height,
            GLenum intformat, GLenum format, GLenum type,
            bool bHaveDepth=false, int iNumBuffers=1);
-  virtual ~GLFBOTex(void);
+  virtual ~GLRenderTexture(void);
   virtual void SetViewport();
   virtual void Write(unsigned int iTargetBuffer=0, int iBuffer=0,
                      bool bCheckBuffer=true);
@@ -42,7 +54,6 @@ public:
                                   size_t iSizePerElement,
                                   bool bHaveDepth=false, int iNumBuffers=1);
 
-  bool Valid() const { return m_hFBO != 0; }
 
   static void NoDrawBuffer();
   static void OneDrawBuffer();
@@ -53,20 +64,23 @@ public:
   void ReadBackPixels(int x, int y, int sX, int sY, void* pData, int iBuffer=0);
 
   template <typename T>
-  void debugOut() const {
+  void toString() const {
 	  std::vector<T> pData(gl_components(m_format)*m_iSizeX*m_iSizeY);
 	  GL_CHECK(glReadBuffer(GL_COLOR_ATTACHMENT0));
 	  GL_CHECK(glReadPixels(0, 0, m_iSizeX, m_iSizeY, m_format, m_type, pData.data()));
+    std::stringstream ss;
 	  for (size_t y = 0; y < m_iSizeY; ++y) {
 		  for (size_t x = 0; x < m_iSizeX; ++x) {
-			  std::cout << "[";
+			  ss << "[";
 			  for (size_t comp = 0; comp < gl_components(m_format); ++comp) {
-				  std::cout << pData[comp + gl_components(m_format)*(x + m_iSizeX*y)] << ",";
+          ss << pData[comp + gl_components(m_format)*(x + m_iSizeX*y)];
+          if (comp+1 < gl_components(m_format)) ss << ",";
 			  }
-			  std::cout << "] ";
+			  ss << "] ";
 		  }
-		  std::cout << std::endl;
+		  ss << "\n";
 	  }
+    return ss.str()
   }
 
 
@@ -85,7 +99,7 @@ private:
   GLuint              m_iSizeY;
   GLuint*             m_hTexture;
   GLuint              m_hDepthBuffer;
-  GLuint			  m_hFBO;
+  std::shared_ptr<GLFBO> m_glFBO;
   GLenum*             m_LastTexUnit;
   GLenum              m_LastDepthTextUnit;
   int                 m_iNumBuffers;
