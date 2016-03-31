@@ -1,5 +1,6 @@
 #include "processing-base/ProcessingCommandsHandler.h"
 
+#include "common/NetConfig.h"
 #include "common/ProxyUtils.h"
 #include "processing-base/ProcessingCommandFactory.h"
 #include "processing-base/RenderSession.h"
@@ -11,14 +12,17 @@ using namespace trinity;
 
 InitProcessingSessionHdl::InitProcessingSessionHdl(const InitProcessingSessionRequest& request, ProcessingNode* node)
     : m_node(node)
-    , m_request(request)
-    , m_ioProxy(request.getParams().getIoEndpoint()) {}
+    , m_request(request) {}
 
 std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
     auto params = m_request.getParams();
 
     // create an IO node proxy and pass it to the renderer
-    auto ioSessionProxy = m_ioProxy.initIO(m_request.getParams().getFileId());
+    mocca::net::Endpoint ioEndpoint = m_node->executionMode() == AbstractNode::ExecutionMode::Separate
+                                          ? m_request.getParams().getIoEndpoint()
+                                          : trinity::ioLoopbackEndpoint();
+    IONodeProxy ioNodeProxy(ioEndpoint);
+    auto ioSessionProxy = ioNodeProxy.initIO(m_request.getParams().getFileId());
 
     try {
         std::unique_ptr<RenderSession> session(

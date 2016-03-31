@@ -7,14 +7,13 @@
 
 using namespace trinity;
 
-AbstractNode::AbstractNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator)
-    : m_aggregator(std::move(aggregator)) {}
+AbstractNode::AbstractNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, ExecutionMode executionMode)
+    : m_aggregator(std::move(aggregator))
+    , m_executionMode(executionMode) {}
 
 AbstractNode::~AbstractNode() {
     join();
 }
-
-#include <iostream>
 
 void AbstractNode::run() {
     LINFO("(node) listening... ");
@@ -24,8 +23,8 @@ void AbstractNode::run() {
             auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_REPLY);
             if (!msgEnvelope.isNull()) {
                 auto env = msgEnvelope.release();
-                //LINFO("raw: " + env.message);
-                
+                // LINFO("raw: " + env.message);
+
                 auto request = Request::createFromByteArray(env.message);
                 LINFO("request: " << *request);
                 // handle request
@@ -43,4 +42,8 @@ void AbstractNode::run() {
             setException(std::current_exception());
         }
     }
+}
+
+AbstractNode::ExecutionMode AbstractNode::executionMode() const {
+    return m_executionMode;
 }

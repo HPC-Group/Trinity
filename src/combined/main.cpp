@@ -48,15 +48,14 @@ void init() {
 int main(int argc, char** argv) {
     init();
 
-    // endpoints
     Endpoint ioTCPEp(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(ioTCPPort));
     Endpoint ioWSEp(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(ioWSPort));
     Endpoint procTCPEp(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(procTCPPort));
     Endpoint procWSEp(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(procWSPort));
 
-    // connection acceptors for the endpoints
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> ioAcceptors = mocca::makeUniquePtrVec<IMessageConnectionAcceptor>(
-        ConnectionFactorySelector::bind(ioTCPEp), ConnectionFactorySelector::bind(ioWSEp));
+        ConnectionFactorySelector::bind(ioTCPEp), ConnectionFactorySelector::bind(ioWSEp),
+        ConnectionFactorySelector::bind(trinity::ioLoopbackEndpoint()));
 
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> procAcceptors =
         mocca::makeUniquePtrVec<IMessageConnectionAcceptor>(ConnectionFactorySelector::bind(procTCPEp),
@@ -64,12 +63,12 @@ int main(int argc, char** argv) {
 
     std::unique_ptr<ConnectionAggregator> ioAggregator(
         new ConnectionAggregator(std::move(ioAcceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
-    IONode ioNode(std::move(ioAggregator));
+    IONode ioNode(std::move(ioAggregator), AbstractNode::ExecutionMode::Combined);
     ioNode.start();
 
     std::unique_ptr<ConnectionAggregator> procAggregator(
         new ConnectionAggregator(std::move(procAcceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
-    ProcessingNode procNode(std::move(procAggregator));
+    ProcessingNode procNode(std::move(procAggregator), AbstractNode::ExecutionMode::Combined);
     procNode.start();
 
     while (!exitFlag) {

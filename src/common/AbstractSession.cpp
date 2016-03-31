@@ -6,7 +6,6 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
 
-
 using namespace mocca::net;
 using namespace trinity;
 
@@ -32,15 +31,15 @@ void AbstractSession::run() {
         LERROR("(session) cannot bind the render session: " << err.what());
         return;
     }
+    LDEBUG("Initiated session of type " << typeid(*this).name() << " with connection ID " << *m_controlConnection->connectionID());
 
-
-	performThreadSpecificInit();
+    performThreadSpecificInit();
     try {
         while (!isInterrupted()) {
             auto bytepacket = m_controlConnection->receive();
             if (!bytepacket.isEmpty()) {
                 auto request = Request::createFromByteArray(bytepacket);
-                //LINFO("request: " << *request);
+                // LINFO("request: " << *request);
 
                 auto handler = createHandler(*request);
                 auto reply = handler->execute();
@@ -53,7 +52,7 @@ void AbstractSession::run() {
         }
     } catch (...) {
         interrupt();
-		performThreadSpecificTeardown();
+        performThreadSpecificTeardown();
         setException(std::current_exception());
     }
 }

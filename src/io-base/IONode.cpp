@@ -10,13 +10,13 @@
 using namespace trinity;
 
 IONode::IONode()
-    : AbstractNode(nullptr) {
+    : AbstractNode(nullptr, AbstractNode::ExecutionMode::Separate) {
     m_listData.push_back(mocca::make_unique<FractalListData>());
     m_listData.push_back(mocca::make_unique<UVFListData>());
 }
 
-IONode::IONode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator)
-    : AbstractNode(std::move(aggregator)) {
+IONode::IONode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, AbstractNode::ExecutionMode executionMode)
+    : AbstractNode(std::move(aggregator), executionMode) {
     m_listData.push_back(mocca::make_unique<FractalListData>());
     m_listData.push_back(mocca::make_unique<UVFListData>());
 }

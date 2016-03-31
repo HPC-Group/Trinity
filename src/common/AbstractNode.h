@@ -10,18 +10,24 @@
 #include <vector>
 
 namespace trinity {
-    class AbstractNode : public mocca::Runnable {
+class AbstractNode : public mocca::Runnable {
 
-    public:
-        AbstractNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator);
-        ~AbstractNode();
+public:
+    // Indicates if IO node and processing node are executed combined in the same process or in separate processes
+    enum class ExecutionMode { Separate, Combined };
 
-    private:
-        void run();
-        virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) = 0;
-        virtual void handleSessionErrors() = 0;
+    AbstractNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, ExecutionMode executionMode);
+    ~AbstractNode();
 
-    private:
-        std::unique_ptr<mocca::net::ConnectionAggregator> m_aggregator;
-    };
+    ExecutionMode executionMode() const;
+
+private:
+    void run();
+    virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) = 0;
+    virtual void handleSessionErrors() = 0;
+
+private:
+    std::unique_ptr<mocca::net::ConnectionAggregator> m_aggregator;
+    ExecutionMode m_executionMode;
+};
 }

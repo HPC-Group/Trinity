@@ -5,8 +5,8 @@
 
 using namespace trinity;
 
-ProcessingNode::ProcessingNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator)
-    : AbstractNode(std::move(aggregator)) {}
+ProcessingNode::ProcessingNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, AbstractNode::ExecutionMode executionMode)
+    : AbstractNode(std::move(aggregator), executionMode) {}
 
 ProcessingNode::~ProcessingNode() {
     join();

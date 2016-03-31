@@ -20,7 +20,6 @@ public:
 private:
     ProcessingNode* m_node;
     InitProcessingSessionRequest m_request;
-    IONodeProxy m_ioProxy;
 };
 
 class SetIsoValueHdl : public ICommandHandler {
