@@ -23,6 +23,11 @@
      opacity: 100;
 }
 
+QToolBar {
+	background: red;
+	border: 0px solid black;
+}
+
 QWidget
 {
     color: #b1b1b1;
