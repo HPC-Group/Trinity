@@ -54,14 +54,14 @@
                 $("#myCanvas").on("touchstart mousedown", function(e) {
                     TRI_Frontend.VisControlConnector.onDown(e)
                 });
-            
-            
-              canvas.style.width ='100%';
-            canvas.style.height='100%';
-  // ...then set the internal size to match
-            canvas.width  = canvas.offsetWidth;
+
+
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            // ...then set the internal size to match
+            canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-            
+
             $("#myCanvas").on("touchmove mousemove", function(e) {
                 TRI_Frontend.VisControlConnector.onMove(e)
             });
@@ -292,37 +292,54 @@
                     } else {
                         deltaX += e.clientX - lastX;
                         deltaY += lastY - e.clientY;
-                    
+
 
                         lastX = e.clientX;
                         lastY = e.clientY;
                     }
 
                     //buildSendMessage(deltaX,deltaY,0);
-                    if(stoppedSending) {
+                    if (stoppedSending) {
                         stoppedSending = false;
                         TRI_Frontend.VisControlConnector.sendRotation();
-                        
+
                     }
                 }
 
             },
-            
+
             switchMode: function() {
                 //rotMode = !rotMode;
-                if(rotMode) {
+                if (rotMode) {
                     rotMode = false;
-                    $("#rotate").text('Move');
+                    $("#rotate").text('switch to rotation mode');
+                    //$("#rotate").unfo;
+                    document.activeElement.blur();
+
+                    console.log("setting text to rotate");
                 } else {
                     rotMode = true;
-                    $("#rotate").text('Rotate');
+                    $("#rotate").text('switch to move mode');
+                    console.log("setting text to move");
+                    document.activeElement.blur();
                 }
+            },
+
+
+            prevTF: function() {
+                document.activeElement.blur();
+
+            },
+
+            nextTF: function() {
+                document.activeElement.blur();
+
             },
 
             onDown: function(e) {
                 e.preventDefault();
                 //console.log(e);
-                
+
                 isRotating = true;
                 if (e.type == "touchstart") {
                     lastX = e.originalEvent.touches[0].pageX;
@@ -344,17 +361,17 @@
 
             sendRotation() {
 
-                if(Math.abs(deltaX) < 0.0001 && Math.abs(deltaY) < 0.0001) {
+                if (Math.abs(deltaX) < 0.0001 && Math.abs(deltaY) < 0.0001) {
                     stoppedSending = true;
                 } else {
-                    
-                    if(rotMode) {
-                TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' + deltaY * (-0.01) + ',"y":' + deltaX * 0.01 + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
+
+                    if (rotMode) {
+                        TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"rotation":{"x": ' + deltaY * (-0.01) + ',"y":' + deltaX * 0.01 + ',"z":0}},"rid":108,"sid":1},"type":"RotateScene"}');
                     } else {
-                TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"direction":{"x": ' + deltaX * (0.001) + ',"y":' + deltaY * 0.001 + ',"z":0}},"rid":108,"sid":1},"type":"MoveCamera"}');
-                        }
-                deltaX = 0.0;
-                deltaY = 0.0;
+                        TRI_Frontend.VisControlConnector.doSend('{"req":{"params":{"direction":{"x": ' + deltaX * (0.001) + ',"y":' + deltaY * 0.001 + ',"z":0}},"rid":108,"sid":1},"type":"MoveCamera"}');
+                    }
+                    deltaX = 0.0;
+                    deltaY = 0.0;
                 }
 
             },

@@ -38,17 +38,17 @@
 <body onload="TRI_Frontend.init()">
 
 
-    <nav class="navbar navbar-inverse navbar-embossed" role="navigation" id="navigon">
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation" id="navigon">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
                 <span class="sr-only">Toggle navigation</span>
               </button>
             <a class="navbar-brand disabled" href="#"><img alt="Brand" style="margin-top:-7px; margin-right:10px; max-height:150%;" src="web_icon.png"></a>
-            
-            
-            
+
+
+
         </div>
-        
+
         <div class="collapse navbar-collapse" id="navbar-collapse-01">
             <ul class="nav navbar-nav navbar-left" id="renderctrl" style="display:none">
                 <li><a href="#rotate" data-toggle="modal" data-target="#aboutModal">Rotate</a></li>
@@ -56,7 +56,7 @@
                 <li><a href="#previous" data-toggle="modal" data-target="#aboutModal">Previous</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" data-toggle="modal" data-target="#aboutModal">About</a></li>
+                <li><a href="#" data-toggle="modal" data-target="#aboutModal" style="margin-right:15px">About</a></li>
             </ul>
         </div>
         <!-- /.navbar-collapse -->
@@ -252,52 +252,77 @@
     </div>
 
     <!-- Modal showing error messages -->
-    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
-                    <h5 class="modal-title" id="errorModalLabel">ERROR</h5>
-                </div>
-                <div class="modal-body">
-                    <p id="errorBody"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">close</button>
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                        <h5 class="modal-title" id="errorModalLabel">ERROR</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="errorBody"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-        
-        
+
+
+
         <div class="panel panel-default" id="vis_panel" style="display:none">
-<div class="panel-heading clearfix">
-      <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Visualization</h4>
-    
-    
-    
-      <div class="btn-group pull-right">
-        <a href="#rot_button" id="rotate" class="btn btn-default btn-sm" onclick="TRI_Frontend.VisControlConnector.switchMode()" >
-            Move</a>
-        <a href="#" class="btn btn-default btn-sm">Previous</a>
-        <a href="#" class="btn btn-default btn-sm">Next</a>
-      </div>
-    </div>
+            <div class="panel-heading clearfix">
+                <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Visualization</h4>
+
+                <div class="btn-group pull-right">
+                    <a href="#" id="prev" class="btn btn-default btn-sm" onclick="TRI_Frontend.VisControlConnector.prevTF()"><span class="fui-triangle-left-large" id="next" aria-hidden="true"></span></a>
+                    <a href="#" class="btn btn-default btn-sm" onclick="TRI_Frontend.VisControlConnector.nextTF()"><span class="fui-triangle-right-large" aria-hidden="true"></span></a>
+                </div>
+
+
+                <div class="btn-group pull-right" style="margin-right:10px">
+                    <a href="#rot_button" id="rotate" class="btn btn-default btn-sm" onclick="TRI_Frontend.VisControlConnector.switchMode()">
+            
+            switch to move mode</a>
+                </div>
+
+
+
+            </div>
+
             <div class="panel-body">
-<canvas id="myCanvas" width="0" height="0""></canvas>
+                <canvas id="myCanvas" width="0" height="0" "></canvas>
                 </div>
             <p>
 
         </div>
 
+                                                                <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                    <h5 class="modal-title" id="aboutModalLabel">Trinity Web Frontend</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Version: 0.1</p>
+                    <p>&copy; 2016 Andrey Krekhov, David McCann, Jens Krüger, and others</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+                                                                                      
     <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
-    <script src="dist/js/vendor/jquery.min.js"></script>
+    <script src="dist/js/vendor/jquery.min.js "></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="dist/js/vendor/video.js"></script>
-    <script src="dist/js/flat-ui.min.js"></script>
-    <script src="js/masterui.js"></script>
-    <script src="js/validator.js"></script>
+    <script src="dist/js/vendor/video.js "></script>
+    <script src="dist/js/flat-ui.min.js "></script>
+    <script src="js/masterui.js "></script>
+    <script src="js/validator.js "></script>
 </body>
 
 </html>
