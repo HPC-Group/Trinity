@@ -18,9 +18,11 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
     auto params = m_request.getParams();
 
     // create an IO node proxy and pass it to the renderer
-    mocca::net::Endpoint ioEndpoint = m_node->executionMode() == AbstractNode::ExecutionMode::Separate
-                                          ? m_request.getParams().getIoEndpoint()
-                                          : trinity::ioLoopbackEndpoint();
+    mocca::net::Endpoint ioEndpoint = m_request.getParams().getIoEndpoint();
+    if (m_node->executionMode() == AbstractNode::ExecutionMode::Combined && m_node->isLocalMachine(ioEndpoint.machine)) {
+        ioEndpoint = trinity::ioLoopbackEndpoint();
+    }
+
     IONodeProxy ioNodeProxy(ioEndpoint);
     auto ioSessionProxy = ioNodeProxy.initIO(m_request.getParams().getFileId());
 

@@ -21,6 +21,8 @@ public:
 
     ExecutionMode executionMode() const;
 
+    bool isLocalMachine(const std::string& machine) const;
+
 private:
     void run();
     virtual std::unique_ptr<ICommandHandler> createHandler(const Request& request) = 0;

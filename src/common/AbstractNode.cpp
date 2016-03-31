@@ -44,6 +44,10 @@ void AbstractNode::run() {
     }
 }
 
+bool AbstractNode::isLocalMachine(const std::string& machine) const {
+    return m_aggregator->isLocalMachine(machine);
+}
+
 AbstractNode::ExecutionMode AbstractNode::executionMode() const {
     return m_executionMode;
 }
