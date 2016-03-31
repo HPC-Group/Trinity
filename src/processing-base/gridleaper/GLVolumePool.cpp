@@ -43,6 +43,7 @@ static Vec3ui GetLoDSize(const Vec3ui& volumeSize, uint32_t iLoD) {
   return vLoDSize;
 }
 
+// TODO: replace this function with dataset API call
 static FLOATVECTOR3 GetFloatBrickLayout(const Vec3ui& volumeSize,
                                         const Vec3ui& maxInnerBrickSize,
                                         uint32_t iLoD) {
@@ -77,7 +78,7 @@ BrickKey IndexFrom4D(   IIO& dataset,
   return k;
 }
 
-
+// TODO: replace this function with dataset API call
 static Vec3ui GetBrickLayout(const Vec3ui& volumeSize,
                              const Vec3ui& maxInnerBrickSize,
                              uint32_t iLoD) {
