@@ -42,4 +42,7 @@ ENDIF ()
 
 #qt5_use_modules(frontend-qt-waschk Widgets OpenGL)
 
+file(GLOB UIELEMENTS ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css ${CMAKE_CURRENT_SOURCE_DIR}/web_icon.png)
+file(COPY ${UIELEMENTS} DESTINATION ${CMAKE_BINARY_DIR}/src/frontend-qt-waschk/)
+
 SET_TARGET_PROPERTIES(frontend-qt-waschk PROPERTIES FOLDER "trinity")
