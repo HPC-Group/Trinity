@@ -1443,6 +1443,67 @@ std::string GetDomainScaleCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// GetFloatBrickLayoutCmd //////////////
+
+VclType GetFloatBrickLayoutCmd::Type = VclType::GetFloatBrickLayout;
+
+GetFloatBrickLayoutCmd::RequestParams::RequestParams(uint64_t lod, uint64_t modality)
+    : m_lod(lod)
+    , m_modality(modality) {}
+
+void GetFloatBrickLayoutCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("lod", m_lod);
+    writer.appendInt("modality", m_modality);
+}
+
+void GetFloatBrickLayoutCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_lod = reader.getUInt64("lod");
+    m_modality = reader.getUInt64("modality");
+}
+
+bool GetFloatBrickLayoutCmd::RequestParams::equals(const GetFloatBrickLayoutCmd::RequestParams& other) const {
+    return m_lod == other.m_lod && m_modality == other.m_modality;
+}
+
+uint64_t GetFloatBrickLayoutCmd::RequestParams::getLod() const {
+    return m_lod;
+}
+
+uint64_t GetFloatBrickLayoutCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+std::string GetFloatBrickLayoutCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "lod: " << m_lod << "; modality: " << m_modality;
+    return stream.str();
+}
+
+GetFloatBrickLayoutCmd::ReplyParams::ReplyParams(const Core::Math::Vec3f& result)
+    : m_result(result) {}
+
+void GetFloatBrickLayoutCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("result", m_result);
+}
+
+void GetFloatBrickLayoutCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializable<Core::Math::Vec3f>("result");
+}
+
+bool GetFloatBrickLayoutCmd::ReplyParams::equals(const GetFloatBrickLayoutCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+Core::Math::Vec3f GetFloatBrickLayoutCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetFloatBrickLayoutCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1819,6 +1880,19 @@ bool operator==(const GetDomainScaleCmd::ReplyParams& lhs, const GetDomainScaleC
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetDomainScaleCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetFloatBrickLayoutCmd::RequestParams& lhs, const GetFloatBrickLayoutCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetFloatBrickLayoutCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetFloatBrickLayoutCmd::ReplyParams& lhs, const GetFloatBrickLayoutCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetFloatBrickLayoutCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

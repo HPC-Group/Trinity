@@ -285,4 +285,14 @@ std::unique_ptr<Reply> GetDomainScaleHdl::execute() {
     return mocca::make_unique<GetDomainScaleReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetFloatBrickLayoutHdl::GetFloatBrickLayoutHdl(const GetFloatBrickLayoutRequest& request, IOSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetFloatBrickLayoutHdl::execute() {
+    GetFloatBrickLayoutCmd::ReplyParams params(
+        m_session->getIO().getFloatBrickLayout(m_request.getParams().getLod(), m_request.getParams().getModality()));
+    return mocca::make_unique<GetFloatBrickLayoutReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN IOCommandHandlerImpl */

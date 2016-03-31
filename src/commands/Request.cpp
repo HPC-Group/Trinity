@@ -174,6 +174,8 @@ std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArra
         return reader->getSerializablePtr<GetDefault1DTransferFunctionRequest>("req");
     } else if (type == GetDomainScaleRequest::Ifc::Type) {
         return reader->getSerializablePtr<GetDomainScaleRequest>("req");
+    } else if (type == GetFloatBrickLayoutRequest::Ifc::Type) {
+        return reader->getSerializablePtr<GetFloatBrickLayoutRequest>("req");
     }
     /* AUTOGEN IORequestFactoryEntry */
 

@@ -107,6 +107,9 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetDomainScale:
         return mocca::make_unique<GetDomainScaleHdl>(static_cast<const GetDomainScaleRequest&>(request), session);
         break;
+    case VclType::GetFloatBrickLayout:
+        return mocca::make_unique<GetFloatBrickLayoutHdl>(static_cast<const GetFloatBrickLayoutRequest&>(request), session);
+        break;
     /* AUTOGEN IOCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

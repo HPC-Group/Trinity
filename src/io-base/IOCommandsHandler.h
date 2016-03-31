@@ -315,5 +315,16 @@ private:
     IOSession* m_session;
 };
 
+class GetFloatBrickLayoutHdl : public ICommandHandler {
+public:
+    GetFloatBrickLayoutHdl(const GetFloatBrickLayoutRequest& request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetFloatBrickLayoutRequest m_request;
+    IOSession* m_session;
+};
+
 /* AUTOGEN IOCommandHandlerHeader */
 }

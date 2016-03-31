@@ -203,4 +203,11 @@ Core::Math::Vec3f IOSessionProxy::getDomainScale(uint64_t modality) const {
     return reply->getParams().getResult();
 }
 
+Core::Math::Vec3f IOSessionProxy::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
+    GetFloatBrickLayoutCmd::RequestParams params(lod, modality);
+    GetFloatBrickLayoutRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN IOSessionProxyImpl */

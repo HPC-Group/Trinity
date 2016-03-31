@@ -115,6 +115,8 @@ std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
         return reader->getSerializablePtr<GetDefault1DTransferFunctionReply>("rep");
     } else if (type == GetDomainScaleReply::Ifc::Type) {
         return reader->getSerializablePtr<GetDomainScaleReply>("rep");
+    } else if (type == GetFloatBrickLayoutReply::Ifc::Type) {
+        return reader->getSerializablePtr<GetFloatBrickLayoutReply>("rep");
     }
     /* AUTOGEN IOReplyFactoryEntry */
 
