@@ -86,7 +86,7 @@
   </action>
   <action name="actionToggleRenderer">
    <property name="text">
-    <string>SimpleRenderer</string>
+    <string>current renderer : SimpleRenderer</string>
    </property>
   </action>
  </widget>

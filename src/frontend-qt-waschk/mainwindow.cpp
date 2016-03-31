@@ -109,9 +109,9 @@ void MainWindow::on_actionToggleRenderer_triggered()
 {
    if(ConnectionSingleton::getInstance().getRendererType() == trinity::VclType::SimpleRenderer){
         ConnectionSingelton.setRendererType(trinity::VclType::GridLeapingRenderer);
-        ui->actionToggleRenderer->setText(QString("GridLeaper"));
+        ui->actionToggleRenderer->setText(QString("current renderer : GridLeaper"));
    }else{
         ConnectionSingelton.setRendererType(trinity::VclType::SimpleRenderer);
-        ui->actionToggleRenderer->setText(QString("SimpleRenderer"));
+        ui->actionToggleRenderer->setText(QString("current renderer : SimpleRenderer"));
    }
 }
