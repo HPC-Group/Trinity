@@ -37,6 +37,8 @@ private slots:
 
     void on_actionNext_triggered();
 
+    void on_actionToggleRenderer_triggered();
+
 private:
     Ui::MainWindow *ui;
 

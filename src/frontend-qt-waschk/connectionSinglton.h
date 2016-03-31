@@ -29,6 +29,9 @@ public:
                       const uint32_t height,
                       const std::string fileId = "FractalData@3");
 
+    trinity::VclType getRendererType() const;
+    void setRendererType(const trinity::VclType &renderer);
+
 private:
     ConnectionSingleton();
     ~ConnectionSingleton();
@@ -38,4 +41,7 @@ private:
     std::unique_ptr<trinity::RendererProxy>         m_renderer;
     bool                                            m_initDone;
 
+    trinity::VclType                                m_rendererType;
 };
+
+#define ConnectionSingelton ConnectionSingleton::getInstance()

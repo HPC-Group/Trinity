@@ -104,3 +104,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     m_mousePosY = event->localPos().y();
 }
 
+
+void MainWindow::on_actionToggleRenderer_triggered()
+{
+   if(ConnectionSingleton::getInstance().getRendererType() == trinity::VclType::SimpleRenderer){
+        ConnectionSingelton.setRendererType(trinity::VclType::GridLeapingRenderer);
+        ui->actionToggleRenderer->setText(QString("GridLeaper"));
+   }else{
+        ConnectionSingelton.setRendererType(trinity::VclType::SimpleRenderer);
+        ui->actionToggleRenderer->setText(QString("SimpleRenderer"));
+   }
+}

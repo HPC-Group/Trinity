@@ -9,7 +9,8 @@ ConnectionSingleton::ConnectionSingleton():
 _ioNode(nullptr),
 _processingNode(nullptr),
 m_renderer(nullptr),
-m_initDone(false){
+m_initDone(false),
+m_rendererType(trinity::VclType::SimpleRenderer){
 
 }
 
@@ -18,6 +19,16 @@ ConnectionSingleton::~ConnectionSingleton(){
 _ioNode = nullptr;
 _processingNode = nullptr;
 m_renderer = nullptr;
+}
+
+trinity::VclType ConnectionSingleton::getRendererType() const
+{
+    return m_rendererType;
+}
+
+void ConnectionSingleton::setRendererType(const trinity::VclType &renderer)
+{
+    m_rendererType = renderer;
 }
 
 trinity::IONodeProxy& ConnectionSingleton::ioNode(){
@@ -63,7 +74,7 @@ void ConnectionSingleton::initRenderer(  const std::string& iohostname,
 
     // the file id will be available after implementing the listdata command
     try {
-      m_renderer = _processingNode->initRenderer(trinity::VclType::SimpleRenderer,
+      m_renderer = _processingNode->initRenderer(m_rendererType,
                                                 fileId, endpointIO, params);
       //_renderer->initContext();
     } catch (const trinity::TrinityError&) {

@@ -58,6 +58,7 @@
    <addaction name="separator"/>
    <addaction name="actionPrev"/>
    <addaction name="actionNext"/>
+   <addaction name="actionToggleRenderer"/>
   </widget>
   <action name="actionConnect_to_IO_Node">
    <property name="text">
@@ -81,6 +82,11 @@
   <action name="actionNext">
    <property name="text">
     <string>+</string>
+   </property>
+  </action>
+  <action name="actionToggleRenderer">
+   <property name="text">
+    <string>SimpleRenderer</string>
    </property>
   </action>
  </widget>
