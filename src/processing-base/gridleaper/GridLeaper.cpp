@@ -511,7 +511,6 @@ void GridLeaper::fillRayEntryBuffer() {
 #endif
   m_targetBinder->Unbind();
 
-
   //bind the entrance buffer as target
   m_targetBinder->Bind(m_pFBORayStart);
 
@@ -533,8 +532,8 @@ void GridLeaper::fillRayEntryBuffer() {
 
   m_bbBox->paint();
 
-  //reset opengl
-  m_programRenderFrontFacesNearPlane->Disable();
+  m_programRenderFrontFaces->Disable();
+
   m_targetBinder->Unbind();
 //  m_pFBORayStart->FinishWrite();
 }
@@ -582,6 +581,7 @@ void GridLeaper::compose(){
 
   m_programCompose->Enable();
   m_programCompose->SetTexture2D("compose", m_pFBOFinalColor->GetTextureHandle(), 0);
+//  m_programCompose->SetTexture2D("compose", m_pFBORayStart->GetTextureHandle(), 0);
 
   Vec3f c1 = Vec3f(m_backgroundColors.colorOne)/255.0f;
   Vec3f c2 = Vec3f(m_backgroundColors.colorTwo)/255.0f;
