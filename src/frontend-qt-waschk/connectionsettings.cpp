@@ -46,9 +46,7 @@ void connectionSettings::on_proc_connect_clicked()
 
     std::string dataID = ui->fileView->currentIndex().data(Qt::UserRole + 1).value<trinity::IOData*>()->getFileId();
 
-    MainWindow* main = (MainWindow*)this->parent();
-
-    main->initRenderer(    ui->io_hostname->text().toStdString(),
+    ConnectionSingleton::getInstance().initRenderer(    ui->io_hostname->text().toStdString(),
                            ui->io_port->text().toStdString(),
                            ui->proc_width->text().toInt(),
                            ui->proc_height->text().toInt(),
@@ -57,3 +55,4 @@ void connectionSettings::on_proc_connect_clicked()
 
     this->close();
 }
+

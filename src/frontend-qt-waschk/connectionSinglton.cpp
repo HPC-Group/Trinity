@@ -7,7 +7,9 @@ static int reconnectInSec = 5;
 
 ConnectionSingleton::ConnectionSingleton():
 _ioNode(nullptr),
-_processingNode(nullptr){
+_processingNode(nullptr),
+m_renderer(nullptr),
+m_initDone(false){
 
 }
 
@@ -15,6 +17,7 @@ _processingNode(nullptr){
 ConnectionSingleton::~ConnectionSingleton(){
 _ioNode = nullptr;
 _processingNode = nullptr;
+m_renderer = nullptr;
 }
 
 trinity::IONodeProxy& ConnectionSingleton::ioNode(){
@@ -23,6 +26,9 @@ trinity::IONodeProxy& ConnectionSingleton::ioNode(){
 
 trinity::ProcessingNodeProxy& ConnectionSingleton::processingNode(){
     return *_processingNode;
+}
+trinity::RendererProxy& ConnectionSingleton::renderer(){
+return *m_renderer;
 }
 
 
@@ -41,6 +47,33 @@ void ConnectionSingleton::connectProcessing(const std::string& hostname, const s
                       port);
 
     _processingNode = std::unique_ptr<trinity::ProcessingNodeProxy>(new trinity::ProcessingNodeProxy(endpoint));
+}
+
+void ConnectionSingleton::initRenderer(  const std::string& iohostname,
+                                   const std::string& ioport,
+                                   const uint32_t width,
+                                   const uint32_t height,
+                                   const std::string fileId){
+
+    trinity::StreamingParams params(width, height);
+
+    Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(),
+                        iohostname,
+                        ioport);
+
+    // the file id will be available after implementing the listdata command
+    try {
+      m_renderer = _processingNode->initRenderer(trinity::VclType::SimpleRenderer,
+                                                fileId, endpointIO, params);
+      //_renderer->initContext();
+    } catch (const trinity::TrinityError&) {
+      LERROR("(qt) no connection to a renderer");
+    }
+
+    m_renderer->startRendering();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    m_initDone = true;
 }
 
 

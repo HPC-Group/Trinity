@@ -26,11 +26,7 @@ public:
 
     void setRenderer(std::unique_ptr<trinity::RendererProxy> renderer);
 
-    void initRenderer(const std::string& iohostname,
-                      const std::string& ioport,
-                      const uint32_t width,
-                      const uint32_t height,
-                      const std::string fileId = "FractalData@3");
+
 
 private slots:
     void update();
@@ -44,12 +40,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    uint32_t m_renderWidth;
-    uint32_t m_renderHeight;
-
     std::unique_ptr<connectionSettings> settings;
-    std::unique_ptr<trinity::RendererProxy>         m_renderer;
-    bool                                            _initDone;
 
     int m_mousePosX;
     int m_mousePosY;
