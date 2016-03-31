@@ -56,7 +56,7 @@ void MainWindow::update() {
 
 void MainWindow::on_actionTrinity_triggered()
 {
-    settings = std::make_unique<connectionSettings>(ui->openGLWidget->width(),
+    settings = mocca::make_unique<connectionSettings>(ui->openGLWidget->width(),
                                                     ui->openGLWidget->height(),
                                                     this);
 }
