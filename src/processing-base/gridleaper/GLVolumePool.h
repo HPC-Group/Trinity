@@ -144,6 +144,8 @@ protected:
   uint64_t m_iMaxUsedBrickVoxelCount;
   uint64_t m_iMaxUsedBrickBytes;
   
+  std::vector <std::vector<Core::Math::Vec3ui>> m_LoDInfoCache;
+
   DebugMode const m_eDebugMode;
   
   DataSetCache m_sDataSetCache;
