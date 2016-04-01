@@ -5,9 +5,9 @@
 using namespace trinity;
 
 JsonWriter::JsonWriter()
-    : m_binary(std::make_shared<std::vector<uint8_t>>()) {}
+    : m_binary(std::make_shared<std::shared_ptr<const std::vector<uint8_t>>>()) {}
 
-JsonWriter::JsonWriter(std::shared_ptr<std::vector<uint8_t>> binary)
+JsonWriter::JsonWriter(std::shared_ptr<std::shared_ptr<const std::vector<uint8_t>>> binary)
     : m_binary(binary) {}
 
 void JsonWriter::appendFloat(const std::string& key, float value) {
@@ -103,23 +103,23 @@ void JsonWriter::appendObjectVec(const std::string& key, const std::vector<ISeri
     }
 }
 
-void JsonWriter::appendBinary(const std::vector<uint8_t>& vec) {
-    m_binary->insert(end(*m_binary), begin(vec), end(vec));
+void JsonWriter::setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) {
+    *m_binary = binary;
 }
 
 mocca::ByteArray JsonWriter::write() const {
     JsonCpp::FastWriter writer;
     std::string str = writer.write(m_root);
     int resultSize = str.size();
-    if (!m_binary->empty()) {
-        resultSize += 4 + m_binary->size();
+    if ((*m_binary) != nullptr && !(*m_binary)->empty()) {
+        resultSize += 4 + (*m_binary)->size();
     }
     mocca::ByteArray result(resultSize);
     result.append(str.data(), str.size());
-    if (!m_binary->empty()) {
+    if ((*m_binary) != nullptr && !(*m_binary)->empty()) {
         // delimiter sequence; octets are invalid in a utf-8 string
         result << '\xc0' << '\xc1' << '\xf5' << '\xff';
-        result.append(m_binary->data(), m_binary->size());
+        result.append((*m_binary)->data(), (*m_binary)->size());
     }
     return result;
 }

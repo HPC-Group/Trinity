@@ -29,15 +29,15 @@ public:
     void appendStringVec(const std::string& key, const std::vector<std::string>& vec) override;
     void appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) override;
 
-    void appendBinary(const std::vector<uint8_t>& vec) override;
+    void setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) override;
 
     mocca::ByteArray write() const override;
 
 private:
-    JsonWriter(std::shared_ptr<std::vector<uint8_t>> binary);
+    JsonWriter(std::shared_ptr<std::shared_ptr<const std::vector<uint8_t>>> binary);
 
 private:
     JsonCpp::Value m_root;
-    std::shared_ptr<std::vector<uint8_t>> m_binary;
+    std::shared_ptr<std::shared_ptr<const std::vector<uint8_t>>> m_binary;
 };
 }

@@ -41,7 +41,7 @@ private:
         writer.appendInt("sid", m_sid);
         serializeParams(writer);
         if (m_binary != nullptr) {
-            writer.appendBinary(*m_binary);
+            writer.setBinary(m_binary);
         }
     }
 

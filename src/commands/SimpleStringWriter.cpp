@@ -87,7 +87,7 @@ void SimpleStringWriter::appendObjectVec(const std::string& key, const std::vect
     }
 }
 
-void SimpleStringWriter::appendBinary(const std::vector<uint8_t>& vec)
+void SimpleStringWriter::setBinary(std::shared_ptr<const std::vector<uint8_t>> binary)
 {
     // fixme dmc
 }

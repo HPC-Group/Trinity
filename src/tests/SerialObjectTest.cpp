@@ -170,12 +170,13 @@ TYPED_TEST(SerialObjectTest, BinaryData) {
     auto writer = factory.createWriter();
     writer->appendString("string1", "Hello");
     writer->appendString("string2", "World");
-    std::vector<uint8_t> binary{ 0x11, 0x22, 0x33 };
-    writer->appendBinary(binary);
+    auto binary = std::make_shared<std::vector<uint8_t>>();
+    *binary = { 0x11, 0x22, 0x33 };
+    writer->setBinary(binary);
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ("Hello", reader->getString("string1"));
     ASSERT_EQ("World", reader->getString("string2"));
-    ASSERT_EQ(binary, *reader->getBinary());
+    ASSERT_EQ(*binary, *reader->getBinary());
 }
