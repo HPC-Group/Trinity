@@ -662,7 +662,7 @@ std::string GLVolumePool::getShaderFragment(uint32_t iMetaTextureUnit,
 }
 
 
-void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, void* pData,
+void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, const void* pData,
                                size_t iInsertPos, uint64_t iTimeOfCreation)
 {
   //StackTimer ubrick(PERF_POOL_UPLOAD_BRICK);
@@ -706,18 +706,19 @@ void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, void
 namespace {
 
   void UploadFirstBrickT(
-                         const BrickKey& bkey,
-                         GLVolumePool& pool,
-                         IIO& pDataset,
-                         uint8_t byteCount
-                         ) {
+    const BrickKey& bkey,
+    GLVolumePool& pool,
+    IIO& pDataset,
+    uint8_t byteCount
+  ) {
     const Vec3ui vVoxelCount = pDataset.getBrickVoxelCounts(bkey);
 
     //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
     bool success;
     auto vUploadMem = pDataset.getBrick(bkey, success);
 
-    pool.uploadFirstBrick(vVoxelCount, const_cast<std::vector<uint8_t>*>(vUploadMem.get()));
+    const uint8_t* data = vUploadMem->data();
+    pool.uploadFirstBrick(vVoxelCount, data);
   }
 
 }
@@ -747,12 +748,12 @@ void GLVolumePool::uploadFirstBrick(const BrickKey& bkey, trinity::IIO& pDataset
   }
 }
 
-void GLVolumePool::uploadFirstBrick(const Vec3ui& m_vVoxelSize, void* pData) {
+void GLVolumePool::uploadFirstBrick(const Vec3ui& m_vVoxelSize, const void* pData) {
   uint32_t iLastBrickIndex = *(m_vLoDOffsetTable.end()-1);
   uploadBrick(iLastBrickIndex, m_vVoxelSize, pData, m_vPoolSlotData.size()-1, (std::numeric_limits<uint64_t>::max)());
 }
 
-bool GLVolumePool::uploadBrick(const BrickElemInfo& metaData, void* pData) {
+bool GLVolumePool::uploadBrick(const BrickElemInfo& metaData, const void* pData) {
   // in this frame we already replaced all bricks (except the single low-res brick)
   // in the pool so now we should render them first
   if (m_iInsertPos >= m_vPoolSlotData.size()-1)
@@ -1337,7 +1338,9 @@ namespace {
       bool success;
       auto vUploadMem = pDataset.getBrick(key, success);
 
-      if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), const_cast<std::vector<uint8_t>*>(vUploadMem.get())))
+      const uint8_t* data = vUploadMem->data();
+
+      if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), data))
         break;
       else
         iPagedBricks++;

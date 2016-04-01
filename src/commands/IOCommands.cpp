@@ -1000,7 +1000,7 @@ bool GetBrickCmd::ReplyParams::getSuccess() const {
 }
 
 std::shared_ptr<const std::vector<uint8_t>> GetBrickCmd::ReplyParams::getBrick() const {
-    return m_brick;
+  return  m_brick;
 }
 
 ////////////// GetTypeCmd //////////////

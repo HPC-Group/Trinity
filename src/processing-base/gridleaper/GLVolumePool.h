@@ -61,8 +61,8 @@ public:
   void uploadFirstBrick(const BrickKey& bkey, trinity::IIO& pDataset);
 
   // returns false if we need to render first before we can continue to upload further bricks
-  bool uploadBrick(const BrickElemInfo& metaData, void* pData); // TODO: we could use the 1D-index here too
-  void uploadFirstBrick(const Core::Math::Vec3ui& m_vVoxelSize, void* pData);
+  bool uploadBrick(const BrickElemInfo& metaData, const void* pData); // TODO: we could use the 1D-index here too
+  void uploadFirstBrick(const Core::Math::Vec3ui& m_vVoxelSize, const void* pData);
   void uploadMetadataTexture();
   void uploadMetadataTexel(uint32_t iBrickID);
   bool isBrickResident(const Core::Math::Vec4ui& vBrickID) const;
@@ -155,7 +155,7 @@ protected:
 
   void prepareForPaging();
 
-  void uploadBrick(uint32_t iBrickID, const Core::Math::Vec3ui& vVoxelSize, void* pData,
+  void uploadBrick(uint32_t iBrickID, const Core::Math::Vec3ui& vVoxelSize, const void* pData,
                    size_t iInsertPos, uint64_t iTimeOfCreation);
 
 };
