@@ -34,10 +34,14 @@
   \date    August 2008
 */
 
-#include "GLTexture3D.h"
-
 #include <cstdio>
 #include <iostream>
+
+#include "GLTexture3D.h"
+
+#include "mocca/log/LogManager.h"
+#include "opengl-base/OpenGLError.h"
+
 using namespace Core::Math;
 
 GLTexture3D::GLTexture3D(uint32_t iSizeX, uint32_t iSizeY, uint32_t iSizeZ,
@@ -58,10 +62,9 @@ GLTexture3D::GLTexture3D(uint32_t iSizeX, uint32_t iSizeY, uint32_t iSizeZ,
 
   GLenum err = glGetError();
   if(err == GL_OUT_OF_MEMORY) {
-    //throw OUT_OF_MEMORY("allocating 3d texture");
+    LERROR("OUT OF MEMORY allocating 3d texture");
   } else if(err != GL_NO_ERROR) {
-    printf("Unknown error (%x) occurred while setting 3D texture.\n",
-           static_cast<unsigned int>(err));
+    LERROR("Unknown error ( " << static_cast<unsigned int>(err) << ") occurred while setting 3D texture");
   }
 
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, wrapX);
@@ -73,24 +76,23 @@ GLTexture3D::GLTexture3D(uint32_t iSizeX, uint32_t iSizeY, uint32_t iSizeZ,
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-err = glGetError();
+  err = glGetError();
   if(err == GL_OUT_OF_MEMORY) {
-    //throw OUT_OF_MEMORY("allocating 3d texture");
+    LERROR("out of memory BEFORE allocating 3d texture");
   } else if(err != GL_NO_ERROR) {
-    printf("Unknown error (%x) occurred while setting 3D texture.\n",
-           static_cast<unsigned int>(err));
+    LERROR("Unknown error ( " << static_cast<unsigned int>(err) << ") occurred while setting 3D texture");
   }
+
   glTexImage3D(GL_TEXTURE_3D, 0, m_internalformat,
                m_iSizeX, m_iSizeY, m_iSizeZ,
                0, m_format, m_type, (GLvoid*)pixels);
 
-err = glGetError();
+  err = glGetError();
   if(err == GL_OUT_OF_MEMORY) {
     this->Delete();
-    //throw OUT_OF_MEMORY("allocating 3d texture");
+    LERROR("out of memory allocating 3d texture");
   } else if(err != GL_NO_ERROR) {
-    printf("Unknown error (%x) occurred while setting 3D texture.\n",
-            static_cast<unsigned int>(err));
+    LERROR("Unknown error ( " << static_cast<unsigned int>(err) << ") occurred while setting 3D texture");
   }
 
   glBindTexture(GL_TEXTURE_3D, prevTex);
@@ -98,37 +100,38 @@ err = glGetError();
 
 void GLTexture3D::SetData(const UINTVECTOR3& offset, const UINTVECTOR3& size,
                           const void *pixels, bool bRestoreBinding) {
-  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  GL_CHECK(glPixelStorei(GL_PACK_ALIGNMENT, 1));
+  GL_CHECK(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 
   GLint prevTex=0;
-  if (bRestoreBinding) glGetIntegerv(GL_TEXTURE_BINDING_3D, &prevTex);
+  if (bRestoreBinding) GL_CHECK(glGetIntegerv(GL_TEXTURE_BINDING_3D, &prevTex));
 
-  glBindTexture(GL_TEXTURE_3D, m_iGLID);
-  glTexSubImage3D(GL_TEXTURE_3D, 0,
+  GL_CHECK(glBindTexture(GL_TEXTURE_3D, m_iGLID));
+  GL_CHECK(glTexSubImage3D(GL_TEXTURE_3D, 0,
                      offset.x, offset.y, offset.z,
                      size.x, size.y, size.z,
-                     m_format, m_type, (GLvoid*)pixels);
+                     m_format, m_type, (GLvoid*)pixels));
 
   if (bRestoreBinding && GLuint(prevTex) != m_iGLID) glBindTexture(GL_TEXTURE_3D, prevTex);
 }
 
 void GLTexture3D::SetData(const void *pixels, bool bRestoreBinding) {
-  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  GL_CHECK(glPixelStorei(GL_PACK_ALIGNMENT, 1));
+  GL_CHECK(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 
   GLint prevTex=0;
-  if (bRestoreBinding) glGetIntegerv(GL_TEXTURE_BINDING_3D, &prevTex);
+  if (bRestoreBinding) GL_CHECK(glGetIntegerv(GL_TEXTURE_BINDING_3D, &prevTex));
 
-  glBindTexture(GL_TEXTURE_3D, m_iGLID);
+  GL_CHECK(glBindTexture(GL_TEXTURE_3D, m_iGLID));
   glTexImage3D(GL_TEXTURE_3D, 0, m_internalformat,
                m_iSizeX, m_iSizeY, m_iSizeZ,
                0, m_format, m_type, (GLvoid*)pixels);
   GLenum err = glGetError();
   if(err == GL_OUT_OF_MEMORY) {
     this->Delete();
-    //throw OUT_OF_MEMORY("allocating 3d texture");
+    LERROR("out of memory allocating 3d texture");
   } else if(err != GL_NO_ERROR) {
+    LERROR("Unknown error " << static_cast<unsigned int>(err) << "occurred while setting 3D texture");
     //WARNING("Unknown error (%x) occurred while setting 3D texture.",
     //        static_cast<unsigned int>(err));
   }

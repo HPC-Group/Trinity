@@ -429,7 +429,11 @@ void GridLeaper::initVolumePool(uint64_t gpuMemorySizeInByte) {
 
     BrickKey brickKey(m_activeModality, m_activeTimestep, singleBrickLoD, 0);
 
+    GL_CHECK_EXT();
+
     m_volumePool->uploadFirstBrick(brickKey,*m_io);
+
+    GL_CHECK_EXT();
 
     RecomputeBrickVisibility(false);
   }
@@ -442,8 +446,11 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     return;
   }
 
-  glClearColor(0, 0, 0, 0);
   m_context->makeCurrent(); // todo: check if we need this
+
+  std::cout << "." << std::endl;
+
+  GL_CHECK(glClearColor(0, 0, 0, 0));
 
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
@@ -465,15 +472,23 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
 
   if(!m_isIdle){
     m_hashTable->clearData();
+
+    GL_CHECK_EXT();
+
     raycast();
 	
+    GL_CHECK_EXT();
     // compose (sends data to frontend)
     compose();
+    GL_CHECK_EXT();
 
 	swapToNextBuffer();
 
-    // update volumepool
+  GL_CHECK_EXT();
+  // update volumepool
     std::vector<Vec4ui> hash = m_hashTable->getData();
+    GL_CHECK_EXT();
+
     if (hash.size() > 0) {
       m_volumePool->uploadBricks(hash,
                                  m_visibilityState,
@@ -482,9 +497,13 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     } else {
       m_isIdle = true;
     }
+
+    GL_CHECK_EXT();
+
   } else {
     if (paintlevel == IRenderer::PaintLevel::PL_RECOMPOSE) compose();
   }
+  GL_CHECK_EXT();
 
 }
 
@@ -589,8 +608,9 @@ void GridLeaper::compose(){
   GL_CHECK(glDisable(GL_BLEND));
   
   m_programCompose->Enable();
-
   m_programCompose->SetTexture2D("compose", m_pFBOFinalColorNext->GetTextureHandle(), 0);
+
+  GL_CHECK_EXT();
 
   Vec3f c1 = Vec3f(m_backgroundColors.colorOne)/255.0f;
   Vec3f c2 = Vec3f(m_backgroundColors.colorTwo)/255.0f;
@@ -598,16 +618,23 @@ void GridLeaper::compose(){
   m_programCompose->Set("ColorOne", c1);
   m_programCompose->Set("ColorTwo", c2);
 
+  GL_CHECK_EXT();
+
   m_nearPlane->paint();
 
   m_programCompose->Disable();
+
+  GL_CHECK_EXT();
 
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
   m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
 
+  GL_CHECK_EXT();
+
   m_targetBinder->Unbind();
-  
+  GL_CHECK_EXT();
+
   auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size());
   getVisStream()->put(std::move(f1));
 }
@@ -790,6 +817,7 @@ Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemoryS
 
   GLint iMaxVolumeDims;
   glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &iMaxVolumeDims);
+  iMaxVolumeDims /= 4; //HACK
   const uint64_t iMaxGPUMem = GPUmemoryInByte - usedMemory;
 
   const uint64_t iMaxVoxelCount = iMaxGPUMem / (elementSize / 8);

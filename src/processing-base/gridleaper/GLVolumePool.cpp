@@ -1420,8 +1420,9 @@ namespace {
             //Tuvok::StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
             bool success;
             auto vUploadMem = pDataset.getBrick(key, success);
-          
-          if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), const_cast<std::vector<uint8_t>*>(vUploadMem.get())))
+            const uint8_t* data = vUploadMem->data();
+
+            if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), data))
             return iPagedBricks;
           else
             iPagedBricks++;
@@ -1601,6 +1602,8 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
                                     trinity::IIO& pDataset,
                                     uint64_t modality)
 {
+  std::cout << "requesting:" << vBrickIDs.size() << " bricks" << std::endl;
+
   uint32_t iPagedBricks = 0;
 
   if (!vBrickIDs.empty())
@@ -1654,7 +1657,9 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
 
     LDEBUGC("GLVolumePool","async visibility update completed for "<< m_iTotalBrickCount << " bricks");
   }
-  
+
+  std::cout << "done" << std::endl;
+
   return iPagedBricks;
 }
 

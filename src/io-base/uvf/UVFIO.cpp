@@ -213,6 +213,9 @@ std::shared_ptr<const std::vector<uint8_t>> UVFIO::getBrick(const BrickKey& key,
     auto data = MemBlockPool::instance().get(getBrickVoxelCounts(key).volume() *
       m_dataset->GetBitWidth()/8 * m_dataset->GetComponentCount());
     m_dataset->GetBrick(key, *data);
+
+    std::cout << "getbrick:" << key << std::endl;
+
     return data;
 }
 

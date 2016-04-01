@@ -219,6 +219,7 @@ float OpenGlHeadlessContext::getVersion() const {
 
 
 void OpenGlHeadlessContext::makeCurrent(){
+
 #ifdef DETECTED_OS_APPLE
     CGLError errorCode = CGLSetCurrentContext( context );
     if (errorCode != kCGLNoError) {bIsValid = false; return;}
