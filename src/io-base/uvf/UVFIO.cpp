@@ -210,7 +210,8 @@ uint64_t UVFIO::getTotalBrickCount(uint64_t modality) const {
 }
 
 std::shared_ptr<const std::vector<uint8_t>> UVFIO::getBrick(const BrickKey& key, bool& success) const {
-    auto data = MemBlockPool::instance().get(getBrickVoxelCounts(key).volume() * 2); // fixme: what is the right way to calculate the capacity?
+    auto data = MemBlockPool::instance().get(getBrickVoxelCounts(key).volume() *
+      m_dataset->GetBitWidth()/8 * m_dataset->GetComponentCount());
     m_dataset->GetBrick(key, *data);
     return data;
 }
