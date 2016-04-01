@@ -11,7 +11,7 @@
 #include <vector>
 
 // this is used when the NVIDIA specific getGPUMem call fails
-#define DEFAULT_GPU_MEM 2048
+#define DEFAULT_GPU_MEM (1024*1024)
 
 using namespace trinity;
 using namespace Core::Math;
