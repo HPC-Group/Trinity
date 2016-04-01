@@ -35,7 +35,7 @@ void connectionSettings::on_io_connect_clicked()
     //printDataTree("FractalData");
 
 
-    ui->fileView->setModel(new IODataModel(ConnectionSingleton::getInstance().ioNode(), this));
+    ui->fileView->setModel(new IODataModel(*ConnectionSingleton::getInstance().ioNode(), this));
     connect(ui->fileView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(enableWidgets()));
 }
 
@@ -56,3 +56,9 @@ void connectionSettings::on_proc_connect_clicked()
     this->close();
 }
 
+void connectionSettings::enableWidgets() {
+    auto index = ui->fileView->currentIndex();
+    bool hasChildren = ui->fileView->model()->hasChildren(index);
+    auto ioData = index.data(Qt::UserRole + 1).value<trinity::IOData*>();
+    ui->proc_connect->setEnabled(io != nullptr && !hasChildren && ioData != nullptr);
+}

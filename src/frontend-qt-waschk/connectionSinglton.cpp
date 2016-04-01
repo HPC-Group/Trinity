@@ -31,8 +31,8 @@ void ConnectionSingleton::setRendererType(const trinity::VclType &renderer)
     m_rendererType = renderer;
 }
 
-trinity::IONodeProxy& ConnectionSingleton::ioNode(){
-    return *_ioNode;
+trinity::IONodeProxy* ConnectionSingleton::ioNode(){
+    return _ioNode.get();
 }
 
 trinity::ProcessingNodeProxy& ConnectionSingleton::processingNode(){

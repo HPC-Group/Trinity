@@ -14,7 +14,7 @@ public:
          return instance;
     }
 
-    trinity::IONodeProxy& ioNode();
+    trinity::IONodeProxy* ioNode();
     trinity::ProcessingNodeProxy& processingNode();
     trinity::RendererProxy& renderer();
 

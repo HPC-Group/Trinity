@@ -526,7 +526,11 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
        </widget>
       </item>
       <item>
-       <widget class="QTreeView" name="fileView"/>
+       <widget class="QTreeView" name="fileView">
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -539,6 +543,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="3" column="0">
        <widget class="QPushButton" name="proc_connect">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>render</string>
         </property>

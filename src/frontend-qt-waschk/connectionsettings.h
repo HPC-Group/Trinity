@@ -24,6 +24,8 @@ private slots:
 
     void on_proc_connect_clicked();
 
+    void enableWidgets();
+
 private:
     Ui::connectionSettings      *ui;
     std::vector<std::string>    m_fileIds;
