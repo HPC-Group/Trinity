@@ -15,7 +15,7 @@ using namespace Core::StringTools;
 using namespace Core::Math;
 using namespace trinity;
 
-#define MaxAcceptableBricksize 512
+#define MaxAcceptableBricksize 1024
 
 UVFIO::UVFIO(const std::string& fileId, const IListData& listData) :
   m_dataset(nullptr),
