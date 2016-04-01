@@ -30,6 +30,9 @@ void CommandInputChannel::sendRequest(const Request& request) const {
     if (!m_mainChannel)
         throw TrinityError("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
 
+    static int count = 0;
+    LINFO("Request " << count++ << " (" << Vcl::instance().toString(request.getType()) << ")");
+
     auto serialRequest = Request::createByteArray(request);
     
     try {
