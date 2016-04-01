@@ -1168,7 +1168,6 @@
 				TargetAttributes = {
 					551B8C2B1CA54EA000428A69 = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = AGGLT799KB;
 					};
 					551B8C441CA54EA100428A69 = {
 						CreatedOnToolsVersion = 7.2;
@@ -1435,7 +1434,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "/Users/andrey/Projects/trinity/branches/vaas/src/mocca/include /Users/andrey/Projects/trinity/branches/vaas/src/mocca/src/thirdparty /Users/andrey/Projects/trinity/branches/vaas/src/ /Users/andrey/Projects/trinity/branches/vaas/src/silverbullet/include";
+				USER_HEADER_SEARCH_PATHS = "$SRCROOT/../mocca/include $SRCROOT/../mocca/src/thirdparty $SRCROOT/../ $SRCROOT/../silverbullet/include";
 			};
 			name = Debug;
 		};
@@ -1473,7 +1472,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "/Users/andrey/Projects/trinity/branches/vaas/src/mocca/include /Users/andrey/Projects/trinity/branches/vaas/src/mocca/src/thirdparty /Users/andrey/Projects/trinity/branches/vaas/src/ /Users/andrey/Projects/trinity/branches/vaas/src/silverbullet/include";
+				USER_HEADER_SEARCH_PATHS = "$SRCROOT/../mocca/include $SRCROOT/../mocca/src/thirdparty $SRCROOT/../ $SRCROOT/../silverbullet/include";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1482,6 +1481,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "frontend-ios/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "trinity.frontend-ios";
@@ -1493,6 +1493,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "frontend-ios/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "trinity.frontend-ios";
@@ -1567,6 +1568,7 @@
 				551B8C5B1CA54EA100428A69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		551B8C5C1CA54EA100428A69 /* Build configuration list for PBXNativeTarget "frontend-iosTests" */ = {
 			isa = XCConfigurationList;
@@ -1575,6 +1577,7 @@
 				551B8C5E1CA54EA100428A69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		551B8C5F1CA54EA100428A69 /* Build configuration list for PBXNativeTarget "frontend-iosUITests" */ = {
 			isa = XCConfigurationList;
@@ -1583,6 +1586,7 @@
 				551B8C611CA54EA100428A69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

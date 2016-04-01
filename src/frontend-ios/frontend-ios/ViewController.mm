@@ -64,8 +64,7 @@ using namespace mocca::net;
     trinity::StreamingParams params(1000, 1000);
     m_renderer = m_processingNode->initRenderer(trinity::VclType::SimpleRenderer, fileId, endpointIO, params);
     
-    m_renderer->initContext();
-    m_renderer->setIsoValue(0.0f);
+    m_renderer->startRendering();
     // sending commands
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self frameLoop];
@@ -77,30 +76,29 @@ static int displayed = 0;
 
 - (void)frameLoop {
     int arrived = 0;
-    float rot = 0.0f;
     m_image.image = m_image1;
 
     while(true) {
 
-    auto visStream = m_renderer->getVisStream();
-    auto frameNullable = visStream->get();
+        auto visStream = m_renderer->getVisStream();
+        auto frameNullable = visStream->get();
         if (!frameNullable.isNull()) {
             LINFO("frame arrived nr " + std::to_string(arrived++));
-        auto frame = frameNullable.release();
+            auto frame = frameNullable.release();
             //m_image.image = nil;
-        NSData* data = [NSData dataWithBytes:(const void *)frame.data() length:sizeof(unsigned char)*frame.size()];
-        m_image1 = [UIImage imageWithData:data];
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            m_image.image = m_image1;
-            m_renderer->setIsoValue(rot);
-            LINFO("frame displayed nr " + std::to_string(displayed++));
-        });
-        
-        rot += 0.01f;
-        //LINFO("content: " + frame.read(frame.size()));
+            @autoreleasepool {
+                NSData* data = [NSData dataWithBytes:(const void *)frame.data() length:sizeof(unsigned char)*frame.size()];
+                m_image1 = [UIImage imageWithData:data];
+            }
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                m_image.image = m_image1;
+                m_renderer->rotateScene({0.02f, 0, 0});
+                LINFO("frame displayed nr " + std::to_string(displayed++));
+            });
+            
+            //LINFO("content: " + frame.read(frame.size()));
+        }
     }
-    }
-
 }
 
 - (void)initLog {
