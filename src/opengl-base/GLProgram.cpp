@@ -171,7 +171,7 @@ void GLProgram::Set(const char *name, const Core::Math::Vec3ui8 value){
 void GLProgram::Set(const char *name, const Core::Math::Vec3ui64 value){
   assert(isEnabled());
   GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name);
-  GL_CHECK(glUniform3ui(currentVariableLocation, value.x, value.y,value.z));
+  GL_CHECK(glUniform3ui(currentVariableLocation, GLuint(value.x), GLuint(value.y), GLuint(value.z)));
 }
 
 void GLProgram::Set(const char *name, const Core::Math::Vec4i value){
