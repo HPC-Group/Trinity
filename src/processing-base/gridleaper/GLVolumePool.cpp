@@ -54,7 +54,8 @@ static FLOATVECTOR3 GetFloatBrickLayout(const Vec3ui& volumeSize,
 
   baseBrickCount /= float( MathTools::pow2(iLoD));
 
-  // subtract smallest possible floating point epsilon from integer values that would mess up the brick index computation in the shader
+  // subtract smallest possible floating point epsilon from integer values
+  // that would mess up the brick index computation in the shader
   if (float(uint32_t(baseBrickCount.x)) == baseBrickCount.x)
     baseBrickCount.x -= baseBrickCount.x * std::numeric_limits<float>::epsilon();
   if (float(uint32_t(baseBrickCount.y)) == baseBrickCount.y)
@@ -240,6 +241,7 @@ m_bVisibilityUpdated(false)
   }
 
   createGLResources();
+  if (!isValid()) return;
 
   // duplicate minmax scalar data from dataset for efficient access
   m_vMinMaxScalar.resize(m_iTotalBrickCount);
@@ -256,7 +258,8 @@ m_bVisibilityUpdated(false)
     default:
     case DM_NONE:
     {
-      uint32_t const iAsyncUpdaterThreshold = 7500 * 5; // we can process 7500 bricks/ms (1500 running debug build)
+      // we can process 7500 bricks/ms (1500 running debug build)
+      uint32_t const iAsyncUpdaterThreshold = 7500 * 5;
     }
       break;
     case DM_BUSY:
@@ -264,7 +267,7 @@ m_bVisibilityUpdated(false)
       break;
     case DM_SYNC:
       // if we want to disable the async updater we just don't instantiate it
-      //WARNING("Forcing always synchronous metadata updates, async worker is disabled.");
+      // WARNING("Forcing always synchronous metadata updates, async worker is disabled.");
       break;
     case DM_NOEMPTYSPACELEAPING:
       //WARNING("Visibility computation is DISABLED, disabling empty space leaping.");
@@ -700,7 +703,8 @@ void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, cons
   uploadMetadataTexel(slot.m_iBrickID);
 
   // upload brick to 3D texture
-  m_pPoolDataTexture->SetData(slot.positionInPool() * m_maxTotalBrickSize, vVoxelSize, pData);
+  m_pPoolDataTexture->SetData(slot.positionInPool() * m_maxTotalBrickSize,
+                              vVoxelSize, pData);
 }
 
 namespace {
@@ -836,11 +840,18 @@ static Vec3ui Fit1DIndexTo3DArray(uint64_t maxIdx, uint32_t maxArraySize) {
 
 void GLVolumePool::createGLResources() {
   GLvoid *pixels = 0;
-  m_pPoolDataTexture = std::make_shared<GLTexture3D>(m_poolSize.x, m_poolSize.y, m_poolSize.z,
-                                                     m_internalformat, m_format, m_type,
+  m_pPoolDataTexture = std::make_shared<GLTexture3D>(m_poolSize.x, m_poolSize.y,
+                                                     m_poolSize.z,
+                                                     m_internalformat, m_format,
+                                                     m_type,
                                                      pixels,
                                                      m_filter,
                                                      m_filter);
+  if (!m_pPoolDataTexture->isValid()) {
+    m_pPoolDataTexture->Delete();
+    m_pPoolDataTexture = nullptr;
+    return;
+  }
 
   m_vPoolCapacity = Vec3ui(m_pPoolDataTexture->GetSize().x/m_maxTotalBrickSize.x,
                            m_pPoolDataTexture->GetSize().y/m_maxTotalBrickSize.y,
@@ -884,6 +895,11 @@ void GLVolumePool::createGLResources() {
                                                          GL_RED_INTEGER, GL_UNSIGNED_INT, &m_vBrickMetadata[0]
                                                          );
 
+  if (!m_pPoolMetadataTexture->isValid()) {
+    m_pPoolMetadataTexture->Delete();
+    m_pPoolMetadataTexture = nullptr;
+    return;
+  }
 
 }
 
@@ -1666,11 +1682,11 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
 void GLVolumePool::freeGLResources() {
   if (m_pPoolMetadataTexture) {
     m_pPoolMetadataTexture->Delete();
-    m_pPoolMetadataTexture.reset();
+    m_pPoolMetadataTexture = nullptr;
   }
   if (m_pPoolDataTexture) {
     m_pPoolDataTexture->Delete();
-    m_pPoolDataTexture.reset();
+    m_pPoolMetadataTexture = nullptr;
   }
 }
 
@@ -1685,4 +1701,12 @@ uint64_t GLVolumePool::getGPUSize() const {
 void GLVolumePool::setFilterMode(GLenum filter) {
   m_filter = filter;
   m_pPoolDataTexture->SetFilter(filter, filter);
+}
+
+
+bool GLVolumePool::isValid() const {
+  return m_pPoolMetadataTexture != nullptr &&
+         m_pPoolMetadataTexture->isValid() &&
+         m_pPoolDataTexture != nullptr &&
+         m_pPoolDataTexture->isValid();
 }

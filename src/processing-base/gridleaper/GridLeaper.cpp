@@ -414,11 +414,23 @@ void GridLeaper::initHashTable() {
 
 void GridLeaper::initVolumePool(uint64_t gpuMemorySizeInByte) {
   //CalculateUsedGPUMemory();
-  Vec3ui volumepoolsize = calculateVolumePoolSize(gpuMemorySizeInByte,0);
+  
+  
+  // this code requires some explanation:
+  // since it's impossible to figure out what 3D textures we can create
+  // we simply try with an initial guess and if that fails sucessively
+  // reduce the size until we sucessfully create a 3D pool
+  uint64_t reduction = 0;
+  do {
+    Vec3ui poolSize = calculateVolumePoolSize(gpuMemorySizeInByte,reduction);
 
-  //todo how?
-  m_volumePool = mocca::make_unique<GLVolumePool>(volumepoolsize, *m_io,
-                                                  m_activeModality, GL_LINEAR);
+    m_volumePool = mocca::make_unique<GLVolumePool>(poolSize,
+                                                    *m_io,
+                                                    m_activeModality,
+                                                    GL_LINEAR);
+    reduction += 1024*1024*10;  // reduce by 10 MB in each iteration
+  } while (!m_volumePool->isValid());
+  
 
   if (m_volumePool){
     // upload a brick that covers the entire domain to make sure have
@@ -784,7 +796,8 @@ void GridLeaper::swapToNextBuffer(){
 #endif
 }
 
-Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,const uint64_t usedMemory){
+Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,
+                                                       const uint64_t reduction){
   uint64_t elementSize = 0;
 
   // TODO: replace this switch-madness with more reasonable code
@@ -813,12 +826,11 @@ Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemoryS
   // and is no bigger than what OpenGL tells us is possible
 
   //Fake workaround for first :x \todo fix this
-  uint64_t GPUmemoryInByte = GPUMemorySizeInByte;
+  uint64_t GPUmemoryInByte = GPUMemorySizeInByte-reduction;
 
   GLint iMaxVolumeDims;
   glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &iMaxVolumeDims);
-  iMaxVolumeDims /= 4; //HACK
-  const uint64_t iMaxGPUMem = GPUmemoryInByte - usedMemory;
+  const uint64_t iMaxGPUMem = GPUmemoryInByte;
 
   const uint64_t iMaxVoxelCount = iMaxGPUMem / (elementSize / 8);
   const uint64_t r3Voxels = uint64_t(pow(double(iMaxVoxelCount), 1.0 / 3.0));

@@ -56,8 +56,8 @@ namespace trinity {
     
     void computeEyeToModelMatrix();
 
-    //help functions move to new GridLeaperTools class?
-    Core::Math::Vec3ui calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,const uint64_t usedMemory);
+    Core::Math::Vec3ui calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,
+                                               const uint64_t reduction);
     const uint64_t getFreeGPUMemory();
 
     Core::Math::Vec4ui RecomputeBrickVisibility(bool bForceSynchronousUpdate);
