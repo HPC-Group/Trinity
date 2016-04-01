@@ -3,8 +3,8 @@
 #include "commands/ISerializable.h"
 #include "common/TrinityError.h"
 
-#include <iterator>
 #include <algorithm>
+#include <cstring>
 
 #define TRINITY_CHECK_JSON
 
@@ -43,8 +43,9 @@ JsonReader::JsonReader(mocca::ByteArray& data)
     // read optional binary data
     if (delimitPos != dataEnd) {
         uint32_t binarySize = data.size() - jsonSize - delimiter.size();
-        m_binary->reserve(binarySize);
-        std::copy(dataBegin + jsonSize + delimiter.size(), dataEnd, std::back_inserter(*m_binary));
+        m_binary->resize(binarySize);
+        // don't use std::copy here, it's less performant
+        std::memcpy(&(*m_binary)[0], dataBegin + jsonSize + delimiter.size(), binarySize);
     }
 }
 
