@@ -5,6 +5,7 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
+#include "mocca/net/message/NewLoopbackConnection.h"
 
 using namespace mocca::net;
 using namespace trinity;
@@ -31,7 +32,7 @@ void AbstractSession::run() {
         LERROR("(session) cannot bind the render session: " << err.what());
         return;
     }
-    
+
     if (m_controlConnection) {
         LDEBUG("Initiated session of type " << typeid(*this).name() << " with connection ID " << *m_controlConnection->connectionID());
     }
@@ -39,17 +40,31 @@ void AbstractSession::run() {
     performThreadSpecificInit();
     try {
         while (!isInterrupted()) {
-            auto bytepacket = m_controlConnection->receive();
-            if (!bytepacket.isEmpty()) {
-                auto request = Request::createFromByteArray(bytepacket);
-                // LINFO("request: " << *request);
+            if (auto loopback = dynamic_cast<mocca::net::NewLoopbackConnection*>(m_controlConnection.get())) {
+                auto message = loopback->receiveNew();
+                if (!message.isEmpty()) {
+                    auto request = Request::createFromMessage(message);
+                    // LINFO("request: " << *request);
 
-                auto handler = createHandler(*request);
-                auto reply = handler->execute();
-                if (reply != nullptr) { // not tested yet
-                    // LINFO("reply: " << *reply);
-                    auto serialReply = Reply::createByteArray(*reply);
-                    m_controlConnection->send(std::move(serialReply));
+                    auto handler = createHandler(*request);
+                    auto reply = handler->execute();
+                    if (reply != nullptr) { // not tested yet
+                        auto serialReply = Reply::createMessage(*reply);
+                        loopback->sendNew(std::move(serialReply));
+                    }
+                }
+            } else {
+                auto bytepacket = m_controlConnection->receive();
+                if (!bytepacket.isEmpty()) {
+                    auto request = Request::createFromByteArray(bytepacket);
+                    // LINFO("request: " << *request);
+
+                    auto handler = createHandler(*request);
+                    auto reply = handler->execute();
+                    if (reply != nullptr) { // not tested yet
+                        auto serialReply = Reply::createByteArray(*reply);
+                        m_controlConnection->send(std::move(serialReply));
+                    }
                 }
             }
         }

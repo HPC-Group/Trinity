@@ -8,6 +8,7 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
+#include "mocca/net/message/NewLoopbackConnection.h"
 
 using namespace trinity;
 
@@ -31,14 +32,22 @@ void CommandInputChannel::sendRequest(const Request& request) const {
         throw TrinityError("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
 
     static int count = 0;
-    LINFO("Request " << count++ << " (" << Vcl::instance().toString(request.getType()) << ")");
-
-    auto serialRequest = Request::createByteArray(request);
-    
-    try {
-        m_mainChannel->send(std::move(serialRequest));
-    } catch (const mocca::net::NetworkError& err) {
-        LERROR("(chn) cannot send request: " << err.what());
+    if (auto loopback = dynamic_cast<mocca::net::NewLoopbackConnection*>(m_mainChannel.get())) {
+        LINFO("Request (via loopback) " << count++ << " (" << Vcl::instance().toString(request.getType()) << ")");
+        auto serialRequest = Request::createMessage(request);
+        try {
+            loopback->sendNew(std::move(serialRequest));
+        } catch (const mocca::net::NetworkError& err) {
+            LERROR("(chn) cannot send request: " << err.what());
+        }
+    } else {
+        LINFO("Request " << count++ << " (" << Vcl::instance().toString(request.getType()) << ")");
+        auto serialRequest = Request::createByteArray(request);
+        try {
+            m_mainChannel->send(std::move(serialRequest));
+        } catch (const mocca::net::NetworkError& err) {
+            LERROR("(chn) cannot send request: " << err.what());
+        }
     }
 }
 
@@ -47,12 +56,19 @@ mocca::net::Endpoint CommandInputChannel::getEndpoint() const {
 }
 
 std::unique_ptr<Reply> CommandInputChannel::getReply(const std::chrono::milliseconds& ms) const {
-    auto serialReply = m_mainChannel->receive(ms);
-
-    if (serialReply.isEmpty()) {
-        throw TrinityError("(chn) no reply arrived", __FILE__, __LINE__);
+    if (auto ptr = dynamic_cast<mocca::net::NewLoopbackConnection*>(m_mainChannel.get())) {
+        auto serialReply = ptr->receiveNew(ms);
+        if (serialReply.isEmpty()) {
+            throw TrinityError("(chn) no reply arrived", __FILE__, __LINE__);
+        }
+        auto reply = Reply::createFromMessage(serialReply);
+        return reply;
+    } else {
+        auto serialReply = m_mainChannel->receive(ms);
+        if (serialReply.isEmpty()) {
+            throw TrinityError("(chn) no reply arrived", __FILE__, __LINE__);
+        }
+        auto reply = Reply::createFromByteArray(serialReply);
+        return reply;
     }
-
-    auto reply = Reply::createFromByteArray(serialReply);
-    return reply;
 }
