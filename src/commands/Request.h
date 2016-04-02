@@ -21,8 +21,7 @@ public:
         , m_sid(0) {}
     Request(int rid, int sid, std::shared_ptr<const std::vector<uint8_t>> binary)
         : m_rid(rid)
-        , m_sid(sid)
-        , m_binary(binary) {}
+        , m_sid(sid) {}
 
     virtual VclType getType() const = 0;
     virtual std::string toString() const = 0;
@@ -30,20 +29,20 @@ public:
     int getRid() const { return m_rid; }
     int getSid() const { return m_sid; }
 
-    std::shared_ptr<const std::vector<uint8_t>> getBinary() const { return m_binary; }
-
     static std::unique_ptr<Request> createFromByteArray(mocca::ByteArray& byteArray);
     static mocca::ByteArray createByteArray(const Request& request);
 
+    static std::unique_ptr<Request> createFromMessage(const mocca::net::Message& message);
+    static mocca::net::Message createMessage(const Request& request);
+
 private:
+    static std::unique_ptr<Request> createRequestInternal(const ISerialReader& reader);
+
     virtual void serializeParams(ISerialWriter& writer) const = 0;
     void serialize(ISerialWriter& writer) const override {
         writer.appendInt("rid", m_rid);
         writer.appendInt("sid", m_sid);
         serializeParams(writer);
-        if (m_binary != nullptr) {
-            writer.setBinary(m_binary);
-        }
     }
 
     virtual void deserializeParams(const ISerialReader& reader) = 0;
@@ -51,17 +50,14 @@ private:
         m_rid = reader.getInt32("rid");
         m_sid = reader.getInt32("sid");
         deserializeParams(reader);
-        m_binary = reader.getBinary();
     }
 
 private:
     int m_rid;
     int m_sid;
-    std::shared_ptr<const std::vector<uint8_t>> m_binary;
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& obj);
-
 
 template <typename Interface> class RequestTemplate : public Request {
     static_assert(std::is_base_of<ISerializable, typename Interface::RequestParams>::value,

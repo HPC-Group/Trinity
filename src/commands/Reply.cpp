@@ -10,122 +10,126 @@
 
 using namespace trinity;
 
-std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
-    auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
-    VclType type = Vcl::instance().toType(reader->getString("type"));
+std::unique_ptr<Reply> Reply::createReplyInternal(const ISerialReader& reader) {
+    VclType type = Vcl::instance().toType(reader.getString("type"));
 
     // processing commands
     if (type == InitProcessingSessionReply::Ifc::Type) {
-        return reader->getSerializablePtr<InitProcessingSessionReply>("rep");
+        return reader.getSerializablePtr<InitProcessingSessionReply>("rep");
     } else if (type == ZoomCameraReply::Ifc::Type) {
-        return reader->getSerializablePtr<ZoomCameraReply>("rep");
+        return reader.getSerializablePtr<ZoomCameraReply>("rep");
     } else if (type == SupportsRenderModeReply::Ifc::Type) {
-        return reader->getSerializablePtr<SupportsRenderModeReply>("rep");
+        return reader.getSerializablePtr<SupportsRenderModeReply>("rep");
     } else if (type == GetActiveModalityReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetActiveModalityReply>("rep");
+        return reader.getSerializablePtr<GetActiveModalityReply>("rep");
     } else if (type == GetActiveTimestepReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetActiveTimestepReply>("rep");
+        return reader.getSerializablePtr<GetActiveTimestepReply>("rep");
     } else if (type == GetModalityCountProcReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetModalityCountProcReply>("rep");
+        return reader.getSerializablePtr<GetModalityCountProcReply>("rep");
     } else if (type == GetTimestepCountProcReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetTimestepCountProcReply>("rep");
+        return reader.getSerializablePtr<GetTimestepCountProcReply>("rep");
     } else if (type == GetDefault1DTransferFunctionProcReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetDefault1DTransferFunctionProcReply>("rep");
+        return reader.getSerializablePtr<GetDefault1DTransferFunctionProcReply>("rep");
     } else if (type == GetDefault1DTransferFunctionCountProcReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetDefault1DTransferFunctionCountProcReply>("rep");
+        return reader.getSerializablePtr<GetDefault1DTransferFunctionCountProcReply>("rep");
     } else if (type == Get1DHistogramProcReply::Ifc::Type) {
-        return reader->getSerializablePtr<Get1DHistogramProcReply>("rep");
+        return reader.getSerializablePtr<Get1DHistogramProcReply>("rep");
     } else if (type == GetIsoValueReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetIsoValueReply>("rep");
+        return reader.getSerializablePtr<GetIsoValueReply>("rep");
     } else if (type == GetIsosurfaceColorReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetIsosurfaceColorReply>("rep");
+        return reader.getSerializablePtr<GetIsosurfaceColorReply>("rep");
     } else if (type == GetRangeProcReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetRangeProcReply>("rep");
+        return reader.getSerializablePtr<GetRangeProcReply>("rep");
     } else if (type == GetLightingColorsReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetLightingColorsReply>("rep");
+        return reader.getSerializablePtr<GetLightingColorsReply>("rep");
     } else if (type == GetLightDirectionReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetLightDirectionReply>("rep");
+        return reader.getSerializablePtr<GetLightDirectionReply>("rep");
     } else if (type == GetSampleRateModifierReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetSampleRateModifierReply>("rep");
+        return reader.getSerializablePtr<GetSampleRateModifierReply>("rep");
     } else if (type == GetBoundingBoxModeReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetBoundingBoxModeReply>("rep");
+        return reader.getSerializablePtr<GetBoundingBoxModeReply>("rep");
     } else if (type == GetRendererSpecialsReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetRendererSpecialsReply>("rep");
+        return reader.getSerializablePtr<GetRendererSpecialsReply>("rep");
     } else if (type == GetBackgroundColorsReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetBackgroundColorsReply>("rep");
+        return reader.getSerializablePtr<GetBackgroundColorsReply>("rep");
     } else if (type == IsIdleReply::Ifc::Type) {
-        return reader->getSerializablePtr<IsIdleReply>("rep");
+        return reader.getSerializablePtr<IsIdleReply>("rep");
     } else if (type == ProceedRenderingReply::Ifc::Type) {
-        return reader->getSerializablePtr<ProceedRenderingReply>("rep");
+        return reader.getSerializablePtr<ProceedRenderingReply>("rep");
     }
     /* AUTOGEN ProcReplyFactoryEntry */
 
     // IO commands
     if (type == ListFilesRequest::Ifc::Type) {
-        return reader->getSerializablePtr<ListFilesReply>("rep");
+        return reader.getSerializablePtr<ListFilesReply>("rep");
     } else if (type == InitIOSessionReply::Ifc::Type) {
-        return reader->getSerializablePtr<InitIOSessionReply>("rep");
+        return reader.getSerializablePtr<InitIOSessionReply>("rep");
     } else if (type == GetLODLevelCountReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetLODLevelCountReply>("rep");
+        return reader.getSerializablePtr<GetLODLevelCountReply>("rep");
     } else if (type == GetMaxBrickSizeReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetMaxBrickSizeReply>("rep");
+        return reader.getSerializablePtr<GetMaxBrickSizeReply>("rep");
     } else if (type == GetMaxUsedBrickSizesReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetMaxUsedBrickSizesReply>("rep");
+        return reader.getSerializablePtr<GetMaxUsedBrickSizesReply>("rep");
     } else if (type == MaxMinForKeyReply::Ifc::Type) {
-        return reader->getSerializablePtr<MaxMinForKeyReply>("rep");
+        return reader.getSerializablePtr<MaxMinForKeyReply>("rep");
     } else if (type == GetNumberOfTimestepsReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetNumberOfTimestepsReply>("rep");
+        return reader.getSerializablePtr<GetNumberOfTimestepsReply>("rep");
     } else if (type == GetDomainSizeReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetDomainSizeReply>("rep");
+        return reader.getSerializablePtr<GetDomainSizeReply>("rep");
     } else if (type == GetTransformationReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetTransformationReply>("rep");
+        return reader.getSerializablePtr<GetTransformationReply>("rep");
     } else if (type == GetBrickOverlapSizeReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetBrickOverlapSizeReply>("rep");
+        return reader.getSerializablePtr<GetBrickOverlapSizeReply>("rep");
     } else if (type == GetLargestSingleBrickLODReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetLargestSingleBrickLODReply>("rep");
+        return reader.getSerializablePtr<GetLargestSingleBrickLODReply>("rep");
     } else if (type == GetBrickVoxelCountsReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetBrickVoxelCountsReply>("rep");
+        return reader.getSerializablePtr<GetBrickVoxelCountsReply>("rep");
     } else if (type == GetBrickExtentsReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetBrickExtentsReply>("rep");
+        return reader.getSerializablePtr<GetBrickExtentsReply>("rep");
     } else if (type == GetBrickLayoutReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetBrickLayoutReply>("rep");
+        return reader.getSerializablePtr<GetBrickLayoutReply>("rep");
     } else if (type == GetModalityCountReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetModalityCountReply>("rep");
+        return reader.getSerializablePtr<GetModalityCountReply>("rep");
     } else if (type == GetComponentCountReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetComponentCountReply>("rep");
+        return reader.getSerializablePtr<GetComponentCountReply>("rep");
     } else if (type == GetRangeReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetRangeReply>("rep");
+        return reader.getSerializablePtr<GetRangeReply>("rep");
     } else if (type == GetTotalBrickCountReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetTotalBrickCountReply>("rep");
+        return reader.getSerializablePtr<GetTotalBrickCountReply>("rep");
     } else if (type == GetBrickReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetBrickReply>("rep");
+        return reader.getSerializablePtr<GetBrickReply>("rep");
     } else if (type == GetTypeReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetTypeReply>("rep");
+        return reader.getSerializablePtr<GetTypeReply>("rep");
     } else if (type == GetSemanticReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetSemanticReply>("rep");
+        return reader.getSerializablePtr<GetSemanticReply>("rep");
     } else if (type == GetDefault1DTransferFunctionCountReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetDefault1DTransferFunctionCountReply>("rep");
+        return reader.getSerializablePtr<GetDefault1DTransferFunctionCountReply>("rep");
     } else if (type == Get1DHistogramReply::Ifc::Type) {
-        return reader->getSerializablePtr<Get1DHistogramReply>("rep");
+        return reader.getSerializablePtr<Get1DHistogramReply>("rep");
     } else if (type == Get2DHistogramReply::Ifc::Type) {
-        return reader->getSerializablePtr<Get2DHistogramReply>("rep");
+        return reader.getSerializablePtr<Get2DHistogramReply>("rep");
     } else if (type == GetUserDefinedSemanticReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetUserDefinedSemanticReply>("rep");
+        return reader.getSerializablePtr<GetUserDefinedSemanticReply>("rep");
     } else if (type == GetDefault1DTransferFunctionReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetDefault1DTransferFunctionReply>("rep");
+        return reader.getSerializablePtr<GetDefault1DTransferFunctionReply>("rep");
     } else if (type == GetDomainScaleReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetDomainScaleReply>("rep");
+        return reader.getSerializablePtr<GetDomainScaleReply>("rep");
     } else if (type == GetFloatBrickLayoutReply::Ifc::Type) {
-        return reader->getSerializablePtr<GetFloatBrickLayoutReply>("rep");
+        return reader.getSerializablePtr<GetFloatBrickLayoutReply>("rep");
     }
     /* AUTOGEN IOReplyFactoryEntry */
 
     // error commands
     else if (type == ErrorReply::Ifc::Type) {
-        return reader->getSerializablePtr<ErrorReply>("rep");
+        return reader.getSerializablePtr<ErrorReply>("rep");
     }
 
     throw TrinityError("Invalid reply type", __FILE__, __LINE__);
+}
+
+std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
+    auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
+    return createReplyInternal(*reader);
 }
 
 mocca::ByteArray Reply::createByteArray(const Reply& reply) {
@@ -133,6 +137,18 @@ mocca::ByteArray Reply::createByteArray(const Reply& reply) {
     writer->appendString("type", Vcl::instance().toString(reply.getType()));
     writer->appendObject("rep", reply);
     return writer->write();
+}
+
+std::unique_ptr<Reply> Reply::createFromMessage(const mocca::net::Message& message) {
+    auto reader = ISerializerFactory::defaultFactory().createReader(message);
+    return createReplyInternal(*reader);
+}
+
+mocca::net::Message Reply::createMessage(const Reply& reply) {
+    auto writer = ISerializerFactory::defaultFactory().createWriter();
+    writer->appendString("type", Vcl::instance().toString(reply.getType()));
+    writer->appendObject("rep", reply);
+    return writer->writeMessage();
 }
 
 namespace trinity {
