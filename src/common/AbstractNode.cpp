@@ -23,17 +23,15 @@ void AbstractNode::run() {
             auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_REPLY);
             if (!msgEnvelope.isNull()) {
                 auto env = msgEnvelope.release();
-                // LINFO("raw: " + env.message);
-
                 auto request = Request::createFromByteArray(env.message);
-                LINFO("request: " << *request);
+                //LINFO("request: " << *request);
                 // handle request
                 auto handler = createHandler(*request);
                 auto reply = handler->execute();
                 if (reply != nullptr) {
                     // send reply
                     auto serialReply = Reply::createByteArray(*reply);
-                    LINFO("reply: " << *reply);
+                    //LINFO("reply: " << *reply);
                     m_aggregator->send(mocca::net::MessageEnvelope(std::move(serialReply), env.connectionID));
                 }
             }

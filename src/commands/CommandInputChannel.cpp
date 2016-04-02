@@ -33,7 +33,6 @@ void CommandInputChannel::sendRequest(const Request& request) const {
 
     static int count = 0;
     if (auto loopback = dynamic_cast<mocca::net::NewLoopbackConnection*>(m_mainChannel.get())) {
-        LINFO("Request (via loopback) " << count++ << " (" << Vcl::instance().toString(request.getType()) << ")");
         auto serialRequest = Request::createMessage(request);
         try {
             loopback->sendNew(std::move(serialRequest));
@@ -41,7 +40,6 @@ void CommandInputChannel::sendRequest(const Request& request) const {
             LERROR("(chn) cannot send request: " << err.what());
         }
     } else {
-        LINFO("Request " << count++ << " (" << Vcl::instance().toString(request.getType()) << ")");
         auto serialRequest = Request::createByteArray(request);
         try {
             m_mainChannel->send(std::move(serialRequest));

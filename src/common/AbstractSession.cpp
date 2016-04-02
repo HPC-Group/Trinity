@@ -45,7 +45,6 @@ void AbstractSession::run() {
                 if (!message.isEmpty()) {
                     auto request = Request::createFromMessage(message);
                     // LINFO("request: " << *request);
-
                     auto handler = createHandler(*request);
                     auto reply = handler->execute();
                     if (reply != nullptr) { // not tested yet
@@ -58,7 +57,6 @@ void AbstractSession::run() {
                 if (!bytepacket.isEmpty()) {
                     auto request = Request::createFromByteArray(bytepacket);
                     // LINFO("request: " << *request);
-
                     auto handler = createHandler(*request);
                     auto reply = handler->execute();
                     if (reply != nullptr) { // not tested yet
