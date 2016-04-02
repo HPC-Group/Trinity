@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mocca/base/ByteArray.h"
+#include "mocca/net/Message.h"
 
 #include <string>
 #include <vector>
@@ -35,5 +36,6 @@ public:
     virtual void setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) = 0;
 
     virtual mocca::ByteArray write() const = 0;
+    virtual mocca::net::Message writeMessage() const = 0;
 };
 }

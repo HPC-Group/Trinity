@@ -123,3 +123,17 @@ mocca::ByteArray JsonWriter::write() const {
     }
     return result;
 }
+
+mocca::net::Message JsonWriter::writeMessage() const {
+    JsonCpp::FastWriter writer;
+    std::string str = writer.write(m_root);
+    auto jsonData = std::make_shared<std::vector<uint8_t>>();
+    jsonData->resize(str.size());
+    // FIXME: this copy might be avoided by using JsonCpp::StreamWriter and streaming the json directly into the vector
+    std::copy(begin(str), end(str), begin(*jsonData));
+    mocca::net::Message headPart(jsonData);
+    if ((*m_binary) != nullptr && !(*m_binary)->empty()) {
+        headPart.append(mocca::make_unique<mocca::net::Message>(*m_binary));
+    }
+    return headPart;
+}

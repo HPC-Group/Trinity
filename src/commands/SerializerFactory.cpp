@@ -4,6 +4,7 @@
 #include "commands/JsonWriter.h"
 #include "commands/SimpleStringReader.h"
 #include "commands/SimpleStringWriter.h"
+#include "common/TrinityError.h"
 
 #include "mocca/base/Memory.h"
 
@@ -23,6 +24,10 @@ std::unique_ptr<ISerialReader> JsonSerializerFactory::createReader(mocca::ByteAr
     return mocca::make_unique<JsonReader>(data);
 }
 
+std::unique_ptr<ISerialReader> JsonSerializerFactory::createReader(const mocca::net::Message &message) const {
+    return mocca::make_unique<JsonReader>(message);
+}
+
 std::unique_ptr<ISerialWriter> SimpleStringSerializerFactory::createWriter() const {
     return mocca::make_unique<SimpleStringWriter>();
 }
@@ -30,4 +35,8 @@ std::unique_ptr<ISerialWriter> SimpleStringSerializerFactory::createWriter() con
 std::unique_ptr<ISerialReader> SimpleStringSerializerFactory::createReader(mocca::ByteArray& data) const {
     data.resetReadPos(); // fixme: not nice
     return mocca::make_unique<SimpleStringReader>(data);
+}
+
+std::unique_ptr<ISerialReader> SimpleStringSerializerFactory::createReader(const mocca::net::Message &message) const {
+    throw TrinityError("Not implemented", __FILE__, __LINE__);
 }

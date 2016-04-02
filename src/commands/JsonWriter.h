@@ -32,6 +32,7 @@ public:
     void setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) override;
 
     mocca::ByteArray write() const override;
+    mocca::net::Message writeMessage() const;
 
 private:
     JsonWriter(std::shared_ptr<std::shared_ptr<const std::vector<uint8_t>>> binary);

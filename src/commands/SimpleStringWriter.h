@@ -30,6 +30,7 @@ public:
     virtual void setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) override;
 
     mocca::ByteArray write() const override;
+    mocca::net::Message writeMessage() const override;
 
 private:
     mutable std::stringstream m_stream;

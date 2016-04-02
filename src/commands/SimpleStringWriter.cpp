@@ -87,12 +87,16 @@ void SimpleStringWriter::appendObjectVec(const std::string& key, const std::vect
     }
 }
 
-void SimpleStringWriter::setBinary(std::shared_ptr<const std::vector<uint8_t>> binary)
-{
+void SimpleStringWriter::setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) {
     // fixme dmc
 }
 
 mocca::ByteArray SimpleStringWriter::write() const {
     std::string str = m_stream.str();
     return mocca::ByteArray::createFromRaw(str.data(), str.size());
+}
+
+mocca::net::Message SimpleStringWriter::writeMessage() const {
+    // fixme dmc
+    return mocca::net::Message();
 }
