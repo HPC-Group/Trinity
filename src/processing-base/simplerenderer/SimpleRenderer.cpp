@@ -200,7 +200,7 @@ void SimpleRenderer::initFrameBuffers() {
   // TODO: check if we need depth (the true below)
   m_backfaceBuffer = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE, width, height,
-                                                GL_RGBA, GL_RGBA,
+                                                GL_RGBA32F, GL_RGBA,
                                                 GL_FLOAT, true, 1);
 }
 

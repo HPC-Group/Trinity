@@ -1641,8 +1641,6 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
     prepareForPaging();
 
     if (!m_bVisibilityUpdated) {
-      //TODO CHECK!!
-      //VisibilityState const& visibility = m_pUpdater->GetVisibility();
       switch (visibility.getRenderMode()) {
         case RM_1DTRANS:
           iPagedBricks =

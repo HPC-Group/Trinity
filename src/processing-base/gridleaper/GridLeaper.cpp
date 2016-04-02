@@ -133,9 +133,14 @@ void GridLeaper::resizeFramebuffer() {
   const uint32_t height = m_visStream->getStreamingParams().getResY();
   m_bufferData.resize(width * height * 4);
 
+  const float fScreenSpaceError = 0.5f;
+
+  m_fLODFactor = 2.0f * tan(m_viewAngle * ((3.1416f / 180.0f) / 2.0f)) *
+                 fScreenSpaceError / float(height);
+  /*
   m_fLODFactor = 2.0f * tan(m_viewAngle *
                             ((3.1416f / 180.0f) / 2.0f)) * 1.0f / float(width);
-
+                            */
   if (!m_context) {
     LWARNING("(p) resizeFramebuffer called without a valid context");
     return;
@@ -353,50 +358,50 @@ void GridLeaper::initFrameBuffers() {
   m_pFBORayStart = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                               GL_CLAMP_TO_EDGE,
                                               width, height,
-                                              GL_RGBA, GL_RGBA,
+                                              GL_RGBA32F, GL_RGBA,
                                               GL_FLOAT, true, 1);
 
   m_pFBORayStartNext = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                   GL_CLAMP_TO_EDGE,
                                                   width, height,
-                                                  GL_RGBA, GL_RGBA,
+                                                  GL_RGBA32F, GL_RGBA,
                                                   GL_FLOAT, true, 1);
 
   m_pFBOStartColor = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE,
                                                 width, height,
-                                                GL_RGBA, GL_RGBA,
+                                                GL_RGBA32F, GL_RGBA,
                                                 GL_FLOAT, true, 1);
 
   m_pFBOStartColorNext = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                     GL_CLAMP_TO_EDGE,
                                                     width, height,
-                                                    GL_RGBA, GL_RGBA,
+                                                    GL_RGBA32F, GL_RGBA,
                                                     GL_FLOAT, true, 1);
 
   m_pFBOFinalColor = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                 GL_CLAMP_TO_EDGE,
                                                 width, height,
-                                                GL_RGBA, GL_RGBA,
+                                                GL_RGBA32F, GL_RGBA,
                                                 GL_FLOAT, true, 1);
 
   m_pFBOFinalColorNext = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                     GL_CLAMP_TO_EDGE,
                                                     width, height,
-                                                    GL_RGBA, GL_RGBA,
+                                                    GL_RGBA32F, GL_RGBA,
                                                     GL_FLOAT, true, 1);
 
 #ifdef GLGRIDLEAPER_DEBUGVIEW
   m_pFBODebug = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                            GL_CLAMP_TO_EDGE,
                                            width, height,
-                                           GL_RGBA, GL_RGBA,
+                                           GL_RGBA32F, GL_RGBA,
                                            GL_FLOAT, true, 1);
 
   m_pFBODebugNext = std::make_shared<GLRenderTexture>(fbo, GL_NEAREST, GL_NEAREST,
                                                GL_CLAMP_TO_EDGE,
                                                width, height,
-                                               GL_RGBA, GL_RGBA,
+                                               GL_RGBA32F, GL_RGBA,
                                                GL_FLOAT, true, 1);
 #endif
 
