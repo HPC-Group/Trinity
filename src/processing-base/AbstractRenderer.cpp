@@ -23,28 +23,51 @@ m_bPaitingActive(false)
   initValueDefaults();
 }
 
+void AbstractRenderer::calculate1DTFDerived() {
+  Vec2f range = m_io->getRange(m_activeModality);
+
+  float maxValue = (range.x > range.y) ? m_1Dtf.getSize() : range.y;
+
+  m_1DTFScale = 1;
+  switch(m_type){
+    case  IIO::ValueType::T_INT8 :
+      m_1DTFScale = float(std::numeric_limits<int8_t>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_UINT8 :
+      m_1DTFScale = float(std::numeric_limits<uint8_t>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_INT16 :
+      m_1DTFScale = float(std::numeric_limits<int16_t>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_UINT16 :
+      m_1DTFScale = float(std::numeric_limits<uint16_t>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_INT32 :
+      m_1DTFScale = float(std::numeric_limits<int32_t>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_UINT32 :
+      m_1DTFScale = float(std::numeric_limits<uint32_t>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_FLOAT :
+      m_1DTFScale = float(std::numeric_limits<float>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_INT64 :
+      m_1DTFScale = float(std::numeric_limits<int64_t>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_UINT64 :
+      m_1DTFScale = float(std::numeric_limits<uint64_t>::max()/maxValue);
+      break;
+    case  IIO::ValueType::T_DOUBLE :
+      m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue);
+      break;
+  }
+}
 
 void AbstractRenderer::calculateDerived() {
   m_type = m_io->getType(m_activeModality);
   m_semantic = m_io->getSemantic(m_activeModality);
   
-  Vec2f range = m_io->getRange(m_activeModality);
-  
-  float maxValue = (range.x > range.y) ? m_1Dtf.getSize() : range.y;
-  
-  m_1DTFScale = 1;
-  switch(m_type){
-    case  IIO::ValueType::T_INT8 : m_1DTFScale = float(std::numeric_limits<int8_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_UINT8 : m_1DTFScale = float(std::numeric_limits<uint8_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_INT16 : m_1DTFScale = float(std::numeric_limits<int16_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_UINT16 : m_1DTFScale = float(std::numeric_limits<uint16_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_INT32 : m_1DTFScale = float(std::numeric_limits<int32_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_UINT32 : m_1DTFScale = float(std::numeric_limits<uint32_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_FLOAT : m_1DTFScale = float(std::numeric_limits<float>::max()/maxValue); break;
-    case  IIO::ValueType::T_INT64 : m_1DTFScale = float(std::numeric_limits<int64_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_UINT64 : m_1DTFScale = float(std::numeric_limits<uint64_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_DOUBLE : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
-  }
+  calculate1DTFDerived();
 
   /*
   float m_2DTFScale = (m_pDataset->MaxGradientMagnitude() == 0) ?
@@ -144,6 +167,7 @@ uint64_t AbstractRenderer::getActiveTimestep() const {
 void AbstractRenderer::set1DTransferFunction(const TransferFunction1D& tf){
   if  (! (m_1Dtf == tf)) {
     m_1Dtf = tf;
+    calculate1DTFDerived();
     paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
   } else {
     paint(IRenderer::PaintLevel::PL_RECOMPOSE);
@@ -169,6 +193,7 @@ std::vector<uint64_t> AbstractRenderer::get1DHistogram() const {
  void AbstractRenderer::set2DTransferFunction(const TransferFunction2D& tf){
    if  (! m_2Dtf == tf) {
      m_2Dtf = tf;
+     calculate"DTFDerived();
      paint(IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE);
    } else {
      paint(IRenderer::PaintLevel::PL_RECOMPOSE);

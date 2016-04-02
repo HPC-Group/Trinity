@@ -168,5 +168,6 @@ namespace trinity {
     void initValueDefaults();
     
     void calculateDerived();
+    void calculate1DTFDerived();
   };
 }

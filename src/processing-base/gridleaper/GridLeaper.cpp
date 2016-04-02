@@ -473,8 +473,6 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
 
   m_context->makeCurrent(); // todo: check if we need this
 
-  std::cout << "." << std::endl;
-
   GL_CHECK(glClearColor(0, 0, 0, 0));
 
   const uint32_t width = m_visStream->getStreamingParams().getResX();
@@ -966,16 +964,19 @@ const uint64_t GridLeaper::getFreeGPUMemory(){
 
 
 void GridLeaper::set1DTransferFunction(const TransferFunction1D& tf) {
-  if ( m_texTransferFunc ) {
-    m_texTransferFunc->SetData(0, tf.getSize(), tf.getRAWData().data());
+  if ( m_context ) {
+    m_texTransferFunc = mocca::make_unique<GLTexture1D>(tf.getSize(),
+                                                        GL_RGBA,
+                                                        GL_RGBA,
+                                                        GL_UNSIGNED_BYTE,
+                                                        tf.getRAWData().data());
   }
   AbstractRenderer::set1DTransferFunction(tf);
 }
 
 /*
 void GridLeaper::set2DTransferFunction(const TransferFunction2D& tf) {
-  if ( m_texTransferFunc2D ) {
-    m_texTransferFunc2D->SetData(0, tf.getSize(), tf.getRAWData().data());
+  if ( m_context ) {
   }
 
   AbstractRenderer::set2DTransferFunction(tf);

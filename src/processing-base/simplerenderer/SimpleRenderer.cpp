@@ -164,13 +164,8 @@ void SimpleRenderer::loadVolumeData() {
 }
 
 void SimpleRenderer::loadTransferFunction() {
-  LINFO("(p) creating transfer function");
-  
-  uint64_t maxIndex = m_io->getDefault1DTransferFunctionCount() - 1;
-  
-  LINFO("(p) using default function " << maxIndex);
-  
-  TransferFunction1D tf = m_io->getDefault1DTransferFunction(maxIndex);
+  LINFO("(p) creating transfer function from first default function ");  
+  TransferFunction1D tf = m_io->getDefault1DTransferFunction(0);
   
   LINFO("(p) filling openGL resource");
   
@@ -300,4 +295,23 @@ bool SimpleRenderer::proceedRendering() {
   }
 }
 
+void SimpleRenderer::set1DTransferFunction(const TransferFunction1D& tf) {
+  if ( m_context ) {
+    m_texTransferFunc = mocca::make_unique<GLTexture1D>(tf.getSize(),
+                                                        GL_RGBA,
+                                                        GL_RGBA,
+                                                        GL_UNSIGNED_BYTE,
+                                                        tf.getRAWData().data());
+  }
+  AbstractRenderer::set1DTransferFunction(tf);
+}
+
+/*
+ void SimpleRenderer::set2DTransferFunction(const TransferFunction2D& tf) {
+ if ( m_context ) {
+ }
+ 
+ AbstractRenderer::set2DTransferFunction(tf);
+ }
+ */
 
