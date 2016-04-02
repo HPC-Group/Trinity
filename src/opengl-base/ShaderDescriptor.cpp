@@ -255,7 +255,6 @@ using namespace Core::IO;
     }
     std::ifstream::pos_type len = ifs.tellg();
     ifs.seekg(0, std::ios::beg);
-    //std::cout << filename << std::endl; // just ot get the filename
     std::vector<char> file(size_t(len+std::ifstream::pos_type(1)), 0);
     size_t offset=0;
     do {

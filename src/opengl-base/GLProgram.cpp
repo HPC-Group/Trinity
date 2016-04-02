@@ -45,19 +45,18 @@ bool GLProgram::CheckProgramStatus(){
   GL_CHECK(glGetProgramiv(m_ShaderProgramm, GL_LINK_STATUS, &status));
   if (status != 1)
   {
-    std::cout << "Could not create programm " << std::endl;
+    LERROR("Could not create programm ");
     
     GLint maxLength = 0;
     GL_CHECK(glGetProgramiv(m_ShaderProgramm, GL_INFO_LOG_LENGTH, &maxLength));
     
     
-    std::cout << maxLength<< std::endl;
     //The maxLength includes the NULL character
     std::vector<GLchar> infoLog(maxLength);
     GL_CHECK(glGetProgramInfoLog(m_ShaderProgramm, maxLength, &maxLength, &infoLog[0]));
     
     for(int i = 0; i < maxLength;++i){
-      std::cout << infoLog[i];
+      LERROR(infoLog[i]);
     }
     //The program is useless now. So delete it.
     GL_CHECK(glDeleteProgram(m_ShaderProgramm));
@@ -230,9 +229,7 @@ void GLProgram::SetTexture(const std::string& name, const std::shared_ptr<GLText
      if (i->second <= iUnusedTexUnit)
      iUnusedTexUnit = i->second+1;
      }*/
-    std::cout << "-------------" << name << "  " << iUnusedTexUnit << std::endl;
     ConnectTextureID(name, iUnusedTexUnit);
-    std::cout << "new ptexture bind " << iUnusedTexUnit << std::endl;
     pTexture->Bind(iUnusedTexUnit);
   } else {
     pTexture->Bind(m_mBindings[name]);
@@ -249,7 +246,6 @@ void GLProgram::SetTexture(const std::string& name, const GLuint value) {
         iUnusedTexUnit = i->second+1;
     }
     ConnectTextureID(name, iUnusedTexUnit);
-    std::cout << "ID FOR : " << name << " - " << iUnusedTexUnit << std::endl;
     
     GLuint currentVariableLocation = glGetUniformLocation(m_ShaderProgramm, name.c_str());
     GL_CHECK(glUniform1i(currentVariableLocation, iUnusedTexUnit));

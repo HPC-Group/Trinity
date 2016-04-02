@@ -1632,7 +1632,7 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
                                     trinity::IIO& pDataset,
                                     uint64_t modality)
 {
-  std::cout << "requesting:" << vBrickIDs.size() << " bricks" << std::endl;
+  LINFO("Requesting:" << vBrickIDs.size() << " bricks");
 
   uint32_t iPagedBricks = 0;
 
@@ -1686,7 +1686,7 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
     LDEBUGC("GLVolumePool","async visibility update completed for "<< m_iTotalBrickCount << " bricks");
   }
 
-  std::cout << "done" << std::endl;
+  LINFO("Bricks processed");
 
   return iPagedBricks;
 }
