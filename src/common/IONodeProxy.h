@@ -12,7 +12,7 @@ class IONodeProxy {
 public:
     IONodeProxy(const mocca::net::Endpoint& ep);
 
-    std::unique_ptr<IOSessionProxy> initIO(const std::string& fileID);
+    std::unique_ptr<IOSessionProxy> initIO(const std::string& fileID, bool useLoopback);
     std::vector<IOData> listFiles(const std::string& dirID) const;
 
 private:

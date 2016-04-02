@@ -16,15 +16,17 @@ IONodeProxy::IONodeProxy(const mocca::net::Endpoint& ep)
     }
 }
 
-std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(const std::string& fileId) {
-    InitIOSessionCmd::RequestParams params(m_inputChannel.getEndpoint().protocol, fileId);
+std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(const std::string& fileId, bool useLoopback) {
+    std::string protocol = useLoopback ? trinity::ioLoopbackEndpoint().protocol : m_inputChannel.getEndpoint().protocol;
+    std::string machine = useLoopback ? trinity::ioLoopbackEndpoint().machine : m_inputChannel.getEndpoint().machine;
+
+    InitIOSessionCmd::RequestParams params(protocol, fileId);
     InitIOSessionRequest request(params, IDGenerator::nextID(), 0);
 
     auto reply = sendRequestChecked(m_inputChannel, request);
 
     // BIG TODO HERE!!!
-    mocca::net::Endpoint controlEndpoint(m_inputChannel.getEndpoint());
-    controlEndpoint.port = reply->getParams().getControlPort();
+    mocca::net::Endpoint controlEndpoint(protocol, machine, reply->getParams().getControlPort());
 
     return mocca::make_unique<IOSessionProxy>(reply->getSid(), controlEndpoint);
 }

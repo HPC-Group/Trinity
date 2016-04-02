@@ -19,12 +19,10 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
 
     // create an IO node proxy and pass it to the renderer
     mocca::net::Endpoint ioEndpoint = m_request.getParams().getIoEndpoint();
-    if (m_node->executionMode() == AbstractNode::ExecutionMode::Combined && m_node->isLocalMachine(ioEndpoint.machine)) {
-        ioEndpoint = trinity::ioLoopbackEndpoint();
-    }
-
     IONodeProxy ioNodeProxy(ioEndpoint);
-    auto ioSessionProxy = ioNodeProxy.initIO(m_request.getParams().getFileId());
+    
+    bool useLoopback = m_node->executionMode() == AbstractNode::ExecutionMode::Combined && m_node->isLocalMachine(ioEndpoint.machine);
+    auto ioSessionProxy = ioNodeProxy.initIO(m_request.getParams().getFileId(), useLoopback);
 
     try {
         std::unique_ptr<RenderSession> session(
