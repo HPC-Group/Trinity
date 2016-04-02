@@ -164,12 +164,8 @@ void SimpleRenderer::loadVolumeData() {
 }
 
 void SimpleRenderer::loadTransferFunction() {
-  LINFO("(p) creating transfer function from first default function ");  
-  TransferFunction1D tf = m_io->getDefault1DTransferFunction(0);
-  
-  LINFO("(p) filling openGL resource");
-  
-  m_texTransferFunc = mocca::make_unique<GLTexture1D>(tf.getSize(), GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, tf.getRAWData().data());
+  LINFO("(p) creating transfer function from first default function ");    
+  m_texTransferFunc = mocca::make_unique<GLTexture1D>(m_1Dtf.getSize(), GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, m_1Dtf.getRAWData().data());
   LINFO("(p) transfer function created");
 }
 

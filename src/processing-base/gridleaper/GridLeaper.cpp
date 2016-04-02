@@ -329,20 +329,13 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
 }
 
 void GridLeaper::loadTransferFunction() {
-
-  if (m_texTransferFunc) return;
-
   LINFO("(p) creating transfer function");
 
-  TransferFunction1D tf = m_io->getDefault1DTransferFunction(0);
-
-  LINFO("(p) filling openGL resource");
-
-  m_texTransferFunc = mocca::make_unique<GLTexture1D>(tf.getSize(),
+  m_texTransferFunc = mocca::make_unique<GLTexture1D>(m_1Dtf.getSize(),
                                                       GL_RGBA,
                                                       GL_RGBA,
                                                       GL_UNSIGNED_BYTE,
-                                                      tf.getRAWData().data());
+                                                      m_1Dtf.getRAWData().data());
   LINFO("(p) transfer function created");
 }
 
