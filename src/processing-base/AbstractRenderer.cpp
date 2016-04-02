@@ -37,12 +37,12 @@ void AbstractRenderer::calculateDerived() {
     case  IIO::ValueType::T_INT8 : m_1DTFScale = float(std::numeric_limits<int8_t>::max()/maxValue); break;
     case  IIO::ValueType::T_UINT8 : m_1DTFScale = float(std::numeric_limits<uint8_t>::max()/maxValue); break;
     case  IIO::ValueType::T_INT16 : m_1DTFScale = float(std::numeric_limits<int16_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_UINT16 : m_1DTFScale = float(std::numeric_limits<uint8_t>::max()/maxValue); break;
-    case  IIO::ValueType::T_INT32 : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
-    case  IIO::ValueType::T_UINT32 : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
-    case  IIO::ValueType::T_FLOAT : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
-    case  IIO::ValueType::T_INT64 : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
-    case  IIO::ValueType::T_UINT64 : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
+    case  IIO::ValueType::T_UINT16 : m_1DTFScale = float(std::numeric_limits<uint16_t>::max()/maxValue); break;
+    case  IIO::ValueType::T_INT32 : m_1DTFScale = float(std::numeric_limits<int32_t>::max()/maxValue); break;
+    case  IIO::ValueType::T_UINT32 : m_1DTFScale = float(std::numeric_limits<uint32_t>::max()/maxValue); break;
+    case  IIO::ValueType::T_FLOAT : m_1DTFScale = float(std::numeric_limits<float>::max()/maxValue); break;
+    case  IIO::ValueType::T_INT64 : m_1DTFScale = float(std::numeric_limits<int64_t>::max()/maxValue); break;
+    case  IIO::ValueType::T_UINT64 : m_1DTFScale = float(std::numeric_limits<uint64_t>::max()/maxValue); break;
     case  IIO::ValueType::T_DOUBLE : m_1DTFScale = float(std::numeric_limits<double>::max()/maxValue); break;
   }
 
