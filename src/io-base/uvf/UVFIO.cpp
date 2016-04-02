@@ -145,7 +145,14 @@ uint64_t UVFIO::getComponentCount(uint64_t modality) const {
 }
 
 uint64_t UVFIO::getDefault1DTransferFunctionCount() const {
-  return 1;
+  
+  const std::string path = getPath(m_filename);
+  const std::string filename = removeExt(getFilename(m_filename));
+  
+  std::vector<std::string> files = getDirContents(path, filename+"*", "1dt");
+  
+  
+  return std::max<uint64_t>(1,files.size());
 }
 
 uint64_t UVFIO::getDefault2DTransferFunctionCount() const {
@@ -153,20 +160,28 @@ uint64_t UVFIO::getDefault2DTransferFunctionCount() const {
   return 1;
 }
 
+
+
 TransferFunction1D UVFIO::getDefault1DTransferFunction(uint64_t index) const {
-  std::string default1DTFFilename = changeExt(m_filename, "1dt");
   
-  if (fileExists(default1DTFFilename)) {
-    TransferFunction1D tf(default1DTFFilename);
-    
-    if (tf.getSize() > 0) { // check if something usefull was in the file
-      LINFO("(UVFIO) loaded user defined default 1D-tf from file " <<
-            default1DTFFilename);
-      return tf;
+  const std::string path = getPath(m_filename);
+  const std::string filename = removeExt(getFilename(m_filename));
+  
+  std::vector<std::string> files = getDirContents(path, filename+"*", "1dt");
+  
+  if (index < files.size()) {
+    const std::string default1DTFFilename = files[index];
+    if (fileExists(default1DTFFilename)) {
+      TransferFunction1D tf(default1DTFFilename);
+      if (tf.getSize() > 0) { // check if something usefull was in the file
+        LINFO("(UVFIO) loaded user defined default 1D-tf from file " <<
+              default1DTFFilename);
+        return tf;
+      }
     }
   }
-
-  LINFO("(UVFIO) using standard 1D tf ");
+  
+  LINFO("(UVFIO) using analytic standard 1D tf ");
   
   TransferFunction1D tf(256);
   tf.setStdFunction();
