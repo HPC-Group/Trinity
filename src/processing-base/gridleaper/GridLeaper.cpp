@@ -329,13 +329,12 @@ bool GridLeaper::loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy) {
 }
 
 void GridLeaper::loadTransferFunction() {
+
+  if (m_texTransferFunc) return;
+
   LINFO("(p) creating transfer function");
 
-  uint64_t maxIndex = m_io->getDefault1DTransferFunctionCount()-1;
-
-  LINFO("(p) using default function " << maxIndex);
-
-  TransferFunction1D tf = m_io->getDefault1DTransferFunction(maxIndex);
+  TransferFunction1D tf = m_io->getDefault1DTransferFunction(0);
 
   LINFO("(p) filling openGL resource");
 
