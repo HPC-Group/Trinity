@@ -24,7 +24,8 @@ using namespace trinity;
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , settings(nullptr) {
+    , settings(nullptr)
+    , m_iCurrent1DIndex(0) {
     ui->setupUi(this);
     this->setWindowTitle("Trinty Demo");
 
@@ -63,9 +64,25 @@ void MainWindow::on_actionTrinity_triggered() {
     settings = mocca::make_unique<connectionSettings>(ui->openGLWidget->width(), ui->openGLWidget->height(), this);
 }
 
-void MainWindow::on_actionPrev_triggered() {}
+void MainWindow::on_actionPrev_triggered() {
+  const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount()-1;
+  if (m_iCurrent1DIndex > 0)
+    m_iCurrent1DIndex--;
+  else
+    m_iCurrent1DIndex = maxIndex;
+  
+  renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
+}
 
-void MainWindow::on_actionNext_triggered() {}
+void MainWindow::on_actionNext_triggered() {
+  const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount()-1;
+  if (m_iCurrent1DIndex < maxIndex)
+    m_iCurrent1DIndex++;
+  else
+    m_iCurrent1DIndex = 0;
+  
+  renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
+}
 
 void MainWindow::wheelEvent(QWheelEvent* event) {
     if (!ready) {
