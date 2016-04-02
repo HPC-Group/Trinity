@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "UVFIO.h"
 
 #include "common/MemBlockPool.h"
@@ -168,6 +170,9 @@ TransferFunction1D UVFIO::getDefault1DTransferFunction(uint64_t index) const {
   const std::string filename = removeExt(getFilename(m_filename));
   
   std::vector<std::string> files = getDirContents(path, filename+"*", "1dt");
+
+  // sort by name
+  std::sort(files.begin(), files.end());
   
   if (index < files.size()) {
     const std::string default1DTFFilename = files[index];
