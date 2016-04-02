@@ -64,6 +64,8 @@ m_isIdle(true)
 
 void GridLeaper::deleteContext() {
   m_texTransferFunc = nullptr;
+  m_texTransfer2DFunc = nullptr;
+  
   m_targetBinder = nullptr;
   m_resultBuffer = nullptr;
   m_pFBORayStart = nullptr;
@@ -76,10 +78,15 @@ void GridLeaper::deleteContext() {
   m_pFBODebugNext = nullptr;
   m_pFBORayStart = nullptr;
 #endif
+  
+  m_volumePool = nullptr;
+  m_hashTable = nullptr;
+  
   m_bbBox = nullptr;
   m_nearPlane = nullptr;
-  m_context = nullptr;
 
+  m_activeShaderProgram = nullptr;
+  
   m_programRenderFrontFaces = nullptr;
   m_programRenderFrontFacesNearPlane = nullptr;
   m_programRayCast1D = nullptr;
@@ -96,7 +103,8 @@ void GridLeaper::deleteContext() {
   m_programComposeColorDebugMix = nullptr;
   m_programComposeColorDebugMixAlpha = nullptr;
   m_programComposeClearViewIso = nullptr;
-  m_activeShaderProgram = nullptr;
+  
+  m_context = nullptr;
 }
 
 GridLeaper::~GridLeaper() {
