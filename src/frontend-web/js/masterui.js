@@ -29,9 +29,9 @@
             $("#panel_requirements").hide();
             $("#div_connect_success").hide();
             $("#div_connect_failure").hide();
-            $("#io_ip").val("127.0.0.1");
+            $("#io_ip").val("134.91.11.156");
             $("#io_port").val("6679");
-            $("#proc_ip").val("127.0.0.1");
+            $("#proc_ip").val("134.91.11.156");
             $("#x_res").val(1024);
             $("#y_res").val(768);
             $("#proc_port").val("8679");
@@ -299,10 +299,10 @@
                 if (requestTypes.indexOf(requestType) != -1) {
                     // look like type: InitRenderer; rid: 1; sid: 0; params: { protocol: tcp.prefixed; rendertype: SimpleRenderer; fileid: FractalData@3; ioendpoint: tcp.prefixed:127.0.0.1:6678; streamingparams: { xres: 800; yres: 600 } }
                     console.log("Sending: " + requestType);
-                    //TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "GridLeapingRenderer", "fileid": "UVFData@./WholeBody-SCANLINE-132-lz4.uvf", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                    TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "GridLeapingRenderer", "fileid": "'+ TRI_Frontend.datasetName + '", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
                     
                     console.log("init renderer for data: " + TRI_Frontend.datasetName);
-                                        TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "'+ TRI_Frontend.datasetName + '", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                                        //TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "'+ TRI_Frontend.datasetName + '", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
 
                 }
 
