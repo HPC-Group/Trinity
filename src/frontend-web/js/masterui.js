@@ -8,6 +8,8 @@
 
         connectFadeoutTimeout: undefined,
         slideCount: 0,
+        dataSelected: false,
+        datasetName: undefined,
         requirementPanelCount: 0,
         applicationTypes: [],
         deviceTypes: [],
@@ -74,8 +76,14 @@
         connect: function() {
             canvas.width = $("#x_res").val();
             canvas.height = $("#y_res").val();
+            
+            if(!TRI_Frontend.dataSelected) {
+                                $('#errorBody').text("please select a dataset first");
+                $('#errorModal').modal('show');
+            } else {
             TRI_Frontend.NodeConnector.initWS();
-            TRI_Frontend.password = $("#connect_password").val()
+            TRI_Frontend.password = $("#connect_password").val();
+            }
         },
 
 
@@ -94,20 +102,19 @@
 
             var applicationsArray = ["bla", "blub"];
             console.log("Building applicatons list");
-            if (applicationsArray.length > 0) {
-                for (var i = 0; i < applicationsArray.length; i++) {
-
-                    var imgpath = undefined;
-                    if (i % 2) {
-                        imgpath = "imagevis_fractal.png";
-                    } else {
-                        imgpath = "imagevis_fractal_back.png";
-                    }
-                    TRI_Frontend.addApplicationSlide("peter", "coole app", imgpath);
-                }
-                $("#apps").show();
-                window.scrollTo(0, document.body.scrollHeight);
-            }
+            
+            var imgpath = "imagevis_body.png"; 
+            TRI_Frontend.addApplicationSlide("MRI", "UVF data", imgpath);
+            
+            imgpath = "bonsai.png";
+            TRI_Frontend.addApplicationSlide("bonsai", "tiny bonsai tree", imgpath);
+            
+                imgpath = "imagevis_fractal_back.png";
+            TRI_Frontend.addApplicationSlide("fractal", "analytical data", imgpath);
+            
+            $("#apps").show();
+            window.scrollTo(0, document.body.scrollHeight);
+            
         },
 
         hideConnectMessage: function() {
@@ -128,7 +135,7 @@
                 $("#carousel_slides").find("p")[0].innerHTML = description;
                 $("#carousel_slides").find("img")[0].src = "img/mui/" + image;
                 var linknode = $("#carousel_slides").find("a")[0];
-                linknode.setAttribute("onclick", "MUI_MasterUI.applicationSelected('" + name + "','" + description + "')");
+                linknode.setAttribute("onclick", "TRI_Frontend.applicationSelected('" + name + "','" + description + "')");
             } else {
                 var parameterString = "\"" + name + "\",\"" + description + "\"";
                 //TODO: Insert correct image
@@ -137,7 +144,7 @@
                 <div class='container'> \
                     <div class='carousel-caption'> \
                         <h1>" + name + "</h1> <p>" + description + "</p> <p> \
-                        <a class='btn btn-lg btn-primary' role='button' onclick='MUI_MasterUI.applicationSelected(" + parameterString + ")'>Select</a></p> \
+                        <a class='btn btn-lg btn-danger' role='button' onclick='TRI_Frontend.applicationSelected(" + parameterString + ")'>Select</a></p> \
                     </div> \
                 </div> \
             </div>");
@@ -146,6 +153,53 @@
 
             TRI_Frontend.slideCount++;
         },
+        
+        applicationSelected : function (name, description)
+	   {
+           
+        TRI_Frontend.dataSelected = true;
+        console.log("selected dataset " + name);
+           
+           if(name == "MRI") {
+               TRI_Frontend.datasetName = "UVFData@./WholeBody-SCANLINE-132-lz4.uvf";
+           }
+           
+            if(name == "bonsai") {
+               TRI_Frontend.datasetName = "UVFData@./Bonsai-SCANLINE-132-lz4.uvf";
+           }
+           
+            if(name == "fractal") {
+               TRI_Frontend.datasetName = "FractalData@4b";
+           }
+        //empty requirements, reset requirements row counter and disable start ui button
+           /*
+        $("#panel_requirements").hide();
+        MUI_MasterUI.requirementPanelCount = 0;
+        $("#container_requirements").empty();
+        $('#btnStartUI').prop('disabled', true);
+        MUI_MasterUI.proposalRequestsCount = 0;
+        MUI_MasterUI.proposalRequestsNeeded = 0;
+        MUI_MasterUI.proposals = [];
+        
+        //send Requirements request
+        MUI_MasterUI.selectedApplicationName = name;
+        MUI_MasterUI.selectedApplicationDescription = description;
+        
+        if (MUI_MasterUI.applicationTypes)
+        {
+            for (var i = 0; i<MUI_MasterUI.applicationTypes.length; i++)
+            {
+                if (MUI_MasterUI.applicationTypes[i].id == MUI_MasterUI.selectedApplicationName)
+                {
+                    console.log("Building requirements list");
+                    //query proposals
+                    MUI_MasterUI.queryMuiProposals(MUI_MasterUI.applicationTypes[i].requirements, MUI_MasterUI.selectedApplicationDescription);
+                    //MUI_MasterUI.buildRequirementList(MUI_MasterUI.applicationTypes[i].requirements);
+                    break;
+                }
+            }
+        }*/
+	   },
 
 
         hidePanel: function() {
@@ -245,7 +299,10 @@
                 if (requestTypes.indexOf(requestType) != -1) {
                     // look like type: InitRenderer; rid: 1; sid: 0; params: { protocol: tcp.prefixed; rendertype: SimpleRenderer; fileid: FractalData@3; ioendpoint: tcp.prefixed:127.0.0.1:6678; streamingparams: { xres: 800; yres: 600 } }
                     console.log("Sending: " + requestType);
-                    TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "GridLeapingRenderer", "fileid": "UVFData@./Bonsai-SCANLINE-132-lz4.uvf", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                    //TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "GridLeapingRenderer", "fileid": "UVFData@./WholeBody-SCANLINE-132-lz4.uvf", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                    
+                    console.log("init renderer for data: " + TRI_Frontend.datasetName);
+                                        TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "'+ TRI_Frontend.datasetName + '", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
 
                 }
 
@@ -272,6 +329,8 @@
         var rotMode = true;
         var zoomCounter = 0;
         var zoomOutNeeded = true;
+        var currentTF = 0;
+        var tfCount = 0;
 
 
 
@@ -337,12 +396,39 @@
 
             prevTF: function() {
                 document.activeElement.blur();
-
+                console.log("previous tf");
+                currentTF--;
+                TRI_Frontend.VisControlConnector.doSend('{"type": "GetDefault1DTransferFunctionCountProc", "req": { "rid": 1, "sid": 3, "params": {} } }');
             },
 
             nextTF: function() {
                 document.activeElement.blur();
+                console.log("next tf");
+                currentTF++;
+                TRI_Frontend.VisControlConnector.doSend('{"type": "GetDefault1DTransferFunctionCountProc", "req": { "rid": 1, "sid": 3, "params": {} } }');
+                
+                
 
+                
+
+                
+                
+                
+
+            },
+            
+            
+            sendTFRequest: function() {
+                if(currentTF  == tfCount) { // jump to first tf
+                    currentTF = 0;
+                }
+                if(currentTF == -1) {  // jump to last tf
+                    currentTF = tfCount - 1;
+                }
+                
+                console.log("requesting tf with index " + currentTF);
+                console.log("total amount: " + tfCount);
+                TRI_Frontend.VisControlConnector.doSend('{"type": "GetDefault1DTransferFunctionProc", "req": { "rid": 1, "sid": 3, "params": {"index":' + currentTF + '} } }');
             },
             
             zoomIn: function() {
@@ -489,6 +575,15 @@
                     console.log("ERROR: Error while parsing Message response to JSON")
                 }
                 console.log("got sth in control channel:");
+                
+                if(messageResult.type == "GetDefault1DTransferFunctionCountProc") {
+                    tfCount = messageResult.rep.params.result;
+                     TRI_Frontend.VisControlConnector.sendTFRequest();
+                }
+                
+                if(messageResult.type == "GetDefault1DTransferFunctionProc") {
+                    TRI_Frontend.VisControlConnector.doSend('{"type": "Set1DTransferFunction", "req": { "rid": 1, "sid": 3, "params": {"tf": '+ JSON.stringify(messageResult.rep.params.result) + '} } }');
+                }
             },
 
             onError: function(evt) {
