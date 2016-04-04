@@ -30,11 +30,11 @@
             $("#panel_requirements").hide();
             $("#div_connect_success").hide();
             $("#div_connect_failure").hide();
-            $("#io_ip").val("134.91.11.156");
+            $("#io_ip").val("192.168.0.1");
             $("#io_port").val("6678");
-            $("#proc_ip").val("134.91.11.156");
-            $("#x_res").val(1024);
-            $("#y_res").val(768);
+            $("#proc_ip").val("192.168.0.1");
+            $("#x_res").val(800);
+            $("#y_res").val(800);
             $("#proc_port").val("8679");
 
             $("#connect_ip").keyup(function(event) {
