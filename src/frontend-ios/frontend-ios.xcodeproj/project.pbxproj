@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3DD520361CB2740800319C33 /* NewLoopbackConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD520321CB2740800319C33 /* NewLoopbackConnection.cpp */; };
+		3DD520371CB2740800319C33 /* NewLoopbackConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD520331CB2740800319C33 /* NewLoopbackConnectionAcceptor.cpp */; };
+		3DD520381CB2740800319C33 /* NewLoopbackConnectionFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD520341CB2740800319C33 /* NewLoopbackConnectionFactory.cpp */; };
+		3DD520391CB2740800319C33 /* NewLoopbackConnectionSpawner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD520351CB2740800319C33 /* NewLoopbackConnectionSpawner.cpp */; };
+		3DD5203B1CB274F000319C33 /* Message.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DD5203A1CB274F000319C33 /* Message.cpp */; };
 		551B8C311CA54EA000428A69 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 551B8C301CA54EA000428A69 /* main.m */; };
 		551B8C341CA54EA000428A69 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 551B8C331CA54EA000428A69 /* AppDelegate.m */; };
 		551B8C371CA54EA000428A69 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 551B8C361CA54EA000428A69 /* ViewController.mm */; };
@@ -138,6 +143,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3DD520261CB272E700319C33 /* NewLoopbackConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewLoopbackConnection.h; sourceTree = "<group>"; };
+		3DD520271CB272E700319C33 /* NewLoopbackConnectionAcceptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewLoopbackConnectionAcceptor.h; sourceTree = "<group>"; };
+		3DD520281CB272E700319C33 /* NewLoopbackConnectionFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewLoopbackConnectionFactory.h; sourceTree = "<group>"; };
+		3DD520291CB272E700319C33 /* NewLoopbackConnectionSpawner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewLoopbackConnectionSpawner.h; sourceTree = "<group>"; };
+		3DD520321CB2740800319C33 /* NewLoopbackConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewLoopbackConnection.cpp; sourceTree = "<group>"; };
+		3DD520331CB2740800319C33 /* NewLoopbackConnectionAcceptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewLoopbackConnectionAcceptor.cpp; sourceTree = "<group>"; };
+		3DD520341CB2740800319C33 /* NewLoopbackConnectionFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewLoopbackConnectionFactory.cpp; sourceTree = "<group>"; };
+		3DD520351CB2740800319C33 /* NewLoopbackConnectionSpawner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewLoopbackConnectionSpawner.cpp; sourceTree = "<group>"; };
+		3DD5203A1CB274F000319C33 /* Message.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Message.cpp; sourceTree = "<group>"; };
+		3DD5203C1CB274FE00319C33 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		551B8C2C1CA54EA000428A69 /* frontend-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "frontend-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		551B8C301CA54EA000428A69 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		551B8C321CA54EA000428A69 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -570,6 +585,7 @@
 		551B8C841CA54FB600428A69 /* net */ = {
 			isa = PBXGroup;
 			children = (
+				3DD5203C1CB274FE00319C33 /* Message.h */,
 				551B8C851CA54FB600428A69 /* ConnectionAggregator.h */,
 				551B8C861CA54FB600428A69 /* ConnectionFactorySelector.h */,
 				551B8C871CA54FB600428A69 /* ConnectionID.h */,
@@ -602,6 +618,10 @@
 		551B8C941CA54FB600428A69 /* message */ = {
 			isa = PBXGroup;
 			children = (
+				3DD520261CB272E700319C33 /* NewLoopbackConnection.h */,
+				3DD520271CB272E700319C33 /* NewLoopbackConnectionAcceptor.h */,
+				3DD520281CB272E700319C33 /* NewLoopbackConnectionFactory.h */,
+				3DD520291CB272E700319C33 /* NewLoopbackConnectionSpawner.h */,
 				551B8C951CA54FB600428A69 /* FramingConnection.h */,
 				551B8C961CA54FB600428A69 /* FramingConnectionAcceptor.h */,
 				551B8C971CA54FB600428A69 /* FramingConnectionFactory.h */,
@@ -690,6 +710,7 @@
 		551B8CBD1CA54FB600428A69 /* net */ = {
 			isa = PBXGroup;
 			children = (
+				3DD5203A1CB274F000319C33 /* Message.cpp */,
 				551B8CBE1CA54FB600428A69 /* ConnectionAggregator.cpp */,
 				551B8CBF1CA54FB600428A69 /* ConnectionFactorySelector.cpp */,
 				551B8CC01CA54FB600428A69 /* Endpoint.cpp */,
@@ -713,6 +734,10 @@
 		551B8CC51CA54FB600428A69 /* message */ = {
 			isa = PBXGroup;
 			children = (
+				3DD520321CB2740800319C33 /* NewLoopbackConnection.cpp */,
+				3DD520331CB2740800319C33 /* NewLoopbackConnectionAcceptor.cpp */,
+				3DD520341CB2740800319C33 /* NewLoopbackConnectionFactory.cpp */,
+				3DD520351CB2740800319C33 /* NewLoopbackConnectionSpawner.cpp */,
 				551B8CC61CA54FB600428A69 /* FramingConnection.cpp */,
 				551B8CC71CA54FB600428A69 /* FramingConnectionAcceptor.cpp */,
 				551B8CC81CA54FB600428A69 /* FramingConnectionFactory.cpp */,
@@ -1253,7 +1278,9 @@
 				551B8D5C1CA5504800428A69 /* IIO.cpp in Sources */,
 				551B8DC41CA5507E00428A69 /* ResizeParams.cpp in Sources */,
 				551B8CF61CA54FB600428A69 /* TextLog.cpp in Sources */,
+				3DD5203B1CB274F000319C33 /* Message.cpp in Sources */,
 				551B8DB91CA5507E00428A69 /* DataType.cpp in Sources */,
+				3DD520361CB2740800319C33 /* NewLoopbackConnection.cpp in Sources */,
 				551B8CF11CA54FB600428A69 /* ConsoleLog.cpp in Sources */,
 				551B8D5A1CA5504800428A69 /* AbstractSession.cpp in Sources */,
 				551B8CF71CA54FB600428A69 /* ConnectionAggregator.cpp in Sources */,
@@ -1271,9 +1298,11 @@
 				551B8DC11CA5507E00428A69 /* QVisVolume.cpp in Sources */,
 				551B8CFF1CA54FB600428A69 /* FramingConnectionFactory.cpp in Sources */,
 				551B8DB61CA5507E00428A69 /* StringTools.cpp in Sources */,
+				3DD520381CB2740800319C33 /* NewLoopbackConnectionFactory.cpp in Sources */,
 				551B8DC91CA5507E00428A69 /* FileTools.cpp in Sources */,
 				551B8CE81CA54FB600428A69 /* ByteArray.cpp in Sources */,
 				551B8D521CA5504800428A69 /* Reply.cpp in Sources */,
+				3DD520371CB2740800319C33 /* NewLoopbackConnectionAcceptor.cpp in Sources */,
 				551B8D041CA54FB600428A69 /* IStreamConnection.cpp in Sources */,
 				551B8D091CA54FB600428A69 /* Sockets.cpp in Sources */,
 				551B8CFB1CA54FB600428A69 /* SizePrefixedProtocol.cpp in Sources */,
@@ -1328,6 +1357,7 @@
 				551B8D4D1CA5504800428A69 /* IOCommands.cpp in Sources */,
 				551B8DC71CA5507E00428A69 /* VolumeProcessor.cpp in Sources */,
 				551B8D051CA54FB600428A69 /* QueueConnection.cpp in Sources */,
+				3DD520391CB2740800319C33 /* NewLoopbackConnectionSpawner.cpp in Sources */,
 				551B8D071CA54FB600428A69 /* QueueConnectionFactory.cpp in Sources */,
 				551B8D601CA5504800428A69 /* ProxyUtils.cpp in Sources */,
 				551B8CF91CA54FB600428A69 /* Endpoint.cpp in Sources */,
