@@ -169,7 +169,7 @@
         TRI_Frontend.dataSelected = true;
         console.log("selected dataset " + name);
            
-           if(name == "MRI") {
+           if(name == "CT") {
                TRI_Frontend.datasetName = "UVFData@./WholeBody-SCANLINE-132-lz4.uvf";
            }
            
@@ -178,7 +178,7 @@
            }
            
             if(name == "fractal") {
-               TRI_Frontend.datasetName = "FractalData@3a";
+               TRI_Frontend.datasetName = "UVFData@./Mandelbulb1k-SCANLINE-132-lz4.uvf";
            }
            
                       
