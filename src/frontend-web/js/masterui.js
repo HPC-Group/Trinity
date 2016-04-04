@@ -20,6 +20,7 @@
         proposalRequestsNeeded: 0,
         proposals: [],
         password: '',
+        gridLeaper: false,
         canvas: undefined,
         img: undefined,
         ctx: undefined,
@@ -30,7 +31,7 @@
             $("#div_connect_success").hide();
             $("#div_connect_failure").hide();
             $("#io_ip").val("134.91.11.156");
-            $("#io_port").val("6679");
+            $("#io_port").val("6678");
             $("#proc_ip").val("134.91.11.156");
             $("#x_res").val(1024);
             $("#y_res").val(768);
@@ -72,6 +73,11 @@
             });
 
         },
+        
+        connectLeaper: function() {
+            TRI_Frontend.gridLeaper = true;
+            TRI_Frontend.connect();
+        },
 
         connect: function() {
             canvas.width = $("#x_res").val();
@@ -104,13 +110,16 @@
             console.log("Building applicatons list");
             
             var imgpath = "imagevis_body.png"; 
-            TRI_Frontend.addApplicationSlide("MRI", "UVF data", imgpath);
+            TRI_Frontend.addApplicationSlide("CT", "UVF data", imgpath);
             
             imgpath = "bonsai.png";
             TRI_Frontend.addApplicationSlide("bonsai", "tiny bonsai tree", imgpath);
             
                 imgpath = "imagevis_fractal_back.png";
             TRI_Frontend.addApplicationSlide("fractal", "analytical data", imgpath);
+            
+            imgpath = "meshkov.png";
+            TRI_Frontend.addApplicationSlide("instability simulation", "Richtmeyer-Meshkov", imgpath);
             
             $("#apps").show();
             window.scrollTo(0, document.body.scrollHeight);
@@ -169,7 +178,12 @@
            }
            
             if(name == "fractal") {
-               TRI_Frontend.datasetName = "FractalData@4b";
+               TRI_Frontend.datasetName = "FractalData@3a";
+           }
+           
+                      
+            if(name == "instability simulation") {
+               TRI_Frontend.datasetName = "UVFData@./RichtmyerMeshkov-SCANLINE-132-lz4.uvf";
            }
         //empty requirements, reset requirements row counter and disable start ui button
            /*
@@ -290,7 +304,7 @@
             },
 
             doSend: function(message) {
-                //console.log("Sent: " + message);
+                console.log("Sent from nodeconnector: " + message);
                 websocket.send(message);
             },
 
@@ -299,10 +313,17 @@
                 if (requestTypes.indexOf(requestType) != -1) {
                     // look like type: InitRenderer; rid: 1; sid: 0; params: { protocol: tcp.prefixed; rendertype: SimpleRenderer; fileid: FractalData@3; ioendpoint: tcp.prefixed:127.0.0.1:6678; streamingparams: { xres: 800; yres: 600 } }
                     console.log("Sending: " + requestType);
-                    TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "GridLeapingRenderer", "fileid": "'+ TRI_Frontend.datasetName + '", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                    var ioString = "" + $("#io_ip")[0].value + ":" + $("#io_port")[0].value;
+                    console.log("io endpoint: " + ioString);
                     
-                    console.log("init renderer for data: " + TRI_Frontend.datasetName);
-                                        //TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "'+ TRI_Frontend.datasetName + '", "ioendpoint": "tcp.prefixed:127.0.0.1:6678", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                    if(TRI_Frontend.gridLeaper) {
+                    TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "GridLeapingRenderer", "fileid": "'+ TRI_Frontend.datasetName + '", "ioendpoint": "tcp.prefixed:'  + ioString + '", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                    }
+                    else {
+                    TRI_Frontend.NodeConnector.doSend('{"type": "InitRenderer",  "req": { "rid": 1, "sid": 0, "params": { "protocol": "tcp.ws", "rendertype": "SimpleRenderer", "fileid": "'+ TRI_Frontend.datasetName + '", "ioendpoint": "tcp.prefixed:'  + ioString + '", "streamingparams": { "xres": ' + $("#x_res").val() + ', "yres": ' + $("#y_res").val() + ' } } } }');
+                    }
+                        
+                        TRI_Frontend.gridLeaper = false;
 
                 }
 
