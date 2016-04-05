@@ -360,14 +360,14 @@ break;''',
 
 "RequestFactoryEntry":
 r''' else if (type == {{CommandNameRequest}}::Ifc::Type) {
-	return reader->getSerializablePtr<{{CommandNameRequest}}>("req");
+	return reader.getSerializablePtr<{{CommandNameRequest}}>("req");
 }''',
 
 ## LOWER LEVEL REPLY IMPL VARIABLES
 
 "ReplyFactoryEntry":
 r''' else if (type == {{CommandNameReply}}::Ifc::Type) {
-	return reader->getSerializablePtr<{{CommandNameReply}}>("rep");
+	return reader.getSerializablePtr<{{CommandNameReply}}>("rep");
 }''',
 
 ## LOWER LEVEL COMMAND HANDLER IMPL VARIABLES

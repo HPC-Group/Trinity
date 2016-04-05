@@ -105,6 +105,8 @@ enum class VclType {
     ProceedRendering,
     GetDomainScale,
     GetFloatBrickLayout,
+    SetUserViewMatrix,
+    SetUserWorldMatrix,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -222,6 +224,8 @@ private:
         m_cmdMap.insert("ProceedRendering", VclType::ProceedRendering);
         m_cmdMap.insert("GetDomainScale", VclType::GetDomainScale);
         m_cmdMap.insert("GetFloatBrickLayout", VclType::GetFloatBrickLayout);
+        m_cmdMap.insert("SetUserViewMatrix", VclType::SetUserViewMatrix);
+        m_cmdMap.insert("SetUserWorldMatrix", VclType::SetUserWorldMatrix);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

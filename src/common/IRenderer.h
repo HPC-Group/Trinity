@@ -147,6 +147,9 @@ namespace trinity {
     // TRANSFORMATION
     virtual void setViewParameters(float angle, float znear, float zfar) = 0;
 
+    virtual void setUserViewMatrix(Core::Math::Mat4f m) = 0;
+    virtual void setUserWorldMatrix(Core::Math::Mat4f m) = 0;
+
     virtual void rotateCamera(Core::Math::Vec3f rotation) = 0;
     virtual void moveCamera(Core::Math::Vec3f direction) = 0;
     virtual void zoomCamera(float zoom) = 0;

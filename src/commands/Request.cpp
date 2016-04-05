@@ -113,6 +113,10 @@ std::unique_ptr<Request> Request::createRequestInternal(const ISerialReader& rea
         return reader.getSerializablePtr<IsIdleRequest>("req");
     } else if (type == ProceedRenderingRequest::Ifc::Type) {
         return reader.getSerializablePtr<ProceedRenderingRequest>("req");
+    } else if (type == SetUserViewMatrixRequest::Ifc::Type) {
+        return reader.getSerializablePtr<SetUserViewMatrixRequest>("req");
+    } else if (type == SetUserWorldMatrixRequest::Ifc::Type) {
+        return reader.getSerializablePtr<SetUserWorldMatrixRequest>("req");
     }
     /* AUTOGEN ProcRequestFactoryEntry */
 

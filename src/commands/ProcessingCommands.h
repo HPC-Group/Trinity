@@ -1633,5 +1633,55 @@ bool operator==(const ProceedRenderingCmd::ReplyParams& lhs, const ProceedRender
 std::ostream& operator<<(std::ostream& os, const ProceedRenderingCmd::ReplyParams& obj);
 using ProceedRenderingReply = ReplyTemplate<ProceedRenderingCmd>;
 
+struct SetUserViewMatrixCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Mat4f& m);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Mat4f getM() const;
+
+    private:
+        Core::Math::Mat4f m_m;
+    };
+};
+
+bool operator==(const SetUserViewMatrixCmd::RequestParams& lhs, const SetUserViewMatrixCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetUserViewMatrixCmd::RequestParams& obj);
+using SetUserViewMatrixRequest = RequestTemplate<SetUserViewMatrixCmd>;
+
+struct SetUserWorldMatrixCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(const Core::Math::Mat4f& m);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        Core::Math::Mat4f getM() const;
+
+    private:
+        Core::Math::Mat4f m_m;
+    };
+};
+
+bool operator==(const SetUserWorldMatrixCmd::RequestParams& lhs, const SetUserWorldMatrixCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const SetUserWorldMatrixCmd::RequestParams& obj);
+using SetUserWorldMatrixRequest = RequestTemplate<SetUserWorldMatrixCmd>;
+
 /* AUTOGEN CommandHeader */
 }

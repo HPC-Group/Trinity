@@ -84,6 +84,9 @@ namespace trinity {
     // TRANSFORMATION
     void setViewParameters(float angle, float znear, float zfar) override;
 
+    void setUserViewMatrix(Core::Math::Mat4f m) override;
+    void setUserWorldMatrix(Core::Math::Mat4f m) override;
+
     void rotateCamera(Core::Math::Vec3f rotation) override;
     void moveCamera(Core::Math::Vec3f direction) override;
     void zoomCamera(float zoom) override;

@@ -43,6 +43,8 @@ public:
   MOCK_METHOD1(enableClipping, void(bool));
   MOCK_METHOD2(setClipVolume, void(const Core::Math::Vec3f&, const Core::Math::Vec3f&));
   MOCK_METHOD3(setViewParameters, void(float, float, float));
+  MOCK_METHOD1(setUserViewMatrix, void(Core::Math::Mat4f m));
+  MOCK_METHOD1(setUserWorldMatrix, void(Core::Math::Mat4f m));
   MOCK_METHOD1(rotateCamera, void(Core::Math::Vec3f));
   MOCK_METHOD1(moveCamera, void(Core::Math::Vec3f));
   MOCK_METHOD1(zoomCamera, void(float));

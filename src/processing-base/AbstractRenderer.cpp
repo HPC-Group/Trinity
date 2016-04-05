@@ -369,6 +369,16 @@ void AbstractRenderer::setViewParameters(float angle, float znear, float zfar) {
   paint();
 }
 
+void AbstractRenderer::setUserViewMatrix(Core::Math::Mat4f m)
+{
+    // TODO: implement
+}
+
+void AbstractRenderer::setUserWorldMatrix(Core::Math::Mat4f m)
+{
+    // TODO: implement
+}
+
 void AbstractRenderer::recomputeModelViewMatrix() {
   m_view.BuildLookAt(m_eyePos, s_vAt, s_vUp);
   

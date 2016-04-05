@@ -342,4 +342,16 @@ bool RendererProxy::proceedRendering() {
     return reply->getParams().getResult();
 }
 
+void RendererProxy::setUserViewMatrix(Core::Math::Mat4f m) {
+    SetUserViewMatrixCmd::RequestParams params(m);
+    SetUserViewMatrixRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
+void RendererProxy::setUserWorldMatrix(Core::Math::Mat4f m) {
+    SetUserWorldMatrixCmd::RequestParams params(m);
+    SetUserWorldMatrixRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    m_inputChannel.sendRequest(request);
+}
+
 /* AUTOGEN RendererProxyImpl */

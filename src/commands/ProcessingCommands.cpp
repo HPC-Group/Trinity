@@ -1863,6 +1863,64 @@ std::string ProceedRenderingCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// SetUserViewMatrixCmd //////////////
+
+VclType SetUserViewMatrixCmd::Type = VclType::SetUserViewMatrix;
+
+SetUserViewMatrixCmd::RequestParams::RequestParams(const Core::Math::Mat4f& m)
+    : m_m(m) {}
+
+void SetUserViewMatrixCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("m", m_m);
+}
+
+void SetUserViewMatrixCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_m = reader.getSerializable<Core::Math::Mat4f>("m");
+}
+
+bool SetUserViewMatrixCmd::RequestParams::equals(const SetUserViewMatrixCmd::RequestParams& other) const {
+    return m_m == other.m_m;
+}
+
+Core::Math::Mat4f SetUserViewMatrixCmd::RequestParams::getM() const {
+    return m_m;
+}
+
+std::string SetUserViewMatrixCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "m: " << m_m;
+    return stream.str();
+}
+
+////////////// SetUserWorldMatrixCmd //////////////
+
+VclType SetUserWorldMatrixCmd::Type = VclType::SetUserWorldMatrix;
+
+SetUserWorldMatrixCmd::RequestParams::RequestParams(const Core::Math::Mat4f& m)
+    : m_m(m) {}
+
+void SetUserWorldMatrixCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendObject("m", m_m);
+}
+
+void SetUserWorldMatrixCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_m = reader.getSerializable<Core::Math::Mat4f>("m");
+}
+
+bool SetUserWorldMatrixCmd::RequestParams::equals(const SetUserWorldMatrixCmd::RequestParams& other) const {
+    return m_m == other.m_m;
+}
+
+Core::Math::Mat4f SetUserWorldMatrixCmd::RequestParams::getM() const {
+    return m_m;
+}
+
+std::string SetUserWorldMatrixCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "m: " << m_m;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -2349,6 +2407,20 @@ bool operator==(const ProceedRenderingCmd::ReplyParams& lhs, const ProceedRender
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const ProceedRenderingCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetUserViewMatrixCmd::RequestParams& lhs, const SetUserViewMatrixCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetUserViewMatrixCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const SetUserWorldMatrixCmd::RequestParams& lhs, const SetUserWorldMatrixCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const SetUserWorldMatrixCmd::RequestParams& obj) {
     return os << obj.toString();
 }
 

@@ -70,6 +70,8 @@ public:
     void stopRendering() override;
     bool isIdle() override;
     bool proceedRendering() override;
+    void setUserViewMatrix(Core::Math::Mat4f m) override;
+    void setUserWorldMatrix(Core::Math::Mat4f m) override;
     /* AUTOGEN RendererInterfaceOverride */
 
 private:

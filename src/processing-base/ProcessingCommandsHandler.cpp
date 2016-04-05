@@ -20,7 +20,7 @@ std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
     // create an IO node proxy and pass it to the renderer
     mocca::net::Endpoint ioEndpoint = m_request.getParams().getIoEndpoint();
     IONodeProxy ioNodeProxy(ioEndpoint);
-    
+
     bool useLoopback = m_node->executionMode() == AbstractNode::ExecutionMode::Combined && m_node->isLocalMachine(ioEndpoint.machine);
     auto ioSessionProxy = ioNodeProxy.initIO(m_request.getParams().getFileId(), useLoopback);
 
@@ -486,6 +486,24 @@ ProceedRenderingHdl::ProceedRenderingHdl(const ProceedRenderingRequest& request,
 std::unique_ptr<Reply> ProceedRenderingHdl::execute() {
     ProceedRenderingCmd::ReplyParams params(m_session->getRenderer().proceedRendering());
     return mocca::make_unique<ProceedRenderingReply>(params, m_request.getRid(), m_session->getSid());
+}
+
+SetUserViewMatrixHdl::SetUserViewMatrixHdl(const SetUserViewMatrixRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetUserViewMatrixHdl::execute() {
+    m_session->getRenderer().setUserViewMatrix(m_request.getParams().getM());
+    return nullptr;
+}
+
+SetUserWorldMatrixHdl::SetUserWorldMatrixHdl(const SetUserWorldMatrixRequest& request, RenderSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> SetUserWorldMatrixHdl::execute() {
+    m_session->getRenderer().setUserWorldMatrix(m_request.getParams().getM());
+    return nullptr;
 }
 
 /* AUTOGEN ProcCommandHandlerImpl */

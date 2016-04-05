@@ -179,6 +179,12 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::ProceedRendering:
         return mocca::make_unique<ProceedRenderingHdl>(static_cast<const ProceedRenderingRequest&>(request), session);
         break;
+    case VclType::SetUserViewMatrix:
+        return mocca::make_unique<SetUserViewMatrixHdl>(static_cast<const SetUserViewMatrixRequest&>(request), session);
+        break;
+    case VclType::SetUserWorldMatrix:
+        return mocca::make_unique<SetUserWorldMatrixHdl>(static_cast<const SetUserWorldMatrixRequest&>(request), session);
+        break;
     /* AUTOGEN ProcCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

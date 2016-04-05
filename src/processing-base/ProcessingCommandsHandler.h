@@ -561,5 +561,27 @@ private:
     RenderSession* m_session;
 };
 
+class SetUserViewMatrixHdl : public ICommandHandler {
+public:
+    SetUserViewMatrixHdl(const SetUserViewMatrixRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetUserViewMatrixRequest m_request;
+    RenderSession* m_session;
+};
+
+class SetUserWorldMatrixHdl : public ICommandHandler {
+public:
+    SetUserWorldMatrixHdl(const SetUserWorldMatrixRequest& request, RenderSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    SetUserWorldMatrixRequest m_request;
+    RenderSession* m_session;
+};
+
 /* AUTOGEN ProcCommandHandlerHeader */
 }
