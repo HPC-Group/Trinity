@@ -975,12 +975,12 @@ GetBrickCmd::ReplyParams::ReplyParams(std::shared_ptr<const std::vector<uint8_t>
 
 void GetBrickCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     writer.appendBool("success", m_success);
-    writer.setBinary(m_brick);
+    writer.appendBinary(m_brick);
 }
 
 void GetBrickCmd::ReplyParams::deserialize(const ISerialReader& reader) {
     m_success = reader.getBool("success");
-    m_brick = reader.getBinary();
+    m_brick = reader.getBinary()[0];
 }
 
 bool GetBrickCmd::ReplyParams::equals(const GetBrickCmd::ReplyParams& other) const {

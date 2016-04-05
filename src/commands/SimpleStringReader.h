@@ -30,7 +30,7 @@ public:
     std::vector<bool> getBoolVec(const std::string& key) const override;
     std::vector<std::string> getStringVec(const std::string& key) const override;
 
-    std::shared_ptr<const std::vector<uint8_t>> getBinary() const override;
+    SharedDataVec getBinary() const override;
 
 private:
     void getSerializableImpl(const std::string& key, ISerializable& obj) const override;

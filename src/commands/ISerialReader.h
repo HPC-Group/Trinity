@@ -50,7 +50,8 @@ public:
     virtual std::vector<bool> getBoolVec(const std::string& key) const = 0;
     virtual std::vector<std::string> getStringVec(const std::string& key) const = 0;
 
-    virtual std::shared_ptr<const std::vector<uint8_t>> getBinary() const = 0;
+    using SharedDataVec = std::vector<std::shared_ptr<const std::vector<uint8_t>>>;
+    virtual SharedDataVec getBinary() const = 0;
 
 private:
     virtual void getSerializableImpl(const std::string& key, ISerializable& prototype) const = 0;

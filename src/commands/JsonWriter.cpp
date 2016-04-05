@@ -5,9 +5,9 @@
 using namespace trinity;
 
 JsonWriter::JsonWriter()
-    : m_binary(std::make_shared<std::shared_ptr<const std::vector<uint8_t>>>()) {}
+    : m_binary(std::make_shared<SharedDataVec>()) {}
 
-JsonWriter::JsonWriter(std::shared_ptr<std::shared_ptr<const std::vector<uint8_t>>> binary)
+JsonWriter::JsonWriter(std::shared_ptr<SharedDataVec> binary)
     : m_binary(binary) {}
 
 void JsonWriter::appendFloat(const std::string& key, float value) {
@@ -103,23 +103,32 @@ void JsonWriter::appendObjectVec(const std::string& key, const std::vector<ISeri
     }
 }
 
-void JsonWriter::setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) {
-    *m_binary = binary;
+void JsonWriter::appendBinary(std::shared_ptr<const std::vector<uint8_t>> binary) {
+    m_binary->push_back(binary);
 }
 
 mocca::ByteArray JsonWriter::write() const {
     JsonCpp::FastWriter writer;
     std::string str = writer.write(m_root);
     int resultSize = str.size();
-    if ((*m_binary) != nullptr && !(*m_binary)->empty()) {
-        resultSize += 4 + (*m_binary)->size();
+    if (!m_binary->empty()) {
+        resultSize += 4; // delimiter size
+        resultSize += sizeof(uint32_t); // number of binary parts
+        for (const auto& sharedData : *m_binary) {
+            resultSize += sizeof(uint32_t);
+            resultSize += sharedData->size();
+        }
     }
     mocca::ByteArray result(resultSize);
     result.append(str.data(), str.size());
-    if ((*m_binary) != nullptr && !(*m_binary)->empty()) {
+    if (!m_binary->empty()) {
         // delimiter sequence; octets are invalid in a utf-8 string
         result << '\xc0' << '\xc1' << '\xf5' << '\xff';
-        result.append((*m_binary)->data(), (*m_binary)->size());
+        result << static_cast<uint32_t>(m_binary->size());
+        for (const auto& sharedData : *m_binary) {
+            result << static_cast<uint32_t>(sharedData->size());
+            result.append(sharedData->data(), sharedData->size());
+        }
     }
     return result;
 }
@@ -132,8 +141,8 @@ mocca::net::Message JsonWriter::writeMessage() const {
     // FIXME: this copy might be avoided by using JsonCpp::StreamWriter and streaming the json directly into the vector
     std::copy(begin(str), end(str), begin(*jsonData));
     mocca::net::Message headPart(jsonData);
-    if ((*m_binary) != nullptr && !(*m_binary)->empty()) {
-        headPart.append(mocca::make_unique<mocca::net::Message>(*m_binary));
+    for (const auto& sharedData : *m_binary) {
+        headPart.append(mocca::make_unique<mocca::net::Message>(sharedData));
     }
     return headPart;
 }

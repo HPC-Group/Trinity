@@ -33,7 +33,7 @@ public:
     virtual void appendStringVec(const std::string& key, const std::vector<std::string>& vec) = 0;
     virtual void appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) = 0;
 
-    virtual void setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) = 0;
+    virtual void appendBinary(std::shared_ptr<const std::vector<uint8_t>> binary) = 0;
 
     virtual mocca::ByteArray write() const = 0;
     virtual mocca::net::Message writeMessage() const = 0;

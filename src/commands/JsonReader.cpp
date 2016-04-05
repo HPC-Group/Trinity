@@ -10,8 +10,7 @@
 
 using namespace trinity;
 
-JsonReader::JsonReader(const std::string& json)
-    : m_binary(nullptr) {
+JsonReader::JsonReader(const std::string& json) {
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {
         throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
@@ -20,16 +19,17 @@ JsonReader::JsonReader(const std::string& json)
 
 JsonReader::JsonReader(const mocca::net::Message& message) {
     std::string json(reinterpret_cast<const char*>(message.data()->data()), message.data()->size());
-    m_binary = message.next() ? message.next()->data() : nullptr;
+    auto next = &message;
+    while (next = next->next()) {
+        m_binary.push_back(next->data());
+    }
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {
         throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
     }
 }
 
-JsonReader::JsonReader(mocca::ByteArray& data)
-    : m_binary(std::make_shared<std::vector<uint8_t>>()) {
-
+JsonReader::JsonReader(mocca::ByteArray& data) {
     // determine position of delimiter
     const std::string delimiter{'\xc0', '\xc1', '\xf5', '\xff'}; // octets are invalid in a utf-8 string
     auto dataBegin = reinterpret_cast<char*>(data.data());
@@ -51,15 +51,24 @@ JsonReader::JsonReader(mocca::ByteArray& data)
 
     // read optional binary data
     if (delimitPos != dataEnd) {
-        uint32_t binarySize = data.size() - jsonSize - delimiter.size();
-        std::shared_ptr<std::vector<uint8_t>> nc = std::const_pointer_cast<std::vector<uint8_t>>(m_binary);
-        nc->resize(binarySize);
-        // don't use std::copy here, it's less performant
-        std::memcpy(&(*nc)[0], dataBegin + jsonSize + delimiter.size(), binarySize);
+        uint32_t pos = jsonSize + 4;
+        uint32_t numParts = mocca::readAt<uint32_t>(data, pos);
+        pos += sizeof(uint32_t);
+        m_binary.resize(numParts);
+        for (uint32_t i = 0; i < numParts; ++i) {
+            uint32_t binarySize = mocca::readAt<uint32_t>(data, pos);
+            pos += sizeof(uint32_t);
+            m_binary[i] = std::make_shared<std::vector<uint8_t>>();
+            std::shared_ptr<std::vector<uint8_t>> nc = std::const_pointer_cast<std::vector<uint8_t>>(m_binary[i]);
+            nc->resize(binarySize); // FIXME: use preallocated memory
+            // don't use std::copy here, it's less performant
+            std::memcpy(&(*nc)[0], data.data() + pos, binarySize);
+            pos += binarySize;
+        }
     }
 }
 
-JsonReader::JsonReader(const JsonCpp::Value& root, std::shared_ptr<const std::vector<uint8_t>> binary)
+JsonReader::JsonReader(const JsonCpp::Value& root, SharedDataVec binary)
     : m_root(root)
     , m_binary(binary) {}
 
@@ -232,6 +241,6 @@ std::vector<std::unique_ptr<ISerializable>> JsonReader::getSerializableVecImpl(c
     return result;
 }
 
-std::shared_ptr<const std::vector<uint8_t>> JsonReader::getBinary() const {
+JsonReader::SharedDataVec JsonReader::getBinary() const {
     return m_binary;
 }

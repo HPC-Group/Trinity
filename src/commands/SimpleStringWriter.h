@@ -27,7 +27,7 @@ public:
     void appendStringVec(const std::string& key, const std::vector<std::string>& vec) override;
     void appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) override;
 
-    virtual void setBinary(std::shared_ptr<const std::vector<uint8_t>> binary) override;
+    virtual void appendBinary(std::shared_ptr<const std::vector<uint8_t>> binary) override;
 
     mocca::ByteArray write() const override;
     mocca::net::Message writeMessage() const override;

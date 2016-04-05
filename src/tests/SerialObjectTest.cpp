@@ -172,11 +172,33 @@ TYPED_TEST(SerialObjectTest, BinaryData) {
     writer->appendString("string2", "World");
     auto binary = std::make_shared<std::vector<uint8_t>>();
     *binary = { 0x11, 0x22, 0x33 };
-    writer->setBinary(binary);
+    writer->appendBinary(binary);
 
     auto serialized = writer->write();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ("Hello", reader->getString("string1"));
     ASSERT_EQ("World", reader->getString("string2"));
-    ASSERT_EQ(*binary, *reader->getBinary());
+    ASSERT_EQ(*binary, *reader->getBinary()[0]);
+}
+
+TYPED_TEST(SerialObjectTest, BinaryDataMultiple) {
+    TypeParam factory;
+    auto writer = factory.createWriter();
+    writer->appendString("string1", "Hello");
+    writer->appendString("string2", "World");
+
+    auto binary1 = std::make_shared<std::vector<uint8_t>>();
+    *binary1 = { 0x11, 0x22, 0x33 };
+    auto binary2 = std::make_shared<std::vector<uint8_t>>();
+    *binary2 = { 0xAA, 0xBB, 0xCC, 0xDD };
+    writer->appendBinary(binary1);
+    writer->appendBinary(binary2);
+
+    auto serialized = writer->write();
+    auto reader = factory.createReader(serialized);
+    ASSERT_EQ("Hello", reader->getString("string1"));
+    ASSERT_EQ("World", reader->getString("string2"));
+    ASSERT_EQ(2, reader->getBinary().size());
+    ASSERT_EQ(*binary1, *reader->getBinary()[0]);
+    ASSERT_EQ(*binary2, *reader->getBinary()[1]);
 }
