@@ -1309,12 +1309,20 @@ struct GetBrickMaxMinCmd {
     class RequestParams : public SerializableTemplate<RequestParams> {
     public:
         RequestParams() = default;
+        RequestParams(uint64_t modality, uint64_t timestep);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
+        uint64_t getModality() const;
+        uint64_t getTimestep() const;
+
         std::string toString() const;
         bool equals(const RequestParams& other) const;
+
+    private:
+        uint64_t m_modality;
+        uint64_t m_timestep;
     };
 
     class ReplyParams : public SerializableTemplate<ReplyParams> {

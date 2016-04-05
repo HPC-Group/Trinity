@@ -311,7 +311,9 @@ GetBrickMaxMinHdl::GetBrickMaxMinHdl(const GetBrickMaxMinRequest& request, IOSes
     , m_session(session) {}
 
 std::unique_ptr<Reply> GetBrickMaxMinHdl::execute() {
-    GetBrickMaxMinCmd::ReplyParams params(m_session->getIO().getBrickMaxMin());
+    auto modality = m_request.getParams().getModality();
+    auto timestep = m_request.getParams().getTimestep();
+    GetBrickMaxMinCmd::ReplyParams params(m_session->getIO().getBrickMaxMin(modality, timestep));
     return mocca::make_unique<GetBrickMaxMinReply>(params, m_request.getRid(), m_session->getSid());
 }
 

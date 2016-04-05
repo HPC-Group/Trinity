@@ -133,11 +133,7 @@ Vec3f UVFIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
   return floatBrickLayout;
 }
 
-std::vector<MinMaxBlock> UVFIO::getBrickMaxMin() const {
-  // TODO: fixme: add modality and timestep as a parameters for getBrickMaxMin
-  const uint64_t modality = 0;
-  const uint64_t timestep = 0;
-  
+std::vector<MinMaxBlock> UVFIO::getBrickMaxMin(uint64_t modality, uint64_t timestep) const {
   uint64_t iTotalBrickCount = getTotalBrickCount(modality);
   std::vector<MinMaxBlock> result(iTotalBrickCount);
   

@@ -1508,29 +1508,47 @@ std::string GetFloatBrickLayoutCmd::ReplyParams::toString() const {
 
 VclType GetBrickMaxMinCmd::Type = VclType::GetBrickMaxMin;
 
-void GetBrickMaxMinCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+GetBrickMaxMinCmd::RequestParams::RequestParams(uint64_t modality, uint64_t timestep)
+    : m_modality(modality), m_timestep(timestep) {}
 
-void GetBrickMaxMinCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+void GetBrickMaxMinCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+    writer.appendInt("timestep", m_timestep);
+}
+
+void GetBrickMaxMinCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+    m_timestep = reader.getUInt64("timestep");
+}
 
 bool GetBrickMaxMinCmd::RequestParams::equals(const GetBrickMaxMinCmd::RequestParams& other) const {
-    return true;
+    return m_modality == other.m_modality && m_timestep == other.m_timestep;
 }
 
 std::string GetBrickMaxMinCmd::RequestParams::toString() const {
     std::stringstream stream;
-
+    stream << "modality: " << m_modality << "; timestep: " << m_timestep;
     return stream.str();
 }
+
+uint64_t GetBrickMaxMinCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+uint64_t GetBrickMaxMinCmd::RequestParams::getTimestep() const {
+    return m_timestep;
+}
+
 
 GetBrickMaxMinCmd::ReplyParams::ReplyParams(const std::vector<MinMaxBlock>& result)
     : m_result(result) {}
 
 void GetBrickMaxMinCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    // TODO: this is getting to complicated, you need to do this yourself... (result)
+    writer.appendObjectVec("result", mocca::transformToBasePtrVec<ISerializable>(begin(m_result), end(m_result)));
 }
 
 void GetBrickMaxMinCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    // TODO: this is getting to complicated, you need to do this yourself... (result)
+    m_result = reader.getSerializableVec<MinMaxBlock>("result");
 }
 
 bool GetBrickMaxMinCmd::ReplyParams::equals(const GetBrickMaxMinCmd::ReplyParams& other) const {
