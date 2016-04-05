@@ -213,9 +213,26 @@ Vec3f FractalIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
   }
 }
 
-std::vector<MinMaxBlock> FractalIO::getBrickMaxMin() const {
-    // TODO: implement
-    return std::vector<MinMaxBlock>();
+std::vector<MinMaxBlock> FractalIO::getBrickMaxMin() const {  
+  // TODO: fixme: add modality and timestep as a parameters for getBrickMaxMin
+  const uint64_t modality = 0;
+  const uint64_t timestep = 0;
+  
+  uint64_t iTotalBrickCount = getTotalBrickCount(modality);
+  std::vector<MinMaxBlock> result(iTotalBrickCount);
+  
+  uint64_t levelCount = getLODLevelCount(modality);
+  
+  size_t i = 0;
+  for (uint32_t lod = 0; lod < levelCount; lod++) {
+    uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
+    for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
+      BrickKey const key(modality, timestep, lod, indexInLodCount);
+      result[i++] = maxMinForKey(key);
+    }
+  }
+  
+  return result;
 }
 
 Vec3ui FractalIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
