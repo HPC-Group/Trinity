@@ -17,6 +17,8 @@ public:
     IListData& getListDataForID(const std::string& fileID) const;
     void addSession(std::unique_ptr<IOSession> session);
 
+    std::vector<std::string> getRoots() const;
+
 private:
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;
     void handleSessionErrors() override;

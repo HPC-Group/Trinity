@@ -37,3 +37,10 @@ std::vector<IOData> IONodeProxy::listFiles(const std::string& dirID) const {
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getIOData();
 }
+
+std::vector<std::string> IONodeProxy::getRoots() const {
+    GetRootsCmd::RequestParams params;
+    GetRootsRequest request(params, IDGenerator::nextID(), 0);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}

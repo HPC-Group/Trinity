@@ -14,6 +14,7 @@ public:
 
     std::unique_ptr<IOSessionProxy> initIO(const std::string& fileID, bool useLoopback);
     std::vector<IOData> listFiles(const std::string& dirID) const;
+    std::vector<std::string> getRoots() const;
 
 private:
     CommandInputChannel m_inputChannel;

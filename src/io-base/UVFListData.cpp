@@ -97,4 +97,6 @@ std::unique_ptr<trinity::IIO> UVFListData::createIO(const std::string& fileId) c
   return std::unique_ptr<UVFIO>(new UVFIO(fileId, *this));
 }
 
-
+std::string UVFListData::getRoot() const {
+    return "UVFData";
+}

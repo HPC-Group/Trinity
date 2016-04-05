@@ -42,6 +42,14 @@ IListData& IONode::getListDataForID(const std::string& fileID) const {
     throw TrinityError("No matching data lister for file ID " + fileID, __FILE__, __LINE__);
 }
 
+std::vector<std::string> IONode::getRoots() const {
+    std::vector<std::string> roots;
+    for (const auto& lister : m_listData) {
+        roots.push_back(lister->getRoot());
+    }
+    return roots;
+}
+
 void IONode::handleSessionErrors() {
     auto it = begin(m_sessions);
     while (it != end(m_sessions)) {

@@ -21,6 +21,9 @@ std::unique_ptr<ICommandHandler> IONodeCommandFactory::createHandler(const Reque
     case VclType::ListFiles:
         return mocca::make_unique<ListFilesHdl>(static_cast<const ListFilesRequest&>(request), node);
         break;
+    case VclType::GetRoots:
+        return mocca::make_unique<GetRootsHdl>(static_cast<const GetRootsRequest&>(request), node);
+        break;
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);
     }

@@ -317,4 +317,13 @@ std::unique_ptr<Reply> GetBricksHdl::execute() {
     return mocca::make_unique<GetBricksReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetRootsHdl::GetRootsHdl(const GetRootsRequest& request, IONode* node)
+    : m_request(request)
+    , m_node(node) {}
+
+std::unique_ptr<Reply> GetRootsHdl::execute() {
+    GetRootsCmd::ReplyParams params(m_node->getRoots());
+    return mocca::make_unique<GetRootsReply>(params, m_request.getRid(), m_request.getSid());
+}
+
 /* AUTOGEN IOCommandHandlerImpl */

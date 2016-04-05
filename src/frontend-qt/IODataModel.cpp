@@ -2,13 +2,13 @@
 
 IODataModel::IODataModel(const trinity::IONodeProxy& ioNode, QObject* parent)
     : m_ioNode(ioNode) {
-    QStandardItem* root = invisibleRootItem();
-    QStandardItem* fractalItem = new QStandardItem(QString("FractalData"));
-    QStandardItem* uvfItem = new QStandardItem(QString("UVFData"));
-    root->appendRow(fractalItem);
-    root->appendRow(uvfItem);
-    createRecursive("FractalData", fractalItem);
-    createRecursive("UVFData", uvfItem);
+    QStandardItem* rootItem = invisibleRootItem();
+    auto rootNames = ioNode.getRoots();
+    for (const auto& rootName : rootNames) {
+        QStandardItem* item = new QStandardItem(QString::fromStdString(rootName));
+        rootItem->appendRow(item);
+        createRecursive(rootName, item);
+    }
 }
 
 void IODataModel::createRecursive(const std::string& dataID, QStandardItem* item) {
@@ -21,5 +21,7 @@ void IODataModel::createRecursive(const std::string& dataID, QStandardItem* item
             item->appendRow(newItem);
             createRecursive(ioItem.getFileId(), newItem);
         }
-    } catch (const trinity::TrinityError&) {} // fixme: an empty list would be nicer than an exception
+    }
+    catch (const trinity::TrinityError&) {
+    } // fixme: an empty list would be nicer than an exception
 }

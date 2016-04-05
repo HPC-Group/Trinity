@@ -144,3 +144,6 @@ std::unique_ptr<trinity::IIO> FractalListData::createIO(const std::string& fileI
   return std::unique_ptr<FractalIO>(new FractalIO(fileId, *this));
 }
 
+std::string FractalListData::getRoot() const {
+    return "FractalData";
+}

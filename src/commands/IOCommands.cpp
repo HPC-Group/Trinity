@@ -1577,7 +1577,8 @@ std::string GetBricksCmd::RequestParams::toString() const {
 }
 
 GetBricksCmd::ReplyParams::ReplyParams(std::vector<std::shared_ptr<const std::vector<uint8_t>>> result, bool success)
-    : m_result(result), m_success(success) {}
+    : m_result(result)
+    , m_success(success) {}
 
 void GetBricksCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     for (const auto& brick : m_result) {
@@ -1595,7 +1596,7 @@ void GetBricksCmd::ReplyParams::deserialize(const ISerialReader& reader) {
 }
 
 bool GetBricksCmd::ReplyParams::equals(const GetBricksCmd::ReplyParams& other) const {
-    return /*m_result == other.m_result && */m_success == other.m_success;
+    return /*m_result == other.m_result && */ m_success == other.m_success;
 }
 
 std::vector<std::shared_ptr<const std::vector<uint8_t>>> GetBricksCmd::ReplyParams::getResult() const {
@@ -1610,6 +1611,48 @@ std::string GetBricksCmd::ReplyParams::toString() const {
 
 bool GetBricksCmd::ReplyParams::getSuccess() const {
     return m_success;
+}
+
+////////////// GetRootsCmd //////////////
+
+VclType GetRootsCmd::Type = VclType::GetRoots;
+
+void GetRootsCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetRootsCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetRootsCmd::RequestParams::equals(const GetRootsCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetRootsCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    return stream.str();
+}
+
+GetRootsCmd::ReplyParams::ReplyParams(const std::vector<std::string>& result)
+    : m_result(result) {}
+
+void GetRootsCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendStringVec("result", m_result);
+}
+
+void GetRootsCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getStringVec("result");
+}
+
+bool GetRootsCmd::ReplyParams::equals(const GetRootsCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+std::vector<std::string> GetRootsCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetRootsCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
 }
 
 /* AUTOGEN CommandImpl */
@@ -2027,6 +2070,19 @@ bool operator==(const GetBricksCmd::ReplyParams& lhs, const GetBricksCmd::ReplyP
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetBricksCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetRootsCmd::RequestParams& lhs, const GetRootsCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetRootsCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetRootsCmd::ReplyParams& lhs, const GetRootsCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetRootsCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

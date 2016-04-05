@@ -348,5 +348,16 @@ private:
     IOSession* m_session;
 };
 
+class GetRootsHdl : public ICommandHandler {
+public:
+    GetRootsHdl(const GetRootsRequest& request, IONode* node);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetRootsRequest m_request;
+    IONode* m_node;
+};
+
 /* AUTOGEN IOCommandHandlerHeader */
 }

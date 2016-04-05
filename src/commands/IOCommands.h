@@ -1,10 +1,10 @@
 #pragma once
 
-#include "common/IIO.h"
 #include "commands/IOData.h"
 #include "commands/ISerializable.h"
 #include "commands/Reply.h"
 #include "commands/Request.h"
+#include "common/IIO.h"
 
 #include "silverbullet/dataio/base/Brick.h"
 #include "silverbullet/math/MinMaxBlock.h"
@@ -1390,6 +1390,46 @@ using GetBricksRequest = RequestTemplate<GetBricksCmd>;
 bool operator==(const GetBricksCmd::ReplyParams& lhs, const GetBricksCmd::ReplyParams& rhs);
 std::ostream& operator<<(std::ostream& os, const GetBricksCmd::ReplyParams& obj);
 using GetBricksReply = ReplyTemplate<GetBricksCmd>;
+
+struct GetRootsCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const std::vector<std::string>& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        std::vector<std::string> getResult() const;
+
+    private:
+        std::vector<std::string> m_result;
+    };
+};
+
+bool operator==(const GetRootsCmd::RequestParams& lhs, const GetRootsCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetRootsCmd::RequestParams& obj);
+using GetRootsRequest = RequestTemplate<GetRootsCmd>;
+
+bool operator==(const GetRootsCmd::ReplyParams& lhs, const GetRootsCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetRootsCmd::ReplyParams& obj);
+using GetRootsReply = ReplyTemplate<GetRootsCmd>;
 
 /* AUTOGEN CommandHeader */
 }
