@@ -1496,7 +1496,7 @@ bool operator==(const ResetCameraCmd::RequestParams& lhs, const ResetCameraCmd::
 std::ostream& operator<<(std::ostream& os, const ResetCameraCmd::RequestParams& obj);
 using ResetCameraRequest = RequestTemplate<ResetCameraCmd>;
 
-struct ResetObjectCmd {
+struct ResetSceneCmd {
     static VclType Type;
 
     class RequestParams : public SerializableTemplate<RequestParams> {
@@ -1511,9 +1511,9 @@ struct ResetObjectCmd {
     };
 };
 
-bool operator==(const ResetObjectCmd::RequestParams& lhs, const ResetObjectCmd::RequestParams& rhs);
-std::ostream& operator<<(std::ostream& os, const ResetObjectCmd::RequestParams& obj);
-using ResetObjectRequest = RequestTemplate<ResetObjectCmd>;
+bool operator==(const ResetSceneCmd::RequestParams& lhs, const ResetSceneCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const ResetSceneCmd::RequestParams& obj);
+using ResetSceneRequest = RequestTemplate<ResetSceneCmd>;
 
 struct StartRenderingCmd {
     static VclType Type;

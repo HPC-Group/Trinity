@@ -159,7 +159,7 @@ namespace trinity {
     virtual void rescaleScene(float scale) = 0;
 
     virtual void resetCamera() = 0;
-    virtual void resetObject() = 0;
+    virtual void resetScene() = 0;
 
     virtual void startRendering() = 0;
     virtual bool proceedRendering() = 0;

@@ -164,8 +164,8 @@ std::unique_ptr<ICommandHandler> ProcessingSessionCommandFactory::createHandler(
     case VclType::ResetCamera:
         return mocca::make_unique<ResetCameraHdl>(static_cast<const ResetCameraRequest&>(request), session);
         break;
-    case VclType::ResetObject:
-        return mocca::make_unique<ResetObjectHdl>(static_cast<const ResetObjectRequest&>(request), session);
+    case VclType::ResetScene:
+        return mocca::make_unique<ResetSceneHdl>(static_cast<const ResetSceneRequest&>(request), session);
         break;
     case VclType::StartRendering:
         return mocca::make_unique<StartRenderingHdl>(static_cast<const StartRenderingRequest&>(request), session);

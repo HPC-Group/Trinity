@@ -103,8 +103,8 @@ std::unique_ptr<Request> Request::createRequestInternal(const ISerialReader& rea
         return reader.getSerializablePtr<RescaleSceneRequest>("req");
     } else if (type == ResetCameraRequest::Ifc::Type) {
         return reader.getSerializablePtr<ResetCameraRequest>("req");
-    } else if (type == ResetObjectRequest::Ifc::Type) {
-        return reader.getSerializablePtr<ResetObjectRequest>("req");
+    } else if (type == ResetSceneRequest::Ifc::Type) {
+        return reader.getSerializablePtr<ResetSceneRequest>("req");
     } else if (type == StartRenderingRequest::Ifc::Type) {
         return reader.getSerializablePtr<StartRenderingRequest>("req");
     } else if (type == StopRenderingRequest::Ifc::Type) {

@@ -52,7 +52,7 @@ public:
   MOCK_METHOD1(moveScene, void(Core::Math::Vec3f));
   MOCK_METHOD1(rescaleScene, void(float));
   MOCK_METHOD0(resetCamera, void());
-  MOCK_METHOD0(resetObject, void());
+  MOCK_METHOD0(resetScene, void());
   MOCK_METHOD0(startRendering, void());
   MOCK_METHOD0(stopRendering, void());
   MOCK_METHOD0(isIdle, bool());

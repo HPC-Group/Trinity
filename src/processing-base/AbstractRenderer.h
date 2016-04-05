@@ -96,7 +96,7 @@ namespace trinity {
     void rescaleScene(float scale) override;
 
     void resetCamera() override;
-    void resetObject() override;
+    void resetScene() override;
 
     void startRendering() override;
     void stopRendering() override;

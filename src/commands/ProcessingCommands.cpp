@@ -1728,19 +1728,19 @@ std::string ResetCameraCmd::RequestParams::toString() const {
     return stream.str();
 }
 
-////////////// ResetObjectCmd //////////////
+////////////// ResetSceneCmd //////////////
 
-VclType ResetObjectCmd::Type = VclType::ResetObject;
+VclType ResetSceneCmd::Type = VclType::ResetScene;
 
-void ResetObjectCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+void ResetSceneCmd::RequestParams::serialize(ISerialWriter& writer) const {}
 
-void ResetObjectCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+void ResetSceneCmd::RequestParams::deserialize(const ISerialReader& reader) {}
 
-bool ResetObjectCmd::RequestParams::equals(const ResetObjectCmd::RequestParams& other) const {
+bool ResetSceneCmd::RequestParams::equals(const ResetSceneCmd::RequestParams& other) const {
     return true;
 }
 
-std::string ResetObjectCmd::RequestParams::toString() const {
+std::string ResetSceneCmd::RequestParams::toString() const {
     std::stringstream stream;
     return stream.str();
 }
@@ -2363,10 +2363,10 @@ std::ostream& operator<<(std::ostream& os, const ResetCameraCmd::RequestParams& 
     return os << obj.toString();
 }
 
-bool operator==(const ResetObjectCmd::RequestParams& lhs, const ResetObjectCmd::RequestParams& rhs) {
+bool operator==(const ResetSceneCmd::RequestParams& lhs, const ResetSceneCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
 }
-std::ostream& operator<<(std::ostream& os, const ResetObjectCmd::RequestParams& obj) {
+std::ostream& operator<<(std::ostream& os, const ResetSceneCmd::RequestParams& obj) {
     return os << obj.toString();
 }
 

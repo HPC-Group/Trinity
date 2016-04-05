@@ -119,7 +119,7 @@ void AbstractRenderer::initValueDefaults(){
   calculateDerived();
 
   resetCamera();
-  resetObject();
+  resetScene();
   recomputeProjectionMatrix();
 }
 
@@ -466,7 +466,7 @@ void AbstractRenderer::resetCamera() {
   paint();
 }
 
-void AbstractRenderer::resetObject() {
+void AbstractRenderer::resetScene() {
   m_rotation = Mat4f();
   m_translation = Mat4f();
   m_scale = Mat4f();

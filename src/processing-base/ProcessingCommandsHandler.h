@@ -506,14 +506,14 @@ private:
     RenderSession* m_session;
 };
 
-class ResetObjectHdl : public ICommandHandler {
+class ResetSceneHdl : public ICommandHandler {
 public:
-    ResetObjectHdl(const ResetObjectRequest& request, RenderSession* session);
+    ResetSceneHdl(const ResetSceneRequest& request, RenderSession* session);
 
     std::unique_ptr<Reply> execute() override;
 
 private:
-    ResetObjectRequest m_request;
+    ResetSceneRequest m_request;
     RenderSession* m_session;
 };
 

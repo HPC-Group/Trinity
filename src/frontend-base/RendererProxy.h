@@ -65,7 +65,7 @@ public:
     void moveScene(Core::Math::Vec3f direction) override;
     void rescaleScene(float scale) override;
     void resetCamera() override;
-    void resetObject() override;
+    void resetScene() override;
     void startRendering() override;
     void stopRendering() override;
     bool isIdle() override;

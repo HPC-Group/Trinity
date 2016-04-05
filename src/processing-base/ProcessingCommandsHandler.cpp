@@ -443,12 +443,12 @@ std::unique_ptr<Reply> ResetCameraHdl::execute() {
     return nullptr;
 }
 
-ResetObjectHdl::ResetObjectHdl(const ResetObjectRequest& request, RenderSession* session)
+ResetSceneHdl::ResetSceneHdl(const ResetSceneRequest& request, RenderSession* session)
     : m_request(request)
     , m_session(session) {}
 
-std::unique_ptr<Reply> ResetObjectHdl::execute() {
-    m_session->getRenderer().resetObject();
+std::unique_ptr<Reply> ResetSceneHdl::execute() {
+    m_session->getRenderer().resetScene();
     return nullptr;
 }
 

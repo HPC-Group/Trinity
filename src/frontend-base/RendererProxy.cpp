@@ -310,9 +310,9 @@ void RendererProxy::resetCamera() {
     m_inputChannel.sendRequest(request);
 }
 
-void RendererProxy::resetObject() {
-    ResetObjectCmd::RequestParams params;
-    ResetObjectRequest request(params, IDGenerator::nextID(), m_remoteSid);
+void RendererProxy::resetScene() {
+    ResetSceneCmd::RequestParams params;
+    ResetSceneRequest request(params, IDGenerator::nextID(), m_remoteSid);
     m_inputChannel.sendRequest(request);
 }
 

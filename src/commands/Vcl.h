@@ -98,7 +98,7 @@ enum class VclType {
     MoveScene,
     RescaleScene,
     ResetCamera,
-    ResetObject,
+    ResetScene,
     StartRendering,
     StopRendering,
     IsIdle,
@@ -217,7 +217,7 @@ private:
         m_cmdMap.insert("MoveScene", VclType::MoveScene);
         m_cmdMap.insert("RescaleScene", VclType::RescaleScene);
         m_cmdMap.insert("ResetCamera", VclType::ResetCamera);
-        m_cmdMap.insert("ResetObject", VclType::ResetObject);
+        m_cmdMap.insert("ResetScene", VclType::ResetScene);
         m_cmdMap.insert("StartRendering", VclType::StartRendering);
         m_cmdMap.insert("StopRendering", VclType::StopRendering);
         m_cmdMap.insert("IsIdle", VclType::IsIdle);
