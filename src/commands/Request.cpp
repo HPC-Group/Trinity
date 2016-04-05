@@ -179,6 +179,8 @@ std::unique_ptr<Request> Request::createRequestInternal(const ISerialReader& rea
         return reader.getSerializablePtr<GetFloatBrickLayoutRequest>("req");
     } else if (type == GetBrickMaxMinRequest::Ifc::Type) {
         return reader.getSerializablePtr<GetBrickMaxMinRequest>("req");
+    } else if (type == GetBricksRequest::Ifc::Type) {
+        return reader.getSerializablePtr<GetBricksRequest>("req");
     }
     /* AUTOGEN IORequestFactoryEntry */
 

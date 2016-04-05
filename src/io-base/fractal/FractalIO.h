@@ -40,6 +40,7 @@ namespace trinity {
     Core::Math::Vec2f getRange(uint64_t modality) const override;
     uint64_t getTotalBrickCount(uint64_t modality) const override;
     std::shared_ptr<const std::vector<uint8_t>> getBrick(const BrickKey& brickKey, bool& success) const override;
+    std::vector<std::shared_ptr<const std::vector<uint8_t>>> getBricks(const std::vector<BrickKey>& brickKeys, bool& success) const override;
     IIO::ValueType getType(uint64_t modality) const override;
     IIO::Semantic getSemantic(uint64_t modality) const override;
     uint64_t getDefault1DTransferFunctionCount() const override;

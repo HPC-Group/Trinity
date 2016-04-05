@@ -24,6 +24,7 @@ public:
     MOCK_CONST_METHOD1(getRange, Core::Math::Vec2f(uint64_t));
     MOCK_CONST_METHOD1(getTotalBrickCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD2(getBrick, std::shared_ptr<const std::vector<uint8_t>>(const BrickKey&, bool&));
+    MOCK_CONST_METHOD2(getBricks, std::vector<std::shared_ptr<const std::vector<uint8_t>>>(const std::vector<BrickKey>&, bool&));
     MOCK_CONST_METHOD1(getType, IIO::ValueType(uint64_t));
     MOCK_CONST_METHOD1(getSemantic, IIO::Semantic(uint64_t));
     MOCK_CONST_METHOD0(getDefault1DTransferFunctionCount, uint64_t());

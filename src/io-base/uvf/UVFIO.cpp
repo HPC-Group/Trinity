@@ -241,6 +241,11 @@ std::shared_ptr<const std::vector<uint8_t>> UVFIO::getBrick(const BrickKey& key,
     return data;
 }
 
+std::vector<std::shared_ptr<const std::vector<uint8_t>>> UVFIO::getBricks(const std::vector<BrickKey>& brickKeys, bool& success) const {
+    // TODO: implement
+    return std::vector<std::shared_ptr<const std::vector<uint8_t>>>();
+}
+
 Vec3ui UVFIO::getBrickVoxelCounts(const BrickKey& key) const {
   return m_dataset->GetBrickVoxelCounts(key);
 }

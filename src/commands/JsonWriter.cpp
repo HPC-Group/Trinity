@@ -141,8 +141,9 @@ mocca::net::Message JsonWriter::writeMessage() const {
     // FIXME: this copy might be avoided by using JsonCpp::StreamWriter and streaming the json directly into the vector
     std::copy(begin(str), end(str), begin(*jsonData));
     mocca::net::Message headPart(jsonData);
+    mocca::net::Message* currentMessage = &headPart;
     for (const auto& sharedData : *m_binary) {
-        headPart.append(mocca::make_unique<mocca::net::Message>(sharedData));
+        currentMessage = currentMessage->append(sharedData);
     }
     return headPart;
 }

@@ -108,6 +108,7 @@ enum class VclType {
     SetUserViewMatrix,
     SetUserWorldMatrix,
     GetBrickMaxMin,
+    GetBricks,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -228,6 +229,7 @@ private:
         m_cmdMap.insert("SetUserViewMatrix", VclType::SetUserViewMatrix);
         m_cmdMap.insert("SetUserWorldMatrix", VclType::SetUserWorldMatrix);
         m_cmdMap.insert("GetBrickMaxMin", VclType::GetBrickMaxMin);
+        m_cmdMap.insert("GetBricks", VclType::GetBricks);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

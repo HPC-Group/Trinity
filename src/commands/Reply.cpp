@@ -118,6 +118,8 @@ std::unique_ptr<Reply> Reply::createReplyInternal(const ISerialReader& reader) {
         return reader.getSerializablePtr<GetFloatBrickLayoutReply>("rep");
     } else if (type == GetBrickMaxMinReply::Ifc::Type) {
         return reader.getSerializablePtr<GetBrickMaxMinReply>("rep");
+    } else if (type == GetBricksReply::Ifc::Type) {
+        return reader.getSerializablePtr<GetBricksReply>("rep");
     }
     /* AUTOGEN IOReplyFactoryEntry */
 
