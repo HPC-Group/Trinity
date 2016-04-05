@@ -316,7 +316,17 @@ uint64_t FractalIO::getTotalBrickCount(uint64_t modality) const {
 std::shared_ptr<const std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& key, bool& success) const {
   success = false;
 
-  auto data = MemBlockPool::instance().get(getMaxBrickSize().volume());
+  uint64_t brickSize;
+  if (!m_bFlat) {
+    Vec3ui64 start, end, size, pos;
+    Vec3d step;
+    genBrickParams(key, start, step, size);
+    brickSize = size.volume();
+  } else {
+    brickSize = m_totalSize.volume();
+  }
+  
+  auto data = MemBlockPool::instance().get(brickSize);
 
 #ifdef CACHE_BRICKS
   if (m_bc.getBrick<uint8_t>(key, *data)) {
@@ -332,7 +342,6 @@ std::shared_ptr<const std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& 
     genBrickParams(key, start, step, size);
     pos = start;
     Vec3d dStart = Vec3d(start);
-    data->resize(size.volume());
 #pragma omp parallel for
     for (int z = 0; z < size.z; ++z) {
       for (int y = 0; y < size.y; ++y) {
@@ -344,7 +353,6 @@ std::shared_ptr<const std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& 
       }
     }
   } else {
-    data->resize(m_totalSize.volume());
 #pragma omp parallel for
     for (int z = 0; z < m_totalSize.z; ++z) {
       for (int y = 0; y < m_totalSize.y; ++y) {
@@ -366,8 +374,15 @@ std::shared_ptr<const std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& 
 }
 
 std::vector<std::shared_ptr<const std::vector<uint8_t>>> FractalIO::getBricks(const std::vector<BrickKey>& brickKeys, bool& success) const {
-    // TODO: implement
-    return std::vector<std::shared_ptr<const std::vector<uint8_t>>>();
+  std::vector<std::shared_ptr<const std::vector<uint8_t>>> result;
+  for (auto key : brickKeys) {
+    auto data = getBrick(key, success);
+    if (!success) {
+      break;
+    }
+    result.push_back(data);
+  }
+  return result;
 }
 
 IIO::ValueType FractalIO::getType(uint64_t modality) const {
