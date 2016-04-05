@@ -32,7 +32,7 @@ public:
     void appendBinary(std::shared_ptr<const std::vector<uint8_t>> binary) override;
 
     mocca::ByteArray write() const override;
-    mocca::net::Message writeMessage() const;
+    mocca::net::Message writeMessage() const override;
 
 private:
     using SharedDataVec = std::vector<std::shared_ptr<const std::vector<uint8_t>>>;
