@@ -10,6 +10,7 @@ out vec3 entranceInViewSpace;
 uniform mat4 worldMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
+uniform mat4 posToTex;
 
 // Vertex Shader
 void main(void)
@@ -21,5 +22,5 @@ void main(void)
     gl_Position = viewMatrix * gl_Position;
     gl_Position = projectionMatrix * gl_Position;
   
-    entranceInViewSpace = inputPosition+ vec3(0.5,0.5,0.5);
+    entranceInViewSpace = (posToTex*vec4(inputPosition,1.0)).xyz;
 }

@@ -138,24 +138,25 @@ void SimpleRenderer::loadVolumeData() {
   uint64_t singleBrickLoD = m_io->getLargestSingleBrickLOD(0);
   
   BrickKey brickKey(0, 0, singleBrickLoD, 0);
+  std::vector<BrickKey> brickKeys;
+  brickKeys.push_back(brickKey);
+  
   
   Core::Math::Vec3ui brickSize = m_io->getBrickVoxelCounts(brickKey);
   
   LINFO("(p) found suitable volume with single brick of size " << brickSize);
   
   bool success;
-  auto volume = m_io->getBrick(brickKey, success);
+  auto volumes = m_io->getBricks(brickKeys, success);
   
-  if (volume->size() != brickSize.volume()*byteWidth) {
-    LERROR("invalid volume data vector. size should be " << brickSize.volume()*byteWidth << " but is " << volume->size());
+  if (!success) {
+    LERROR("something when wrong trying to access the data");
     return;
-  } else {
-    LINFO("(p) volume size data ok");
   }
   
   m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x, brickSize.y,
                                                 brickSize.z, GL_RED, GL_RED,
-                                                format, volume->data(),
+                                                format, volumes[0]->data(),
                                                 GL_LINEAR, GL_LINEAR);
   
   LINFO("(p) volume created");
@@ -174,7 +175,8 @@ void SimpleRenderer::loadGeometry() {
   vMinPoint = -m_vExtend/2.0;
   vMaxPoint =  m_vExtend/2.0;
   
-  m_bbBox = mocca::make_unique<GLVolumeBox>(vMinPoint, vMaxPoint);
+  m_bbBox = mocca::make_unique<GLVolumeBox>(vMinPoint,
+                                            vMaxPoint);
 }
 
 void SimpleRenderer::initFrameBuffers() {
@@ -234,10 +236,15 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
     m_targetBinder->Bind(m_backfaceBuffer);
     m_backfaceBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
     
+    Core::Math::Mat4f scale, shift;
+    scale.Scaling(1.0f/m_vExtend.x,1.0f/m_vExtend.y,1.0f/m_vExtend.z);
+    shift.Translation(0.5f,0.5f,0.5f);
+    
     m_backfaceShader->Enable();
     m_backfaceShader->Set("projectionMatrix", m_projection);
     m_backfaceShader->Set("viewMatrix", m_view);
     m_backfaceShader->Set("worldMatrix", m_domainTransform*m_model);
+    m_backfaceShader->Set("posToTex", scale*shift);
     m_bbBox->paint();
     m_backfaceShader->Disable();
     
@@ -255,6 +262,7 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
     m_raycastShader->Set("projectionMatrix", m_projection);
     m_raycastShader->Set("viewMatrix", m_view);
     m_raycastShader->Set("worldMatrix", m_domainTransform*m_model);
+    m_raycastShader->Set("posToTex", scale*shift);
     m_raycastShader->Set("transferFuncScaleValue", m_1DTFScale);
     
     m_raycastShader->ConnectTextureID("transferfunc", 0);
