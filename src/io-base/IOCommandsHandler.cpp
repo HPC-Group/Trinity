@@ -16,7 +16,7 @@ InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request, IONode* 
 
 std::unique_ptr<Reply> InitIOSessionHdl::execute() {
     try {
-        if (!m_node->maxSessionsReached()) {
+        if (m_node->maxSessionsReached()) {
             throw TrinityError("IO session cannot be created: maximum number of sessions has been reached", __FILE__, __LINE__);
         }
 

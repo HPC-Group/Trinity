@@ -35,7 +35,7 @@ void IONode::addSession(std::unique_ptr<IOSession> session) {
 
 bool IONode::maxSessionsReached() const {
     static unsigned int maxSessions = 3;
-    return m_sessions.size() < maxSessions;
+    return m_sessions.size() >= maxSessions;
 }
 
 IListData& IONode::getListDataForID(const std::string& fileID) const {

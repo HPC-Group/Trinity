@@ -16,7 +16,7 @@ InitProcessingSessionHdl::InitProcessingSessionHdl(const InitProcessingSessionRe
 
 std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
     try {
-        if (!m_node->maxSessionsReached()) {
+        if (m_node->maxSessionsReached()) {
             throw TrinityError("Processing session cannot be created: maximum number of sessions has been reached", __FILE__, __LINE__);
         }
 
