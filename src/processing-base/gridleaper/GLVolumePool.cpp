@@ -254,6 +254,7 @@ m_bVisibilityUpdated(false)
     
   // duplicate minmax scalar data from dataset for efficient access
   m_vMinMaxScalar.resize(m_iTotalBrickCount);
+  m_vMinMaxGradient.resize(m_iTotalBrickCount);
   for (uint32_t i = 0; i < m_vMinMaxScalar.size(); i++) {
     Vec4ui const vBrickID = getVectorBrickID(i);
 
@@ -261,6 +262,8 @@ m_bVisibilityUpdated(false)
     MinMaxBlock imme = pDataset.maxMinForKey(key);
     m_vMinMaxScalar[i].min = imme.minScalar;
     m_vMinMaxScalar[i].max = imme.maxScalar;
+    m_vMinMaxGradient[i].min = imme.minGradient;
+    m_vMinMaxGradient[i].max = imme.maxGradient;
   }
 
 
@@ -1564,25 +1567,11 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, trin
       MinMaxBlock imme = pDataset.maxMinForKey(key);
       m_vMinMaxScalar[iBrickID].min = imme.minScalar;
       m_vMinMaxScalar[iBrickID].max = imme.maxScalar;
+      m_vMinMaxGradient[iBrickID].min = imme.minGradient;
+      m_vMinMaxGradient[iBrickID].max = imme.maxGradient;      
     }
   }
-  // fill minmax gradient acceleration data structure if needed and timestep changed
-  if (visibility.getRenderMode() == RM_2DTRANS) {
-    if (m_iMinMaxGradientTimestep != iTimestep || m_vMinMaxGradient.empty()) {
-      if (m_vMinMaxGradient.empty())
-        m_vMinMaxGradient.resize(m_iTotalBrickCount);
-      m_iMinMaxGradientTimestep = iTimestep;
-      for (uint32_t iBrickID = 0; iBrickID < m_vMinMaxScalar.size(); iBrickID++) {
-        Vec4ui const vBrickID = getVectorBrickID(iBrickID);
-
-        BrickKey const key = IndexFrom4D(m_LoDInfoCache,modality,vBrickID, m_iMinMaxGradientTimestep);
-        MinMaxBlock imme = pDataset.maxMinForKey(key);
-
-        m_vMinMaxGradient[iBrickID].min = imme.minGradient;
-        m_vMinMaxGradient[iBrickID].max = imme.maxGradient;
-      }
-    }
-  }
+  
   // reset meta data for all bricks (BI_MISSING means that we haven't test the data for visibility until the async updater finishes)
   std::fill(m_vBrickMetadata.begin(), m_vBrickMetadata.end(), BI_MISSING);
 
