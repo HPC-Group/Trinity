@@ -19,9 +19,10 @@ JsonReader::JsonReader(const std::string& json) {
 
 JsonReader::JsonReader(const mocca::net::Message& message) {
     std::string json(reinterpret_cast<const char*>(message.data()->data()), message.data()->size());
-    auto next = &message;
-    while (next = next->next()) {
+    auto next = message.next();
+    while (next) {
         m_binary.push_back(next->data());
+        next = next->next();
     }
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {
