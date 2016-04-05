@@ -728,10 +728,18 @@ namespace {
     const Vec3ui vVoxelCount = pDataset.getBrickVoxelCounts(bkey);
 
     //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
+    std::vector<BrickKey> bkeys;
+    bkeys.push_back(bkey);
+    
     bool success;
-    auto vUploadMem = pDataset.getBrick(bkey, success);
+    auto vUploadMem = pDataset.getBricks(bkeys, success);
 
-    const uint8_t* data = vUploadMem->data();
+    if (!success) {
+      LERROR("Error getting first brick");
+      return;
+    }
+    
+    const uint8_t* data = vUploadMem[0]->data();
     pool.uploadFirstBrick(vVoxelCount, data);
   }
 
@@ -1352,26 +1360,37 @@ namespace {
                                     size_t iTimestep,
                                     const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
-    uint32_t iPagedBricks = 0;
 
-
+    
+    std::vector<BrickKey> keys;
+    std::vector<Vec3ui> sizes;
     for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
-
-      Vec4ui const& vBrickID = *missingBrick;
-
-      BrickKey const key = IndexFrom4D(loDInfoCache,modality,vBrickID, iTimestep);
-      Vec3ui const vVoxelSize = pDataset.getBrickVoxelCounts(key);
-      // upload brick core
-      bool success;
-      auto vUploadMem = pDataset.getBrick(key, success);
-
-      const uint8_t* data = vUploadMem->data();
-
-      if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), data))
+      const Vec4ui& vBrickID = *missingBrick;
+      const BrickKey key = IndexFrom4D(loDInfoCache,modality,vBrickID,iTimestep);
+      const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
+      
+      keys.push_back(key);
+      sizes.push_back(vVoxelSize);
+    }
+    
+    bool success;
+    auto vUploadMem = pDataset.getBricks(keys, success);
+    
+    if (!success) {
+      LERROR("Error getting bricks");
+      return 0;
+    }
+    
+    uint32_t iPagedBricks = 0;
+    for (auto brick : vUploadMem) {
+      const uint8_t* data = brick->data();
+      if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[iPagedBricks],
+                                          sizes[iPagedBricks]), data))
         break;
       else
         iPagedBricks++;
     }
+    
     return iPagedBricks;
   }
 
@@ -1426,52 +1445,65 @@ namespace {
                                                const std::vector<GLVolumePool::MinMax>& vMinMaxGradient,
                                                const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
-    uint32_t iPagedBricks = 0;
-
-    // now iterate over the missing bricks and upload them to the GPU
-    // todo: consider batching this if it turns out to make a difference
-    //       from submitting each brick separately
-    Timer t;
+    std::vector<BrickKey> keys;
+    std::vector<Vec3ui> sizes;
     for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
-      Vec4ui const& vBrickID = *missingBrick;
-      BrickKey const key = IndexFrom4D(loDInfoCache,modality,vBrickID, iTimestep);
-      Vec3ui const vVoxelSize = pDataset.getBrickVoxelCounts(key);
-
+      const Vec4ui& vBrickID = *missingBrick;
+      const BrickKey key = IndexFrom4D(loDInfoCache,modality,vBrickID,iTimestep);
+      const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
+      
       uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-      // the brick could be flagged as empty by now if the async updater tested the brick after we ran the last render pass
+      // the brick could be flagged as empty by now if the async updater
+      // tested the brick after we ran the last render pass
       if (vBrickMetadata[brickIndex] == BI_MISSING) {
-        // we might not have tested the brick for visibility yet since the updater's still running and we do not have a BI_UNKNOWN flag for now
-        bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
+        
+        // we might not have tested the brick for visibility yet since the
+        // updater's still running and we do not have a BI_UNKNOWN flag for now
+        bool const bContainsData = ContainsData<eRenderMode>(visibility,
+                                                             brickIndex,
+                                                             vMinMaxScalar,
+                                                             vMinMaxGradient);
         if (bContainsData) {
-
-          // upload brick core
-          
-            //Tuvok::StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
-            bool success;
-            auto vUploadMem = pDataset.getBrick(key, success);
-            const uint8_t* data = vUploadMem->data();
-
-            if (!pool.uploadBrick(BrickElemInfo(vBrickID, vVoxelSize), data))
-            return iPagedBricks;
-          else
-            iPagedBricks++;
+          keys.push_back(key);
+          sizes.push_back(vVoxelSize);
         } else {
           vBrickMetadata[brickIndex] = BI_EMPTY;
           pool.uploadMetadataTexel(brickIndex);
         }
       } else if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) {
-        // if the updater touched the brick in the meanwhile, we need to upload the meta texel
+        // if the updater touched the brick in the meanwhile,
+        // we need to upload the meta texel
         pool.uploadMetadataTexel(brickIndex);
       } else {
         assert(false); // should never happen
       }
+      
+      
     }
+    
+    bool success;
+    auto vUploadMem = pDataset.getBricks(keys, success);
+    
+    if (!success) {
+      LERROR("Error getting bricks");
+      return 0;
+    }
+    
+    uint32_t iPagedBricks = 0;
+    for (auto brick : vUploadMem) {
+      const uint8_t* data = brick->data();
+      if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[iPagedBricks],
+                                          sizes[iPagedBricks]), data))
+        break;
+      else
+        iPagedBricks++;
+    }
+
     return iPagedBricks;
   }
 
   template<ERenderMode eRenderMode>
-  uint32_t PotentiallyUploadBricksToBrickPool(
-                                              const VisibilityState& visibility,
+  uint32_t PotentiallyUploadBricksToBrickPool(const VisibilityState& visibility,
                                               IIO& pDataset,
                                               std::vector <std::vector<Core::Math::Vec3ui>> loDInfoCache,
                                               const GLVolumePool::DataSetCache meta,
