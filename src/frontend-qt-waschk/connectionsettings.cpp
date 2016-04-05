@@ -5,6 +5,8 @@
 #include "connectionSinglton.h"
 #include "mainwindow.h"
 
+#include <QMessageBox>
+
 #define io ConnectionSingleton::getInstance().ioNode()
 
 connectionSettings::connectionSettings(unsigned int glWidth, unsigned int glHeight, QWidget* parent)
@@ -22,20 +24,31 @@ connectionSettings::~connectionSettings() {
 }
 
 void connectionSettings::on_io_connect_clicked() {
-    ConnectionSingleton::getInstance().connectIO(ui->io_hostname->text().toStdString(), ui->io_port->text().toStdString());
-    ui->fileView->setModel(new IODataModel(*ConnectionSingleton::getInstance().ioNode(), this));
-    connect(ui->fileView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(enableWidgets()));
+    try {
+        ConnectionSingleton::getInstance().connectIO(ui->io_hostname->text().toStdString(), ui->io_port->text().toStdString());
+        ui->fileView->setModel(new IODataModel(*ConnectionSingleton::getInstance().ioNode(), this));
+        connect(ui->fileView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this,
+                SLOT(enableWidgets()));
+    } catch (const std::runtime_error& err) {
+        this->close();
+        QMessageBox::critical(this, "Error", err.what());
+    }
 }
 
 void connectionSettings::on_proc_connect_clicked() {
-    ConnectionSingleton::getInstance().connectProcessing(ui->proc_hostname->text().toStdString(), ui->proc_port->text().toStdString());
+    try {
+        ConnectionSingleton::getInstance().connectProcessing(ui->proc_hostname->text().toStdString(), ui->proc_port->text().toStdString());
 
-    std::string dataID = ui->fileView->currentIndex().data(Qt::UserRole + 1).value<trinity::IOData*>()->getFileId();
+        std::string dataID = ui->fileView->currentIndex().data(Qt::UserRole + 1).value<trinity::IOData*>()->getFileId();
 
-    ConnectionSingleton::getInstance().initRenderer(ui->io_hostname->text().toStdString(), ui->io_port->text().toStdString(),
-                                                    ui->proc_width->text().toInt(), ui->proc_height->text().toInt(), dataID);
+        ConnectionSingleton::getInstance().initRenderer(ui->io_hostname->text().toStdString(), ui->io_port->text().toStdString(),
+                                                        ui->proc_width->text().toInt(), ui->proc_height->text().toInt(), dataID);
 
-    this->close();
+        this->close();
+    } catch (const std::runtime_error& err) {
+        this->close();
+        QMessageBox::critical(this, "Error", err.what());
+    }
 }
 
 void connectionSettings::enableWidgets() {

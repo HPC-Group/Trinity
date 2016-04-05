@@ -15,9 +15,10 @@ public:
     ~IONode();
 
     IListData& getListDataForID(const std::string& fileID) const;
-    void addSession(std::unique_ptr<IOSession> session);
-
     std::vector<std::string> getRoots() const;
+
+    void addSession(std::unique_ptr<IOSession> session);
+    bool maxSessionsReached() const;
 
 private:
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;

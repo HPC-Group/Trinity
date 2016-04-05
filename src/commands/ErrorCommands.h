@@ -10,19 +10,18 @@ struct ErrorCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(int errorCode);
+        ReplyParams(const std::string& error);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
 
-        std::string printError() const;
-        int getErrorCode() const;
+        std::string getError() const;
 
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
     private:
-        int m_errorCode;
+        std::string m_error;
     };
 };
 

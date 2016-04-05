@@ -4,32 +4,28 @@ using namespace trinity;
 
 VclType ErrorCmd::Type = VclType::TrinityError;
 
-ErrorCmd::ReplyParams::ReplyParams(int errorCode)
-    : m_errorCode(errorCode) {}
+ErrorCmd::ReplyParams::ReplyParams(const std::string& error)
+    : m_error(error) {}
 
 void ErrorCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt("code", m_errorCode);
+    writer.appendString("error", m_error);
 }
 
 void ErrorCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_errorCode = reader.getInt32("code");
+    m_error = reader.getString("error");
 }
 
-std::string ErrorCmd::ReplyParams::printError() const {
-    return Vcl::instance().toString(m_errorCode);
-}
-
-int ErrorCmd::ReplyParams::getErrorCode() const {
-    return m_errorCode;
+std::string ErrorCmd::ReplyParams::getError() const {
+    return m_error;
 }
 
 bool ErrorCmd::ReplyParams::equals(const ReplyParams& other) const {
-    return m_errorCode == other.m_errorCode;
+    return m_error == other.m_error;
 }
 
 std::string ErrorCmd::ReplyParams::toString() const {
     std::stringstream stream;
-    stream << "errorCode: " << m_errorCode;
+    stream << "error: " << m_error;
     return stream.str();
 }
 

@@ -14,6 +14,7 @@ public:
 
     void addSession(std::unique_ptr<RenderSession> session);
     std::vector<std::unique_ptr<RenderSession>>& getSessions();
+    bool maxSessionsReached() const;
 
 private:
     std::unique_ptr<ICommandHandler> createHandler(const Request& request) override;

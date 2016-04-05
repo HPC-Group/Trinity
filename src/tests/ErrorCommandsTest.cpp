@@ -19,7 +19,7 @@ protected:
 
 
 TEST_F(ErrorCommandsTest, ErrorErrorCommandsTest) {
-    ErrorCmd::ReplyParams target(4711);
+    ErrorCmd::ReplyParams target("Some Error");
     auto result = trinity::testing::writeAndRead(target);
     ASSERT_EQ(target, result);
 }

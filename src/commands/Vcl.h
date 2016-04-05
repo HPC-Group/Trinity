@@ -234,9 +234,6 @@ private:
         m_cmdMap.insert("GetRoots", VclType::GetRoots);
         /* AUTOGEN VclMapEntry */
 
-        m_errorCodeMap.insert(std::make_pair(1, "no such command"));
-        m_errorCodeMap.insert(std::make_pair(2, "no such renderer type"));
-
         assertCompleteLanguage();
     }
 

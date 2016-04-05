@@ -56,15 +56,7 @@ void ConnectionSingleton::initRenderer(const std::string& iohostname, const std:
     trinity::StreamingParams params(width, height);
 
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), iohostname, ioport);
-
-    // the file id will be available after implementing the listdata command
-    try {
-        m_renderer = _processingNode->initRenderer(m_rendererType, fileId, endpointIO, params);
-        //_renderer->initContext();
-    } catch (const trinity::TrinityError&) {
-        LERROR("(qt) no connection to a renderer");
-    }
-
+    m_renderer = _processingNode->initRenderer(m_rendererType, fileId, endpointIO, params);
     m_renderer->startRendering();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));

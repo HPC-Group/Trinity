@@ -20,7 +20,7 @@ std::unique_ptr<typename RequestType::ReplyType> sendRequestChecked(const Comman
     auto reply = channel.getReply();
     if (reply->getType() == VclType::TrinityError) {
         const auto& error = static_cast<const ErrorReply&>(*reply);
-        throw TrinityError("Error received: " + error.getParams().printError(), __FILE__, __LINE__);
+        throw TrinityError("Error received: " + error.getParams().getError(), __FILE__, __LINE__);
     }
     if (reply->getType() != request.getType()) {
         throw TrinityError("Reply type does not match request type", __FILE__, __LINE__);

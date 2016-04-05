@@ -1,5 +1,6 @@
 #include "io-base/IOCommandsHandler.h"
 
+#include "commands/ErrorCommands.h"
 #include "common/MemBlockPool.h"
 #include "common/TrinityError.h"
 #include "io-base/IOCommandFactory.h"
@@ -14,17 +15,26 @@ InitIOSessionHdl::InitIOSessionHdl(const InitIOSessionRequest& request, IONode* 
     , m_request(request) {}
 
 std::unique_ptr<Reply> InitIOSessionHdl::execute() {
-    auto requestParams = m_request.getParams();
+    try {
+        if (!m_node->maxSessionsReached()) {
+            throw TrinityError("IO session cannot be created: maximum number of sessions has been reached", __FILE__, __LINE__);
+        }
 
-    auto fileID = requestParams.getFileId();
-    auto& listData = m_node->getListDataForID(fileID);
-    auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), listData.createIO(fileID));
-    session->start();
+        auto requestParams = m_request.getParams();
 
-    InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());
-    std::unique_ptr<Reply> reply = mocca::make_unique<InitIOSessionReply>(replyParams, m_request.getRid(), session->getSid());
-    m_node->addSession(std::move(session));
-    return reply;
+        auto fileID = requestParams.getFileId();
+        auto& listData = m_node->getListDataForID(fileID);
+        auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), listData.createIO(fileID));
+        session->start();
+
+        InitIOSessionCmd::ReplyParams replyParams(session->getControlPort());
+        std::unique_ptr<Reply> reply = mocca::make_unique<InitIOSessionReply>(replyParams, m_request.getRid(), session->getSid());
+        m_node->addSession(std::move(session));
+        return reply;
+    } catch (const std::runtime_error& err) {
+        ErrorCmd::ReplyParams replyParams(err.what());
+        return mocca::make_unique<ErrorReply>(replyParams, m_request.getRid(), m_request.getSid());
+    }
 }
 
 GetLODLevelCountHdl::GetLODLevelCountHdl(const GetLODLevelCountRequest& request, IOSession* session)

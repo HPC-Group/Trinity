@@ -15,27 +15,33 @@ InitProcessingSessionHdl::InitProcessingSessionHdl(const InitProcessingSessionRe
     , m_request(request) {}
 
 std::unique_ptr<Reply> InitProcessingSessionHdl::execute() {
-    auto params = m_request.getParams();
-
-    // create an IO node proxy and pass it to the renderer
-    mocca::net::Endpoint ioEndpoint = m_request.getParams().getIoEndpoint();
-    IONodeProxy ioNodeProxy(ioEndpoint);
-
-    bool useLoopback = m_node->executionMode() == AbstractNode::ExecutionMode::Combined && m_node->isLocalMachine(ioEndpoint.machine);
-    auto ioSessionProxy = ioNodeProxy.initIO(m_request.getParams().getFileId(), useLoopback);
-
     try {
+        if (!m_node->maxSessionsReached()) {
+            throw TrinityError("Processing session cannot be created: maximum number of sessions has been reached", __FILE__, __LINE__);
+        }
+
+        auto requestParams = m_request.getParams();
+
+        // create an IO node proxy and pass it to the renderer
+        mocca::net::Endpoint ioEndpoint = m_request.getParams().getIoEndpoint();
+        IONodeProxy ioNodeProxy(ioEndpoint);
+
+        bool useLoopback = m_node->executionMode() == AbstractNode::ExecutionMode::Combined && m_node->isLocalMachine(ioEndpoint.machine);
+        auto ioSessionProxy = ioNodeProxy.initIO(m_request.getParams().getFileId(), useLoopback);
+
         std::unique_ptr<RenderSession> session(
-            new RenderSession(params.getRenderType(), params.getStreamingParams(), params.getProtocol(), std::move(ioSessionProxy)));
+            new RenderSession(requestParams.getRenderType(), requestParams.getStreamingParams(), requestParams.getProtocol(), std::move(ioSessionProxy)));
         session->start();
 
         LINFO("(p) handling init req, session port " << session->getControlPort());
-        InitProcessingSessionCmd::ReplyParams params(session->getControlPort(), session->getVisPort());
-        std::unique_ptr<Reply> reply = mocca::make_unique<InitProcessingSessionReply>(params, m_request.getRid(), session->getSid());
+        InitProcessingSessionCmd::ReplyParams replyParams(session->getControlPort(), session->getVisPort());
+        std::unique_ptr<Reply> reply = mocca::make_unique<InitProcessingSessionReply>(replyParams, m_request.getRid(), session->getSid());
         m_node->addSession(std::move(session));
         return reply;
-    } catch (const std::runtime_error&) {
-        ErrorCmd::ReplyParams replyParams(2);
+        // FIXME: Bad design. Exceptions have to be caught in EVERY handler and converted into an ErrorReply. Would be better to catch
+        // expcetions in AbstractNode / AbstractSession
+    } catch (const std::runtime_error& err) {
+        ErrorCmd::ReplyParams replyParams(err.what());
         return mocca::make_unique<ErrorReply>(replyParams, m_request.getRid(), m_request.getSid());
     }
 }

@@ -1651,7 +1651,8 @@ std::vector<std::string> GetRootsCmd::ReplyParams::getResult() const {
 
 std::string GetRootsCmd::ReplyParams::toString() const {
     std::stringstream stream;
-    stream << "result: " << m_result;
+    stream << "result: ";
+    ::operator<<(stream, m_result);
     return stream.str();
 }
 

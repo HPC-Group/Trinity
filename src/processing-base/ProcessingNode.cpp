@@ -25,6 +25,11 @@ std::vector<std::unique_ptr<RenderSession>>& ProcessingNode::getSessions() {
     return m_sessions;
 }
 
+bool ProcessingNode::maxSessionsReached() const {
+    static unsigned int maxSessions = 3;
+    return m_sessions.size() < maxSessions;
+}
+
 void ProcessingNode::handleSessionErrors() {
     auto it = begin(m_sessions);
     while (it != end(m_sessions)) {
