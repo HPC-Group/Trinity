@@ -326,5 +326,16 @@ private:
     IOSession* m_session;
 };
 
+class GetBrickMaxMinHdl : public ICommandHandler {
+public:
+    GetBrickMaxMinHdl(const GetBrickMaxMinRequest& request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetBrickMaxMinRequest m_request;
+    IOSession* m_session;
+};
+
 /* AUTOGEN IOCommandHandlerHeader */
 }

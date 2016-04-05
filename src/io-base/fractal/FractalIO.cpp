@@ -213,6 +213,11 @@ Vec3f FractalIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
   }
 }
 
+std::vector<MinMaxBlock> FractalIO::getBrickMaxMin() const {
+    // TODO: implement
+    return std::vector<MinMaxBlock>();
+}
+
 Vec3ui FractalIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
   if (modality != 0 )
     throw TrinityError("invalid modality", __FILE__, __LINE__);

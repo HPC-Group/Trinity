@@ -133,6 +133,11 @@ Vec3f UVFIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
   return floatBrickLayout;
 }
 
+std::vector<MinMaxBlock> UVFIO::getBrickMaxMin() const {
+    // TODO: implement
+    return std::vector<MinMaxBlock>();
+}
+
 Vec3ui UVFIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
   // HACK: assume all timesteps have same layout
   return m_dataset->GetBrickLayout(lod, 0);

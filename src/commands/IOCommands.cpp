@@ -1000,7 +1000,7 @@ bool GetBrickCmd::ReplyParams::getSuccess() const {
 }
 
 std::shared_ptr<const std::vector<uint8_t>> GetBrickCmd::ReplyParams::getBrick() const {
-  return  m_brick;
+    return m_brick;
 }
 
 ////////////// GetTypeCmd //////////////
@@ -1504,6 +1504,49 @@ std::string GetFloatBrickLayoutCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
+////////////// GetBrickMaxMinCmd //////////////
+
+VclType GetBrickMaxMinCmd::Type = VclType::GetBrickMaxMin;
+
+void GetBrickMaxMinCmd::RequestParams::serialize(ISerialWriter& writer) const {}
+
+void GetBrickMaxMinCmd::RequestParams::deserialize(const ISerialReader& reader) {}
+
+bool GetBrickMaxMinCmd::RequestParams::equals(const GetBrickMaxMinCmd::RequestParams& other) const {
+    return true;
+}
+
+std::string GetBrickMaxMinCmd::RequestParams::toString() const {
+    std::stringstream stream;
+
+    return stream.str();
+}
+
+GetBrickMaxMinCmd::ReplyParams::ReplyParams(const std::vector<MinMaxBlock>& result)
+    : m_result(result) {}
+
+void GetBrickMaxMinCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    // TODO: this is getting to complicated, you need to do this yourself... (result)
+}
+
+void GetBrickMaxMinCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    // TODO: this is getting to complicated, you need to do this yourself... (result)
+}
+
+bool GetBrickMaxMinCmd::ReplyParams::equals(const GetBrickMaxMinCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+std::vector<MinMaxBlock> GetBrickMaxMinCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetBrickMaxMinCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
+    return stream.str();
+}
+
 /* AUTOGEN CommandImpl */
 
 namespace trinity {
@@ -1893,6 +1936,19 @@ bool operator==(const GetFloatBrickLayoutCmd::ReplyParams& lhs, const GetFloatBr
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetFloatBrickLayoutCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBrickMaxMinCmd::RequestParams& lhs, const GetBrickMaxMinCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetBrickMaxMinCmd::ReplyParams& lhs, const GetBrickMaxMinCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

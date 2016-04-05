@@ -209,4 +209,11 @@ Core::Math::Vec3f IOSessionProxy::getFloatBrickLayout(uint64_t lod, uint64_t mod
     return reply->getParams().getResult();
 }
 
+std::vector<MinMaxBlock> IOSessionProxy::getBrickMaxMin() const {
+    GetBrickMaxMinCmd::RequestParams params;
+    GetBrickMaxMinRequest request(params, IDGenerator::nextID(), m_remoteSid);
+    auto reply = sendRequestChecked(m_inputChannel, request);
+    return reply->getParams().getResult();
+}
+
 /* AUTOGEN IOSessionProxyImpl */

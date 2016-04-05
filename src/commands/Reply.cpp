@@ -116,6 +116,8 @@ std::unique_ptr<Reply> Reply::createReplyInternal(const ISerialReader& reader) {
         return reader.getSerializablePtr<GetDomainScaleReply>("rep");
     } else if (type == GetFloatBrickLayoutReply::Ifc::Type) {
         return reader.getSerializablePtr<GetFloatBrickLayoutReply>("rep");
+    } else if (type == GetBrickMaxMinReply::Ifc::Type) {
+        return reader.getSerializablePtr<GetBrickMaxMinReply>("rep");
     }
     /* AUTOGEN IOReplyFactoryEntry */
 

@@ -107,6 +107,7 @@ enum class VclType {
     GetFloatBrickLayout,
     SetUserViewMatrix,
     SetUserWorldMatrix,
+    GetBrickMaxMin,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -226,6 +227,7 @@ private:
         m_cmdMap.insert("GetFloatBrickLayout", VclType::GetFloatBrickLayout);
         m_cmdMap.insert("SetUserViewMatrix", VclType::SetUserViewMatrix);
         m_cmdMap.insert("SetUserWorldMatrix", VclType::SetUserWorldMatrix);
+        m_cmdMap.insert("GetBrickMaxMin", VclType::GetBrickMaxMin);
         /* AUTOGEN VclMapEntry */
 
         m_errorCodeMap.insert(std::make_pair(1, "no such command"));

@@ -1303,5 +1303,45 @@ bool operator==(const GetFloatBrickLayoutCmd::ReplyParams& lhs, const GetFloatBr
 std::ostream& operator<<(std::ostream& os, const GetFloatBrickLayoutCmd::ReplyParams& obj);
 using GetFloatBrickLayoutReply = ReplyTemplate<GetFloatBrickLayoutCmd>;
 
+struct GetBrickMaxMinCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const std::vector<MinMaxBlock>& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        std::vector<MinMaxBlock> getResult() const;
+
+    private:
+        std::vector<MinMaxBlock> m_result;
+    };
+};
+
+bool operator==(const GetBrickMaxMinCmd::RequestParams& lhs, const GetBrickMaxMinCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::RequestParams& obj);
+using GetBrickMaxMinRequest = RequestTemplate<GetBrickMaxMinCmd>;
+
+bool operator==(const GetBrickMaxMinCmd::ReplyParams& lhs, const GetBrickMaxMinCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::ReplyParams& obj);
+using GetBrickMaxMinReply = ReplyTemplate<GetBrickMaxMinCmd>;
+
 /* AUTOGEN CommandHeader */
 }

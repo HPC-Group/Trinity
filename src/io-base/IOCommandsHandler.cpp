@@ -296,4 +296,13 @@ std::unique_ptr<Reply> GetFloatBrickLayoutHdl::execute() {
     return mocca::make_unique<GetFloatBrickLayoutReply>(params, m_request.getRid(), m_session->getSid());
 }
 
+GetBrickMaxMinHdl::GetBrickMaxMinHdl(const GetBrickMaxMinRequest& request, IOSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetBrickMaxMinHdl::execute() {
+    GetBrickMaxMinCmd::ReplyParams params(m_session->getIO().getBrickMaxMin());
+    return mocca::make_unique<GetBrickMaxMinReply>(params, m_request.getRid(), m_session->getSid());
+}
+
 /* AUTOGEN IOCommandHandlerImpl */
