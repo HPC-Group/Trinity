@@ -35,6 +35,9 @@ using namespace Core::Math;
 using namespace Core::Time;
 using namespace trinity;
 
+const size_t maxBricksPerRequest = 10;
+
+
 static Vec3ui GetLoDSize(const Vec3ui& volumeSize, uint32_t iLoD) {
   Vec3ui vLoDSize(uint32_t(ceil(double(volumeSize.x)/MathTools::pow2(iLoD))),
                   uint32_t(ceil(double(volumeSize.y)/MathTools::pow2(iLoD))),
@@ -1363,38 +1366,51 @@ namespace {
                                     size_t iTimestep,
                                     const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
+    
+    const size_t requestCount = vBrickIDs.size()%maxBricksPerRequest == 0
+      ? vBrickIDs.size() / maxBricksPerRequest 
+      : 1 + vBrickIDs.size() / maxBricksPerRequest;
 
-    
-    std::vector<BrickKey> keys;
-    std::vector<Vec3ui> sizes;
-    for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
-      const Vec4ui& vBrickID = *missingBrick;
-      const BrickKey key = IndexFrom4D(loDInfoCache,modality,vBrickID,iTimestep);
-      const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
-      
-      keys.push_back(key);
-      sizes.push_back(vVoxelSize);
+    size_t index = 0;
+    uint64_t iPagedBricksTotal = 0;
+    size_t j = 0;
+    for (size_t requests = 0; requests < requestCount; requests++) {
+      auto start = vBrickIDs.cbegin()+ (requests*maxBricksPerRequest);
+      auto end = requests+1 == requestCount ? vBrickIDs.cend() : start + maxBricksPerRequest;
+
+      std::vector<BrickKey> keys;
+      std::vector<Vec3ui> sizes;
+      for (auto missingBrick = start; missingBrick < end; missingBrick++) {
+        const Vec4ui& vBrickID = *missingBrick;
+        const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
+        const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
+
+        keys.push_back(key);
+        sizes.push_back(vVoxelSize);
+      }
+
+      bool success;
+      auto vUploadMem = pDataset.getBricks(keys, success);
+
+      if (!success) {
+        LERROR("Error getting bricks");
+        return 0;
+      }
+
+      uint32_t iPagedBricks = 0;
+      size_t i = 0;
+      for (auto brick : vUploadMem) {
+        const uint8_t* data = brick->data();
+        if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[j++],
+          sizes[i++]), data))
+          break;
+        else
+          iPagedBricks++;
+      }
+      iPagedBricksTotal += iPagedBricks;
     }
-    
-    bool success;
-    auto vUploadMem = pDataset.getBricks(keys, success);
-    
-    if (!success) {
-      LERROR("Error getting bricks");
-      return 0;
-    }
-    
-    uint32_t iPagedBricks = 0;
-    for (auto brick : vUploadMem) {
-      const uint8_t* data = brick->data();
-      if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[iPagedBricks],
-                                          sizes[iPagedBricks]), data))
-        break;
-      else
-        iPagedBricks++;
-    }
-    
-    return iPagedBricks;
+
+    return iPagedBricksTotal;
   }
 
   uint32_t UploadBricksToBrickPool(
@@ -1448,61 +1464,78 @@ namespace {
                                                const std::vector<GLVolumePool::MinMax>& vMinMaxGradient,
                                                const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
-    std::vector<BrickKey> keys;
-    std::vector<Vec3ui> sizes;
-    for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
-      const Vec4ui& vBrickID = *missingBrick;
-      const BrickKey key = IndexFrom4D(loDInfoCache,modality,vBrickID,iTimestep);
-      const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
-      
-      uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-      // the brick could be flagged as empty by now if the async updater
-      // tested the brick after we ran the last render pass
-      if (vBrickMetadata[brickIndex] == BI_MISSING) {
-        
-        // we might not have tested the brick for visibility yet since the
-        // updater's still running and we do not have a BI_UNKNOWN flag for now
-        bool const bContainsData = ContainsData<eRenderMode>(visibility,
-                                                             brickIndex,
-                                                             vMinMaxScalar,
-                                                             vMinMaxGradient);
-        if (bContainsData) {
-          keys.push_back(key);
-          sizes.push_back(vVoxelSize);
-        } else {
-          vBrickMetadata[brickIndex] = BI_EMPTY;
+
+    const size_t requestCount = vBrickIDs.size()%maxBricksPerRequest == 0
+      ? vBrickIDs.size() / maxBricksPerRequest
+      : 1 + vBrickIDs.size() / maxBricksPerRequest;
+
+    size_t index = 0;
+    uint64_t iPagedBricksTotal = 0;
+    size_t j=0;
+    for (size_t requests = 0; requests < requestCount; requests++) {
+      auto start = vBrickIDs.cbegin() + (requests*maxBricksPerRequest);
+      auto end = requests + 1 == requestCount ? vBrickIDs.cend() : start + maxBricksPerRequest;
+
+      std::vector<BrickKey> keys;
+      std::vector<Vec3ui> sizes;
+      for (auto missingBrick = start; missingBrick < end; missingBrick++) {
+        const Vec4ui& vBrickID = *missingBrick;
+        const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
+        const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
+
+        uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
+        // the brick could be flagged as empty by now if the async updater
+        // tested the brick after we ran the last render pass
+        if (vBrickMetadata[brickIndex] == BI_MISSING) {
+
+          // we might not have tested the brick for visibility yet since the
+          // updater's still running and we do not have a BI_UNKNOWN flag for now
+          bool const bContainsData = ContainsData<eRenderMode>(visibility,
+            brickIndex,
+            vMinMaxScalar,
+            vMinMaxGradient);
+          if (bContainsData) {
+            keys.push_back(key);
+            sizes.push_back(vVoxelSize);
+          }
+          else {
+            vBrickMetadata[brickIndex] = BI_EMPTY;
+            pool.uploadMetadataTexel(brickIndex);
+          }
+        }
+        else if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) {
+          // if the updater touched the brick in the meanwhile,
+          // we need to upload the meta texel
           pool.uploadMetadataTexel(brickIndex);
         }
-      } else if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) {
-        // if the updater touched the brick in the meanwhile,
-        // we need to upload the meta texel
-        pool.uploadMetadataTexel(brickIndex);
-      } else {
-        assert(false); // should never happen
-      }
-      
-      
-    }
-    
-    bool success;
-    auto vUploadMem = pDataset.getBricks(keys, success);
-    
-    if (!success) {
-      LERROR("Error getting bricks");
-      return 0;
-    }
-    
-    uint32_t iPagedBricks = 0;
-    for (auto brick : vUploadMem) {
-      const uint8_t* data = brick->data();
-      if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[iPagedBricks],
-                                          sizes[iPagedBricks]), data))
-        break;
-      else
-        iPagedBricks++;
-    }
+        else {
+          assert(false); // should never happen
+        }
 
-    return iPagedBricks;
+
+      }
+
+      bool success;
+      auto vUploadMem = pDataset.getBricks(keys, success);
+
+      if (!success) {
+        LERROR("Error getting bricks");
+        return 0;
+      }
+
+      uint32_t iPagedBricks = 0;
+      size_t i = 0;
+      for (auto brick : vUploadMem) {
+        const uint8_t* data = brick->data();
+        if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[j++],
+          sizes[i++]), data))
+          break;
+        else
+          iPagedBricks++;
+      }
+      iPagedBricksTotal += iPagedBricks;
+    }
+    return iPagedBricksTotal;
   }
 
   template<ERenderMode eRenderMode>
