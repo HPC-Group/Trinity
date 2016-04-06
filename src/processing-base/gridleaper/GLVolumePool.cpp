@@ -35,7 +35,7 @@ using namespace Core::Math;
 using namespace Core::Time;
 using namespace trinity;
 
-const size_t maxBricksPerRequest = 10;
+const size_t maxBricksPerRequest = 5;
 
 
 static Vec3ui GetLoDSize(const Vec3ui& volumeSize, uint32_t iLoD) {
