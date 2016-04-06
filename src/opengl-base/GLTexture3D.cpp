@@ -41,7 +41,7 @@ m_iSizeZ(GLuint(iSizeZ))
   GLenum err = glGetError();
   if(err == GL_OUT_OF_MEMORY) {
 #ifndef NDEBUG
-    LWARNING("out of memory allocating 3d texture");
+    LWARNING("out of memory allocating 3d texture of size " << m_iSizeX << "x" << m_iSizeY << "x" << m_iSizeZ);
 #endif
     m_iGLID = 0;
   } else if(err != GL_NO_ERROR) {
