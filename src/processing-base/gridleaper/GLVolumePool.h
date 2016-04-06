@@ -101,6 +101,9 @@ public:
   
   uint64_t getMaxUsedBrickBytes() const { return m_iMaxUsedBrickBytes; }
   DataSetCache getCacheInfo() const { return m_sDataSetCache; }
+  Vec3ui getBrickVoxelCounts(const Core::Math::Vec4ui& key) const {
+    return m_brickVoxelCounts[getIntegerBrickID(key)];
+  }
   
 protected:
   GLTexture3DPtr m_pPoolMetadataTexture;
@@ -137,6 +140,8 @@ protected:
   size_t m_iMinMaxGradientTimestep;      // current timestep of gradient acceleration structure below
   std::vector<MinMax> m_vMinMaxScalar;   // accelerates access to minmax scalar information, gets constructed in c'tor
   std::vector<MinMax> m_vMinMaxGradient; // accelerates access to minmax gradient information, gets constructed on first access to safe some mem
+  std::vector<Vec3ui> m_brickVoxelCounts;
+  
   double m_BrickIOTime;
   uint64_t m_BrickIOBytes;
   

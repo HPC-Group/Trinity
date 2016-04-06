@@ -258,15 +258,18 @@ m_bVisibilityUpdated(false)
   // duplicate minmax scalar data from dataset for efficient access
   m_vMinMaxScalar.resize(m_iTotalBrickCount);
   m_vMinMaxGradient.resize(m_iTotalBrickCount);
+  m_brickVoxelCounts.resize(m_iTotalBrickCount);
   for (uint32_t i = 0; i < m_vMinMaxScalar.size(); i++) {
     Vec4ui const vBrickID = getVectorBrickID(i);
 
-    BrickKey const key = IndexFrom4D(m_LoDInfoCache,modality,vBrickID, m_iMinMaxScalarTimestep);
+    BrickKey const key = IndexFrom4D(m_LoDInfoCache,modality,vBrickID,
+                                     m_iMinMaxScalarTimestep);
     MinMaxBlock imme = pDataset.maxMinForKey(key);
     m_vMinMaxScalar[i].min = imme.minScalar;
     m_vMinMaxScalar[i].max = imme.maxScalar;
     m_vMinMaxGradient[i].min = imme.minGradient;
-    m_vMinMaxGradient[i].max = imme.maxGradient;
+    m_vMinMaxGradient[i].max = imme.maxGradient;    
+    m_brickVoxelCounts[i] = pDataset.getBrickVoxelCounts(key);
   }
 
 
@@ -732,7 +735,7 @@ namespace {
     uint8_t byteCount
   ) {
     const Vec3ui vVoxelCount = pDataset.getBrickVoxelCounts(bkey);
-
+    
     //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
     std::vector<BrickKey> bkeys;
     bkeys.push_back(bkey);
@@ -1384,6 +1387,9 @@ namespace {
         const Vec4ui& vBrickID = *missingBrick;
         const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
         const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
+        
+        // TODO: if this is ok repace vVoxelSize
+        assert(pDataset.getBrickVoxelCounts(key) == pool.getBrickVoxelCounts(vBrickID));
 
         keys.push_back(key);
         sizes.push_back(vVoxelSize);
@@ -1482,6 +1488,10 @@ namespace {
         const Vec4ui& vBrickID = *missingBrick;
         const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
         const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
+        
+        // TODO: if this is ok repace vVoxelSize
+        assert(pDataset.getBrickVoxelCounts(key) == pool.getBrickVoxelCounts(vBrickID));
+        
 
         uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
         // the brick could be flagged as empty by now if the async updater
@@ -1601,7 +1611,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, trin
       m_vMinMaxScalar[iBrickID].min = imme.minScalar;
       m_vMinMaxScalar[iBrickID].max = imme.maxScalar;
       m_vMinMaxGradient[iBrickID].min = imme.minGradient;
-      m_vMinMaxGradient[iBrickID].max = imme.maxGradient;      
+      m_vMinMaxGradient[iBrickID].max = imme.maxGradient;
     }
   }
   
