@@ -1386,11 +1386,8 @@ namespace {
       for (auto missingBrick = start; missingBrick < end; missingBrick++) {
         const Vec4ui& vBrickID = *missingBrick;
         const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
-        const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
+        const Vec3ui vVoxelSize = pool.getBrickVoxelCounts(vBrickID);
         
-        // TODO: if this is ok repace vVoxelSize
-        assert(pDataset.getBrickVoxelCounts(key) == pool.getBrickVoxelCounts(vBrickID));
-
         keys.push_back(key);
         sizes.push_back(vVoxelSize);
       }
@@ -1487,12 +1484,8 @@ namespace {
       for (auto missingBrick = start; missingBrick < end; missingBrick++) {
         const Vec4ui& vBrickID = *missingBrick;
         const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
-        const Vec3ui vVoxelSize = pDataset.getBrickVoxelCounts(key);
+        const Vec3ui vVoxelSize = pool.getBrickVoxelCounts(vBrickID);
         
-        // TODO: if this is ok repace vVoxelSize
-        assert(pDataset.getBrickVoxelCounts(key) == pool.getBrickVoxelCounts(vBrickID));
-        
-
         uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
         // the brick could be flagged as empty by now if the async updater
         // tested the brick after we ran the last render pass
@@ -1696,7 +1689,7 @@ uint32_t GLVolumePool::uploadBricks(const std::vector<Vec4ui>& vBrickIDs,
                                     trinity::IIO& pDataset,
                                     uint64_t modality)
 {
-  LINFO("Requesting:" << vBrickIDs.size() << " bricks");
+  LINFO("Requesting:" << vBrickIDs.size() << " brick(s)");
 
   uint32_t iPagedBricks = 0;
 
