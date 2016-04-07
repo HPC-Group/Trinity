@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <thread>
+#include <cstring>
 
 using namespace trinity;
 using namespace Core::Math;
