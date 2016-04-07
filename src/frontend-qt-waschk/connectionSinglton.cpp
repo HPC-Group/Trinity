@@ -10,7 +10,7 @@ ConnectionSingleton::ConnectionSingleton()
     , _processingNode(nullptr)
     , m_renderer(nullptr)
     , m_initDone(false)
-    , m_rendererType(trinity::VclType::SimpleRenderer) {}
+    , m_rendererType(trinity::VclType::GridLeapingRenderer) {}
 
 ConnectionSingleton::~ConnectionSingleton() {
     _ioNode = nullptr;

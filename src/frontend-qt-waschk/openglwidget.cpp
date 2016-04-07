@@ -112,6 +112,7 @@ void OpenGLWidget::initializeGL() {
   createShaderProgram();
 }
 
+#include <thread>
 void OpenGLWidget::paintGL() {
   // devicePixelRatio is needed for retina displays
   glViewport(0, 0, this->width()*devicePixelRatio(),
@@ -124,5 +125,8 @@ void OpenGLWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT);
   }
 
-  glFinish();
+
+    glFinish();
+    glFlush();
+    
 }

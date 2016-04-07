@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>720</height>
+    <width>800</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -537,7 +537,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
   </action>
   <action name="actionToggleRenderer">
    <property name="text">
-    <string>current renderer : SimpleRenderer</string>
+    <string>current renderer : GridLeaper</string>
    </property>
   </action>
  </widget>
