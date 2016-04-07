@@ -103,34 +103,8 @@ void JsonWriter::appendObjectVec(const std::string& key, const std::vector<ISeri
     }
 }
 
-void JsonWriter::appendBinary(std::shared_ptr<const std::vector<uint8_t>> binary) {
+void JsonWriter::appendBinary(std::shared_ptr<std::vector<uint8_t>> binary) {
     m_binary->push_back(binary);
-}
-
-mocca::ByteArray JsonWriter::write() const {
-    JsonCpp::FastWriter writer;
-    std::string str = writer.write(m_root);
-    int resultSize = str.size();
-    if (!m_binary->empty()) {
-        resultSize += 4; // delimiter size
-        resultSize += sizeof(uint32_t); // number of binary parts
-        for (const auto& sharedData : *m_binary) {
-            resultSize += sizeof(uint32_t);
-            resultSize += sharedData->size();
-        }
-    }
-    mocca::ByteArray result(resultSize);
-    result.append(str.data(), str.size());
-    if (!m_binary->empty()) {
-        // delimiter sequence; octets are invalid in a utf-8 string
-        result << '\xc0' << '\xc1' << '\xf5' << '\xff';
-        result << static_cast<uint32_t>(m_binary->size());
-        for (const auto& sharedData : *m_binary) {
-            result << static_cast<uint32_t>(sharedData->size());
-            result.append(sharedData->data(), sharedData->size());
-        }
-    }
-    return result;
 }
 
 mocca::net::Message JsonWriter::writeMessage() const {
@@ -140,10 +114,10 @@ mocca::net::Message JsonWriter::writeMessage() const {
     jsonData->resize(str.size());
     // FIXME: this copy might be avoided by using JsonCpp::StreamWriter and streaming the json directly into the vector
     std::copy(begin(str), end(str), begin(*jsonData));
-    mocca::net::Message headPart(jsonData);
-    mocca::net::Message* currentMessage = &headPart;
-    for (const auto& sharedData : *m_binary) {
-        currentMessage = currentMessage->append(sharedData);
+    mocca::net::Message message;
+    message.push_back(jsonData);
+    for (auto& sharedData : *m_binary) {
+        message.push_back(sharedData);
     }
-    return headPart;
+    return message;
 }

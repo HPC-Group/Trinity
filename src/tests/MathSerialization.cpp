@@ -15,8 +15,7 @@ protected:
 };
 
 typedef ::testing::Types<
-    JsonSerializerFactory,
-    SimpleStringSerializerFactory
+    JsonSerializerFactory
 > MyTypes;
 
 TYPED_TEST_CASE(MathSerializationTest, MyTypes);
@@ -30,8 +29,8 @@ TYPED_TEST(MathSerializationTest, Vector2_UInt8) {
     Core::Math::VECTOR2<uint8_t> vec(x, y);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -46,8 +45,8 @@ TYPED_TEST(MathSerializationTest, Vector2_Int32) {
     Core::Math::VECTOR2<int32_t> vec(x, y);
     
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -62,8 +61,8 @@ TYPED_TEST(MathSerializationTest, Vector2_UInt32) {
     Core::Math::VECTOR2<uint32_t> vec(x, y);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -78,8 +77,8 @@ TYPED_TEST(MathSerializationTest, Vector2_Int64) {
     Core::Math::VECTOR2<int64_t> vec(x, y);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -94,8 +93,8 @@ TYPED_TEST(MathSerializationTest, Vector2_UInt64) {
     Core::Math::VECTOR2<uint64_t> vec(x, y);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -110,8 +109,8 @@ TYPED_TEST(MathSerializationTest, Vector2_Float) {
     Core::Math::VECTOR2<float> vec(x, y);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -126,8 +125,8 @@ TYPED_TEST(MathSerializationTest, Vector2_Double) {
     Core::Math::VECTOR2<double> vec(x, y);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -143,8 +142,8 @@ TYPED_TEST(MathSerializationTest, Vector3_UInt8) {
     Core::Math::VECTOR3<uint8_t> vec(x, y, z);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -161,8 +160,8 @@ TYPED_TEST(MathSerializationTest, Vector3_Int32) {
     Core::Math::VECTOR3<int32_t> vec(x, y, z);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -179,8 +178,8 @@ TYPED_TEST(MathSerializationTest, Vector3_UInt32) {
     Core::Math::VECTOR3<uint32_t> vec(x, y, z);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -197,8 +196,8 @@ TYPED_TEST(MathSerializationTest, Vector3_Int64) {
     Core::Math::VECTOR3<int64_t> vec(x, y, z);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -215,8 +214,8 @@ TYPED_TEST(MathSerializationTest, Vector3_UInt64) {
     Core::Math::VECTOR3<uint64_t> vec(x, y, z);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -233,8 +232,8 @@ TYPED_TEST(MathSerializationTest, Vector3_Float) {
     Core::Math::VECTOR3<float> vec(x, y, z);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -251,8 +250,8 @@ TYPED_TEST(MathSerializationTest, Vector3_Double) {
     Core::Math::VECTOR3<double> vec(x, y, z);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -270,8 +269,8 @@ TYPED_TEST(MathSerializationTest, Vector4_UInt8) {
     Core::Math::VECTOR4<uint8_t> vec(x, y, z, w);
 
     writer->appendObject("vec", vec);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(vec)>("vec");
     ASSERT_EQ(x, result.x);
     ASSERT_EQ(y, result.y);
@@ -306,8 +305,8 @@ TYPED_TEST(MathSerializationTest, Matrix4_Double) {
     Core::Math::MATRIX4<double> mat(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
 
     writer->appendObject("mat", mat);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto messgae = writer->writeMessage();
+    auto reader = factory.createReader(messgae);
     auto result = reader->template getSerializable<decltype(mat)>("mat");
     
     ASSERT_EQ(m11, result.m11);
@@ -358,8 +357,8 @@ TYPED_TEST(MathSerializationTest, Matrix4_Float) {
     Core::Math::MATRIX4<float> mat(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
 
     writer->appendObject("mat", mat);
-    auto byteArray = writer->write();
-    auto reader = factory.createReader(byteArray);
+    auto message = writer->writeMessage();
+    auto reader = factory.createReader(message);
     auto result = reader->template getSerializable<decltype(mat)>("mat");
 
     ASSERT_EQ(m11, result.m11);

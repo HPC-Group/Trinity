@@ -19,22 +19,12 @@ std::unique_ptr<ISerialWriter> JsonSerializerFactory::createWriter() const {
     return mocca::make_unique<JsonWriter>();
 }
 
-std::unique_ptr<ISerialReader> JsonSerializerFactory::createReader(mocca::ByteArray& data) const {
-    data.resetReadPos(); // fixme: not nice
-    return mocca::make_unique<JsonReader>(data);
-}
-
 std::unique_ptr<ISerialReader> JsonSerializerFactory::createReader(const mocca::net::Message &message) const {
     return mocca::make_unique<JsonReader>(message);
 }
 
 std::unique_ptr<ISerialWriter> SimpleStringSerializerFactory::createWriter() const {
     return mocca::make_unique<SimpleStringWriter>();
-}
-
-std::unique_ptr<ISerialReader> SimpleStringSerializerFactory::createReader(mocca::ByteArray& data) const {
-    data.resetReadPos(); // fixme: not nice
-    return mocca::make_unique<SimpleStringReader>(data);
 }
 
 std::unique_ptr<ISerialReader> SimpleStringSerializerFactory::createReader(const mocca::net::Message &message) const {

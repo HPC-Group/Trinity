@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "mocca/base/Nullable.h"
-#include "mocca/base/ByteArray.h"
+#include <vector>
+#include <memory>
 
 namespace trinity {
 
@@ -46,7 +46,7 @@ public:
   void setSubsampling(ChrominanceSubsampling subsampling);
   ChrominanceSubsampling getSubsampling() const;
   
-  mocca::Nullable<mocca::ByteArray> encode(mocca::ByteArray const& raw, int width, int height);
+  std::shared_ptr<std::vector<uint8_t>> encode(const std::vector<uint8_t>& raw, int width, int height);
   
 private:
   void * m_handle;

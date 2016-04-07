@@ -838,7 +838,7 @@ struct GetBrickCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        explicit ReplyParams(std::shared_ptr<const std::vector<uint8_t>> brick, bool success);
+        explicit ReplyParams(std::shared_ptr<std::vector<uint8_t>> brick, bool success);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -847,11 +847,11 @@ struct GetBrickCmd {
         bool equals(const ReplyParams& other) const;
 
         bool getSuccess() const;
-        std::shared_ptr<const std::vector<uint8_t>> getBrick() const;
+        std::shared_ptr<std::vector<uint8_t>> getBrick() const;
 
     private:
         bool m_success;
-        std::shared_ptr<const std::vector<uint8_t>> m_brick;
+        std::shared_ptr<std::vector<uint8_t>> m_brick;
     };
 };
 
@@ -1374,7 +1374,7 @@ struct GetBricksCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(std::vector<std::shared_ptr<const std::vector<uint8_t>>> result, bool success);
+        ReplyParams(std::vector<std::shared_ptr<std::vector<uint8_t>>> result, bool success);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -1382,11 +1382,11 @@ struct GetBricksCmd {
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
-        std::vector<std::shared_ptr<const std::vector<uint8_t>>> getResult() const;
+        std::vector<std::shared_ptr<std::vector<uint8_t>>> getResult() const;
         bool getSuccess() const;
 
     private:
-        std::vector<std::shared_ptr<const std::vector<uint8_t>>> m_result;
+        std::vector<std::shared_ptr<std::vector<uint8_t>>> m_result;
         bool m_success;
     };
 };

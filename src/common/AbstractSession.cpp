@@ -5,7 +5,6 @@
 #include "mocca/log/LogManager.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/NetworkError.h"
-#include "mocca/net/message/NewLoopbackConnection.h"
 
 using namespace mocca::net;
 using namespace trinity;
@@ -40,29 +39,15 @@ void AbstractSession::run() {
     performThreadSpecificInit();
     try {
         while (!isInterrupted()) {
-            if (auto loopback = dynamic_cast<mocca::net::NewLoopbackConnection*>(m_controlConnection.get())) {
-                auto message = loopback->receiveNew();
-                if (!message.isEmpty()) {
-                    auto request = Request::createFromMessage(message);
-                    // LINFO("request: " << *request);
-                    auto handler = createHandler(*request);
-                    auto reply = handler->execute();
-                    if (reply != nullptr) { // not tested yet
-                        auto serialReply = Reply::createMessage(*reply);
-                        loopback->sendNew(std::move(serialReply));
-                    }
-                }
-            } else {
-                auto bytepacket = m_controlConnection->receive();
-                if (!bytepacket.isEmpty()) {
-                    auto request = Request::createFromByteArray(bytepacket);
-                    // LINFO("request: " << *request);
-                    auto handler = createHandler(*request);
-                    auto reply = handler->execute();
-                    if (reply != nullptr) { // not tested yet
-                        auto serialReply = Reply::createByteArray(*reply);
-                        m_controlConnection->send(std::move(serialReply));
-                    }
+            auto message = m_controlConnection->receive();
+            if (!message.empty()) {
+                auto request = Request::createFromMessage(message);
+                // LINFO("request: " << *request);
+                auto handler = createHandler(*request);
+                auto reply = handler->execute();
+                if (reply != nullptr) { // not tested yet
+                    auto serialReply = Reply::createMessage(*reply);
+                    m_controlConnection->send(std::move(serialReply));
                 }
             }
         }

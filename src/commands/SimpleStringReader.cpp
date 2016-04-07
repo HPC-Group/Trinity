@@ -7,11 +7,6 @@ using namespace trinity;
 SimpleStringReader::SimpleStringReader(const std::string& str)
     : m_stream(str) {}
 
-SimpleStringReader::SimpleStringReader(mocca::ByteArray& data)
-    : m_stream(data.read(data.size())) {
-    // fixme dmc
-}
-
 float SimpleStringReader::getFloat(const std::string& key) const {
     float x;
     m_stream >> x;

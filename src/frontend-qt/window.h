@@ -4,7 +4,6 @@
 #include "common/IONodeProxy.h"
 #include "frontend-base/ProcessingNodeProxy.h"
 
-#include "mocca/base/ByteArray.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 

@@ -4,7 +4,6 @@
 #include <memory>
 #include <thread>
 
-#include "mocca/base/ByteArray.h"
 #include "mocca/base/MessageQueue.h"
 
 #include "commands/ProcessingCommands.h"
@@ -12,7 +11,7 @@
 
 namespace trinity {
 
-using Frame = mocca::ByteArray;
+using Frame = std::vector<uint8_t>;
 
 class VisStreamQueue {
 public:

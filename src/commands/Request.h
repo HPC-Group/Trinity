@@ -6,7 +6,6 @@
 #include "commands/Reply.h"
 #include "commands/Vcl.h"
 
-#include "mocca/base/ByteArray.h"
 #include "mocca/base/Error.h"
 
 #include <memory>
@@ -28,9 +27,6 @@ public:
 
     int getRid() const { return m_rid; }
     int getSid() const { return m_sid; }
-
-    static std::unique_ptr<Request> createFromByteArray(mocca::ByteArray& byteArray);
-    static mocca::ByteArray createByteArray(const Request& request);
 
     static std::unique_ptr<Request> createFromMessage(const mocca::net::Message& message);
     static mocca::net::Message createMessage(const Request& request);

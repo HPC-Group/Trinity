@@ -2,8 +2,6 @@
 
 #include "commands/ISerialReader.h"
 
-#include "mocca/base/ByteArray.h"
-
 #include <sstream>
 
 namespace trinity {
@@ -11,7 +9,6 @@ namespace trinity {
 class SimpleStringReader : public ISerialReader {
 public:
     SimpleStringReader(const std::string& str);
-    SimpleStringReader(mocca::ByteArray& data);
 
     float getFloat(const std::string& key) const override;
     double getDouble(const std::string& key) const override;

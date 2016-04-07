@@ -2,7 +2,6 @@
 
 #include "commands/ProcessingCommands.h"
 
-#include "mocca/base/ByteArray.h"
 #include "mocca/base/Nullable.h"
 
 #include <condition_variable>
@@ -10,7 +9,7 @@
 
 namespace trinity {
 
-using Frame = mocca::ByteArray;
+using Frame = std::vector<uint8_t>;
 
 class VisStream {
 public:
@@ -19,7 +18,7 @@ public:
     const StreamingParams& getStreamingParams() const;
 
     void put(Frame frame);
-    mocca::Nullable<Frame> get();
+    Frame get();
 
 private:
     StreamingParams m_streamingParams;

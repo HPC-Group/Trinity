@@ -62,7 +62,7 @@ JPEGEncoder::ChrominanceSubsampling JPEGEncoder::getSubsampling() const
   return m_subsampling;
 }
 
-Nullable<ByteArray> JPEGEncoder::encode(ByteArray const& raw, int width, int height)
+std::shared_ptr<std::vector<uint8_t>> JPEGEncoder::encode(const std::vector<uint8_t>& raw, int width, int height)
 {
   int channels = raw.size() / (width * height);
 //  LINFO("encoding: " << width << "x" << height << "@" << channels << " channels with quality " << m_quality << " and subsampling " << m_subsampling);
@@ -78,7 +78,7 @@ Nullable<ByteArray> JPEGEncoder::encode(ByteArray const& raw, int width, int hei
       break;
     default:
       LERROR("unsupported pixel format");
-      return Nullable<ByteArray>();
+      return nullptr;
   }
   
   // libjpeg-turbo 1.4.2 doc promises to not modify the src buffer but does not decalre it as const
@@ -91,12 +91,13 @@ Nullable<ByteArray> JPEGEncoder::encode(ByteArray const& raw, int width, int hei
   
   if (success != 0) {
     LERROR("turbojpeg: " << tjGetErrorStr());
-    return Nullable<ByteArray>();
+    return nullptr;
   }
 
-  ByteArray jpeg = ByteArray::createFromRaw(m_buffer, m_size);
+  auto jpeg = std::make_shared<std::vector<uint8_t>>();
+  jpeg->assign(m_buffer, m_buffer + m_size);
   
 //  LINFO("raw: " << raw.size() << " bytes, jpeg: " << jpeg.size() << " bytes, compression ratio: " << (float)raw.size()/jpeg.size());
 
-  return std::move(jpeg);
+  return jpeg;
 }

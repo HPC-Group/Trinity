@@ -4,7 +4,6 @@
 #include <memory>
 #include <thread>
 
-#include "mocca/base/ByteArray.h"
 #include "mocca/base/ContainerTools.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/HTMLLog.h"

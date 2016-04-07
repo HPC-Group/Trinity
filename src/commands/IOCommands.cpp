@@ -969,7 +969,7 @@ BrickKey GetBrickCmd::RequestParams::getBrickKey() const {
     return m_brickKey;
 }
 
-GetBrickCmd::ReplyParams::ReplyParams(std::shared_ptr<const std::vector<uint8_t>> brick, bool success)
+GetBrickCmd::ReplyParams::ReplyParams(std::shared_ptr<std::vector<uint8_t>> brick, bool success)
     : m_success(success)
     , m_brick(brick) {}
 
@@ -999,7 +999,7 @@ bool GetBrickCmd::ReplyParams::getSuccess() const {
     return m_success;
 }
 
-std::shared_ptr<const std::vector<uint8_t>> GetBrickCmd::ReplyParams::getBrick() const {
+std::shared_ptr<std::vector<uint8_t>> GetBrickCmd::ReplyParams::getBrick() const {
     return m_brick;
 }
 
@@ -1594,12 +1594,12 @@ std::string GetBricksCmd::RequestParams::toString() const {
     return stream.str();
 }
 
-GetBricksCmd::ReplyParams::ReplyParams(std::vector<std::shared_ptr<const std::vector<uint8_t>>> result, bool success)
+GetBricksCmd::ReplyParams::ReplyParams(std::vector<std::shared_ptr<std::vector<uint8_t>>> result, bool success)
     : m_result(result)
     , m_success(success) {}
 
 void GetBricksCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    for (const auto& brick : m_result) {
+    for (auto& brick : m_result) {
         writer.appendBinary(brick);
     }
     writer.appendBool("success", m_success);
@@ -1607,7 +1607,7 @@ void GetBricksCmd::ReplyParams::serialize(ISerialWriter& writer) const {
 
 void GetBricksCmd::ReplyParams::deserialize(const ISerialReader& reader) {
     auto bricks = reader.getBinary();
-    for (const auto& brick : bricks) {
+    for (auto& brick : bricks) {
         m_result.push_back(brick);
     }
     m_success = reader.getBool("success");
@@ -1617,7 +1617,7 @@ bool GetBricksCmd::ReplyParams::equals(const GetBricksCmd::ReplyParams& other) c
     return /*m_result == other.m_result && */ m_success == other.m_success;
 }
 
-std::vector<std::shared_ptr<const std::vector<uint8_t>>> GetBricksCmd::ReplyParams::getResult() const {
+std::vector<std::shared_ptr<std::vector<uint8_t>>> GetBricksCmd::ReplyParams::getResult() const {
     return m_result;
 }
 

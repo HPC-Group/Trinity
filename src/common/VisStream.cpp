@@ -17,10 +17,10 @@ void VisStream::put(Frame frame) {
     m_cv.notify_one();
 }
 
-mocca::Nullable<Frame> VisStream::get() {
+Frame VisStream::get() {
     std::unique_lock<std::mutex> lock(m_mutex);
-    if (!m_cv.wait_for(lock, std::chrono::milliseconds(10), [&] { return !m_frame.isEmpty(); })) {
-        return mocca::Nullable<Frame>();
+    if (!m_cv.wait_for(lock, std::chrono::milliseconds(10), [&] { return !m_frame.empty(); })) {
+        return Frame();
     }
-    return mocca::Nullable<Frame>(std::move(m_frame));
+    return m_frame;
 }

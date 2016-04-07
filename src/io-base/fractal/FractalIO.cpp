@@ -326,7 +326,7 @@ uint64_t FractalIO::getTotalBrickCount(uint64_t modality) const {
   }
 }
 
-std::shared_ptr<const std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& key, bool& success) const {
+std::shared_ptr<std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& key, bool& success) const {
   success = false;
 
   uint64_t brickSize;
@@ -386,8 +386,8 @@ std::shared_ptr<const std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& 
   return data;
 }
 
-std::vector<std::shared_ptr<const std::vector<uint8_t>>> FractalIO::getBricks(const std::vector<BrickKey>& brickKeys, bool& success) const {
-  std::vector<std::shared_ptr<const std::vector<uint8_t>>> result;
+std::vector<std::shared_ptr<std::vector<uint8_t>>> FractalIO::getBricks(const std::vector<BrickKey>& brickKeys, bool& success) const {
+  std::vector<std::shared_ptr<std::vector<uint8_t>>> result;
   for (auto key : brickKeys) {
     auto data = getBrick(key, success);
     if (!success) {

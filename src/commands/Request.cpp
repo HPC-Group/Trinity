@@ -189,22 +189,10 @@ std::unique_ptr<Request> Request::createRequestInternal(const ISerialReader& rea
     throw TrinityError("Invalid request type", __FILE__, __LINE__);
 }
 
-std::unique_ptr<Request> Request::createFromByteArray(mocca::ByteArray& byteArray) {
-    auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
-    return createRequestInternal(*reader);
-}
-
 std::unique_ptr<Request> Request::createFromMessage(const mocca::net::Message& message) {
     auto reader = ISerializerFactory::defaultFactory().createReader(message);
     auto request = createRequestInternal(*reader);
     return request;
-}
-
-mocca::ByteArray Request::createByteArray(const Request& request) {
-    auto writer = ISerializerFactory::defaultFactory().createWriter();
-    writer->appendString("type", Vcl::instance().toString(request.getType()));
-    writer->appendObject("req", request);
-    return writer->write();
 }
 
 mocca::net::Message Request::createMessage(const Request& request) {

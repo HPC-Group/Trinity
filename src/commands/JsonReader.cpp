@@ -18,54 +18,13 @@ JsonReader::JsonReader(const std::string& json) {
 }
 
 JsonReader::JsonReader(const mocca::net::Message& message) {
-    std::string json(reinterpret_cast<const char*>(message.data()->data()), message.data()->size());
-    auto next = message.next();
-    while (next) {
-        m_binary.push_back(next->data());
-        next = next->next();
+    std::string json(reinterpret_cast<const char*>(message[0]->data()), message[0]->size());
+    for (unsigned int i = 1; i < message.size(); ++i) {
+        m_binary.push_back(message[i]);
     }
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {
         throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
-    }
-}
-
-JsonReader::JsonReader(mocca::ByteArray& data) {
-    // determine position of delimiter
-    const std::string delimiter{'\xc0', '\xc1', '\xf5', '\xff'}; // octets are invalid in a utf-8 string
-    auto dataBegin = reinterpret_cast<char*>(data.data());
-    auto dataEnd = reinterpret_cast<char*>(data.data()) + data.size();
-    auto delimitPos = std::find_first_of(dataBegin, dataEnd, begin(delimiter), end(delimiter));
-
-    // split off json part before delimiter
-    auto jsonSize = data.size();
-    if (delimitPos != dataEnd) {
-        jsonSize = std::distance(dataBegin, delimitPos);
-    }
-    auto json = data.read(jsonSize);
-
-    // parse json
-    JsonCpp::Reader reader;
-    if (!reader.parse(json, m_root)) {
-        throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
-    }
-
-    // read optional binary data
-    if (delimitPos != dataEnd) {
-        uint32_t pos = jsonSize + 4;
-        uint32_t numParts = mocca::readAt<uint32_t>(data, pos);
-        pos += sizeof(uint32_t);
-        m_binary.resize(numParts);
-        for (uint32_t i = 0; i < numParts; ++i) {
-            uint32_t binarySize = mocca::readAt<uint32_t>(data, pos);
-            pos += sizeof(uint32_t);
-            m_binary[i] = std::make_shared<std::vector<uint8_t>>();
-            std::shared_ptr<std::vector<uint8_t>> nc = std::const_pointer_cast<std::vector<uint8_t>>(m_binary[i]);
-            nc->resize(binarySize); // FIXME: use preallocated memory
-            // don't use std::copy here, it's less performant
-            std::memcpy(&(*nc)[0], data.data() + pos, binarySize);
-            pos += binarySize;
-        }
     }
 }
 

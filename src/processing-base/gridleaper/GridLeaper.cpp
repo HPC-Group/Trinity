@@ -650,7 +650,8 @@ void GridLeaper::compose(){
   m_targetBinder->Unbind();
   GL_CHECK_EXT();
 
-  auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size());
+  Frame f1;
+  f1.assign(begin(m_bufferData), end(m_bufferData));
   getVisStream()->put(std::move(f1));
 }
 

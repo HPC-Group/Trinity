@@ -10,7 +10,7 @@ template <typename T> T writeAndRead(const T& obj) {
     auto writer = ISerializerFactory::defaultFactory().createWriter();
     obj.serialize(*writer);
     T result;
-    auto serialized = writer->write();
+    auto serialized = writer->writeMessage();
     auto reader = ISerializerFactory::defaultFactory().createReader(serialized);
     result.deserialize(*reader);
     return result;

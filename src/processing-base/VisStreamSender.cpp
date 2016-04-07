@@ -51,15 +51,16 @@ void VisStreamSender::run() {
             continue;
         }
 
-        auto frameNullable = m_visStream->get();
-
-        if (m_connection->isConnected() && !frameNullable.isNull()) {
+        auto frame = m_visStream->get();
+        if (m_connection->isConnected() && !frame.empty()) {
             try {
                 auto const& params = m_visStream->getStreamingParams();
-                frameNullable = jpeg.encode(frameNullable, params.getResX(), params.getResY());
+                auto encodedFrame = jpeg.encode(frame, params.getResX(), params.getResY());
                 
-				if (!frameNullable.isNull()) {
-					m_connection->send(std::move(frameNullable.release()));
+				if (encodedFrame != nullptr) {
+                    mocca::net::Message message;
+                    message.push_back(encodedFrame);
+                    m_connection->send(message);
 					//LINFO("(p) frame out");
 				}
  	} catch (const mocca::net::NetworkError& err) {

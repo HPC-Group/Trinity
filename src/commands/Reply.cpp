@@ -133,18 +133,6 @@ std::unique_ptr<Reply> Reply::createReplyInternal(const ISerialReader& reader) {
     throw TrinityError("Invalid reply type", __FILE__, __LINE__);
 }
 
-std::unique_ptr<Reply> Reply::createFromByteArray(mocca::ByteArray& byteArray) {
-    auto reader = ISerializerFactory::defaultFactory().createReader(byteArray);
-    return createReplyInternal(*reader);
-}
-
-mocca::ByteArray Reply::createByteArray(const Reply& reply) {
-    auto writer = ISerializerFactory::defaultFactory().createWriter();
-    writer->appendString("type", Vcl::instance().toString(reply.getType()));
-    writer->appendObject("rep", reply);
-    return writer->write();
-}
-
 std::unique_ptr<Reply> Reply::createFromMessage(const mocca::net::Message& message) {
     auto reader = ISerializerFactory::defaultFactory().createReader(message);
     return createReplyInternal(*reader);

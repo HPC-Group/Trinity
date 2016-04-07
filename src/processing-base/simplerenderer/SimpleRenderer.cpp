@@ -281,7 +281,8 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
     m_targetBinder->Unbind();
   }
   
-  auto f1 = Frame::createFromRaw(m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
+  Frame f1(m_bufferData.size() * 4 * sizeof(uint8_t));
+  std::memcpy(f1.data(), m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
   getVisStream()->put(std::move(f1));
 }
 

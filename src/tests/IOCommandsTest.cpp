@@ -482,7 +482,7 @@ TEST_F(IOCommandsTest, GetBrickCmd) {
     }
     {
         std::initializer_list<uint8_t> data = {0x12, 0x34, 0x56, 0x78, 0x9A};
-        auto binary = std::make_shared<const std::vector<uint8_t>>(data);
+        auto binary = std::make_shared<std::vector<uint8_t>>(data);
         GetBrickCmd::ReplyParams target(binary, true);
         auto result = trinity::testing::writeAndRead(target);
         ASSERT_EQ(target, result);

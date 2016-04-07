@@ -5,7 +5,6 @@
 #include "thirdparty/jsoncpp/json.h"
 
 #include "mocca/net/Message.h"
-#include "mocca/base/ByteArray.h"
 
 namespace trinity {
 
@@ -14,7 +13,6 @@ public:
 
     JsonReader(const std::string& json);
     JsonReader(const mocca::net::Message& message);
-    JsonReader(mocca::ByteArray& data);
 
     float getFloat(const std::string& key) const override;
     double getDouble(const std::string& key) const override;

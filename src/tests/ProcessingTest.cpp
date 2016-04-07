@@ -26,7 +26,6 @@ protected:
     virtual ~ProcessingTest() { ConnectionFactorySelector::removeAll(); }
 };
 
-
 TEST_F(ProcessingTest, VisStreamPutGetTest) {
 
     Endpoint endpoint(ConnectionFactorySelector::loopback(), "localhost", "5678");
@@ -34,21 +33,17 @@ TEST_F(ProcessingTest, VisStreamPutGetTest) {
     trinity::StreamingParams p;
     std::shared_ptr<trinity::VisStream> sendstream = std::make_shared<trinity::VisStream>(p);
 
-    trinity::Frame f1;
-    f1 << "123";
-    sendstream->put(std::move(f1));
-    auto ff1Nullable = sendstream->get();
-    ASSERT_FALSE(ff1Nullable.isNull());
-    auto ff1 = ff1Nullable.release();
-    ASSERT_EQ("123", ff1.read(ff1.size()));
+    trinity::Frame f1 = { 0x11, 0x22, 0x33 };
+    sendstream->put(f1);
+    auto ff1 = sendstream->get();
+    ASSERT_FALSE(ff1.empty());
+    ASSERT_EQ(f1, ff1);
 
-    trinity::Frame f2;
-    f2 << "456";
-    sendstream->put(std::move(f2));
-    auto ff2Nullable = sendstream->get();
-    ASSERT_FALSE(ff2Nullable.isNull());
-    auto ff2 = ff2Nullable.release();
-    ASSERT_EQ("456", ff2.read(ff2.size()));
+    trinity::Frame f2 = { 0x44, 0x55, 0x55 };
+    sendstream->put(f2);
+    auto ff2 = sendstream->get();
+    ASSERT_FALSE(ff2.empty());
+    ASSERT_EQ(f2, ff2);
 }
 
 /*deprecated since libjpeg

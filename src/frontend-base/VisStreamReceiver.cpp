@@ -58,7 +58,7 @@ void VisStreamReceiver::run() {
         try {
             
             auto bytepacket = m_connection->receive();
-            if (!bytepacket.isEmpty()) {
+            if (!bytepacket.empty()) {
                 
                 /**
                  * THIS IS THE POINT TO DECOMPRESS THE JPED-COMPRESSED IMAGE
@@ -66,8 +66,8 @@ void VisStreamReceiver::run() {
                  m_visStream->put(f.decompress)... sth. like this
                  */
 #if !defined(DETECTED_IOS_SIMULATOR) && !defined(DETECTED_IOS)
-                auto frame = jpeg.decode(bytepacket);
-                m_visStream->put(std::move(frame.release()));
+                auto frame = jpeg.decode(*bytepacket[0]);
+                m_visStream->put(std::move(frame));
 #else
                 m_visStream->put(std::move(bytepacket));
 #endif

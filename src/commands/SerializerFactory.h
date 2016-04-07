@@ -13,7 +13,6 @@ namespace trinity {
 class ISerializerFactory {
 public:
     virtual std::unique_ptr<ISerialWriter> createWriter() const = 0;
-    virtual std::unique_ptr<ISerialReader> createReader(mocca::ByteArray& data) const = 0;
     virtual std::unique_ptr<ISerialReader> createReader(const mocca::net::Message &message) const = 0;
 
     static const ISerializerFactory& defaultFactory(); // edit this method to change the default serializer
@@ -22,14 +21,12 @@ public:
 class JsonSerializerFactory : public ISerializerFactory {
 public:
     std::unique_ptr<ISerialWriter> createWriter() const override;
-    std::unique_ptr<ISerialReader> createReader(mocca::ByteArray& data) const override;
     std::unique_ptr<ISerialReader> createReader(const mocca::net::Message &message) const override;
 };
 
 class SimpleStringSerializerFactory : public ISerializerFactory {
 public:
     std::unique_ptr<ISerialWriter> createWriter() const override;
-    std::unique_ptr<ISerialReader> createReader(mocca::ByteArray& data) const override;
     std::unique_ptr<ISerialReader> createReader(const mocca::net::Message &message) const override;
 };
 }

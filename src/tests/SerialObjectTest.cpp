@@ -54,7 +54,7 @@ TYPED_TEST(SerialObjectTest, BasicTypes) {
     writer->appendBool("boolFalse", false);
     writer->appendString("string", "Hello");
 
-    auto serialized = writer->write();
+    auto serialized = writer->writeMessage();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ(3.14f, reader->getFloat("float"));
     ASSERT_EQ(static_cast<uint8_t>(128), reader->getUInt8("uint8"));
@@ -76,7 +76,7 @@ TYPED_TEST(SerialObjectTest, SubObjects) {
     writer->appendObject("subObject", subObject);
     writer->appendString("string", "Hello");
 
-    auto serialized = writer->write();
+    auto serialized = writer->writeMessage();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ(3.14f, reader->getFloat("float"));
     MyObj resultSubObject;
@@ -101,7 +101,7 @@ TYPED_TEST(SerialObjectTest, VectorBasicTypes) {
     writer->appendBoolVec("bool", std::vector<bool>{true, false, true});
     writer->appendStringVec("string", std::vector<std::string>{"Hello", "World"});
 
-    auto serialized = writer->write();
+    auto serialized = writer->writeMessage();
     auto reader = factory.createReader(serialized);
 
     auto floatRes = reader->getFloatVec("float");
@@ -145,7 +145,7 @@ TYPED_TEST(SerialObjectTest, VectorSubObject) {
     std::vector<ISerializable*> vec{ subObject1.get(), subObject2.get() };
     writer->appendObjectVec("subObjects", vec);
 
-    auto serialized = writer->write();
+    auto serialized = writer->writeMessage();
     auto reader = factory.createReader(serialized);
     auto res = reader->template getSerializableVec<MyObj>("subObjects");
     ASSERT_EQ(2, res.size());
@@ -159,7 +159,7 @@ TYPED_TEST(SerialObjectTest, EmptyVector) {
     TypeParam factory;
     auto writer = factory.createWriter();
     writer->appendIntVec("int32", std::vector<int>{});
-    auto serialized = writer->write();
+    auto serialized = writer->writeMessage();
     auto reader = factory.createReader(serialized);
     auto res = reader->getInt32Vec("int32");
     ASSERT_TRUE(res.empty());
@@ -174,7 +174,7 @@ TYPED_TEST(SerialObjectTest, BinaryData) {
     *binary = { 0x11, 0x22, 0x33 };
     writer->appendBinary(binary);
 
-    auto serialized = writer->write();
+    auto serialized = writer->writeMessage();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ("Hello", reader->getString("string1"));
     ASSERT_EQ("World", reader->getString("string2"));
@@ -194,7 +194,7 @@ TYPED_TEST(SerialObjectTest, BinaryDataMultiple) {
     writer->appendBinary(binary1);
     writer->appendBinary(binary2);
 
-    auto serialized = writer->write();
+    auto serialized = writer->writeMessage();
     auto reader = factory.createReader(serialized);
     ASSERT_EQ("Hello", reader->getString("string1"));
     ASSERT_EQ("World", reader->getString("string2"));

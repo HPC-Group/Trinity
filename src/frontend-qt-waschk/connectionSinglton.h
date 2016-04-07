@@ -1,6 +1,5 @@
 #pragma once
 
-#include "mocca/base/ByteArray.h"
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 

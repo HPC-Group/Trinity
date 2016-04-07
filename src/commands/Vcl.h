@@ -6,7 +6,6 @@
 #include <memory>
 
 #include "mocca/base/BidirectionalMap.h"
-#include "mocca/base/ByteArray.h"
 #include "mocca/base/Error.h"
 #include "mocca/base/StringTools.h"
 

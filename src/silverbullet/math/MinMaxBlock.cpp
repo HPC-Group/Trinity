@@ -1,5 +1,7 @@
 #include "silverbullet/math/MinMaxBlock.h"
 
+#include <sstream>
+
 using namespace trinity;
 
 void MinMaxBlock::serialize(ISerialWriter& writer) const {

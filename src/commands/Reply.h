@@ -5,7 +5,6 @@
 #include "commands/ISerializable.h"
 #include "commands/Vcl.h"
 
-#include "mocca/base/ByteArray.h"
 #include "mocca/base/Error.h"
 #include "mocca/net/Message.h"
 
@@ -28,9 +27,6 @@ public:
 
     int getRid() const { return m_rid; }
     int getSid() const { return m_sid; }
-
-    static std::unique_ptr<Reply> createFromByteArray(mocca::ByteArray& byteArray);
-    static mocca::ByteArray createByteArray(const Reply& reply);
 
     static std::unique_ptr<Reply> createFromMessage(const mocca::net::Message& message);
     static mocca::net::Message createMessage(const Reply& reply);

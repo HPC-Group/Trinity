@@ -130,7 +130,7 @@ uint64_t IOSessionProxy::getTotalBrickCount(uint64_t modality) const {
     return reply->getParams().getTotalBrickCount();
 }
 
-std::shared_ptr<const std::vector<uint8_t>> IOSessionProxy::getBrick(const BrickKey& brickKey, bool& success) const {
+std::shared_ptr<std::vector<uint8_t>> IOSessionProxy::getBrick(const BrickKey& brickKey, bool& success) const {
     GetBrickCmd::RequestParams params(brickKey);
     GetBrickRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
@@ -216,7 +216,7 @@ std::vector<MinMaxBlock> IOSessionProxy::getBrickMaxMin(uint64_t modality, uint6
     return reply->getParams().getResult();
 }
 
-std::vector<std::shared_ptr<const std::vector<uint8_t>>> IOSessionProxy::getBricks(const std::vector<BrickKey>& brickKeys,
+std::vector<std::shared_ptr<std::vector<uint8_t>>> IOSessionProxy::getBricks(const std::vector<BrickKey>& brickKeys,
                                                                                    bool& success) const {
     GetBricksCmd::RequestParams params(brickKeys);
     GetBricksRequest request(params, IDGenerator::nextID(), m_remoteSid);
