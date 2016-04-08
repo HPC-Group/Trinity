@@ -34,16 +34,16 @@ TEST_F(ProcessingTest, VisStreamPutGetTest) {
     std::shared_ptr<trinity::VisStream> sendstream = std::make_shared<trinity::VisStream>(p);
 
     trinity::Frame f1 = { 0x11, 0x22, 0x33 };
-    sendstream->put(f1);
+    sendstream->put(mocca::make_unique<decltype(f1)>(f1));
     auto ff1 = sendstream->get();
-    ASSERT_FALSE(ff1.empty());
-    ASSERT_EQ(f1, ff1);
+    ASSERT_FALSE(ff1->empty());
+    ASSERT_EQ(f1, *ff1);
 
     trinity::Frame f2 = { 0x44, 0x55, 0x55 };
-    sendstream->put(f2);
+    sendstream->put(mocca::make_unique<decltype(f2)>(f2));
     auto ff2 = sendstream->get();
-    ASSERT_FALSE(ff2.empty());
-    ASSERT_EQ(f2, ff2);
+    ASSERT_FALSE(ff2->empty());
+    ASSERT_EQ(f2, *ff2);
 }
 
 /*deprecated since libjpeg

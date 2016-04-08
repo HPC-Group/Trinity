@@ -46,9 +46,9 @@ void MainWindow::update() {
 
     try {
         auto frame = renderer.getVisStream()->get();
-        if (!frame.empty()) {
+        if (frame != nullptr) {
             ui->openGLWidget->setData(renderer.getVisStream()->getStreamingParams().getResX(),
-                renderer.getVisStream()->getStreamingParams().getResY(), frame.data());
+                renderer.getVisStream()->getStreamingParams().getResY(), frame->data());
             ui->openGLWidget->repaint();
         }
         renderer.proceedRendering();

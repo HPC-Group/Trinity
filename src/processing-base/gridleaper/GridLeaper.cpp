@@ -645,9 +645,8 @@ void GridLeaper::compose(){
   m_targetBinder->Unbind();
   GL_CHECK_EXT();
 
-  Frame f1;
-  f1.assign(begin(m_bufferData), end(m_bufferData));
-  getVisStream()->put(std::move(f1));
+  auto frame = mocca::make_unique<std::vector<uint8_t>>(m_bufferData);
+  getVisStream()->put(std::move(frame));
 }
 
 

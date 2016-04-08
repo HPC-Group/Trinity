@@ -17,12 +17,12 @@ public:
 
     const StreamingParams& getStreamingParams() const;
 
-    void put(Frame frame);
-    Frame get();
+    void put(std::unique_ptr<Frame> frame);
+    std::unique_ptr<Frame> get();
 
 private:
     StreamingParams m_streamingParams;
-    Frame m_frame;
+    std::unique_ptr<Frame> m_frame;
     std::mutex m_mutex;
     std::condition_variable m_cv;
 };

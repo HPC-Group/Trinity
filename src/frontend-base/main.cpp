@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
         std::this_thread::sleep_for(std::chrono::seconds(2));
         auto visStream = renderer->getVisStream();
         auto frame = visStream->get();
-        if (frame.empty())
+        if (frame == nullptr)
             LINFO("no frame arrived yet");
         else {
             LINFO("frame arrived!");
