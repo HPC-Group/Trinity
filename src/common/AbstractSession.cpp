@@ -24,7 +24,7 @@ void AbstractSession::run() {
     LINFO("(session) session control at \"" << *m_acceptor->localEndpoint() << "\"");
 
     try {
-        while (!m_controlConnection && !isInterrupted()) {
+        while (!m_controlConnection && !mocca::Thread::isThisInterrupted()) {
             m_controlConnection = m_acceptor->accept(); // auto-timeout
         }
     } catch (const mocca::net::NetworkError& err) {
@@ -38,7 +38,7 @@ void AbstractSession::run() {
 
     performThreadSpecificInit();
     try {
-        while (!isInterrupted()) {
+        while (!mocca::Thread::isThisInterrupted()) {
             auto message = m_controlConnection->receive();
             if (!message.empty()) {
                 auto request = Request::createFromMessage(message);

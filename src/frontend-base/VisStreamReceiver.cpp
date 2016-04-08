@@ -37,7 +37,7 @@ void VisStreamReceiver::run() {
 
     try {
 
-        while (!m_connection && !isInterrupted()) {
+        while (!m_connection && !mocca::Thread::isThisInterrupted()) {
             m_connection = mocca::net::ConnectionFactorySelector::connect(m_endpoint);
         }
 
@@ -53,7 +53,7 @@ void VisStreamReceiver::run() {
     JPEGDecoder jpeg(JPEGDecoder::Format_RGBA, false);
 #endif
 
-    while (!isInterrupted()) {
+    while (!mocca::Thread::isThisInterrupted()) {
         
         try {
             

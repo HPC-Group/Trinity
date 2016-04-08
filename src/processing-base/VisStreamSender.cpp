@@ -33,7 +33,7 @@ void VisStreamSender::run() {
 
     try {
 
-        while (!m_connection && !isInterrupted()) {
+        while (!m_connection && !mocca::Thread::isThisInterrupted()) {
             m_connection = m_acceptor->accept();
         }
 
@@ -45,7 +45,7 @@ void VisStreamSender::run() {
     LINFO("(p) vis sender was bound");
     JPEGEncoder jpeg(75, JPEGEncoder::Subsample_420);
     
-    while (!isInterrupted()) {
+    while (!mocca::Thread::isThisInterrupted()) {
         if(!m_connection->isConnected()) {
             interrupt();
             continue;
