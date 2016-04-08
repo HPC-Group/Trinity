@@ -53,7 +53,7 @@ m_pFBOFinalColorNext(nullptr),
 m_pFBODebug(nullptr),
 m_pFBODebugNext(nullptr),
 #endif
-m_bbBox(nullptr),
+m_bBox(nullptr),
 m_nearPlane(nullptr),
 m_context(nullptr),
 m_visibilityState(),
@@ -82,7 +82,7 @@ void GridLeaper::deleteContext() {
   m_volumePool = nullptr;
   m_hashTable = nullptr;
   
-  m_bbBox = nullptr;
+  m_bBox = nullptr;
   m_nearPlane = nullptr;
 
   m_activeShaderProgram = nullptr;
@@ -340,12 +340,7 @@ void GridLeaper::loadTransferFunction() {
 }
 
 void GridLeaper::loadGeometry() {
-  Core::Math::Vec3f vMinPoint, vMaxPoint;
-  vMinPoint = -m_vExtend/2.0;
-  vMaxPoint =  m_vExtend/2.0;
-
-  m_bbBox = mocca::make_unique<GLVolumeBox>(vMinPoint, vMaxPoint);
-
+  updateBBox();
   m_nearPlane = mocca::make_unique<GLRenderPlane>();
 }
 
@@ -567,7 +562,7 @@ void GridLeaper::fillRayEntryBuffer() {
   GL_CHECK(glDisable(GL_DEPTH_TEST));
   GL_CHECK(glDisable(GL_BLEND));
 
-  m_bbBox->paint();
+  m_bBox->paint();
 
   m_programRenderFrontFaces->Disable();
 
@@ -603,7 +598,7 @@ void GridLeaper::raycast(){
   GL_CHECK(glDepthMask(GL_FALSE));
 
   // render
-  m_bbBox->paint();
+  m_bBox->paint();
 
   m_volumePool->disable();
 
@@ -980,18 +975,24 @@ bool GridLeaper::isIdle() {
   return m_isIdle;
 }
 
-
-void GridLeaper::enableClipping(bool enable) {
-  AbstractRenderer::enableClipping(enable);
-  // TODO: update m_bbBox
+void GridLeaper::performClipping() {
+  updateBBox();
 }
 
-void GridLeaper::setClipVolume(const Core::Math::Vec3f& minValues,
-                               const Core::Math::Vec3f& maxValues)  {
-  AbstractRenderer::setClipVolume(minValues, maxValues);
-  // TODO: update m_bbBox
+void GridLeaper::updateBBox() {
+  Vec3f vMinPoint(-m_vExtend/2.0);
+  Vec3f vMaxPoint(m_vExtend/2.0);
+  if (m_enableClipping) {
+    Vec3f vScaledMinPoint((Vec3f(1.0f,1.0f,1.0f)-m_clipVolumeMin) * vMinPoint +
+                          m_clipVolumeMin * vMaxPoint);
+    Vec3f vScaledMaxPoint((Vec3f(1.0f,1.0f,1.0f)-m_clipVolumeMax) * vMinPoint +
+                          m_clipVolumeMax * vMaxPoint);
+    m_bBox = mocca::make_unique<GLVolumeBox>(vScaledMinPoint,
+                                             vScaledMaxPoint);
+  } else {
+    m_bBox = mocca::make_unique<GLVolumeBox>(vMinPoint, vMaxPoint);
+  }
 }
-
 
 bool GridLeaper::proceedRendering() {
   if (isIdle()) {

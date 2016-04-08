@@ -21,7 +21,8 @@ namespace trinity {
   class GridLeaper : public AbstractRenderer {
     
   public:
-    GridLeaper(std::shared_ptr<VisStream> stream, std::unique_ptr<IIO> ioSession);
+    GridLeaper(std::shared_ptr<VisStream> stream,
+               std::unique_ptr<IIO> ioSession);
     ~GridLeaper();
     
     virtual void initContext() override;
@@ -33,14 +34,10 @@ namespace trinity {
     void set1DTransferFunction(const TransferFunction1D& tf) override;
     //void set2DTransferFunction(const TransferFunction2D& tf) override;
     
-    virtual void enableClipping(bool enable) override;
-    virtual void setClipVolume(const Core::Math::Vec3f& minValues,
-                               const Core::Math::Vec3f& maxValues) override;
-    
-    
   protected:
     virtual void paintInternal(PaintLevel paintlevel) override;
     virtual void resizeFramebuffer() override;
+    virtual void performClipping() override;
     
   private:
     bool loadShaders(GLVolumePool::MissingBrickStrategy brickStrategy);
@@ -53,6 +50,7 @@ namespace trinity {
     void fillRayEntryBuffer();
     void raycast();
     void compose();
+    void updateBBox();
     
     void computeEyeToModelMatrix();
     
@@ -73,7 +71,7 @@ namespace trinity {
     std::unique_ptr<GLTargetBinder>   m_targetBinder;
     
     
-    std::unique_ptr<GLVolumeBox>      m_bbBox;
+    std::unique_ptr<GLVolumeBox>      m_bBox;
     std::unique_ptr<GLRenderPlane>    m_nearPlane;
     std::shared_ptr<OpenGlHeadlessContext> m_context;
     

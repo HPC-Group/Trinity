@@ -26,7 +26,7 @@ SimpleRenderer::SimpleRenderer(std::shared_ptr<VisStream> stream, std::unique_pt
 , m_raycastShader(nullptr)
 , m_backfaceBuffer(nullptr)
 , m_resultBuffer(nullptr)
-, m_bbBox(nullptr)
+, m_bBox(nullptr)
 , m_context(nullptr) {}
 
 void SimpleRenderer::deleteContext() {
@@ -37,7 +37,7 @@ void SimpleRenderer::deleteContext() {
   m_raycastShader = nullptr;
   m_backfaceBuffer = nullptr;
   m_resultBuffer = nullptr;
-  m_bbBox = nullptr;
+  m_bBox = nullptr;
   m_context = nullptr;
 }
 
@@ -168,13 +168,27 @@ void SimpleRenderer::loadTransferFunction() {
   LINFO("(p) transfer function created");
 }
 
+void SimpleRenderer::performClipping() {
+  updateBBox();
+}
+
+void SimpleRenderer::updateBBox() {
+  Vec3f vMinPoint(-m_vExtend/2.0);
+  Vec3f vMaxPoint(m_vExtend/2.0);
+  if (m_enableClipping) {
+    Vec3f vScaledMinPoint((Vec3f(1.0f,1.0f,1.0f)-m_clipVolumeMin) * vMinPoint +
+                          m_clipVolumeMin * vMaxPoint);
+    Vec3f vScaledMaxPoint((Vec3f(1.0f,1.0f,1.0f)-m_clipVolumeMax) * vMinPoint +
+                          m_clipVolumeMax * vMaxPoint);
+    m_bBox = mocca::make_unique<GLVolumeBox>(vScaledMinPoint,
+                                             vScaledMaxPoint);
+  } else {
+    m_bBox = mocca::make_unique<GLVolumeBox>(vMinPoint, vMaxPoint);
+  }
+}
+
 void SimpleRenderer::loadGeometry() {
-  Core::Math::Vec3f vMinPoint, vMaxPoint;
-  vMinPoint = -m_vExtend/2.0;
-  vMaxPoint =  m_vExtend/2.0;
-  
-  m_bbBox = mocca::make_unique<GLVolumeBox>(vMinPoint,
-                                            vMaxPoint);
+  updateBBox();
 }
 
 void SimpleRenderer::initFrameBuffers() {
@@ -243,7 +257,7 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
     m_backfaceShader->Set("viewMatrix", m_view);
     m_backfaceShader->Set("worldMatrix", m_domainTransform*m_model);
     m_backfaceShader->Set("posToTex", scale*shift);
-    m_bbBox->paint();
+    m_bBox->paint();
     m_backfaceShader->Disable();
     
     
@@ -267,7 +281,7 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
     m_raycastShader->ConnectTextureID("volume", 1);
     m_raycastShader->ConnectTextureID("rayExit", 2);
     
-    m_bbBox->paint();
+    m_bBox->paint();
     m_raycastShader->Disable();
     
     m_backfaceBuffer->FinishRead();

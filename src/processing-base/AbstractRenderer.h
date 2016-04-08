@@ -115,6 +115,7 @@ namespace trinity {
 
   protected:
     virtual void paintInternal(PaintLevel paintlevel) = 0;
+    virtual void performClipping();
 
     ERenderMode m_renderMode;
     uint64_t m_activeModality;

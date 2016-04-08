@@ -22,7 +22,6 @@ namespace trinity {
 
     virtual void initContext() override;
     virtual void deleteContext() override;
-    virtual void resizeFramebuffer() override;
     virtual bool isIdle() override;
     virtual bool proceedRendering() override;
     
@@ -31,6 +30,8 @@ namespace trinity {
 
   protected:
     virtual void paintInternal(PaintLevel paintlevel) override;
+    virtual void resizeFramebuffer() override;
+    virtual void performClipping() override;
 
   private:
     
@@ -39,6 +40,7 @@ namespace trinity {
     void loadVolumeData();
     void loadTransferFunction();
     void initFrameBuffers();
+    void updateBBox();
 
     std::vector<std::array<uint8_t, 4>>  m_bufferData;
     
@@ -49,7 +51,7 @@ namespace trinity {
     std::unique_ptr<GLProgram>        m_raycastShader;
     std::shared_ptr<GLRenderTexture>         m_backfaceBuffer;
     std::shared_ptr<GLRenderTexture>         m_resultBuffer;
-    std::unique_ptr<GLVolumeBox>      m_bbBox;
+    std::unique_ptr<GLVolumeBox>      m_bBox;
     std::shared_ptr<OpenGlHeadlessContext> m_context;
     
     Core::Math::Mat4f m_domainTransform;

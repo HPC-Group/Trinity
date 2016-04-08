@@ -347,15 +347,35 @@ IRenderer::BackgroundColors AbstractRenderer::getBackgroundColors() const {
 
 // CLIPPING
 
+void AbstractRenderer::performClipping() {}
+
 void AbstractRenderer::enableClipping(bool enable) {
   m_enableClipping = enable;
+  performClipping();
   paint();
 }
 
 void AbstractRenderer::setClipVolume(const Vec3f& minValues,
                                      const Vec3f& maxValues) {
-  m_clipVolumeMin = minValues;
-  m_clipVolumeMax = maxValues;
+
+  // make sure the minimal vaues are stored in m_clipVolumeMin ...
+  m_clipVolumeMin.x = std::min(minValues.x, maxValues.x);
+  m_clipVolumeMin.y = std::min(minValues.y, maxValues.y);
+  m_clipVolumeMin.z = std::min(minValues.z, maxValues.z);
+
+  // ... and the maximal vaues are stored in m_clipVolumeMax
+  m_clipVolumeMax.x = std::max(minValues.x, maxValues.x);
+  m_clipVolumeMax.y = std::max(minValues.y, maxValues.y);
+  m_clipVolumeMax.z = std::max(minValues.z, maxValues.z);
+  
+  // now make sure the values are between 0 and 1
+  m_clipVolumeMin.StoreMin(Vec3f(1.0f,1.0f,1.0f));
+  m_clipVolumeMin.StoreMax(Vec3f(0.0f,0.0f,0.0f));
+  
+  m_clipVolumeMax.StoreMin(Vec3f(1.0f,1.0f,1.0f));
+  m_clipVolumeMax.StoreMax(Vec3f(0.0f,0.0f,0.0f));
+  
+  performClipping();
   paint();
 }
 
