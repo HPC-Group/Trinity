@@ -44,26 +44,3 @@ TEST_F(RequestTest, GetBrickWithMessage) {
     ASSERT_EQ(true, castedResult->getParams().getSuccess());
     ASSERT_EQ(*binary, *castedResult->getParams().getBrick());
 }
-
-TEST_F(RequestTest, GetBricksWithMessage) {
-    auto binary1 = std::make_shared<std::vector<uint8_t>>();
-    binary1->push_back(0xAA);
-    binary1->push_back(0xBB);
-    binary1->push_back(0xCC);
-
-    auto binary2 = std::make_shared<std::vector<uint8_t>>();
-    binary2->push_back(0xDD);
-    binary2->push_back(0xEE);
-
-    GetBricksCmd::ReplyParams replyParams({ binary1, binary2 }, true);
-    GetBricksReply reply(replyParams, 0, 0);
-    auto serialized = Reply::createMessage(reply);
-
-    auto result = Reply::createFromMessage(serialized);
-    auto castedResult = dynamic_cast<GetBricksReply*>(result.get());
-    ASSERT_TRUE(castedResult != nullptr);
-    ASSERT_EQ(true, castedResult->getParams().getSuccess());
-    ASSERT_EQ(2, castedResult->getParams().getResult().size());
-    ASSERT_EQ(*binary1, *castedResult->getParams().getResult()[0]);
-    ASSERT_EQ(*binary2, *castedResult->getParams().getResult()[1]);
-}

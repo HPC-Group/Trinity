@@ -386,18 +386,6 @@ std::shared_ptr<std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& key, b
   return data;
 }
 
-std::vector<std::shared_ptr<std::vector<uint8_t>>> FractalIO::getBricks(const std::vector<BrickKey>& brickKeys, bool& success) const {
-  std::vector<std::shared_ptr<std::vector<uint8_t>>> result;
-  for (auto key : brickKeys) {
-    auto data = getBrick(key, success);
-    if (!success) {
-      break;
-    }
-    result.push_back(data);
-  }
-  return result;
-}
-
 IIO::ValueType FractalIO::getType(uint64_t modality) const {
   return ValueType::T_UINT8;
 }

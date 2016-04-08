@@ -216,14 +216,4 @@ std::vector<MinMaxBlock> IOSessionProxy::getBrickMaxMin(uint64_t modality, uint6
     return reply->getParams().getResult();
 }
 
-std::vector<std::shared_ptr<std::vector<uint8_t>>> IOSessionProxy::getBricks(const std::vector<BrickKey>& brickKeys,
-                                                                                   bool& success) const {
-    GetBricksCmd::RequestParams params(brickKeys);
-    GetBricksRequest request(params, IDGenerator::nextID(), m_remoteSid);
-    auto reply = sendRequestChecked(m_inputChannel, request);
-    const auto& replyParams = reply->getParams();
-    success = replyParams.getSuccess();
-    return replyParams.getResult();
-}
-
 /* AUTOGEN IOSessionProxyImpl */

@@ -254,20 +254,6 @@ std::shared_ptr<std::vector<uint8_t>> UVFIO::getBrick(const BrickKey& key, bool&
     return data;
 }
 
-std::vector<std::shared_ptr<std::vector<uint8_t>>> UVFIO::getBricks(const std::vector<BrickKey>& brickKeys, bool& success) const {
-  std::vector<std::shared_ptr<std::vector<uint8_t>>> result;
-  for (auto key : brickKeys) {
-    auto data = MemBlockPool::instance().get(getBrickVoxelCounts(key).volume() *
-                                             m_dataset->GetBitWidth()/8 * m_dataset->GetComponentCount());
-    if (!m_dataset->GetBrick(key, *data)) {
-      success = false;
-      break;
-    }
-    result.push_back(data);
-  }
-  return result;
-}
-
 Vec3ui UVFIO::getBrickVoxelCounts(const BrickKey& key) const {
   return m_dataset->GetBrickVoxelCounts(key);
 }

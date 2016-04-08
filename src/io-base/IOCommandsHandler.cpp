@@ -317,18 +317,6 @@ std::unique_ptr<Reply> GetBrickMaxMinHdl::execute() {
     return mocca::make_unique<GetBrickMaxMinReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-GetBricksHdl::GetBricksHdl(const GetBricksRequest& request, IOSession* session)
-    : m_request(request)
-    , m_session(session) {}
-
-std::unique_ptr<Reply> GetBricksHdl::execute() {
-    auto brickKeys = m_request.getParams().getBrickKeys();
-    bool success;
-    auto bricks = m_session->getIO().getBricks(brickKeys, success);
-    GetBricksCmd::ReplyParams params(std::move(bricks), success);
-    return mocca::make_unique<GetBricksReply>(params, m_request.getRid(), m_session->getSid());
-}
-
 GetRootsHdl::GetRootsHdl(const GetRootsRequest& request, IONode* node)
     : m_request(request)
     , m_node(node) {}

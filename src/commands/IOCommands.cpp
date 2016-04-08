@@ -1565,72 +1565,6 @@ std::string GetBrickMaxMinCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
-////////////// GetBricksCmd //////////////
-
-VclType GetBricksCmd::Type = VclType::GetBricks;
-
-GetBricksCmd::RequestParams::RequestParams(const std::vector<BrickKey>& brickKeys)
-    : m_brickKeys(brickKeys) {}
-
-void GetBricksCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.appendObjectVec("brickKeys", mocca::transformToBasePtrVec<ISerializable>(begin(m_brickKeys), end(m_brickKeys)));
-}
-
-void GetBricksCmd::RequestParams::deserialize(const ISerialReader& reader) {
-    m_brickKeys = reader.getSerializableVec<BrickKey>("brickKeys");
-}
-
-bool GetBricksCmd::RequestParams::equals(const GetBricksCmd::RequestParams& other) const {
-    return m_brickKeys == other.m_brickKeys;
-}
-
-std::vector<BrickKey> GetBricksCmd::RequestParams::getBrickKeys() const {
-    return m_brickKeys;
-}
-
-std::string GetBricksCmd::RequestParams::toString() const {
-    std::stringstream stream;
-    stream << "brickKeys: " << m_brickKeys;
-    return stream.str();
-}
-
-GetBricksCmd::ReplyParams::ReplyParams(std::vector<std::shared_ptr<std::vector<uint8_t>>> result, bool success)
-    : m_result(result)
-    , m_success(success) {}
-
-void GetBricksCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    for (auto& brick : m_result) {
-        writer.appendBinary(brick);
-    }
-    writer.appendBool("success", m_success);
-}
-
-void GetBricksCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    auto bricks = reader.getBinary();
-    for (auto& brick : bricks) {
-        m_result.push_back(brick);
-    }
-    m_success = reader.getBool("success");
-}
-
-bool GetBricksCmd::ReplyParams::equals(const GetBricksCmd::ReplyParams& other) const {
-    return /*m_result == other.m_result && */ m_success == other.m_success;
-}
-
-std::vector<std::shared_ptr<std::vector<uint8_t>>> GetBricksCmd::ReplyParams::getResult() const {
-    return m_result;
-}
-
-std::string GetBricksCmd::ReplyParams::toString() const {
-    std::stringstream stream;
-    stream << "success: " << m_success;
-    return stream.str();
-}
-
-bool GetBricksCmd::ReplyParams::getSuccess() const {
-    return m_success;
-}
-
 ////////////// GetRootsCmd //////////////
 
 VclType GetRootsCmd::Type = VclType::GetRoots;
@@ -2076,19 +2010,6 @@ bool operator==(const GetBrickMaxMinCmd::ReplyParams& lhs, const GetBrickMaxMinC
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::ReplyParams& obj) {
-    return os << obj.toString();
-}
-
-bool operator==(const GetBricksCmd::RequestParams& lhs, const GetBricksCmd::RequestParams& rhs) {
-    return lhs.equals(rhs);
-}
-std::ostream& operator<<(std::ostream& os, const GetBricksCmd::RequestParams& obj) {
-    return os << obj.toString();
-}
-bool operator==(const GetBricksCmd::ReplyParams& lhs, const GetBricksCmd::ReplyParams& rhs) {
-    return lhs.equals(rhs);
-}
-std::ostream& operator<<(std::ostream& os, const GetBricksCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

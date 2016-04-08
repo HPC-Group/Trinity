@@ -42,8 +42,6 @@ public:
     Core::Math::Vec3f getDomainScale(uint64_t modality) const override;
     Core::Math::Vec3f getFloatBrickLayout(uint64_t lod, uint64_t modality) const override;
     std::vector<MinMaxBlock> getBrickMaxMin(uint64_t modality, uint64_t timestep) const override;
-    std::vector<std::shared_ptr<std::vector<uint8_t>>> getBricks(const std::vector<BrickKey>& brickKeys,
-                                                                 bool& success) const override;
     /* AUTOGEN IOInterfaceOverride */
 
 private:

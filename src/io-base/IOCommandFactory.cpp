@@ -116,9 +116,6 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetBrickMaxMin:
         return mocca::make_unique<GetBrickMaxMinHdl>(static_cast<const GetBrickMaxMinRequest&>(request), session);
         break;
-    case VclType::GetBricks:
-        return mocca::make_unique<GetBricksHdl>(static_cast<const GetBricksRequest&>(request), session);
-        break;
     /* AUTOGEN IOCommandFactoryEntry */
     default:
         throw TrinityError("command unknown: " + (Vcl::instance().toString(type)), __FILE__, __LINE__);

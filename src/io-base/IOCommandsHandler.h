@@ -337,17 +337,6 @@ private:
     IOSession* m_session;
 };
 
-class GetBricksHdl : public ICommandHandler {
-public:
-    GetBricksHdl(const GetBricksRequest& request, IOSession* session);
-
-    std::unique_ptr<Reply> execute() override;
-
-private:
-    GetBricksRequest m_request;
-    IOSession* m_session;
-};
-
 class GetRootsHdl : public ICommandHandler {
 public:
     GetRootsHdl(const GetRootsRequest& request, IONode* node);

@@ -1351,54 +1351,6 @@ bool operator==(const GetBrickMaxMinCmd::ReplyParams& lhs, const GetBrickMaxMinC
 std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::ReplyParams& obj);
 using GetBrickMaxMinReply = ReplyTemplate<GetBrickMaxMinCmd>;
 
-struct GetBricksCmd {
-    static VclType Type;
-
-    class RequestParams : public SerializableTemplate<RequestParams> {
-    public:
-        RequestParams() = default;
-        RequestParams(const std::vector<BrickKey>& brickKeys);
-
-        void serialize(ISerialWriter& writer) const override;
-        void deserialize(const ISerialReader& reader) override;
-
-        std::string toString() const;
-        bool equals(const RequestParams& other) const;
-
-        std::vector<BrickKey> getBrickKeys() const;
-
-    private:
-        std::vector<BrickKey> m_brickKeys;
-    };
-
-    class ReplyParams : public SerializableTemplate<ReplyParams> {
-    public:
-        ReplyParams() = default;
-        ReplyParams(std::vector<std::shared_ptr<std::vector<uint8_t>>> result, bool success);
-
-        void serialize(ISerialWriter& writer) const override;
-        void deserialize(const ISerialReader& reader) override;
-
-        std::string toString() const;
-        bool equals(const ReplyParams& other) const;
-
-        std::vector<std::shared_ptr<std::vector<uint8_t>>> getResult() const;
-        bool getSuccess() const;
-
-    private:
-        std::vector<std::shared_ptr<std::vector<uint8_t>>> m_result;
-        bool m_success;
-    };
-};
-
-bool operator==(const GetBricksCmd::RequestParams& lhs, const GetBricksCmd::RequestParams& rhs);
-std::ostream& operator<<(std::ostream& os, const GetBricksCmd::RequestParams& obj);
-using GetBricksRequest = RequestTemplate<GetBricksCmd>;
-
-bool operator==(const GetBricksCmd::ReplyParams& lhs, const GetBricksCmd::ReplyParams& rhs);
-std::ostream& operator<<(std::ostream& os, const GetBricksCmd::ReplyParams& obj);
-using GetBricksReply = ReplyTemplate<GetBricksCmd>;
-
 struct GetRootsCmd {
     static VclType Type;
 
