@@ -260,57 +260,57 @@ Core::Math::Vec3ui64 GetMaxUsedBrickSizesCmd::ReplyParams::getMaxUsedBrickSizes(
     return m_maxUsedBrickSizes;
 }
 
-////////////// MaxMinForKeyCmd //////////////
+////////////// GetMaxMinForKeyCmd //////////////
 
-VclType MaxMinForKeyCmd::Type = VclType::MaxMinForKey;
+VclType GetMaxMinForKeyCmd::Type = VclType::GetMaxMinForKey;
 
-MaxMinForKeyCmd::RequestParams::RequestParams(const BrickKey& brickKey)
+GetMaxMinForKeyCmd::RequestParams::RequestParams(const BrickKey& brickKey)
     : m_brickKey(brickKey) {}
 
-void MaxMinForKeyCmd::RequestParams::serialize(ISerialWriter& writer) const {
+void GetMaxMinForKeyCmd::RequestParams::serialize(ISerialWriter& writer) const {
     writer.appendObject("brickKey", m_brickKey);
 }
 
-void MaxMinForKeyCmd::RequestParams::deserialize(const ISerialReader& reader) {
+void GetMaxMinForKeyCmd::RequestParams::deserialize(const ISerialReader& reader) {
     m_brickKey = reader.getSerializable<BrickKey>("brickKey");
 }
 
-bool MaxMinForKeyCmd::RequestParams::equals(const MaxMinForKeyCmd::RequestParams& other) const {
+bool GetMaxMinForKeyCmd::RequestParams::equals(const GetMaxMinForKeyCmd::RequestParams& other) const {
     return m_brickKey == other.m_brickKey;
 }
 
-std::string MaxMinForKeyCmd::RequestParams::toString() const {
+std::string GetMaxMinForKeyCmd::RequestParams::toString() const {
     std::stringstream stream;
     stream << "brickKey: " << m_brickKey;
     return stream.str();
 }
 
-BrickKey MaxMinForKeyCmd::RequestParams::getBrickKey() const {
+BrickKey GetMaxMinForKeyCmd::RequestParams::getBrickKey() const {
     return m_brickKey;
 }
 
-MaxMinForKeyCmd::ReplyParams::ReplyParams(const MinMaxBlock& minMaxBlock)
+GetMaxMinForKeyCmd::ReplyParams::ReplyParams(const MinMaxBlock& minMaxBlock)
     : m_minMaxBock(minMaxBlock) {}
 
-void MaxMinForKeyCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+void GetMaxMinForKeyCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     writer.appendObject("minMaxBlock", m_minMaxBock);
 }
 
-void MaxMinForKeyCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+void GetMaxMinForKeyCmd::ReplyParams::deserialize(const ISerialReader& reader) {
     m_minMaxBock = reader.getSerializable<MinMaxBlock>("minMaxBlock");
 }
 
-bool MaxMinForKeyCmd::ReplyParams::equals(const MaxMinForKeyCmd::ReplyParams& other) const {
+bool GetMaxMinForKeyCmd::ReplyParams::equals(const GetMaxMinForKeyCmd::ReplyParams& other) const {
     return m_minMaxBock == other.m_minMaxBock;
 }
 
-std::string MaxMinForKeyCmd::ReplyParams::toString() const {
+std::string GetMaxMinForKeyCmd::ReplyParams::toString() const {
     std::stringstream stream;
     stream << m_minMaxBock;
     return stream.str();
 }
 
-MinMaxBlock MaxMinForKeyCmd::ReplyParams::getMinMaxBlock() const {
+MinMaxBlock GetMaxMinForKeyCmd::ReplyParams::getMinMaxBlock() const {
     return m_minMaxBock;
 }
 
@@ -1749,16 +1749,16 @@ std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::ReplyP
     return os << obj.toString();
 }
 
-bool operator==(const MaxMinForKeyCmd::RequestParams& lhs, const MaxMinForKeyCmd::RequestParams& rhs) {
+bool operator==(const GetMaxMinForKeyCmd::RequestParams& lhs, const GetMaxMinForKeyCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
 }
-bool operator==(const MaxMinForKeyCmd::ReplyParams& lhs, const MaxMinForKeyCmd::ReplyParams& rhs) {
+bool operator==(const GetMaxMinForKeyCmd::ReplyParams& lhs, const GetMaxMinForKeyCmd::ReplyParams& rhs) {
     return lhs.equals(rhs);
 }
-std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::RequestParams& obj) {
+std::ostream& operator<<(std::ostream& os, const GetMaxMinForKeyCmd::RequestParams& obj) {
     return os << obj.toString();
 }
-std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::ReplyParams& obj) {
+std::ostream& operator<<(std::ostream& os, const GetMaxMinForKeyCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

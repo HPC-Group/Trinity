@@ -62,14 +62,14 @@ private:
     IOSession* m_session;
 };
 
-class MaxMinForKeyHdl : public ICommandHandler {
+class GetMaxMinForKeyHdl : public ICommandHandler {
 public:
-    MaxMinForKeyHdl(const MaxMinForKeyRequest& request, IOSession* session);
+    GetMaxMinForKeyHdl(const GetMaxMinForKeyRequest& request, IOSession* session);
 
     std::unique_ptr<Reply> execute() override;
 
 private:
-    MaxMinForKeyRequest m_request;
+    GetMaxMinForKeyRequest m_request;
     IOSession* m_session;
 };
 

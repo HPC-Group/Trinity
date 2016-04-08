@@ -232,7 +232,7 @@ std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::ReplyP
 using GetMaxUsedBrickSizesRequest = RequestTemplate<GetMaxUsedBrickSizesCmd>;
 using GetMaxUsedBrickSizesReply = ReplyTemplate<GetMaxUsedBrickSizesCmd>;
 
-struct MaxMinForKeyCmd {
+struct GetMaxMinForKeyCmd {
     static VclType Type;
 
     class RequestParams : public SerializableTemplate<RequestParams> {
@@ -270,13 +270,13 @@ struct MaxMinForKeyCmd {
     };
 };
 
-bool operator==(const MaxMinForKeyCmd::RequestParams& lhs, const MaxMinForKeyCmd::RequestParams& rhs);
-bool operator==(const MaxMinForKeyCmd::ReplyParams& lhs, const MaxMinForKeyCmd::ReplyParams& rhs);
-std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::RequestParams& obj);
-std::ostream& operator<<(std::ostream& os, const MaxMinForKeyCmd::ReplyParams& obj);
+bool operator==(const GetMaxMinForKeyCmd::RequestParams& lhs, const GetMaxMinForKeyCmd::RequestParams& rhs);
+bool operator==(const GetMaxMinForKeyCmd::ReplyParams& lhs, const GetMaxMinForKeyCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetMaxMinForKeyCmd::RequestParams& obj);
+std::ostream& operator<<(std::ostream& os, const GetMaxMinForKeyCmd::ReplyParams& obj);
 
-using MaxMinForKeyRequest = RequestTemplate<MaxMinForKeyCmd>;
-using MaxMinForKeyReply = ReplyTemplate<MaxMinForKeyCmd>;
+using GetMaxMinForKeyRequest = RequestTemplate<GetMaxMinForKeyCmd>;
+using GetMaxMinForKeyReply = ReplyTemplate<GetMaxMinForKeyCmd>;
 
 struct GetNumberOfTimestepsCmd {
     static VclType Type;

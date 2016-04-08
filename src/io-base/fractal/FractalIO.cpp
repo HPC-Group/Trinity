@@ -57,7 +57,7 @@ Vec3ui64 FractalIO::getMaxUsedBrickSizes() const {
   }
 }
 
-MinMaxBlock FractalIO::maxMinForKey(const BrickKey& key) const {
+MinMaxBlock FractalIO::getMaxMinForKey(const BrickKey& key) const {
   // TODO: compute gradients and fill 3rd and 4th parameters accordingly
   
   uint8_t min = 255, max = 0;
@@ -224,7 +224,7 @@ std::vector<MinMaxBlock> FractalIO::getBrickMaxMin(uint64_t modality, uint64_t t
     uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
     for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
       BrickKey const key(modality, timestep, lod, indexInLodCount);
-      result[i++] = maxMinForKey(key);
+      result[i++] = getMaxMinForKey(key);
     }
   }
   

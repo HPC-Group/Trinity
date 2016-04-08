@@ -33,7 +33,7 @@ public:
   /// example, the domain is smaller than the brick size requested.
   virtual Core::Math::Vec3ui GetMaxUsedBrickSizes() const;
   /// @returns the min/max scalar and gradient values for the given brick.
-  virtual MinMaxBlock MaxMinForKey(const BrickKey&) const=0;
+  virtual MinMaxBlock GetMaxMinForKey(const BrickKey&) const=0;
 
   virtual void Clear();
 

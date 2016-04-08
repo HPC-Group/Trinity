@@ -59,7 +59,7 @@ enum class VclType {
     GetActiveTimestep,
     GetMaxBrickSize,
     GetMaxUsedBrickSizes,
-    MaxMinForKey,
+    GetMaxMinForKey,
     GetNumberOfTimesteps,
     GetDomainSize,
     GetModalityCountProc,
@@ -156,7 +156,7 @@ private:
         m_cmdMap.insert("ZoomCamera", VclType::ZoomCamera);
         m_cmdMap.insert("GetMaxBrickSize", VclType::GetMaxBrickSize);
         m_cmdMap.insert("GetMaxUsedBrickSizes", VclType::GetMaxUsedBrickSizes);
-        m_cmdMap.insert("MaxMinForKey", VclType::MaxMinForKey);
+        m_cmdMap.insert("GetMaxMinForKey", VclType::GetMaxMinForKey);
         m_cmdMap.insert("GetNumberOfTimesteps", VclType::GetNumberOfTimesteps);
         m_cmdMap.insert("GetDomainSize", VclType::GetDomainSize);
         m_cmdMap.insert("GetTransformation", VclType::GetTransformation);

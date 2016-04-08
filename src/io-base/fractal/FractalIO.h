@@ -22,7 +22,7 @@ namespace trinity {
     
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
     Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
-    MinMaxBlock maxMinForKey(const BrickKey&) const override;
+    MinMaxBlock getMaxMinForKey(const BrickKey&) const override;
     uint64_t getLODLevelCount(uint64_t modality) const override;
     uint64_t getNumberOfTimesteps() const override;
     Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality) const override;

@@ -32,9 +32,9 @@ Core::Math::Vec3ui64 IOSessionProxy::getMaxUsedBrickSizes() const {
     return reply->getParams().getMaxUsedBrickSizes();
 }
 
-MinMaxBlock IOSessionProxy::maxMinForKey(const BrickKey& brickKey) const {
-    MaxMinForKeyCmd::RequestParams params(brickKey);
-    MaxMinForKeyRequest request(params, IDGenerator::nextID(), m_remoteSid);
+MinMaxBlock IOSessionProxy::getMaxMinForKey(const BrickKey& brickKey) const {
+    GetMaxMinForKeyCmd::RequestParams params(brickKey);
+    GetMaxMinForKeyRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getMinMaxBlock();
 }

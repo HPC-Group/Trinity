@@ -26,7 +26,7 @@ namespace trinity {
 
     virtual Core::Math::Vec3ui64 getMaxBrickSize() const = 0;
     virtual Core::Math::Vec3ui64 getMaxUsedBrickSizes() const = 0;
-    virtual MinMaxBlock maxMinForKey(const BrickKey&) const = 0;
+    virtual MinMaxBlock getMaxMinForKey(const BrickKey&) const = 0;
     virtual uint64_t getLODLevelCount(uint64_t modality) const = 0;
     virtual uint64_t getNumberOfTimesteps() const = 0;
     virtual Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality) const = 0;

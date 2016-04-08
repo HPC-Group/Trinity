@@ -7,7 +7,7 @@ public:
     MOCK_CONST_METHOD1(getLODLevelCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD0(getMaxBrickSize, Core::Math::Vec3ui64());
     MOCK_CONST_METHOD0(getMaxUsedBrickSizes, Core::Math::Vec3ui64());
-    MOCK_CONST_METHOD1(maxMinForKey, MinMaxBlock(const BrickKey&));
+    MOCK_CONST_METHOD1(getMaxMinForKey, MinMaxBlock(const BrickKey&));
     MOCK_CONST_METHOD0(getNumberOfTimesteps, uint64_t());
     MOCK_CONST_METHOD2(getDomainSize, Core::Math::Vec3ui64(const uint64_t, const uint64_t));
     MOCK_CONST_METHOD1(getDomainScale, Core::Math::Vec3f(uint64_t));

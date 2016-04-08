@@ -131,8 +131,8 @@ std::unique_ptr<Request> Request::createRequestInternal(const ISerialReader& rea
         return reader.getSerializablePtr<GetMaxBrickSizeRequest>("req");
     } else if (type == GetMaxUsedBrickSizesRequest::Ifc::Type) {
         return reader.getSerializablePtr<GetMaxUsedBrickSizesRequest>("req");
-    } else if (type == MaxMinForKeyRequest::Ifc::Type) {
-        return reader.getSerializablePtr<MaxMinForKeyRequest>("req");
+    } else if (type == GetMaxMinForKeyRequest::Ifc::Type) {
+        return reader.getSerializablePtr<GetMaxMinForKeyRequest>("req");
     } else if (type == GetNumberOfTimestepsRequest::Ifc::Type) {
         return reader.getSerializablePtr<GetNumberOfTimestepsRequest>("req");
     } else if (type == GetDomainSizeRequest::Ifc::Type) {

@@ -70,8 +70,8 @@ std::unique_ptr<Reply> Reply::createReplyInternal(const ISerialReader& reader) {
         return reader.getSerializablePtr<GetMaxBrickSizeReply>("rep");
     } else if (type == GetMaxUsedBrickSizesReply::Ifc::Type) {
         return reader.getSerializablePtr<GetMaxUsedBrickSizesReply>("rep");
-    } else if (type == MaxMinForKeyReply::Ifc::Type) {
-        return reader.getSerializablePtr<MaxMinForKeyReply>("rep");
+    } else if (type == GetMaxMinForKeyReply::Ifc::Type) {
+        return reader.getSerializablePtr<GetMaxMinForKeyReply>("rep");
     } else if (type == GetNumberOfTimestepsReply::Ifc::Type) {
         return reader.getSerializablePtr<GetNumberOfTimestepsReply>("rep");
     } else if (type == GetDomainSizeReply::Ifc::Type) {

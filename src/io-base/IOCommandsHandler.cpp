@@ -77,15 +77,15 @@ std::unique_ptr<Reply> GetMaxUsedBrickSizesHdl::execute() {
     return mocca::make_unique<GetMaxUsedBrickSizesReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-MaxMinForKeyHdl::MaxMinForKeyHdl(const MaxMinForKeyRequest& request, IOSession* session)
+GetMaxMinForKeyHdl::GetMaxMinForKeyHdl(const GetMaxMinForKeyRequest& request, IOSession* session)
     : m_request(request)
     , m_session(session) {}
 
-std::unique_ptr<Reply> MaxMinForKeyHdl::execute() {
+std::unique_ptr<Reply> GetMaxMinForKeyHdl::execute() {
     auto brickKey = m_request.getParams().getBrickKey();
-    auto minMax = m_session->getIO().maxMinForKey(brickKey);
-    MaxMinForKeyCmd::ReplyParams params(minMax);
-    return mocca::make_unique<MaxMinForKeyReply>(params, m_request.getRid(), m_session->getSid());
+    auto minMax = m_session->getIO().getMaxMinForKey(brickKey);
+    GetMaxMinForKeyCmd::ReplyParams params(minMax);
+    return mocca::make_unique<GetMaxMinForKeyReply>(params, m_request.getRid(), m_session->getSid());
 }
 
 GetNumberOfTimestepsHdl::GetNumberOfTimestepsHdl(const GetNumberOfTimestepsRequest& request, IOSession* session)

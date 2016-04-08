@@ -97,7 +97,7 @@ public:
   virtual bool ContainsData(const BrickKey &k, double fMin,double fMax,
                             double fMinGradient,double fMaxGradient) const;
   /// @returns the min/max scalar and gradient values for the given brick
-  MinMaxBlock MaxMinForKey(const BrickKey& k) const;
+  MinMaxBlock GetMaxMinForKey(const BrickKey& k) const;
   
   // LOD Data
   /// @todo fixme -- this should take a brick key and just ignore the spatial

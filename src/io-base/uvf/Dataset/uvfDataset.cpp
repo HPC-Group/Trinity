@@ -1148,7 +1148,7 @@ void UVFDataset::ComputeRange() {
   }
 }
 
-MinMaxBlock UVFDataset::MaxMinForKey(const BrickKey& k) const {
+MinMaxBlock UVFDataset::GetMaxMinForKey(const BrickKey& k) const {
   MinMaxBlock maxMinElement;
   if (m_bToCBlock) {
     const TOCTimestep* ts = dynamic_cast<const TOCTimestep*>(m_timesteps[k.timestep]);
@@ -1170,7 +1170,7 @@ bool UVFDataset::ContainsData(const BrickKey &k, double isoval) const
 {
   // if we have no max min data we have to assume that every block is visible
   if(NULL == m_timesteps[k.timestep]->m_pMaxMinData) {return true;}
-  const MinMaxBlock maxMinElement = MaxMinForKey(k);
+  const MinMaxBlock maxMinElement = GetMaxMinForKey(k);
   return (isoval <= maxMinElement.maxScalar);
 }
 
@@ -1178,7 +1178,7 @@ bool UVFDataset::ContainsData(const BrickKey &k, double fMin,double fMax) const
 {
   // if we have no max min data we have to assume that every block is visible
   if(NULL == m_timesteps[k.timestep]->m_pMaxMinData) {return true;}
-  const MinMaxBlock maxMinElement = MaxMinForKey(k);
+  const MinMaxBlock maxMinElement = GetMaxMinForKey(k);
   return (fMax >= maxMinElement.minScalar && fMin <= maxMinElement.maxScalar);
 }
 
@@ -1186,7 +1186,7 @@ bool UVFDataset::ContainsData(const BrickKey &k, double fMin,double fMax, double
 {
   // if we have no max min data we have to assume that every block is visible
   if(NULL == m_timesteps[k.timestep]->m_pMaxMinData) {return true;}
-  const MinMaxBlock maxMinElement = MaxMinForKey(k);
+  const MinMaxBlock maxMinElement = GetMaxMinForKey(k);
   return (fMax >= maxMinElement.minScalar &&
           fMin <= maxMinElement.maxScalar)
                          &&

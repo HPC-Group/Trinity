@@ -71,8 +71,8 @@ Vec3ui64 UVFIO::getMaxUsedBrickSizes() const {
   return Vec3ui64(m_dataset->GetMaxUsedBrickSizes());
 }
 
-MinMaxBlock UVFIO::maxMinForKey(const BrickKey& key) const {
-  return m_dataset->MaxMinForKey(key);
+MinMaxBlock UVFIO::getMaxMinForKey(const BrickKey& key) const {
+  return m_dataset->GetMaxMinForKey(key);
 }
 
 uint64_t UVFIO::getLODLevelCount(uint64_t modality) const {
@@ -144,7 +144,7 @@ std::vector<MinMaxBlock> UVFIO::getBrickMaxMin(uint64_t modality, uint64_t times
     uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
     for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
       BrickKey const key(modality, timestep, lod, indexInLodCount);
-      result[i++] = maxMinForKey(key);
+      result[i++] = getMaxMinForKey(key);
     }
   }
   
