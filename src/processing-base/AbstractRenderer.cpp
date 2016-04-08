@@ -371,19 +371,21 @@ void AbstractRenderer::setViewParameters(float angle, float znear, float zfar) {
 
 void AbstractRenderer::setUserViewMatrix(Core::Math::Mat4f m)
 {
-    // TODO: implement
+  m_userViewMatrix = m;
+  recomputeModelViewMatrix();
 }
 
 void AbstractRenderer::setUserWorldMatrix(Core::Math::Mat4f m)
 {
-    // TODO: implement
+  m_userWorldMatrix = m;
+  recomputeModelViewMatrix();
 }
 
 void AbstractRenderer::recomputeModelViewMatrix() {
   m_view.BuildLookAt(m_eyePos, s_vAt, s_vUp);
   
-  m_view = m_camRotation*m_camTranslation*m_camZoom*m_view;
-  m_model = m_rotation*m_translation*m_scale;
+  m_view = m_userViewMatrix*m_camRotation*m_camTranslation*m_camZoom*m_view;
+  m_model = m_userWorldMatrix*m_rotation*m_translation*m_scale;
   m_modelView = m_model*m_view;
 }
 
@@ -453,11 +455,8 @@ void AbstractRenderer::resizeFramebuffer() {
 }
 
 void AbstractRenderer::resetCamera() {
-  /*
-   // TODO
-   GL_CHECK(glViewport(0, 0, width, height));
-   */
-  
+  m_userViewMatrix = Mat4f();
+
   m_camRotation = Mat4f();
   m_camTranslation = Mat4f();
   m_camZoom = Mat4f();
@@ -467,6 +466,8 @@ void AbstractRenderer::resetCamera() {
 }
 
 void AbstractRenderer::resetScene() {
+  m_userWorldMatrix = Mat4f();
+
   m_rotation = Mat4f();
   m_translation = Mat4f();
   m_scale = Mat4f();

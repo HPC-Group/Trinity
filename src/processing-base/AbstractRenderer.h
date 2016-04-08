@@ -156,7 +156,9 @@ namespace trinity {
 
     
   private:
-    bool m_bPaitingActive;
+    bool              m_bPaitingActive;
+    Core::Math::Mat4f m_userWorldMatrix;
+    Core::Math::Mat4f m_userViewMatrix;
     
     Core::Math::Mat4f m_camRotation;
     Core::Math::Mat4f m_camTranslation;
