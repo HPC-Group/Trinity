@@ -73,7 +73,7 @@ BrickKey IndexFrom4D(const std::vector <std::vector<Core::Math::Vec3ui>>& loDInf
                      size_t timestep) {
   // the fourth component represents the LOD.
   const size_t lod = static_cast<size_t>(four.w);
-  
+
   const Vec3ui layout = loDInfoCache[modality][lod];
 
   const BrickKey k = BrickKey(modality, timestep, lod, four.x +
@@ -253,8 +253,8 @@ m_bVisibilityUpdated(false)
       m_LoDInfoCache[modality][lod] = pDataset.getBrickLayout(lod, modality);
     }
   }
-    
-    
+
+
   // duplicate minmax scalar data from dataset for efficient access
   m_vMinMaxScalar.resize(m_iTotalBrickCount);
   m_vMinMaxGradient.resize(m_iTotalBrickCount);
@@ -268,7 +268,7 @@ m_bVisibilityUpdated(false)
     m_vMinMaxScalar[i].min = imme.minScalar;
     m_vMinMaxScalar[i].max = imme.maxScalar;
     m_vMinMaxGradient[i].min = imme.minGradient;
-    m_vMinMaxGradient[i].max = imme.maxGradient;    
+    m_vMinMaxGradient[i].max = imme.maxGradient;
     m_brickVoxelCounts[i] = pDataset.getBrickVoxelCounts(key);
   }
 
@@ -729,26 +729,24 @@ void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, cons
 namespace {
 
   void UploadFirstBrickT(
-    const BrickKey& bkey,
-    GLVolumePool& pool,
-    IIO& pDataset,
-    uint8_t byteCount
-  ) {
+                         const BrickKey& bkey,
+                         GLVolumePool& pool,
+                         IIO& pDataset,
+                         uint8_t byteCount
+                         ) {
     const Vec3ui vVoxelCount = pDataset.getBrickVoxelCounts(bkey);
-    
+
     //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
-    std::vector<BrickKey> bkeys;
-    bkeys.push_back(bkey);
-    
+
     bool success;
-    auto vUploadMem = pDataset.getBricks(bkeys, success);
+    auto vUploadMem = pDataset.getBrick(bkey, success);
 
     if (!success) {
-      LERROR("Error getting first brick");
+      LERROR("Error getting first brick: " << bkey);
       return;
     }
-    
-    const uint8_t* data = vUploadMem[0]->data();
+
+    const uint8_t* data = vUploadMem->data();
     pool.uploadFirstBrick(vVoxelCount, data);
   }
 
@@ -1369,51 +1367,36 @@ namespace {
                                     size_t iTimestep,
                                     const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
-    
-    const size_t requestCount = vBrickIDs.size()%maxBricksPerRequest == 0
-      ? vBrickIDs.size() / maxBricksPerRequest 
-      : 1 + vBrickIDs.size() / maxBricksPerRequest;
 
-    size_t index = 0;
-    uint64_t iPagedBricksTotal = 0;
-    size_t j = 0;
-    for (size_t requests = 0; requests < requestCount; requests++) {
-      auto start = vBrickIDs.cbegin()+ (requests*maxBricksPerRequest);
-      auto end = requests+1 == requestCount ? vBrickIDs.cend() : start + maxBricksPerRequest;
+    std::vector<BrickKey> keys;
+    std::vector<Vec3ui> sizes;
+    for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
+      const Vec4ui& vBrickID = *missingBrick;
+      const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
+      const Vec3ui vVoxelSize = pool.getBrickVoxelCounts(vBrickID);
 
-      std::vector<BrickKey> keys;
-      std::vector<Vec3ui> sizes;
-      for (auto missingBrick = start; missingBrick < end; missingBrick++) {
-        const Vec4ui& vBrickID = *missingBrick;
-        const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
-        const Vec3ui vVoxelSize = pool.getBrickVoxelCounts(vBrickID);
-        
-        keys.push_back(key);
-        sizes.push_back(vVoxelSize);
-      }
+      keys.push_back(key);
+      sizes.push_back(vVoxelSize);
+    }
 
+    uint32_t iPagedBricks = 0;
+    for (size_t j = 0;j<keys.size();++j) {
       bool success;
-      auto vUploadMem = pDataset.getBricks(keys, success);
+      auto vUploadMem = pDataset.getBrick(keys[j], success);
 
       if (!success) {
-        LERROR("Error getting bricks");
+        LERROR("Error getting brick" << keys[j]);
         return 0;
       }
 
-      uint32_t iPagedBricks = 0;
-      size_t i = 0;
-      for (auto brick : vUploadMem) {
-        const uint8_t* data = brick->data();
-        if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[j++],
-          sizes[i++]), data))
-          break;
-        else
-          iPagedBricks++;
+      if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[j], sizes[j]),
+                            vUploadMem->data())) {
+        continue;
+      } else {
+        iPagedBricks++;
       }
-      iPagedBricksTotal += iPagedBricks;
     }
-
-    return iPagedBricksTotal;
+    return iPagedBricks;
   }
 
   uint32_t UploadBricksToBrickPool(
@@ -1425,30 +1408,30 @@ namespace {
                                    const GLVolumePool::DataSetCache& metaData,
                                    size_t iTimestep,
                                    const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
-                                   ) {
+  ) {
 
-      // brick debugging disabled
-      if (!metaData.m_iIsSigned) {
-        switch (metaData.m_iBitWidth) {
-          case 8  : return UploadBricksToBrickPoolT<uint8_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
-          case 16 : return UploadBricksToBrickPoolT<uint16_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
-          case 32 : return UploadBricksToBrickPoolT<uint32_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
-          default : throw TrinityError("Invalid bit width for an unsigned dataset", __FILE__, __LINE__);
-        }
-      } else if (metaData.m_iIsFloat) {
-        switch (metaData.m_iBitWidth) {
-          case 32 : return UploadBricksToBrickPoolT<float>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
-          case 64 : return UploadBricksToBrickPoolT<double>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
-          default : throw TrinityError("Invalid bit width for a float dataset", __FILE__, __LINE__);
-        }
-      } else {
-        switch (metaData.m_iBitWidth) {
-          case 8  : return UploadBricksToBrickPoolT<int8_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
-          case 16 : return UploadBricksToBrickPoolT<int16_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
-          case 32 : return UploadBricksToBrickPoolT<int32_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
-          default : throw TrinityError("Invalid bit width for a signed dataset", __FILE__, __LINE__);
-        }
+    // brick debugging disabled
+    if (!metaData.m_iIsSigned) {
+      switch (metaData.m_iBitWidth) {
+        case 8  : return UploadBricksToBrickPoolT<uint8_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
+        case 16 : return UploadBricksToBrickPoolT<uint16_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
+        case 32 : return UploadBricksToBrickPoolT<uint32_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
+        default : throw TrinityError("Invalid bit width for an unsigned dataset", __FILE__, __LINE__);
       }
+    } else if (metaData.m_iIsFloat) {
+      switch (metaData.m_iBitWidth) {
+        case 32 : return UploadBricksToBrickPoolT<float>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
+        case 64 : return UploadBricksToBrickPoolT<double>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
+        default : throw TrinityError("Invalid bit width for a float dataset", __FILE__, __LINE__);
+      }
+    } else {
+      switch (metaData.m_iBitWidth) {
+        case 8  : return UploadBricksToBrickPoolT<int8_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
+        case 16 : return UploadBricksToBrickPoolT<int16_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
+        case 32 : return UploadBricksToBrickPoolT<int32_t>(pool, vBrickIDs, pDataset, loDInfoCache, modality, iTimestep, maxUsedBrickVoxelCount);
+        default : throw TrinityError("Invalid bit width for a signed dataset", __FILE__, __LINE__);
+      }
+    }
 
     //return 0;
   }
@@ -1468,77 +1451,58 @@ namespace {
                                                const size_t maxUsedBrickVoxelCount // we pass it in here to avoid the pDataset.GetMaxUsedBrickSize() loop over all bricks
   ) {
 
-    const size_t requestCount = vBrickIDs.size()%maxBricksPerRequest == 0
-      ? vBrickIDs.size() / maxBricksPerRequest
-      : 1 + vBrickIDs.size() / maxBricksPerRequest;
+    std::vector<BrickKey> keys;
+    std::vector<Vec3ui> sizes;
+    for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
+      const Vec4ui& vBrickID = *missingBrick;
+      const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
+      const Vec3ui vVoxelSize = pool.getBrickVoxelCounts(vBrickID);
 
-    size_t index = 0;
-    uint64_t iPagedBricksTotal = 0;
-    size_t j=0;
-    for (size_t requests = 0; requests < requestCount; requests++) {
-      auto start = vBrickIDs.cbegin() + (requests*maxBricksPerRequest);
-      auto end = requests + 1 == requestCount ? vBrickIDs.cend() : start + maxBricksPerRequest;
+      uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
+      // the brick could be flagged as empty by now if the async updater
+      // tested the brick after we ran the last render pass
+      if (vBrickMetadata[brickIndex] == BI_MISSING) {
 
-      std::vector<BrickKey> keys;
-      std::vector<Vec3ui> sizes;
-      for (auto missingBrick = start; missingBrick < end; missingBrick++) {
-        const Vec4ui& vBrickID = *missingBrick;
-        const BrickKey key = IndexFrom4D(loDInfoCache, modality, vBrickID, iTimestep);
-        const Vec3ui vVoxelSize = pool.getBrickVoxelCounts(vBrickID);
-        
-        uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-        // the brick could be flagged as empty by now if the async updater
-        // tested the brick after we ran the last render pass
-        if (vBrickMetadata[brickIndex] == BI_MISSING) {
-
-          // we might not have tested the brick for visibility yet since the
-          // updater's still running and we do not have a BI_UNKNOWN flag for now
-          bool const bContainsData = ContainsData<eRenderMode>(visibility,
-            brickIndex,
-            vMinMaxScalar,
-            vMinMaxGradient);
-          if (bContainsData) {
-            keys.push_back(key);
-            sizes.push_back(vVoxelSize);
-          }
-          else {
-            vBrickMetadata[brickIndex] = BI_EMPTY;
-            pool.uploadMetadataTexel(brickIndex);
-          }
-        }
-        else if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) {
-          // if the updater touched the brick in the meanwhile,
-          // we need to upload the meta texel
+        // we might not have tested the brick for visibility yet since the
+        // updater's still running and we do not have a BI_UNKNOWN flag for now
+        bool const bContainsData = ContainsData<eRenderMode>(visibility,
+                                                             brickIndex,
+                                                             vMinMaxScalar,
+                                                             vMinMaxGradient);
+        if (bContainsData) {
+          keys.push_back(key);
+          sizes.push_back(vVoxelSize);
+        } else {
+          vBrickMetadata[brickIndex] = BI_EMPTY;
           pool.uploadMetadataTexel(brickIndex);
         }
-        else {
-          assert(false); // should never happen
-        }
-
-
+      } else if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) {
+        // if the updater touched the brick in the meanwhile,
+        // we need to upload the meta texel
+        pool.uploadMetadataTexel(brickIndex);
+      } else {
+        LERROR("Error in brick metadata for brick: " << brickIndex);
       }
+    }
 
+    uint32_t iPagedBricks = 0;
+    for (size_t j = 0;j<keys.size();++j) {
       bool success;
-      auto vUploadMem = pDataset.getBricks(keys, success);
+      auto vUploadMem = pDataset.getBrick(keys[j], success);
 
       if (!success) {
-        LERROR("Error getting bricks");
+        LERROR("Error getting brick" << keys[j]);
         return 0;
       }
 
-      uint32_t iPagedBricks = 0;
-      size_t i = 0;
-      for (auto brick : vUploadMem) {
-        const uint8_t* data = brick->data();
-        if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[j++],
-          sizes[i++]), data))
-          break;
-        else
-          iPagedBricks++;
+      if (!pool.uploadBrick(BrickElemInfo(vBrickIDs[j], sizes[j]),
+                            vUploadMem->data())) {
+        continue;
+      } else {
+        iPagedBricks++;
       }
-      iPagedBricksTotal += iPagedBricks;
     }
-    return iPagedBricksTotal;
+    return iPagedBricks;
   }
 
   template<ERenderMode eRenderMode>
@@ -1607,7 +1571,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(VisibilityState const& visibility, trin
       m_vMinMaxGradient[iBrickID].max = imme.maxGradient;
     }
   }
-  
+
   // reset meta data for all bricks (BI_MISSING means that we haven't test the data for visibility until the async updater finishes)
   std::fill(m_vBrickMetadata.begin(), m_vBrickMetadata.end(), BI_MISSING);
 
@@ -1775,7 +1739,7 @@ void GLVolumePool::setFilterMode(GLenum filter) {
 
 bool GLVolumePool::isValid() const {
   return m_pPoolMetadataTexture != nullptr &&
-         m_pPoolMetadataTexture->isValid() &&
-         m_pPoolDataTexture != nullptr &&
-         m_pPoolDataTexture->isValid();
+  m_pPoolMetadataTexture->isValid() &&
+  m_pPoolDataTexture != nullptr &&
+  m_pPoolDataTexture->isValid();
 }

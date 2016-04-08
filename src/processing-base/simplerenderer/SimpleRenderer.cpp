@@ -139,16 +139,13 @@ void SimpleRenderer::loadVolumeData() {
   uint64_t singleBrickLoD = m_io->getLargestSingleBrickLOD(0);
   
   BrickKey brickKey(0, 0, singleBrickLoD, 0);
-  std::vector<BrickKey> brickKeys;
-  brickKeys.push_back(brickKey);
-  
-  
+
   Core::Math::Vec3ui brickSize = m_io->getBrickVoxelCounts(brickKey);
   
   LINFO("(p) found suitable volume with single brick of size " << brickSize);
   
   bool success;
-  auto volumes = m_io->getBricks(brickKeys, success);
+  auto volume = m_io->getBrick(brickKey, success);
   
   if (!success) {
     LERROR("something when wrong trying to access the data");
@@ -157,7 +154,7 @@ void SimpleRenderer::loadVolumeData() {
   
   m_texVolume = mocca::make_unique<GLTexture3D>(brickSize.x, brickSize.y,
                                                 brickSize.z, GL_RED, GL_RED,
-                                                format, volumes[0]->data(),
+                                                format, volume->data(),
                                                 GL_LINEAR, GL_LINEAR);
   
   LINFO("(p) volume created");
