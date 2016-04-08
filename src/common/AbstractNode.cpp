@@ -17,7 +17,7 @@ AbstractNode::~AbstractNode() {
 
 void AbstractNode::run() {
     LINFO("(node) listening... ");
-    while (!mocca::Thread::isThisInterrupted()) {
+    while (!isInterrupted()) {
         try {
             // receive request
             auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_REPLY);
