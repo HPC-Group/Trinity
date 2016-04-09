@@ -123,9 +123,6 @@ m_bVisibilityUpdated(false)
 , m_eDebugMode(dm)
 , m_brickGetterThread(nullptr)
 {
-  m_brickGetterThread = mocca::make_unique<LambdaThread>(std::bind(&GLVolumePool::brickGetterFunc, this, std::placeholders::_1, std::placeholders::_2));
-  m_brickGetterThread->startThread();
-
   trinity::IIO::ValueType type = pDataset.getType(modality);
 
   switch(type){
@@ -296,6 +293,9 @@ m_bVisibilityUpdated(false)
       //WARNING("Visibility computation is DISABLED, disabling empty space leaping.");
       break;
   }
+  m_brickGetterThread = mocca::make_unique<LambdaThread>(std::bind(&GLVolumePool::brickGetterFunc, this, std::placeholders::_1, std::placeholders::_2));
+  m_brickGetterThread->startThread();
+  
 }
 
 
