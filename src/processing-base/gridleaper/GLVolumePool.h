@@ -2,6 +2,8 @@
 
 #include <list>
 
+#include "Threads.h"
+
 #include <opengl-base/OpenGLincludes.h>
 #include <opengl-base/GLTexture2D.h>
 #include <opengl-base/GLTexture3D.h>
@@ -163,5 +165,9 @@ protected:
   
   void uploadBrick(uint32_t iBrickID, const Core::Math::Vec3ui& vVoxelSize, const void* pData,
                    size_t iInsertPos, uint64_t iTimeOfCreation);
+  
+  void brickGetterFunc(Predicate pContinue,
+                       LambdaThread::Interface& threadInterface);
+  std::unique_ptr<LambdaThread> m_brickGetterThread;
   
 };

@@ -121,7 +121,11 @@ m_bVisibilityUpdated(false)
 , m_iMaxUsedBrickVoxelCount(0)
 , m_iMaxUsedBrickBytes(0)
 , m_eDebugMode(dm)
+, m_brickGetterThread(nullptr)
 {
+  m_brickGetterThread = mocca::make_unique<LambdaThread>(std::bind(&GLVolumePool::brickGetterFunc, this, std::placeholders::_1, std::placeholders::_2));
+  m_brickGetterThread->startThread();
+
   trinity::IIO::ValueType type = pDataset.getType(modality);
 
   switch(type){
@@ -826,6 +830,17 @@ void GLVolumePool::disable() const {
 }
 
 GLVolumePool::~GLVolumePool() {
+  if (m_brickGetterThread) {
+    m_brickGetterThread->requestThreadStop();
+    // TODO: this should be larget than the network timeout
+    //       replace th 30 secs by that timeout + x
+    m_brickGetterThread->joinThread(30*1000);
+    if (m_brickGetterThread->isRunning()) {
+      LWARNING("brickGetterThread join has timed out, killing thread.");
+      m_brickGetterThread->killThread();
+    }
+  }
+  
   freeGLResources();
 }
 
@@ -1742,4 +1757,16 @@ bool GLVolumePool::isValid() const {
   m_pPoolMetadataTexture->isValid() &&
   m_pPoolDataTexture != nullptr &&
   m_pPoolDataTexture->isValid();
+}
+
+
+
+void GLVolumePool::brickGetterFunc(Predicate pContinue,
+                                 LambdaThread::Interface& threadInterface) {
+  LINFO("brickGetterThread starting");
+  while (pContinue()) {
+    threadInterface.suspend(pContinue);
+    LINFO("brickGetterThread running");
+  }
+  LINFO("brickGetterThread terminating");
 }
