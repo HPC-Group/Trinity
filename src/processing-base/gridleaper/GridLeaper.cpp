@@ -443,7 +443,7 @@ void GridLeaper::initVolumePool(uint64_t gpuMemorySizeInByte) {
 
     GL_CHECK_EXT();
 
-    m_volumePool->uploadFirstBrick(brickKey,*m_io);
+    m_volumePool->uploadFirstBrick(brickKey);
 
     GL_CHECK_EXT();
 
@@ -481,6 +481,8 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
   }
 
   if(!m_isIdle){
+    m_volumePool->uploadBricks();
+                               
     m_hashTable->clearData();
 
     GL_CHECK_EXT();
@@ -500,9 +502,8 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     GL_CHECK_EXT();
 
     if (hash.size() > 0) {
-      m_volumePool->uploadBricks(hash,
+      m_volumePool->requestBricks(hash,
                                  m_visibilityState,
-                                 *m_io,
                                  m_activeModality);
     } else {
       m_isIdle = true;
@@ -900,7 +901,9 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
       double const fMax = double(m_1Dtf.getNonZeroLimits().y) * fRescaleFactor;
       if (m_visibilityState.needsUpdate(fMin, fMax) ||
           bForceSynchronousUpdate) {
-        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,*m_io, m_activeTimestep, bForceSynchronousUpdate);
+        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
+                                                             m_activeTimestep,
+                                                             bForceSynchronousUpdate);
       }
       break; }
     case ERenderMode::RM_2DTRANS: {
@@ -910,14 +913,18 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
        double const fMaxGradient = double(m_p2DTrans->GetNonZeroLimits().w);
        if (m_VisibilityState->NeedsUpdate(fMin, fMax, fMinGradient, fMaxGradient) ||
        bForceSynchronousUpdate) {
-       vEmptyBrickCount = m_volumePool->RecomputeVisibility(*(m_VisibilityState.get()), m_iTimestep, bForceSynchronousUpdate);
+       vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
+       m_activeTimestep,
+       bForceSynchronousUpdate);
        }*/
       break; }
     case ERenderMode::RM_ISOSURFACE: {
       double const fIsoValue = m_isoValue[0];
       if (m_visibilityState.needsUpdate(fIsoValue) ||
           bForceSynchronousUpdate) {
-        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,*m_io, m_activeTimestep, bForceSynchronousUpdate);
+        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
+                                                             m_activeTimestep,
+                                                             bForceSynchronousUpdate);
       }
       break; }
     default:

@@ -41,7 +41,8 @@ public:
   };
   
   /// @throws Tuvok::Exception on init error
-  GLVolumePool(const Core::Math::Vec3ui& poolSize, trinity::IIO& pDataset, uint64_t modality,
+  GLVolumePool(const Core::Math::Vec3ui& poolSize, trinity::IIO& pDataset,
+               uint64_t modality,
                GLenum filter, bool bUseGLCore=true, DebugMode dm=DM_NONE);
   virtual ~GLVolumePool();
   
@@ -49,16 +50,20 @@ public:
   // the whole hierarchy
   bool IsVisibilityUpdated() const { return m_bVisibilityUpdated; }
   // @return (totalProcessedBrickCount, emptyBrickCount, childEmptyBrickCount, emptyLeafBrickCount)
-  Core::Math::Vec4ui RecomputeVisibility(const VisibilityState& visibility,trinity::IIO& pDataset, uint64_t modality, size_t iTimestep, bool bForceSynchronousUpdate = false);
+  Core::Math::Vec4ui RecomputeVisibility(const VisibilityState& visibility,
+                                         uint64_t modality, size_t iTimestep,
+                                         bool bForceSynchronousUpdate = false);
   // returns number of bricks paged in that must not be equal to given
   // number of brick IDs especially if async updater is busy we'll get
   // requests for empty bricks too that won't be paged in
-  uint32_t uploadBricks(const std::vector<Core::Math::Vec4ui>& vBrickIDs,
+  uint32_t uploadBricks();
+  
+  
+  void requestBricks(const std::vector<Core::Math::Vec4ui>& vBrickIDs,
                         VisibilityState const& visibility,
-                        trinity::IIO& pDataset,
                         uint64_t modality);
   
-  void uploadFirstBrick(const BrickKey& bkey, trinity::IIO& pDataset);
+  void uploadFirstBrick(const BrickKey& bkey);
   
   // returns false if we need to render first before we can continue to upload further bricks
   bool uploadBrick(const BrickElemInfo& metaData, const void* pData); // TODO: we could use the 1D-index here too
@@ -108,6 +113,7 @@ public:
   }
   
 protected:
+  trinity::IIO& m_pDataset;
   GLTexture3DPtr m_pPoolMetadataTexture;
   GLTexture3DPtr m_pPoolDataTexture;
   Core::Math::Vec3ui m_vPoolCapacity;
@@ -166,8 +172,12 @@ protected:
   void uploadBrick(uint32_t iBrickID, const Core::Math::Vec3ui& vVoxelSize, const void* pData,
                    size_t iInsertPos, uint64_t iTimeOfCreation);
   
+  
+  CriticalSection               m_brickDataCS;
+  std::unique_ptr<LambdaThread> m_brickGetterThread;
+  
   void brickGetterFunc(Predicate pContinue,
                        LambdaThread::Interface& threadInterface);
-  std::unique_ptr<LambdaThread> m_brickGetterThread;
+  
   
 };
