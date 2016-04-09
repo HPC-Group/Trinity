@@ -4,6 +4,7 @@
 #include <functional>
 #include <cassert>
 #include <string>
+#include <limits>
 
 #ifdef _MSC_VER
 #define NOMINMAX
