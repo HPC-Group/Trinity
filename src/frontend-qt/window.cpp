@@ -68,7 +68,7 @@ void Window::initRenderer() {
     auto dataID = m_ui->dsWidget->currentIndex().data(Qt::UserRole + 1).value<trinity::IOData*>()->getFileId();
 
     try {
-        m_renderer = m_processingNode->initRenderer(trinity::VclType::SimpleRenderer, dataID, endpointIO, params);
+        m_renderer = m_processingNode->initRenderer(trinity::VclType::GridLeapingRenderer, dataID, endpointIO, params);
     } catch (const trinity::TrinityError&) {
         LERROR("(qt) no connection to a renderer");
     }

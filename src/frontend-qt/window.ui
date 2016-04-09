@@ -102,7 +102,7 @@
              </size>
             </property>
             <property name="text">
-             <string>127.0.0.1</string>
+             <string>192.168.0.129</string>
             </property>
            </widget>
           </item>
@@ -146,7 +146,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>127.0.0.1</string>
+               <string>192.168.0.129</string>
               </property>
              </widget>
             </item>
@@ -187,7 +187,7 @@
             <item>
              <widget class="QLineEdit" name="resx">
               <property name="text">
-               <string>800</string>
+               <string>512</string>
               </property>
              </widget>
             </item>
@@ -201,7 +201,7 @@
             <item>
              <widget class="QLineEdit" name="resy">
               <property name="text">
-               <string>600</string>
+               <string>512</string>
               </property>
              </widget>
             </item>
@@ -228,7 +228,7 @@
      <x>0</x>
      <y>0</y>
      <width>899</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
