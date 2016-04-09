@@ -835,7 +835,6 @@ Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemoryS
   const uint64_t r3Voxels = uint64_t(pow(double(iMaxVoxelCount), 1.0 / 3.0));
   Vec3ui maxBricksForGPU;
 
-
   // round the starting input size (r3Voxels) to the closest multiple brick size
   // to guarantee as cubic as possible volume pools and to better fill the
   // available amount of memory
@@ -844,17 +843,17 @@ Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemoryS
   uint64_t multipleOfBrickSizeThatFitsInX = uint64_t(((float)r3Voxels / vMaxBS.x) + 0.5f) *vMaxBS.x;
   if (multipleOfBrickSizeThatFitsInX > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInX = (iMaxVolumeDims / vMaxBS.x)*vMaxBS.x;
-  maxBricksForGPU.x = (uint32_t)multipleOfBrickSizeThatFitsInX;
+  maxBricksForGPU.x = std::max<uint32_t>(vMaxBS.x,(uint32_t)multipleOfBrickSizeThatFitsInX);
 
   uint64_t multipleOfBrickSizeThatFitsInY = ((iMaxVoxelCount / (maxBricksForGPU.x*maxBricksForGPU.x)) / vMaxBS.y)*vMaxBS.y;
   if (multipleOfBrickSizeThatFitsInY > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInY = (iMaxVolumeDims / vMaxBS.y)*vMaxBS.y;
-  maxBricksForGPU.y = (uint32_t)multipleOfBrickSizeThatFitsInY;
+  maxBricksForGPU.y = std::max<uint32_t>(vMaxBS.y, (uint32_t)multipleOfBrickSizeThatFitsInY);
 
   uint64_t multipleOfBrickSizeThatFitsInZ = ((iMaxVoxelCount / (maxBricksForGPU.x*maxBricksForGPU.y)) / vMaxBS.z)*vMaxBS.z;
   if (multipleOfBrickSizeThatFitsInZ > uint64_t(iMaxVolumeDims))
     multipleOfBrickSizeThatFitsInZ = (iMaxVolumeDims / vMaxBS.z)*vMaxBS.z;
-  maxBricksForGPU.z = (uint32_t)multipleOfBrickSizeThatFitsInZ;
+  maxBricksForGPU.z = std::max<uint32_t>(vMaxBS.z, (uint32_t)multipleOfBrickSizeThatFitsInZ);
 
   // the max brick layout required by the dataset
   const uint64_t iMaxBrickCount = m_io->getTotalBrickCount(m_activeModality);
