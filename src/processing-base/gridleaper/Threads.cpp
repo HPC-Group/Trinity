@@ -323,7 +323,7 @@ ThreadClass::~ThreadClass()
 #if defined(_MSC_VER)
     if (isRunning()) {
       LWARNING("Attempting to kill thread");
-      if(!KillThread()) {
+      if(!killThread()) {
         LERROR("Could not kill thread.");
       } else {
         LWARNING("Thread successfully killed.");
@@ -340,7 +340,7 @@ ThreadClass::~ThreadClass()
 DWORD WINAPI ThreadClass::staticStartFunc(LPVOID pThreadStarterData)
 {
   ThreadData * d = (ThreadData*)pThreadStarterData;
-  d->pThread->ThreadMain(d->pData);
+  d->pThread->threadMain(d->pData);
   return 0;
 }
 #else
