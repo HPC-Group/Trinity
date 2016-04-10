@@ -36,6 +36,11 @@ public:
   struct BrickRequest {
     Core::Math::Vec4ui ID;
     BrickKey key;
+    
+    bool operator==(const BrickRequest& other) {
+      return ID == other.ID && key == other.key;
+    }
+    
   };
     
   enum DebugMode {
@@ -180,6 +185,8 @@ protected:
   
   std::vector<BrickRequest>     m_requestTodo;
   std::vector<BrickRequest>     m_requestDone;
+  std::vector<std::shared_ptr<std::vector<uint8_t>>> m_requestStorage;
+  
   CriticalSection               m_brickDataCS;
   std::unique_ptr<LambdaThread> m_brickGetterThread;
   

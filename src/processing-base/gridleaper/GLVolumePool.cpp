@@ -36,7 +36,7 @@ using namespace Core::Time;
 using namespace trinity;
 
 const size_t maxBricksPerRequest = 5;
-
+const uint32_t asyncGetThreadWaitSecs = 5;
 
 static Vec3ui GetLoDSize(const Vec3ui& volumeSize, uint32_t iLoD) {
   Vec3ui vLoDSize(uint32_t(ceil(double(volumeSize.x)/MathTools::pow2(iLoD))),
@@ -1612,11 +1612,6 @@ Vec4ui GLVolumePool::RecomputeVisibility(const VisibilityState& visibility,
   return vEmptyBrickCount;
 }
 
-uint32_t GLVolumePool::uploadBricks() {
-  // TODO: implement this
-  return 0;
-}
-
 void GLVolumePool::requestBricks(const std::vector<Vec4ui>& vBrickIDs,
                                  const VisibilityState& visibility)
 {
@@ -1700,48 +1695,126 @@ bool GLVolumePool::isValid() const {
 }
 
 void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>& request) {
-  
-  // HACK: Quick hack for testing purposes, later the code below is called
-  uint32_t iPagedBricks = 0;
   for (size_t j = 0;j<request.size();++j) {
-    bool success;
-    auto vUploadMem = m_pDataset.getBrick(request[j].key, success);
     
-    if (!success) {
-      LERROR("Error getting brick" << request[j].key);
-      return;
+    if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
+      bool found = false;
+      for (size_t i = 0;i<m_requestTodo.size();++i) {
+        if (m_requestTodo[i] == request[j]) {
+          found = true;
+          break;
+        }
+      }
+      
+      if (found) {
+        m_brickDataCS.unlock();
+        continue;
+      }
+
+      for (size_t i = 0;i<m_requestDone.size();++i) {
+        if (m_requestDone[i] == request[j]) {
+          found = true;
+          break;
+        }
+      }
+      
+      if (found) {
+        m_brickDataCS.unlock();
+        continue;
+      }
+      
+      m_requestTodo.push_back(request[j]);
+      m_brickDataCS.unlock();
+    } else {
+      continue;
     }
     
-    const Vec3ui vVoxelSize = getBrickVoxelCounts(request[j].ID);
+  }
+}
+
+uint32_t GLVolumePool::uploadBricks() {
+  
+  // TODO: don't lock the whole time
+  SCOPEDLOCK(m_brickDataCS);
+  uint32_t iPagedBricks = 0;
+  
+  for (size_t j = 0;j<m_requestDone.size();++j) {
+
+    const Vec3ui vVoxelSize = getBrickVoxelCounts(m_requestDone[j].ID);
     
-    if (uploadBrick(BrickElemInfo(request[j].ID, vVoxelSize),
-                    vUploadMem->data())) {
+    if (uploadBrick(BrickElemInfo(m_requestDone[j].ID, vVoxelSize),
+                    m_requestStorage[j]->data())) {
       iPagedBricks++;
     }
   }
   
-  // SCOPEDLOCK(m_brickDataCS);
-  //
-  // TODO: check for each element in request if it exists in
-  //       m_requestTodo or m_requestDone if not add it to m_requestTodo
-  //       then call m_brickGetterThread->resume();
+  m_requestDone.clear();
+  m_requestStorage.clear();
+  
+  return iPagedBricks;
 }
 
 
 void GLVolumePool::brickGetterFunc(Predicate pContinue,
                                    LambdaThread::Interface& threadInterface) {
   LINFO("brickGetterThread starting");
+  
+  
+  size_t todoCount = 0;
+  if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
+    todoCount = m_requestTodo.size();
+    m_brickDataCS.unlock();
+  } else {
+    todoCount = 0;
+  }
+  
   while (pContinue()) {
-    threadInterface.suspend(pContinue);
+    if (todoCount == 0)
+      threadInterface.suspend(pContinue);
+
+    BrickRequest b;
+    if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
+      todoCount = m_requestTodo.size();
+      if (todoCount == 0) continue;
+      
+      // get first element from todo list
+      b = m_requestTodo[0];
+      m_brickDataCS.unlock();
+    } else {
+      continue;
+    }
     
+    // now request the brick (outside the lock)
+    bool success;
+    auto vUploadMem = m_pDataset.getBrick(b.key, success);
+    if (!success) {
+      LERROR("Error getting brick" << b.key);
+      continue;
+    }
     
-    // SCOPEDLOCK(m_brickDataCS);
-    //
-    // TODO: check m_requestTodo and call getBrick for each element
-    //       once that returns, store the data and move the request to
-    //       m_requestDone, repeat until m_requestTodo is empty
+    if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
+      // check if request still exists
+      bool found = false;
+      for (size_t i = 0;i<m_requestTodo.size();++i) {
+        if (m_requestTodo[i] == b) {
+          found = true;
+          m_requestTodo.erase (m_requestTodo.begin()+i);
+        }
+      }
+      if (!found) {
+        LINFO("wasted a brick request");
+        continue;
+      }
+      
+      m_requestStorage.push_back(vUploadMem);
+      m_requestDone.push_back(b);
+      
+      todoCount = m_requestTodo.size();
+      m_brickDataCS.unlock();
+    } else {
+      continue;
+    }
     
-    LINFO("brickGetterThread running");
   }
   LINFO("brickGetterThread terminating");
 }
