@@ -33,7 +33,11 @@ public:
     Core::Math::Vec2f m_vRange;
   };
   
-  
+  struct BrickRequest {
+    Core::Math::Vec4ui ID;
+    BrickKey key;
+  };
+    
   enum DebugMode {
     DM_NONE = 0, // no debugging
     DM_BUSY,     // prevent the async worker from doing anything useful forcing the situation when the async updater has not yet updated the metadata but should
@@ -140,14 +144,14 @@ protected:
   
   void* lastbrick;
   
-  std::vector<uint32_t>     m_vBrickMetadata;  // ref by iBrickID, size of total brick count + some unused 2d texture padding
+  std::vector<uint32_t>     m_brickMetadata;  // ref by iBrickID, size of total brick count + some unused 2d texture padding
   std::vector<PoolSlotData> m_vPoolSlotData;   // size of available pool slots
   std::vector<uint32_t>     m_vLoDOffsetTable; // size of LoDs, stores index sums, level 0 is finest
   
   size_t m_currentModality;
   size_t m_currentTimestep;
-  std::vector<MinMax> m_vMinMaxScalar;   // accelerates access to minmax scalar information, gets constructed in c'tor
-  std::vector<MinMax> m_vMinMaxGradient; // accelerates access to minmax gradient information, gets constructed on first access to safe some mem
+  std::vector<MinMax> m_minMaxScalar;   // accelerates access to minmax scalar information, gets constructed in c'tor
+  std::vector<MinMax> m_minMaxGradient; // accelerates access to minmax gradient information, gets constructed on first access to safe some mem
   std::vector<Vec3ui> m_brickVoxelCounts;
   
   double m_BrickIOTime;
@@ -169,21 +173,21 @@ protected:
   
   void prepareForPaging();
   
-  void uploadBrick(uint32_t iBrickID, const Core::Math::Vec3ui& vVoxelSize, const void* pData,
+  void uploadBrick(uint32_t iBrickID, const Core::Math::Vec3ui& vVoxelSize,
+                   const void* pData,
                    size_t iInsertPos, uint64_t iTimeOfCreation);
   
   
-  std::vector<BrickKey> m_uploadKeys;
-  std::vector<Vec3ui> m_uploadSizes;
+  std::vector<BrickRequest>     m_requestTodo;
+  std::vector<BrickRequest>     m_requestDone;
   CriticalSection               m_brickDataCS;
   std::unique_ptr<LambdaThread> m_brickGetterThread;
   
   void brickGetterFunc(Predicate pContinue,
                        LambdaThread::Interface& threadInterface);
   
-  void requestBricksFromGetterThread(const std::vector<Core::Math::Vec4ui>& vBrickIDs,
-                                     const std::vector<BrickKey>& keys,
-                                     const std::vector<Core::Math::Vec3ui>& sizes);
+  void requestBricksFromGetterThread(const std::vector<BrickRequest>& request);
+  
   
   void UploadBricksToBrickPool(const std::vector<Core::Math::Vec4ui>& vBrickIDs);  
   
@@ -197,5 +201,16 @@ protected:
   template<trinity::IRenderer::ERenderMode eRenderMode, typename T>
   void PotentiallyUploadBricksToBrickPoolT(const VisibilityState& visibility,
                                            const std::vector<Core::Math::Vec4ui>& vBrickIDs);
+
+  template<trinity::IRenderer::ERenderMode eRenderMode>
+  bool ContainsData(const VisibilityState& visibility, uint32_t iBrickID);
+  
+  template<trinity::IRenderer::ERenderMode eRenderMode>
+  void RecomputeVisibilityForBrickPool(const VisibilityState& visibility);
+  
+  template<bool bInterruptable, trinity::IRenderer::ERenderMode eRenderMode>
+  Core::Math::Vec4ui RecomputeVisibilityForOctree(const VisibilityState& visibility
+  //Tuvok::ThreadClass::PredicateFunction pContinue = Tuvok::ThreadClass::PredicateFunction()
+  );
   
 };

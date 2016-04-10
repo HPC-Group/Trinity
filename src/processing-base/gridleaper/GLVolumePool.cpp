@@ -257,19 +257,19 @@ m_bVisibilityUpdated(false)
   
   
   // duplicate minmax scalar data from dataset for efficient access
-  m_vMinMaxScalar.resize(m_iTotalBrickCount);
-  m_vMinMaxGradient.resize(m_iTotalBrickCount);
+  m_minMaxScalar.resize(m_iTotalBrickCount);
+  m_minMaxGradient.resize(m_iTotalBrickCount);
   m_brickVoxelCounts.resize(m_iTotalBrickCount);
-  for (uint32_t i = 0; i < m_vMinMaxScalar.size(); i++) {
+  for (uint32_t i = 0; i < m_minMaxScalar.size(); i++) {
     Vec4ui const vBrickID = getVectorBrickID(i);
     
     BrickKey const key = IndexFrom4D(m_LoDInfoCache,modality,vBrickID,
                                      m_currentTimestep);
     MinMaxBlock imme = m_pDataset.getMaxMinForKey(key);
-    m_vMinMaxScalar[i].min = imme.minScalar;
-    m_vMinMaxScalar[i].max = imme.maxScalar;
-    m_vMinMaxGradient[i].min = imme.minGradient;
-    m_vMinMaxGradient[i].max = imme.maxGradient;
+    m_minMaxScalar[i].min = imme.minScalar;
+    m_minMaxScalar[i].max = imme.maxScalar;
+    m_minMaxGradient[i].min = imme.minGradient;
+    m_minMaxGradient[i].max = imme.maxGradient;
     m_brickVoxelCounts[i] = m_pDataset.getBrickVoxelCounts(key);
   }
   
@@ -695,7 +695,7 @@ void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, cons
   PoolSlotData& slot = m_vPoolSlotData[iInsertPos];
   
   if (slot.containsVisibleBrick()) {
-    m_vBrickMetadata[slot.m_iBrickID] = BI_MISSING;
+    m_brickMetadata[slot.m_iBrickID] = BI_MISSING;
     
     // upload paged-out meta texel
     uploadMetadataTexel(slot.m_iBrickID);
@@ -720,7 +720,7 @@ void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, cons
   // this is done by the explicit UploadMetaData call to
   // only upload the updated data once all bricks have been
   // updated
-  m_vBrickMetadata[slot.m_iBrickID] = iPoolCoordinate + BI_FLAG_COUNT;
+  m_brickMetadata[slot.m_iBrickID] = iPoolCoordinate + BI_FLAG_COUNT;
   
   // upload paged-in meta texel
   uploadMetadataTexel(slot.m_iBrickID);
@@ -730,55 +730,21 @@ void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, cons
                               vVoxelSize, pData);
 }
 
-namespace {
-  
-  void UploadFirstBrickT(
-                         const BrickKey& bkey,
-                         GLVolumePool& pool,
-                         IIO& pDataset,
-                         uint8_t byteCount
-                         ) {
-    const Vec3ui vVoxelCount = pDataset.getBrickVoxelCounts(bkey);
-    
-    //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
-    
-    bool success;
-    auto vUploadMem = pDataset.getBrick(bkey, success);
-    
-    if (!success) {
-      LERROR("Error getting first brick: " << bkey);
-      return;
-    }
-    
-    const uint8_t* data = vUploadMem->data();
-    pool.uploadFirstBrick(vVoxelCount, data);
-  }
-  
-}
-
 void GLVolumePool::uploadFirstBrick(const BrickKey& bkey) {
-  unsigned int const iBitWidth = m_sDataSetCache.m_iBitWidth;
-  if (!m_sDataSetCache.m_iIsSigned) {
-    switch (iBitWidth) {
-      case 8  : return UploadFirstBrickT (bkey, *this, m_pDataset,1);
-      case 16 : return UploadFirstBrickT (bkey, *this, m_pDataset,2);
-      case 32 : return UploadFirstBrickT (bkey, *this, m_pDataset,4);
-      default : throw  TrinityError("Invalid bit width for an unsigned dataset", __FILE__, __LINE__);
-    }
-  } else if (m_sDataSetCache.m_iIsFloat) {
-    switch (iBitWidth) {
-      case 32 : return UploadFirstBrickT (bkey, *this, m_pDataset,4);
-      case 64 : return UploadFirstBrickT (bkey, *this, m_pDataset,8);
-      default : throw TrinityError("Invalid bit width for an float dataset", __FILE__, __LINE__);
-    }
-  } else {
-    switch (iBitWidth) {
-      case 8  : return UploadFirstBrickT (bkey, *this, m_pDataset,1);
-      case 16 : return UploadFirstBrickT (bkey, *this, m_pDataset,2);
-      case 32 : return UploadFirstBrickT (bkey, *this, m_pDataset,4);
-      default : throw TrinityError("Invalid bit width for an signed dataset", __FILE__, __LINE__);
-    }
+  
+  const Vec3ui vVoxelCount = m_pDataset.getBrickVoxelCounts(bkey);
+  
+  //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
+  
+  bool success;
+  auto vUploadMem = m_pDataset.getBrick(bkey, success);
+  
+  if (!success) {
+    LERROR("Error getting first brick: " << bkey);
+    return;
   }
+  
+  uploadFirstBrick(vVoxelCount, vUploadMem->data());
 }
 
 void GLVolumePool::uploadFirstBrick(const Vec3ui& m_vVoxelSize, const void* pData) {
@@ -918,9 +884,9 @@ void GLVolumePool::createGLResources() {
     LERRORC("GLVolumePool",e.what());
     throw;
   }
-  m_vBrickMetadata.resize(vTexSize.volume());
+  m_brickMetadata.resize(vTexSize.volume());
   
-  std::fill(m_vBrickMetadata.begin(), m_vBrickMetadata.end(), BI_MISSING);
+  std::fill(m_brickMetadata.begin(), m_brickMetadata.end(), BI_MISSING);
 #ifdef DEBUG_OUTS
   std::stringstream ss;
   ss << "[GLGridLeaper] Creating brick metadata texture of size " << vTexSize.x << " x "
@@ -932,7 +898,7 @@ void GLVolumePool::createGLResources() {
 #endif
   m_pPoolMetadataTexture = std::make_shared<GLTexture3D>(
                                                          vTexSize.x, vTexSize.y, vTexSize.z, GL_R32UI,
-                                                         GL_RED_INTEGER, GL_UNSIGNED_INT, &m_vBrickMetadata[0]
+                                                         GL_RED_INTEGER, GL_UNSIGNED_INT, &m_brickMetadata[0]
                                                          );
   
   if (!m_pPoolMetadataTexture->isValid()) {
@@ -956,11 +922,11 @@ void GLVolumePool::uploadMetadataTexture() {
 #ifdef DEBUG_OUTS
   printf("Brickpool Metadata entries:\n");
   for (size_t i = 0; i<m_iTotalBrickCount;++i) {
-    switch (m_vBrickMetadata[i]) {
+    switch (m_brickMetadata[i]) {
       case BI_MISSING		: break;
       case BI_EMPTY:			printf("  %i is empty\n", i); break;
       case BI_CHILD_EMPTY:		printf("  %i is empty (including all children)\n", i); break;
-      default:					printf("  %i loaded at position %i\n", i, int(m_vBrickMetadata[i] - BI_FLAG_COUNT)); break;
+      default:					printf("  %i loaded at position %i\n", i, int(m_brickMetadata[i] - BI_FLAG_COUNT)); break;
     }
   }
 #endif
@@ -974,7 +940,7 @@ void GLVolumePool::uploadMetadataTexture() {
    // DEBUG code end
    */
   
-  m_pPoolMetadataTexture->SetData(&m_vBrickMetadata[0]);
+  m_pPoolMetadataTexture->SetData(&m_brickMetadata[0]);
 }
 
 void GLVolumePool::uploadMetadataTexel(uint32_t iBrickID) {
@@ -985,7 +951,7 @@ void GLVolumePool::uploadMetadataTexel(uint32_t iBrickID) {
   const uint32_t idx = iBrickID;
   const Vec3ui vOffset(idx % texDim[0], (idx/texDim[0]) % texDim[1],
                        idx / (texDim[0] * texDim[1]));
-  m_pPoolMetadataTexture->SetData(vOffset, vSize, &m_vBrickMetadata[iBrickID]);
+  m_pPoolMetadataTexture->SetData(vOffset, vSize, &m_brickMetadata[iBrickID]);
 }
 
 void GLVolumePool::prepareForPaging() {
@@ -994,342 +960,205 @@ void GLVolumePool::prepareForPaging() {
   m_iInsertPos = 0;
 }
 
-namespace {
-  template<IRenderer::ERenderMode eRenderMode>
-  bool ContainsData(const VisibilityState& visibility, uint32_t iBrickID,
-                    const std::vector<GLVolumePool::MinMax>& vMinMaxScalar,
-                    const std::vector<GLVolumePool::MinMax>& vMinMaxGradient)
-  {
-    assert(eRenderMode == visibility.getRenderMode());
-    static_assert(eRenderMode == IRenderer::ERenderMode::RM_1DTRANS ||
-                  eRenderMode == IRenderer::ERenderMode::RM_2DTRANS ||
-                  eRenderMode == IRenderer::ERenderMode::RM_ISOSURFACE ||
-                  eRenderMode == IRenderer::ERenderMode::RM_CLEARVIEW , "render mode not supported");
-    switch (eRenderMode) {
-      case IRenderer::ERenderMode::RM_1DTRANS:
-        return (visibility.get1DTransfer().fMax >= vMinMaxScalar[iBrickID].min &&
-                visibility.get1DTransfer().fMin <= vMinMaxScalar[iBrickID].max);
-        break;
-      case IRenderer::ERenderMode::RM_2DTRANS:
-        return (visibility.get2DTransfer().fMax >= vMinMaxScalar[iBrickID].min &&
-                visibility.get2DTransfer().fMin <= vMinMaxScalar[iBrickID].max) &&
-        (visibility.get2DTransfer().fMaxGradient >= vMinMaxGradient[iBrickID].min &&
-         visibility.get2DTransfer().fMinGradient <= vMinMaxGradient[iBrickID].max);
-        break;
-      case IRenderer::ERenderMode::RM_ISOSURFACE:
-        return (visibility.getIsoSurface().fIsoValue <= vMinMaxScalar[iBrickID].max);
-        break;
-      case IRenderer::ERenderMode::RM_CLEARVIEW:
-        return (visibility.getIsoSurfaceCV().fIsoValue1 <= vMinMaxScalar[iBrickID].max) &&
-               (visibility.getIsoSurfaceCV().fIsoValue2 <= vMinMaxScalar[iBrickID].max);
-        break;
-    }
-    return true;
+template<IRenderer::ERenderMode eRenderMode>
+bool GLVolumePool::ContainsData(const VisibilityState& visibility, uint32_t iBrickID)
+{
+  assert(eRenderMode == visibility.getRenderMode());
+  static_assert(eRenderMode == IRenderer::ERenderMode::RM_1DTRANS ||
+                eRenderMode == IRenderer::ERenderMode::RM_2DTRANS ||
+                eRenderMode == IRenderer::ERenderMode::RM_ISOSURFACE ||
+                eRenderMode == IRenderer::ERenderMode::RM_CLEARVIEW , "render mode not supported");
+  switch (eRenderMode) {
+    case IRenderer::ERenderMode::RM_1DTRANS:
+      return (visibility.get1DTransfer().fMax >= m_minMaxScalar[iBrickID].min &&
+              visibility.get1DTransfer().fMin <= m_minMaxScalar[iBrickID].max);
+      break;
+    case IRenderer::ERenderMode::RM_2DTRANS:
+      return (visibility.get2DTransfer().fMax >= m_minMaxScalar[iBrickID].min &&
+              visibility.get2DTransfer().fMin <= m_minMaxScalar[iBrickID].max) &&
+      (visibility.get2DTransfer().fMaxGradient >= m_minMaxGradient[iBrickID].min &&
+       visibility.get2DTransfer().fMinGradient <= m_minMaxGradient[iBrickID].max);
+      break;
+    case IRenderer::ERenderMode::RM_ISOSURFACE:
+      return (visibility.getIsoSurface().fIsoValue <= m_minMaxScalar[iBrickID].max);
+      break;
+    case IRenderer::ERenderMode::RM_CLEARVIEW:
+      return (visibility.getIsoSurfaceCV().fIsoValue1 <= m_minMaxScalar[iBrickID].max) &&
+      (visibility.getIsoSurfaceCV().fIsoValue2 <= m_minMaxScalar[iBrickID].max);
+      break;
   }
-  
-  template<trinity::IRenderer::ERenderMode eRenderMode>
-  void RecomputeVisibilityForBrickPool(
-                                       const VisibilityState& visibility,
-                                       const GLVolumePool& pool,
-                                       std::vector<uint32_t>& vBrickMetadata,
-                                       std::vector<PoolSlotData>& vBrickPool,
-                                       const std::vector<GLVolumePool::MinMax>& vMinMaxScalar,
-                                       const std::vector<GLVolumePool::MinMax>& vMinMaxGradient)
-  {
-    assert(eRenderMode == visibility.getRenderMode());
-    for (auto slot = vBrickPool.begin(); slot < vBrickPool.end(); slot++) {
-      if (slot->wasEverUsed()) {
-        bool const bContainsData = ContainsData<eRenderMode>(visibility, slot->m_iBrickID, vMinMaxScalar, vMinMaxGradient);
-        bool const bContainedData = slot->containsVisibleBrick();
-        if (bContainsData) {
-          if (!bContainedData)
-            slot->restore();
-          uint32_t const iPoolCoordinate = slot->positionInPool().x +
-          slot->positionInPool().y * pool.getPoolCapacity().x +
-          slot->positionInPool().z * pool.getPoolCapacity().x * pool.getPoolCapacity().y;
-          vBrickMetadata[slot->m_iBrickID] = iPoolCoordinate + BI_FLAG_COUNT;
-        } else {
-          if (bContainedData)
-            slot->flagEmpty();
-          vBrickMetadata[slot->m_iBrickID] = BI_EMPTY; //! \todo remove again
-        }
+  return true;
+}
+
+template<IRenderer::ERenderMode eRenderMode>
+void GLVolumePool::RecomputeVisibilityForBrickPool(const VisibilityState& visibility)
+{
+  assert(eRenderMode == visibility.getRenderMode());
+  for (auto slot = m_vPoolSlotData.begin(); slot < m_vPoolSlotData.end(); slot++) {
+    if (slot->wasEverUsed()) {
+      bool const bContainsData = ContainsData<eRenderMode>(visibility, slot->m_iBrickID);
+      bool const bContainedData = slot->containsVisibleBrick();
+      if (bContainsData) {
+        if (!bContainedData)
+          slot->restore();
+        uint32_t const iPoolCoordinate = slot->positionInPool().x +
+        slot->positionInPool().y * getPoolCapacity().x +
+        slot->positionInPool().z * getPoolCapacity().x * getPoolCapacity().y;
+        m_brickMetadata[slot->m_iBrickID] = iPoolCoordinate + BI_FLAG_COUNT;
+      } else {
+        if (bContainedData)
+          slot->flagEmpty();
+        m_brickMetadata[slot->m_iBrickID] = BI_EMPTY; //! \todo remove again
       }
-    } // for all slots in brick pool
-  }
-  
-  template<bool bInterruptable, IRenderer::ERenderMode eRenderMode>
-  Vec4ui RecomputeVisibilityForOctree(const VisibilityState& visibility,
-                                      const GLVolumePool& pool,
-                                      std::vector<uint32_t>& vBrickMetadata,
-                                      const std::vector<GLVolumePool::MinMax>& vMinMaxScalar,
-                                      const std::vector<GLVolumePool::MinMax>& vMinMaxGradient
-  //Tuvok::ThreadClass::PredicateFunction pContinue = Tuvok::ThreadClass::PredicateFunction()
-  )
-  {
-    Vec4ui vEmptyBrickCount(0, 0, 0, 0);
+    }
+  } // for all slots in brick pool
+}
+
+
+//, *this, m_brickMetadata, m_vPoolSlotData, m_minMaxScalar, m_minMaxGradient
+
+
+
+
+template<bool bInterruptable, IRenderer::ERenderMode eRenderMode>
+Vec4ui GLVolumePool::RecomputeVisibilityForOctree(const VisibilityState& visibility
+//Tuvok::ThreadClass::PredicateFunction pContinue = Tuvok::ThreadClass::PredicateFunction()
+)
+{
+  Vec4ui vEmptyBrickCount(0, 0, 0, 0);
 #ifndef _DEBUG
-    uint32_t const iContinue = 375; // we approximately process 7500 bricks/ms, checking for interruption every 375 bricks allows us to pause in 0.05 ms (worst case)
+  uint32_t const iContinue = 375; // we approximately process 7500 bricks/ms, checking for interruption every 375 bricks allows us to pause in 0.05 ms (worst case)
 #else
-    uint32_t const iContinue = 75; // we'll just get 1500 bricks/ms running a debug build
+  uint32_t const iContinue = 75; // we'll just get 1500 bricks/ms running a debug build
 #endif
-    uint32_t const iLoDCount = pool.getLoDCount();
-    Vec3ui iChildLayout = GetBrickLayout(pool.getVolumeSize(), pool.getMaxInnerBrickSize(), 0);
+  uint32_t const iLoDCount = getLoDCount();
+  Vec3ui iChildLayout = GetBrickLayout(getVolumeSize(), getMaxInnerBrickSize(), 0);
+  
+  // evaluate child visibility for finest level
+  for (uint32_t z = 0; z < iChildLayout.z; z++) {
+    for (uint32_t y = 0; y < iChildLayout.y; y++) {
+      for (uint32_t x = 0; x < iChildLayout.x; x++) {
+        
+        if (bInterruptable && !(x % iContinue)/* && pContinue*/)
+          
+          vEmptyBrickCount.x++; // increment total brick count
+        
+        Vec4ui const vBrickID(x, y, z, 0);
+        uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+        if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+        {
+          bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
+          if (!bContainsData) {
+            m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // finest level bricks are all child empty by definition
+            vEmptyBrickCount.w++; // increment leaf empty brick count
+          }
+        }
+      } // for x
+    } // for y
+  } // for z
+  
+  // walk up hierarchy (from finest to coarsest level) and propagate child empty visibility
+  for (uint32_t iLoD = 1; iLoD < iLoDCount; iLoD++)
+  {
+    Vec3ui const iLayout = GetBrickLayout(getVolumeSize(), getMaxInnerBrickSize(), iLoD);
     
-    // evaluate child visibility for finest level
-    for (uint32_t z = 0; z < iChildLayout.z; z++) {
-      for (uint32_t y = 0; y < iChildLayout.y; y++) {
-        for (uint32_t x = 0; x < iChildLayout.x; x++) {
+    // process even-sized volume
+    Vec3ui const iEvenLayout = iChildLayout / 2;
+    for (uint32_t z = 0; z < iEvenLayout.z; z++) {
+      for (uint32_t y = 0; y < iEvenLayout.y; y++) {
+        for (uint32_t x = 0; x < iEvenLayout.x; x++) {
           
-          if (bInterruptable && !(x % iContinue)/* && pContinue*/)
-            
-            vEmptyBrickCount.x++; // increment total brick count
+          vEmptyBrickCount.x++; // increment total brick count
           
-          Vec4ui const vBrickID(x, y, z, 0);
-          uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-          if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+          Vec4ui const vBrickID(x, y, z, iLoD);
+          uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+          if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
           {
-            bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
+            bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
             if (!bContainsData) {
-              vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // finest level bricks are all child empty by definition
-              vEmptyBrickCount.w++; // increment leaf empty brick count
+              m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
+              
+              Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
+              if ((m_brickMetadata[getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 0, 1, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 1, 0, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 1, 1, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 0, 0, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 0, 1, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 1, 0, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 1, 1, 0))] != BI_CHILD_EMPTY))
+              {
+                m_brickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non child empty child
+                vEmptyBrickCount.y++; // increment empty brick count
+              } else {
+                vEmptyBrickCount.z++; // increment child empty brick count
+              }
             }
           }
         } // for x
       } // for y
     } // for z
     
-    // walk up hierarchy (from finest to coarsest level) and propagate child empty visibility
-    for (uint32_t iLoD = 1; iLoD < iLoDCount; iLoD++)
-    {
-      Vec3ui const iLayout = GetBrickLayout(pool.getVolumeSize(), pool.getMaxInnerBrickSize(), iLoD);
-      
-      // process even-sized volume
-      Vec3ui const iEvenLayout = iChildLayout / 2;
+    // process odd boundaries (if any)
+    
+    // plane at the end of the x-axis
+    if (iChildLayout.x % 2) {
       for (uint32_t z = 0; z < iEvenLayout.z; z++) {
         for (uint32_t y = 0; y < iEvenLayout.y; y++) {
-          for (uint32_t x = 0; x < iEvenLayout.x; x++) {
-            
-            vEmptyBrickCount.x++; // increment total brick count
-            
-            Vec4ui const vBrickID(x, y, z, iLoD);
-            uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-            if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
-            {
-              bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
-              if (!bContainsData) {
-                vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
-                
-                Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
-                if ((vBrickMetadata[pool.getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 0, 1, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 1, 0, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 1, 1, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 0, 0, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 0, 1, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 1, 0, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 1, 1, 0))] != BI_CHILD_EMPTY))
-                {
-                  vBrickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non child empty child
-                  vEmptyBrickCount.y++; // increment empty brick count
-                } else {
-                  vEmptyBrickCount.z++; // increment child empty brick count
-                }
+          
+          vEmptyBrickCount.x++; // increment total brick count
+          
+          uint32_t const x = iLayout.x - 1;
+          Vec4ui const vBrickID(x, y, z, iLoD);
+          uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+          if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+          {
+            bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
+            if (!bContainsData) {
+              m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
+              
+              Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
+              if ((m_brickMetadata[getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 0, 1, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 1, 0, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 1, 1, 0))] != BI_CHILD_EMPTY))
+              {
+                m_brickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non child empty child
+                vEmptyBrickCount.y++; // increment empty brick count
+              } else {
+                vEmptyBrickCount.z++; // increment child empty brick count
               }
             }
-          } // for x
+          }
         } // for y
       } // for z
-      
-      // process odd boundaries (if any)
-      
-      // plane at the end of the x-axis
-      if (iChildLayout.x % 2) {
-        for (uint32_t z = 0; z < iEvenLayout.z; z++) {
-          for (uint32_t y = 0; y < iEvenLayout.y; y++) {
-            
-            vEmptyBrickCount.x++; // increment total brick count
-            
-            uint32_t const x = iLayout.x - 1;
-            Vec4ui const vBrickID(x, y, z, iLoD);
-            uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-            if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
-            {
-              bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
-              if (!bContainsData) {
-                vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
-                
-                Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
-                if ((vBrickMetadata[pool.getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 0, 1, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 1, 0, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 1, 1, 0))] != BI_CHILD_EMPTY))
-                {
-                  vBrickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non child empty child
-                  vEmptyBrickCount.y++; // increment empty brick count
-                } else {
-                  vEmptyBrickCount.z++; // increment child empty brick count
-                }
-              }
-            }
-          } // for y
-        } // for z
-      } // if x is odd
-      
-      // plane at the end of the y-axis
-      if (iChildLayout.y % 2) {
-        for (uint32_t z = 0; z < iEvenLayout.z; z++) {
-          for (uint32_t x = 0; x < iEvenLayout.x; x++) {
-            
-            
-            
-            vEmptyBrickCount.x++; // increment total brick count
-            
-            uint32_t const y = iLayout.y - 1;
-            Vec4ui const vBrickID(x, y, z, iLoD);
-            uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-            if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
-            {
-              bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
-              if (!bContainsData) {
-                vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
-                
-                Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
-                if ((vBrickMetadata[pool.getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 0, 1, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 0, 0, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 0, 1, 0))] != BI_CHILD_EMPTY))
-                {
-                  vBrickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
-                  vEmptyBrickCount.y++; // increment empty brick count
-                } else {
-                  vEmptyBrickCount.z++; // increment child empty brick count
-                }
-              }
-            }
-          } // for x
-        } // for z
-      } // if y is odd
-      
-      // plane at the end of the z-axis
-      if (iChildLayout.z % 2) {
-        for (uint32_t y = 0; y < iEvenLayout.y; y++) {
-          for (uint32_t x = 0; x < iEvenLayout.x; x++) {
-            
-            
-            
-            vEmptyBrickCount.x++; // increment total brick count
-            
-            uint32_t const z = iLayout.z - 1;
-            Vec4ui const vBrickID(x, y, z, iLoD);
-            uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-            if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
-            {
-              bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
-              if (!bContainsData) {
-                vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
-                
-                Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
-                if ((vBrickMetadata[pool.getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 1, 0, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 0, 0, 0))] != BI_CHILD_EMPTY) ||
-                    (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 1, 0, 0))] != BI_CHILD_EMPTY))
-                {
-                  vBrickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
-                  vEmptyBrickCount.y++; // increment empty brick count
-                } else {
-                  vEmptyBrickCount.z++; // increment child empty brick count
-                }
-              }
-            }
-          } // for x
-        } // for y
-      } // if z is odd
-      
-      // line at the end of the x/y-axes
-      if (iChildLayout.x % 2 && iChildLayout.y % 2) {
-        for (uint32_t z = 0; z < iEvenLayout.z; z++) {
-          
-          
-          vEmptyBrickCount.x++; // increment total brick count
-          
-          uint32_t const y = iLayout.y - 1;
-          uint32_t const x = iLayout.x - 1;
-          Vec4ui const vBrickID(x, y, z, iLoD);
-          uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-          if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
-          {
-            bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
-            if (!bContainsData) {
-              vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
-              
-              Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
-              if ((vBrickMetadata[pool.getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
-                  (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 0, 1, 0))] != BI_CHILD_EMPTY))
-              {
-                vBrickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
-                vEmptyBrickCount.y++; // increment empty brick count
-              } else {
-                vEmptyBrickCount.z++; // increment child empty brick count
-              }
-            }
-          }
-        } // for z
-      } // if x and y are odd
-      
-      // line at the end of the x/z-axes
-      if (iChildLayout.x % 2 && iChildLayout.z % 2) {
-        for (uint32_t y = 0; y < iEvenLayout.y; y++) {
-          
-          
-          
-          vEmptyBrickCount.x++; // increment total brick count
-          
-          uint32_t const z = iLayout.z - 1;
-          uint32_t const x = iLayout.x - 1;
-          Vec4ui const vBrickID(x, y, z, iLoD);
-          uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-          if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
-          {
-            bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
-            if (!bContainsData) {
-              vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
-              
-              Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
-              if ((vBrickMetadata[pool.getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
-                  (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(0, 1, 0, 0))] != BI_CHILD_EMPTY))
-              {
-                vBrickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
-                vEmptyBrickCount.y++; // increment empty brick count
-              } else {
-                vEmptyBrickCount.z++; // increment child empty brick count
-              }
-            }
-          }
-        } // for y
-      } // if x and z are odd
-      
-      // line at the end of the y/z-axes
-      if (iChildLayout.y % 2 && iChildLayout.z % 2) {
+    } // if x is odd
+    
+    // plane at the end of the y-axis
+    if (iChildLayout.y % 2) {
+      for (uint32_t z = 0; z < iEvenLayout.z; z++) {
         for (uint32_t x = 0; x < iEvenLayout.x; x++) {
           
           
+          
           vEmptyBrickCount.x++; // increment total brick count
           
-          uint32_t const z = iLayout.z - 1;
           uint32_t const y = iLayout.y - 1;
           Vec4ui const vBrickID(x, y, z, iLoD);
-          uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-          if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+          uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+          if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
           {
-            bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
+            bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
             if (!bContainsData) {
-              vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
+              m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
               
               Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
-              if ((vBrickMetadata[pool.getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
-                  (vBrickMetadata[pool.getIntegerBrickID(childPosition + Vec4ui(1, 0, 0, 0))] != BI_CHILD_EMPTY))
+              if ((m_brickMetadata[getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 0, 1, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 0, 0, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 0, 1, 0))] != BI_CHILD_EMPTY))
               {
-                vBrickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
+                m_brickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
                 vEmptyBrickCount.y++; // increment empty brick count
               } else {
                 vEmptyBrickCount.z++; // increment child empty brick count
@@ -1337,64 +1166,191 @@ namespace {
             }
           }
         } // for x
-      } // if y and z are odd
-      
-      // single brick at the x/y/z corner
-      if (iChildLayout.x % 2 && iChildLayout.y % 2 && iChildLayout.z % 2) {
+      } // for z
+    } // if y is odd
+    
+    // plane at the end of the z-axis
+    if (iChildLayout.z % 2) {
+      for (uint32_t y = 0; y < iEvenLayout.y; y++) {
+        for (uint32_t x = 0; x < iEvenLayout.x; x++) {
+          
+          
+          
+          vEmptyBrickCount.x++; // increment total brick count
+          
+          uint32_t const z = iLayout.z - 1;
+          Vec4ui const vBrickID(x, y, z, iLoD);
+          uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+          if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+          {
+            bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
+            if (!bContainsData) {
+              m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
+              
+              Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
+              if ((m_brickMetadata[getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 1, 0, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 0, 0, 0))] != BI_CHILD_EMPTY) ||
+                  (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 1, 0, 0))] != BI_CHILD_EMPTY))
+              {
+                m_brickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
+                vEmptyBrickCount.y++; // increment empty brick count
+              } else {
+                vEmptyBrickCount.z++; // increment child empty brick count
+              }
+            }
+          }
+        } // for x
+      } // for y
+    } // if z is odd
+    
+    // line at the end of the x/y-axes
+    if (iChildLayout.x % 2 && iChildLayout.y % 2) {
+      for (uint32_t z = 0; z < iEvenLayout.z; z++) {
         
         
         vEmptyBrickCount.x++; // increment total brick count
         
-        uint32_t const z = iLayout.z - 1;
         uint32_t const y = iLayout.y - 1;
         uint32_t const x = iLayout.x - 1;
         Vec4ui const vBrickID(x, y, z, iLoD);
-        uint32_t const brickIndex = pool.getIntegerBrickID(vBrickID);
-        if (vBrickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+        uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+        if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
         {
-          bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex, vMinMaxScalar, vMinMaxGradient);
+          bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
           if (!bContainsData) {
-            vBrickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
+            m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
             
             Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
-            if (vBrickMetadata[pool.getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY)
+            if ((m_brickMetadata[getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
+                (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 0, 1, 0))] != BI_CHILD_EMPTY))
             {
-              vBrickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
+              m_brickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
               vEmptyBrickCount.y++; // increment empty brick count
             } else {
               vEmptyBrickCount.z++; // increment child empty brick count
             }
           }
         }
-      } // if x, y and z are odd
-      
-      iChildLayout = iLayout;
-    } // for all levels
+      } // for z
+    } // if x and y are odd
     
-    return vEmptyBrickCount;
-  }
-} // anonymous namespace
+    // line at the end of the x/z-axes
+    if (iChildLayout.x % 2 && iChildLayout.z % 2) {
+      for (uint32_t y = 0; y < iEvenLayout.y; y++) {
+        
+        
+        
+        vEmptyBrickCount.x++; // increment total brick count
+        
+        uint32_t const z = iLayout.z - 1;
+        uint32_t const x = iLayout.x - 1;
+        Vec4ui const vBrickID(x, y, z, iLoD);
+        uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+        if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+        {
+          bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
+          if (!bContainsData) {
+            m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
+            
+            Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
+            if ((m_brickMetadata[getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
+                (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(0, 1, 0, 0))] != BI_CHILD_EMPTY))
+            {
+              m_brickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
+              vEmptyBrickCount.y++; // increment empty brick count
+            } else {
+              vEmptyBrickCount.z++; // increment child empty brick count
+            }
+          }
+        }
+      } // for y
+    } // if x and z are odd
+    
+    // line at the end of the y/z-axes
+    if (iChildLayout.y % 2 && iChildLayout.z % 2) {
+      for (uint32_t x = 0; x < iEvenLayout.x; x++) {
+        
+        
+        vEmptyBrickCount.x++; // increment total brick count
+        
+        uint32_t const z = iLayout.z - 1;
+        uint32_t const y = iLayout.y - 1;
+        Vec4ui const vBrickID(x, y, z, iLoD);
+        uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+        if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+        {
+          bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
+          if (!bContainsData) {
+            m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
+            
+            Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
+            if ((m_brickMetadata[getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY) ||
+                (m_brickMetadata[getIntegerBrickID(childPosition + Vec4ui(1, 0, 0, 0))] != BI_CHILD_EMPTY))
+            {
+              m_brickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
+              vEmptyBrickCount.y++; // increment empty brick count
+            } else {
+              vEmptyBrickCount.z++; // increment child empty brick count
+            }
+          }
+        }
+      } // for x
+    } // if y and z are odd
+    
+    // single brick at the x/y/z corner
+    if (iChildLayout.x % 2 && iChildLayout.y % 2 && iChildLayout.z % 2) {
+      
+      
+      vEmptyBrickCount.x++; // increment total brick count
+      
+      uint32_t const z = iLayout.z - 1;
+      uint32_t const y = iLayout.y - 1;
+      uint32_t const x = iLayout.x - 1;
+      Vec4ui const vBrickID(x, y, z, iLoD);
+      uint32_t const brickIndex = getIntegerBrickID(vBrickID);
+      if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) // only check bricks that are not cached in the pool
+      {
+        bool const bContainsData = ContainsData<eRenderMode>(visibility, brickIndex);
+        if (!bContainsData) {
+          m_brickMetadata[brickIndex] = BI_CHILD_EMPTY; // flag parent brick to be child empty for now so that we can save a couple of tests below
+          
+          Vec4ui const childPosition(x*2, y*2, z*2, iLoD-1);
+          if (m_brickMetadata[getIntegerBrickID(childPosition)] != BI_CHILD_EMPTY)
+          {
+            m_brickMetadata[brickIndex] = BI_EMPTY; // downgrade parent brick if we found a non-empty child
+            vEmptyBrickCount.y++; // increment empty brick count
+          } else {
+            vEmptyBrickCount.z++; // increment child empty brick count
+          }
+        }
+      }
+    } // if x, y and z are odd
+    
+    iChildLayout = iLayout;
+  } // for all levels
+  
+  return vEmptyBrickCount;
+}
 
 
 template<typename T>
 void GLVolumePool::UploadBricksToBrickPoolT(const std::vector<Vec4ui>& vBrickIDs) {
   
-  std::vector<BrickKey> keys;
-  std::vector<Vec3ui> sizes;
+  std::vector<BrickRequest> request;
+  
   for (auto missingBrick = vBrickIDs.cbegin();
        missingBrick < vBrickIDs.cend(); missingBrick++) {
     const Vec4ui& vBrickID = *missingBrick;
     const BrickKey key = IndexFrom4D(m_LoDInfoCache, m_currentModality,
                                      vBrickID, m_currentTimestep);
     
-    const Vec3ui vVoxelSize = getBrickVoxelCounts(vBrickID);
-    
-    keys.push_back(key);
-    sizes.push_back(vVoxelSize);
+    BrickRequest r = {vBrickID, key};
+    request.push_back(r);
   }
   
   // copy upload data to getter thread
-  requestBricksFromGetterThread(vBrickIDs, keys, sizes);
+  requestBricksFromGetterThread(request);
 }
 
 void GLVolumePool::UploadBricksToBrickPool(const std::vector<Vec4ui>& vBrickIDs) {
@@ -1449,33 +1405,30 @@ template<IRenderer::ERenderMode eRenderMode, typename T>
 void GLVolumePool::PotentiallyUploadBricksToBrickPoolT(const VisibilityState& visibility,
                                                        const std::vector<Vec4ui>& vBrickIDs) {
   
-  std::vector<BrickKey> keys;
-  std::vector<Vec3ui> sizes;
-  for (auto missingBrick = vBrickIDs.cbegin(); missingBrick < vBrickIDs.cend(); missingBrick++) {
+  std::vector<BrickRequest> request;
+  for (auto missingBrick = vBrickIDs.cbegin();
+       missingBrick < vBrickIDs.cend(); missingBrick++) {
     const Vec4ui& vBrickID = *missingBrick;
     const BrickKey key = IndexFrom4D(m_LoDInfoCache, m_currentModality,
                                      vBrickID, m_currentTimestep);
-    const Vec3ui vVoxelSize = getBrickVoxelCounts(vBrickID);
     
     uint32_t const brickIndex = getIntegerBrickID(vBrickID);
     // the brick could be flagged as empty by now if the async updater
     // tested the brick after we ran the last render pass
-    if (m_vBrickMetadata[brickIndex] == BI_MISSING) {
+    if (m_brickMetadata[brickIndex] == BI_MISSING) {
       
       // we might not have tested the brick for visibility yet since the
       // updater's still running and we do not have a BI_UNKNOWN flag for now
       bool const bContainsData = ContainsData<eRenderMode>(visibility,
-                                                           brickIndex,
-                                                           m_vMinMaxScalar,
-                                                           m_vMinMaxGradient);
+                                                           brickIndex);
       if (bContainsData) {
-        keys.push_back(key);
-        sizes.push_back(vVoxelSize);
+        BrickRequest r = {vBrickID, key};
+        request.push_back(r);
       } else {
-        m_vBrickMetadata[brickIndex] = BI_EMPTY;
+        m_brickMetadata[brickIndex] = BI_EMPTY;
         uploadMetadataTexel(brickIndex);
       }
-    } else if (m_vBrickMetadata[brickIndex] < BI_FLAG_COUNT) {
+    } else if (m_brickMetadata[brickIndex] < BI_FLAG_COUNT) {
       // if the updater touched the brick in the meanwhile,
       // we need to upload the meta texel
       uploadMetadataTexel(brickIndex);
@@ -1485,7 +1438,7 @@ void GLVolumePool::PotentiallyUploadBricksToBrickPoolT(const VisibilityState& vi
   }
   
   // copy upload data to getter thread
-  requestBricksFromGetterThread(vBrickIDs, keys, sizes);
+  requestBricksFromGetterThread(request);
 }
 
 template<IRenderer::ERenderMode eRenderMode>
@@ -1562,7 +1515,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(const VisibilityState& visibility,
   if (m_currentTimestep != iTimestep || m_currentModality != modality) {
     m_currentTimestep = iTimestep;
     m_currentModality = modality;
-    for (uint32_t iBrickID = 0; iBrickID < m_vMinMaxScalar.size(); iBrickID++) {
+    for (uint32_t iBrickID = 0; iBrickID < m_minMaxScalar.size(); iBrickID++) {
       Vec4ui const vBrickID = getVectorBrickID(iBrickID);
       BrickKey const key = IndexFrom4D(m_LoDInfoCache,
                                        m_currentModality,
@@ -1570,15 +1523,15 @@ Vec4ui GLVolumePool::RecomputeVisibility(const VisibilityState& visibility,
                                        m_currentTimestep);
       
       MinMaxBlock imme = m_pDataset.getMaxMinForKey(key);
-      m_vMinMaxScalar[iBrickID].min = imme.minScalar;
-      m_vMinMaxScalar[iBrickID].max = imme.maxScalar;
-      m_vMinMaxGradient[iBrickID].min = imme.minGradient;
-      m_vMinMaxGradient[iBrickID].max = imme.maxGradient;
+      m_minMaxScalar[iBrickID].min = imme.minScalar;
+      m_minMaxScalar[iBrickID].max = imme.maxScalar;
+      m_minMaxGradient[iBrickID].min = imme.minGradient;
+      m_minMaxGradient[iBrickID].max = imme.maxGradient;
     }
   }
   
   // reset meta data for all bricks (BI_MISSING means that we haven't test the data for visibility until the async updater finishes)
-  std::fill(m_vBrickMetadata.begin(), m_vBrickMetadata.end(), BI_MISSING);
+  std::fill(m_brickMetadata.begin(), m_brickMetadata.end(), BI_MISSING);
   
   // TODO: if metadata texture grows too large (14 ms CPU update time for approx 2000x2000 texture) consider to
   //       update texel regions efficiently that will be toched by RecomputeVisibilityForBrickPool()
@@ -1587,16 +1540,16 @@ Vec4ui GLVolumePool::RecomputeVisibility(const VisibilityState& visibility,
   // recompute visibility for cached bricks immediately
   switch (visibility.getRenderMode()) {
     case IRenderer::ERenderMode::RM_1DTRANS:
-      RecomputeVisibilityForBrickPool<IRenderer::ERenderMode::RM_1DTRANS>(visibility, *this, m_vBrickMetadata, m_vPoolSlotData, m_vMinMaxScalar, m_vMinMaxGradient);
+      RecomputeVisibilityForBrickPool<IRenderer::ERenderMode::RM_1DTRANS>(visibility);
       break;
     case IRenderer::ERenderMode::RM_2DTRANS:
-      RecomputeVisibilityForBrickPool<IRenderer::ERenderMode::RM_2DTRANS>(visibility, *this, m_vBrickMetadata, m_vPoolSlotData, m_vMinMaxScalar, m_vMinMaxGradient);
+      RecomputeVisibilityForBrickPool<IRenderer::ERenderMode::RM_2DTRANS>(visibility);
       break;
     case IRenderer::ERenderMode::RM_ISOSURFACE:
-      RecomputeVisibilityForBrickPool<IRenderer::ERenderMode::RM_ISOSURFACE>(visibility, *this, m_vBrickMetadata, m_vPoolSlotData, m_vMinMaxScalar, m_vMinMaxGradient);
+      RecomputeVisibilityForBrickPool<IRenderer::ERenderMode::RM_ISOSURFACE>(visibility);
       break;
     case IRenderer::ERenderMode::RM_CLEARVIEW:
-      RecomputeVisibilityForBrickPool<IRenderer::ERenderMode::RM_CLEARVIEW>(visibility, *this, m_vBrickMetadata, m_vPoolSlotData, m_vMinMaxScalar, m_vMinMaxGradient);
+      RecomputeVisibilityForBrickPool<IRenderer::ERenderMode::RM_CLEARVIEW>(visibility);
       break;
     default:
       LERRORC("GLVolumePool","Unhandled rendering mode.");
@@ -1606,16 +1559,16 @@ Vec4ui GLVolumePool::RecomputeVisibility(const VisibilityState& visibility,
   // recompute visibility for the entire hierarchy immediately
   switch (visibility.getRenderMode()) {
     case IRenderer::ERenderMode::RM_1DTRANS:
-      vEmptyBrickCount = RecomputeVisibilityForOctree<false, IRenderer::ERenderMode::RM_1DTRANS>(visibility, *this, m_vBrickMetadata, m_vMinMaxScalar, m_vMinMaxGradient);
+      vEmptyBrickCount = RecomputeVisibilityForOctree<false, IRenderer::ERenderMode::RM_1DTRANS>(visibility);
       break;
     case IRenderer::ERenderMode::RM_2DTRANS:
-      vEmptyBrickCount = RecomputeVisibilityForOctree<false, IRenderer::ERenderMode::RM_2DTRANS>(visibility, *this, m_vBrickMetadata, m_vMinMaxScalar, m_vMinMaxGradient);
+      vEmptyBrickCount = RecomputeVisibilityForOctree<false, IRenderer::ERenderMode::RM_2DTRANS>(visibility);
       break;
     case IRenderer::ERenderMode::RM_ISOSURFACE:
-      vEmptyBrickCount = RecomputeVisibilityForOctree<false, IRenderer::ERenderMode::RM_ISOSURFACE>(visibility, *this, m_vBrickMetadata, m_vMinMaxScalar, m_vMinMaxGradient);
+      vEmptyBrickCount = RecomputeVisibilityForOctree<false, IRenderer::ERenderMode::RM_ISOSURFACE>(visibility);
       break;
     case IRenderer::ERenderMode::RM_CLEARVIEW:
-      vEmptyBrickCount = RecomputeVisibilityForOctree<false, IRenderer::ERenderMode::RM_CLEARVIEW>(visibility, *this, m_vBrickMetadata, m_vMinMaxScalar, m_vMinMaxGradient);
+      vEmptyBrickCount = RecomputeVisibilityForOctree<false, IRenderer::ERenderMode::RM_CLEARVIEW>(visibility);
       break;
     default:
       LERRORC("GLVolumePool","Unhandled rendering mode.");
@@ -1677,19 +1630,19 @@ void GLVolumePool::requestBricks(const std::vector<Vec4ui>& vBrickIDs,
       switch (visibility.getRenderMode()) {
         case IRenderer::ERenderMode::RM_1DTRANS:
           PotentiallyUploadBricksToBrickPool<IRenderer::ERenderMode::RM_1DTRANS>(visibility,
-                                                         vBrickIDs);
+                                                                                 vBrickIDs);
           break;
         case IRenderer::ERenderMode::RM_2DTRANS:
           PotentiallyUploadBricksToBrickPool<IRenderer::ERenderMode::RM_2DTRANS>(visibility,
-                                                         vBrickIDs);
+                                                                                 vBrickIDs);
           break;
         case IRenderer::ERenderMode::RM_ISOSURFACE:
           PotentiallyUploadBricksToBrickPool<IRenderer::ERenderMode::RM_ISOSURFACE>(visibility,
-                                                            vBrickIDs);
+                                                                                    vBrickIDs);
           break;
         case IRenderer::ERenderMode::RM_CLEARVIEW:
           PotentiallyUploadBricksToBrickPool<IRenderer::ERenderMode::RM_CLEARVIEW>(visibility,
-                                                                                    vBrickIDs);
+                                                                                   vBrickIDs);
           break;
         default:
           LERRORC("GLVolumePool","Unhandled rendering mode.");
@@ -1746,38 +1699,32 @@ bool GLVolumePool::isValid() const {
   m_pPoolDataTexture->isValid();
 }
 
-void GLVolumePool::requestBricksFromGetterThread(const std::vector<Vec4ui>& vBrickIDs,
-                                                 const std::vector<BrickKey>& keys,
-                                                 const std::vector<Vec3ui>& sizes) {
-
+void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>& request) {
+  
   // HACK: Quick hack for testing purposes, later the code below is called
   uint32_t iPagedBricks = 0;
-  for (size_t j = 0;j<keys.size();++j) {
+  for (size_t j = 0;j<request.size();++j) {
     bool success;
-    auto vUploadMem = m_pDataset.getBrick(keys[j], success);
+    auto vUploadMem = m_pDataset.getBrick(request[j].key, success);
     
     if (!success) {
-      LERROR("Error getting brick" << keys[j]);
+      LERROR("Error getting brick" << request[j].key);
       return;
     }
     
-    if (!uploadBrick(BrickElemInfo(vBrickIDs[j], sizes[j]),
-                     vUploadMem->data())) {
-      continue;
-    } else {
+    const Vec3ui vVoxelSize = getBrickVoxelCounts(request[j].ID);
+    
+    if (uploadBrick(BrickElemInfo(request[j].ID, vVoxelSize),
+                    vUploadMem->data())) {
       iPagedBricks++;
     }
   }
   
-  /*
- 
-  SCOPEDLOCK(m_brickDataCS);
-  m_uploadKeys = keys;
-  m_uploadSizes = sizes;
-  m_uploadBrickIDs = vBrickIDs;
-  m_brickGetterThread->resume();
- 
-*/
+  // SCOPEDLOCK(m_brickDataCS);
+  //
+  // TODO: check for each element in request if it exists in
+  //       m_requestTodo or m_requestDone if not add it to m_requestTodo
+  //       then call m_brickGetterThread->resume();
 }
 
 
@@ -1788,26 +1735,11 @@ void GLVolumePool::brickGetterFunc(Predicate pContinue,
     threadInterface.suspend(pContinue);
     
     
-    /*
-     uint32_t iPagedBricks = 0;
-     for (size_t j = 0;j<keys.size();++j) {
-     bool success;
-     auto vUploadMem = pDataset.getBrick(keys[j], success);
-     
-     if (!success) {
-     LERROR("Error getting brick" << keys[j]);
-     return 0;
-     }
-     
-     if (!uploadBrick(BrickElemInfo(vBrickIDs[j], sizes[j]),
-     vUploadMem->data())) {
-     continue;
-     } else {
-     iPagedBricks++;
-     }
-     }
-     return iPagedBricks;
-     */
+    // SCOPEDLOCK(m_brickDataCS);
+    //
+    // TODO: check m_requestTodo and call getBrick for each element
+    //       once that returns, store the data and move the request to
+    //       m_requestDone, repeat until m_requestTodo is empty
     
     LINFO("brickGetterThread running");
   }
