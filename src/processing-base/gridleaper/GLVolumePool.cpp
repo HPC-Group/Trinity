@@ -1725,6 +1725,8 @@ void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>
       
       m_requestTodo.push_back(request[j]);
       m_brickDataCS.unlock();
+
+      m_brickGetterThread->resume();
     } else {
       continue;
     }
@@ -1758,7 +1760,6 @@ uint32_t GLVolumePool::uploadBricks() {
 void GLVolumePool::brickGetterFunc(Predicate pContinue,
                                    LambdaThread::Interface& threadInterface) {
   LINFO("brickGetterThread starting");
-  
   
   size_t todoCount = 0;
   if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
