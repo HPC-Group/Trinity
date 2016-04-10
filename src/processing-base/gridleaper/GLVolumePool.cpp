@@ -1735,15 +1735,49 @@ void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>
 }
 
 uint32_t GLVolumePool::uploadBricks() {
+  uint32_t iPagedBricks = 0;
   
-  // TODO: don't lock the whole time
+  
+  // Method 1: get the bricks request by request
+  do {
+    
+    std::shared_ptr<std::vector<uint8_t>> data = nullptr;
+    BrickRequest b;
+    
+    if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
+      if (m_requestDone.empty()) {
+        m_brickDataCS.unlock();
+        return iPagedBricks;
+      }
+      
+      data = m_requestStorage[0];
+      b = m_requestDone[0];
+      m_requestDone.erase(m_requestDone.begin());
+      m_requestStorage.erase(m_requestStorage.begin());
+      m_brickDataCS.unlock();
+      
+    } else {
+      return iPagedBricks;
+    }
+    
+    
+    const Vec3ui vVoxelSize = getBrickVoxelCounts(b.ID);
+    if (uploadBrick(BrickElemInfo(b.ID, vVoxelSize),
+                    data->data())) {
+      iPagedBricks++;
+    }
+    
+  } while (true);
+  
+/*
+  // Method 2: get all available bricks in one go
+ 
   SCOPEDLOCK(m_brickDataCS);
   uint32_t iPagedBricks = 0;
   
   for (size_t j = 0;j<m_requestDone.size();++j) {
 
     const Vec3ui vVoxelSize = getBrickVoxelCounts(m_requestDone[j].ID);
-    
     if (uploadBrick(BrickElemInfo(m_requestDone[j].ID, vVoxelSize),
                     m_requestStorage[j]->data())) {
       iPagedBricks++;
@@ -1752,6 +1786,7 @@ uint32_t GLVolumePool::uploadBricks() {
   
   m_requestDone.clear();
   m_requestStorage.clear();
+*/
   
   return iPagedBricks;
 }
@@ -1776,7 +1811,10 @@ void GLVolumePool::brickGetterFunc(Predicate pContinue,
     BrickRequest b;
     if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
       todoCount = m_requestTodo.size();
-      if (todoCount == 0) continue;
+      if (todoCount == 0) {
+        m_brickDataCS.unlock();
+        continue;
+      }
       
       // get first element from todo list
       b = m_requestTodo[0];
@@ -1799,11 +1837,12 @@ void GLVolumePool::brickGetterFunc(Predicate pContinue,
       for (size_t i = 0;i<m_requestTodo.size();++i) {
         if (m_requestTodo[i] == b) {
           found = true;
-          m_requestTodo.erase (m_requestTodo.begin()+i);
+          m_requestTodo.erase(m_requestTodo.begin()+i);
         }
       }
       if (!found) {
         LINFO("wasted a brick request");
+        m_brickDataCS.unlock();
         continue;
       }
       
