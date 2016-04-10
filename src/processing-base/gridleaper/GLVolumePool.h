@@ -10,6 +10,7 @@
 
 #include <silverbullet/time/Timer.h>
 #include <common/IIO.h>
+#include <common/IRenderer.h>
 
 
 #include "PoolSlotData.h"
@@ -60,8 +61,7 @@ public:
   
   
   void requestBricks(const std::vector<Core::Math::Vec4ui>& vBrickIDs,
-                        VisibilityState const& visibility,
-                        uint64_t modality);
+                     const VisibilityState& visibility);
   
   void uploadFirstBrick(const BrickKey& bkey);
   
@@ -97,9 +97,9 @@ public:
   uint32_t getLoDCount() const;
   uint32_t getIntegerBrickID(const Core::Math::Vec4ui& vBrickID) const; // x, y , z, lod (w) to iBrickID
   Core::Math::Vec4ui getVectorBrickID(uint32_t iBrickID) const;
-  Core::Math::Vec3ui const& getPoolCapacity() const;
-  Core::Math::Vec3ui const& getVolumeSize() const;
-  Core::Math::Vec3ui const& getMaxInnerBrickSize() const;
+  const Core::Math::Vec3ui& getPoolCapacity() const;
+  const Core::Math::Vec3ui& getVolumeSize() const;
+  const Core::Math::Vec3ui& getMaxInnerBrickSize() const;
   
   struct MinMax {
     double min;
@@ -144,8 +144,8 @@ protected:
   std::vector<PoolSlotData> m_vPoolSlotData;   // size of available pool slots
   std::vector<uint32_t>     m_vLoDOffsetTable; // size of LoDs, stores index sums, level 0 is finest
   
-  size_t m_iMinMaxScalarTimestep;        // current timestep of scalar acceleration structure below
-  size_t m_iMinMaxGradientTimestep;      // current timestep of gradient acceleration structure below
+  size_t m_currentModality;
+  size_t m_currentTimestep;
   std::vector<MinMax> m_vMinMaxScalar;   // accelerates access to minmax scalar information, gets constructed in c'tor
   std::vector<MinMax> m_vMinMaxGradient; // accelerates access to minmax gradient information, gets constructed on first access to safe some mem
   std::vector<Vec3ui> m_brickVoxelCounts;
@@ -158,7 +158,7 @@ protected:
   uint64_t m_iMaxUsedBrickBytes;
   
   std::vector <std::vector<Core::Math::Vec3ui>> m_LoDInfoCache;
-
+  
   DebugMode const m_eDebugMode;
   
   DataSetCache m_sDataSetCache;
@@ -173,11 +173,29 @@ protected:
                    size_t iInsertPos, uint64_t iTimeOfCreation);
   
   
+  std::vector<BrickKey> m_uploadKeys;
+  std::vector<Vec3ui> m_uploadSizes;
   CriticalSection               m_brickDataCS;
   std::unique_ptr<LambdaThread> m_brickGetterThread;
   
   void brickGetterFunc(Predicate pContinue,
                        LambdaThread::Interface& threadInterface);
   
+  void requestBricksFromGetterThread(const std::vector<Core::Math::Vec4ui>& vBrickIDs,
+                                     const std::vector<BrickKey>& keys,
+                                     const std::vector<Core::Math::Vec3ui>& sizes);
+  
+  void UploadBricksToBrickPool(const std::vector<Core::Math::Vec4ui>& vBrickIDs);  
+  
+  template<typename T>
+  void UploadBricksToBrickPoolT(const std::vector<Core::Math::Vec4ui>& vBrickIDs);
+  
+  template<trinity::IRenderer::ERenderMode eRenderMode>
+  void PotentiallyUploadBricksToBrickPool(const VisibilityState& visibility,
+                                          const std::vector<Core::Math::Vec4ui>& vBrickIDs);
+  
+  template<trinity::IRenderer::ERenderMode eRenderMode, typename T>
+  void PotentiallyUploadBricksToBrickPoolT(const VisibilityState& visibility,
+                                           const std::vector<Core::Math::Vec4ui>& vBrickIDs);
   
 };

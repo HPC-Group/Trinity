@@ -502,9 +502,7 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     GL_CHECK_EXT();
 
     if (hash.size() > 0) {
-      m_volumePool->requestBricks(hash,
-                                 m_visibilityState,
-                                 m_activeModality);
+      m_volumePool->requestBricks(hash, m_visibilityState);
     } else {
       m_isIdle = true;
     }
@@ -902,6 +900,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
           bForceSynchronousUpdate) {
         vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
                                                              m_activeTimestep,
+                                                             m_activeModality,
                                                              bForceSynchronousUpdate);
       }
       break; }
@@ -914,6 +913,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
        bForceSynchronousUpdate) {
        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
        m_activeTimestep,
+       m_activeModality,
        bForceSynchronousUpdate);
        }*/
       break; }
@@ -923,6 +923,18 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
           bForceSynchronousUpdate) {
         vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
                                                              m_activeTimestep,
+                                                             m_activeModality,
+                                                             bForceSynchronousUpdate);
+      }
+      break; }
+    case ERenderMode::RM_CLEARVIEW: {
+      double const fIsoValue1 = m_isoValue[0];
+      double const fIsoValue2 = m_isoValue[1];
+      if (m_visibilityState.needsUpdateCV(fIsoValue1, fIsoValue2) ||
+          bForceSynchronousUpdate) {
+        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
+                                                             m_activeTimestep,
+                                                             m_activeModality,
                                                              bForceSynchronousUpdate);
       }
       break; }
