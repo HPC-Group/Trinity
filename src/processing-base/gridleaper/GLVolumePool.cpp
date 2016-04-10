@@ -1740,7 +1740,6 @@ uint32_t GLVolumePool::uploadBricks() {
   
   // Method 1: get the bricks request by request
   do {
-    
     std::shared_ptr<std::vector<uint8_t>> data = nullptr;
     BrickRequest b;
     
@@ -1760,14 +1759,13 @@ uint32_t GLVolumePool::uploadBricks() {
       return iPagedBricks;
     }
     
-    
     const Vec3ui vVoxelSize = getBrickVoxelCounts(b.ID);
     if (uploadBrick(BrickElemInfo(b.ID, vVoxelSize),
                     data->data())) {
       iPagedBricks++;
     }
     
-  } while (true);
+  } while (true);  // termination is handled by the return above
   
 /*
   // Method 2: get all available bricks in one go
