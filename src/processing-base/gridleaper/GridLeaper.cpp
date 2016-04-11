@@ -898,7 +898,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
       double const fMax = double(m_1Dtf.getNonZeroLimits().y) * fRescaleFactor;
       if (m_visibilityState.needsUpdate(fMin, fMax) ||
           bForceSynchronousUpdate) {
-        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
+        vEmptyBrickCount = m_volumePool->recomputeVisibility(m_visibilityState,
                                                              m_activeTimestep,
                                                              m_activeModality,
                                                              bForceSynchronousUpdate);
@@ -911,7 +911,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
        double const fMaxGradient = double(m_p2DTrans->GetNonZeroLimits().w);
        if (m_VisibilityState->NeedsUpdate(fMin, fMax, fMinGradient, fMaxGradient) ||
        bForceSynchronousUpdate) {
-       vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
+       vEmptyBrickCount = m_volumePool->recomputeVisibility(m_visibilityState,
        m_activeTimestep,
        m_activeModality,
        bForceSynchronousUpdate);
@@ -921,7 +921,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
       double const fIsoValue = m_isoValue[0];
       if (m_visibilityState.needsUpdate(fIsoValue) ||
           bForceSynchronousUpdate) {
-        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
+        vEmptyBrickCount = m_volumePool->recomputeVisibility(m_visibilityState,
                                                              m_activeTimestep,
                                                              m_activeModality,
                                                              bForceSynchronousUpdate);
@@ -932,7 +932,7 @@ Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
       double const fIsoValue2 = m_isoValue[1];
       if (m_visibilityState.needsUpdateCV(fIsoValue1, fIsoValue2) ||
           bForceSynchronousUpdate) {
-        vEmptyBrickCount = m_volumePool->RecomputeVisibility(m_visibilityState,
+        vEmptyBrickCount = m_volumePool->recomputeVisibility(m_visibilityState,
                                                              m_activeTimestep,
                                                              m_activeModality,
                                                              bForceSynchronousUpdate);

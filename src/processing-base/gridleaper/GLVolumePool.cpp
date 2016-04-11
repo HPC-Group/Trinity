@@ -35,7 +35,6 @@ using namespace Core::Math;
 using namespace Core::Time;
 using namespace trinity;
 
-const size_t maxBricksPerRequest = 5;
 const uint32_t asyncGetThreadWaitSecs = 5;
 
 static Vec3ui GetLoDSize(const Vec3ui& volumeSize, uint32_t iLoD) {
@@ -117,10 +116,6 @@ m_iInsertPos(0),
 m_bVisibilityUpdated(false)
 , m_currentTimestep(0)
 , m_currentModality(0)
-, m_BrickIOTime(0.0)
-, m_BrickIOBytes(0)
-, m_iMaxUsedBrickVoxelCount(0)
-, m_iMaxUsedBrickBytes(0)
 , m_eDebugMode(dm)
 , m_brickGetterThread(nullptr)
 {
@@ -177,9 +172,6 @@ m_bVisibilityUpdated(false)
     case IIO::Semantic::Vector  : m_sDataSetCache.m_iCompCount = 3;break;
     case IIO::Semantic::Color   : m_sDataSetCache.m_iCompCount = 4;break;
   }
-  
-  m_iMaxUsedBrickVoxelCount = m_maxTotalBrickSize.volume();
-  m_iMaxUsedBrickBytes = (m_sDataSetCache.m_iBitWidth/8) * m_sDataSetCache.m_iCompCount * m_iMaxUsedBrickVoxelCount;
   
   switch (m_sDataSetCache.m_iCompCount) {
     case 1: m_format = GL_RED; break;
@@ -299,11 +291,6 @@ m_bVisibilityUpdated(false)
   
 }
 
-
-uint32_t GLVolumePool::getLoDCount() const {
-  return m_iLoDCount;
-}
-
 uint32_t GLVolumePool::getIntegerBrickID(const Vec4ui& vBrickID) const {
   Vec3ui bricks = GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, vBrickID.w);
   return vBrickID.x + vBrickID.y * bricks.x + vBrickID.z * bricks.x * bricks.y + m_vLoDOffsetTable[vBrickID.w];
@@ -321,17 +308,6 @@ Vec4ui GLVolumePool::getVectorBrickID(uint32_t iBrickID) const {
                 lod);
 }
 
-const Vec3ui& GLVolumePool::getPoolCapacity() const {
-  return m_vPoolCapacity;
-}
-
-inline const Vec3ui& GLVolumePool::getVolumeSize() const {
-  return m_volumeSize;
-}
-
-inline const Vec3ui& GLVolumePool::getMaxInnerBrickSize() const {
-  return m_maxInnerBrickSize;
-}
 
 std::string GLVolumePool::getShaderFragment(uint32_t iMetaTextureUnit,
                                             uint32_t iDataTextureUnit,
@@ -765,16 +741,6 @@ bool GLVolumePool::uploadBrick(const BrickElemInfo& metaData, const void* pData)
   return true;
 }
 
-bool GLVolumePool::isBrickResident(const Vec4ui& vBrickID) const {
-  
-  int32_t iBrickID = getIntegerBrickID(vBrickID);
-  for (auto slot = m_vPoolSlotData.begin(); slot<m_vPoolSlotData.end();++slot) {
-    if (int32_t(slot->m_iBrickID) == iBrickID) return true;
-  }
-  
-  return false;
-}
-
 void GLVolumePool::enable(float fLoDFactor, const FLOATVECTOR3& vExtend,
                           const FLOATVECTOR3& /*vAspect */,
                           GLProgramPtr pShaderProgram) const {
@@ -1003,8 +969,8 @@ void GLVolumePool::RecomputeVisibilityForBrickPool(const VisibilityState& visibi
         if (!bContainedData)
           slot->restore();
         uint32_t const iPoolCoordinate = slot->positionInPool().x +
-        slot->positionInPool().y * getPoolCapacity().x +
-        slot->positionInPool().z * getPoolCapacity().x * getPoolCapacity().y;
+        slot->positionInPool().y * m_vPoolCapacity.x +
+        slot->positionInPool().z * m_vPoolCapacity.x * m_vPoolCapacity.y;
         m_brickMetadata[slot->m_iBrickID] = iPoolCoordinate + BI_FLAG_COUNT;
       } else {
         if (bContainedData)
@@ -1032,8 +998,7 @@ Vec4ui GLVolumePool::RecomputeVisibilityForOctree(const VisibilityState& visibil
 #else
   uint32_t const iContinue = 75; // we'll just get 1500 bricks/ms running a debug build
 #endif
-  uint32_t const iLoDCount = getLoDCount();
-  Vec3ui iChildLayout = GetBrickLayout(getVolumeSize(), getMaxInnerBrickSize(), 0);
+  Vec3ui iChildLayout = GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, 0);
   
   // evaluate child visibility for finest level
   for (uint32_t z = 0; z < iChildLayout.z; z++) {
@@ -1059,9 +1024,9 @@ Vec4ui GLVolumePool::RecomputeVisibilityForOctree(const VisibilityState& visibil
   } // for z
   
   // walk up hierarchy (from finest to coarsest level) and propagate child empty visibility
-  for (uint32_t iLoD = 1; iLoD < iLoDCount; iLoD++)
+  for (uint32_t iLoD = 1; iLoD < m_iLoDCount; iLoD++)
   {
-    Vec3ui const iLayout = GetBrickLayout(getVolumeSize(), getMaxInnerBrickSize(), iLoD);
+    Vec3ui const iLayout = GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, iLoD);
     
     // process even-sized volume
     Vec3ui const iEvenLayout = iChildLayout / 2;
@@ -1501,7 +1466,7 @@ void GLVolumePool::PotentiallyUploadBricksToBrickPool(const VisibilityState& vis
   }
 }
 
-Vec4ui GLVolumePool::RecomputeVisibility(const VisibilityState& visibility,
+Vec4ui GLVolumePool::recomputeVisibility(const VisibilityState& visibility,
                                          uint64_t modality, size_t iTimestep,
                                          bool bForceSynchronousUpdate)
 {

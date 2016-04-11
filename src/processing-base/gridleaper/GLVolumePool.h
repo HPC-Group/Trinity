@@ -33,14 +33,24 @@ public:
     Core::Math::Vec2f m_vRange;
   };
   
+  enum MissingBrickStrategy {
+    OnlyNeeded,
+    RequestAll,
+    SkipOneLevel,
+    SkipTwoLevels
+  };
+  
+  struct MinMax {
+    double min;
+    double max;
+  };
+
   struct BrickRequest {
     Core::Math::Vec4ui ID;
     BrickKey key;
-    
     bool operator==(const BrickRequest& other) {
       return ID == other.ID && key == other.key;
     }
-    
   };
     
   enum DebugMode {
@@ -58,9 +68,9 @@ public:
   
   // signals if meta texture is up-to-date including child emptiness for
   // the whole hierarchy
-  bool IsVisibilityUpdated() const { return m_bVisibilityUpdated; }
+  bool isVisibilityUpdated() const { return m_bVisibilityUpdated; }
   // @return (totalProcessedBrickCount, emptyBrickCount, childEmptyBrickCount, emptyLeafBrickCount)
-  Core::Math::Vec4ui RecomputeVisibility(const VisibilityState& visibility,
+  Core::Math::Vec4ui recomputeVisibility(const VisibilityState& visibility,
                                          uint64_t modality, size_t iTimestep,
                                          bool bForceSynchronousUpdate = false);
   // returns number of bricks paged in that must not be equal to given
@@ -76,10 +86,6 @@ public:
   
   // returns false if we need to render first before we can continue to upload further bricks
   bool uploadBrick(const BrickElemInfo& metaData, const void* pData); // TODO: we could use the 1D-index here too
-  void uploadFirstBrick(const Core::Math::Vec3ui& m_vVoxelSize, const void* pData);
-  void uploadMetadataTexture();
-  void uploadMetadataTexel(uint32_t iBrickID);
-  bool isBrickResident(const Core::Math::Vec4ui& vBrickID) const;
   void enable(float fLoDFactor, const Core::Math::Vec3f& vExtend,
               const Core::Math::Vec3f& vAspect,
               GLProgramPtr pShaderProgram) const;
@@ -87,12 +93,6 @@ public:
   
   bool isValid() const;
   
-  enum MissingBrickStrategy {
-    OnlyNeeded,
-    RequestAll,
-    SkipOneLevel,
-    SkipTwoLevels
-  };
   std::string getShaderFragment(uint32_t iMetaTextureUnit,
                                 uint32_t iDataTextureUnit,
                                 enum MissingBrickStrategy,
@@ -103,23 +103,6 @@ public:
   virtual uint64_t getCPUSize() const;
   virtual uint64_t getGPUSize() const;
   
-  uint32_t getLoDCount() const;
-  uint32_t getIntegerBrickID(const Core::Math::Vec4ui& vBrickID) const; // x, y , z, lod (w) to iBrickID
-  Core::Math::Vec4ui getVectorBrickID(uint32_t iBrickID) const;
-  const Core::Math::Vec3ui& getPoolCapacity() const;
-  const Core::Math::Vec3ui& getVolumeSize() const;
-  const Core::Math::Vec3ui& getMaxInnerBrickSize() const;
-  
-  struct MinMax {
-    double min;
-    double max;
-  };
-  
-  uint64_t getMaxUsedBrickBytes() const { return m_iMaxUsedBrickBytes; }
-  DataSetCache getCacheInfo() const { return m_sDataSetCache; }
-  Vec3ui getBrickVoxelCounts(const Core::Math::Vec4ui& key) const {
-    return m_brickVoxelCounts[getIntegerBrickID(key)];
-  }
   
 protected:
   trinity::IIO& m_pDataset;
@@ -146,9 +129,7 @@ protected:
   uint32_t m_iTotalBrickCount;
   
   bool m_bVisibilityUpdated;
-  
-  void* lastbrick;
-  
+
   std::vector<uint32_t>     m_brickMetadata;  // ref by iBrickID, size of total brick count + some unused 2d texture padding
   std::vector<PoolSlotData> m_vPoolSlotData;   // size of available pool slots
   std::vector<uint32_t>     m_vLoDOffsetTable; // size of LoDs, stores index sums, level 0 is finest
@@ -159,12 +140,6 @@ protected:
   std::vector<MinMax> m_minMaxGradient; // accelerates access to minmax gradient information, gets constructed on first access to safe some mem
   std::vector<Vec3ui> m_brickVoxelCounts;
   
-  double m_BrickIOTime;
-  uint64_t m_BrickIOBytes;
-  
-  // time savers, derived from Dataset::GetMaxUsedBrickSize()
-  uint64_t m_iMaxUsedBrickVoxelCount;
-  uint64_t m_iMaxUsedBrickBytes;
   
   std::vector <std::vector<Core::Math::Vec3ui>> m_LoDInfoCache;
   
@@ -172,6 +147,17 @@ protected:
   
   DataSetCache m_sDataSetCache;
   
+  uint32_t getIntegerBrickID(const Core::Math::Vec4ui& vBrickID) const; // x, y , z, lod (w) to iBrickID
+  Core::Math::Vec4ui getVectorBrickID(uint32_t iBrickID) const;
+  Vec3ui getBrickVoxelCounts(const Core::Math::Vec4ui& key) const {
+    return m_brickVoxelCounts[getIntegerBrickID(key)];
+  }
+  
+  void uploadFirstBrick(const Core::Math::Vec3ui& m_vVoxelSize,
+                        const void* pData);
+
+  void uploadMetadataTexture();
+  void uploadMetadataTexel(uint32_t iBrickID);
   
   void createGLResources();
   void freeGLResources();
