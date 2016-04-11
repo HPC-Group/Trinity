@@ -116,58 +116,69 @@ m_bUseGLCore(bUseGLCore),
 m_iInsertPos(0),
 m_bVisibilityUpdated(false)
 , m_currentTimestep(0)
+, m_currentModality(0)
 , m_BrickIOTime(0.0)
 , m_BrickIOBytes(0)
 , m_iMaxUsedBrickVoxelCount(0)
 , m_iMaxUsedBrickBytes(0)
 , m_eDebugMode(dm)
+, m_metaDataInitialized(false)
 , m_brickGetterThread(nullptr)
 {
   trinity::IIO::ValueType type = m_pDataset.getType(modality);
   
   switch(type){
-    case IIO::ValueType::T_FLOAT :  m_sDataSetCache.m_iBitWidth = 32;
+    case IIO::ValueType::T_FLOAT :
+      m_sDataSetCache.m_iBitWidth = 32;
       m_sDataSetCache.m_iIsFloat = true;
       m_sDataSetCache.m_iIsSigned = true;
       break;
-    case IIO::ValueType::T_DOUBLE : m_sDataSetCache.m_iBitWidth = 64;
+    case IIO::ValueType::T_DOUBLE :
+      m_sDataSetCache.m_iBitWidth = 64;
       m_sDataSetCache.m_iIsFloat = true;
       m_sDataSetCache.m_iIsSigned = true;
       break;
-    case IIO::ValueType::T_UINT8 :  m_sDataSetCache.m_iBitWidth = 8;
+    case IIO::ValueType::T_UINT8 :
+      m_sDataSetCache.m_iBitWidth = 8;
       m_sDataSetCache.m_iIsFloat = false;
       m_sDataSetCache.m_iIsSigned = false;
       break;
-    case IIO::ValueType::T_UINT16 : m_sDataSetCache.m_iBitWidth = 16;
+    case IIO::ValueType::T_UINT16 :
+      m_sDataSetCache.m_iBitWidth = 16;
       m_sDataSetCache.m_iIsFloat = false;
       m_sDataSetCache.m_iIsSigned = false;
       break;
-    case IIO::ValueType::T_UINT32 : m_sDataSetCache.m_iBitWidth = 32;
+    case IIO::ValueType::T_UINT32 :
+      m_sDataSetCache.m_iBitWidth = 32;
       m_sDataSetCache.m_iIsFloat = false;
       m_sDataSetCache.m_iIsSigned = false;
       break;
-    case IIO::ValueType::T_UINT64 : m_sDataSetCache.m_iBitWidth = 64;
+    case IIO::ValueType::T_UINT64 :
+      m_sDataSetCache.m_iBitWidth = 64;
       m_sDataSetCache.m_iIsFloat = false;
       m_sDataSetCache.m_iIsSigned = false;
       break;
-    case IIO::ValueType::T_INT8 :   m_sDataSetCache.m_iBitWidth = 8;
+    case IIO::ValueType::T_INT8 :
+      m_sDataSetCache.m_iBitWidth = 8;
       m_sDataSetCache.m_iIsFloat = false;
       m_sDataSetCache.m_iIsSigned = true;
       break;
-    case IIO::ValueType::T_INT16 :  m_sDataSetCache.m_iBitWidth = 16;
+    case IIO::ValueType::T_INT16 :
+      m_sDataSetCache.m_iBitWidth = 16;
       m_sDataSetCache.m_iIsFloat = false;
       m_sDataSetCache.m_iIsSigned = true;
       break;
-    case IIO::ValueType::T_INT32 :  m_sDataSetCache.m_iBitWidth = 32;
+    case IIO::ValueType::T_INT32 :
+      m_sDataSetCache.m_iBitWidth = 32;
       m_sDataSetCache.m_iIsFloat = false;
       m_sDataSetCache.m_iIsSigned = true;
       break;
-    case IIO::ValueType::T_INT64 :  m_sDataSetCache.m_iBitWidth = 64;
+    case IIO::ValueType::T_INT64 :
+      m_sDataSetCache.m_iBitWidth = 64;
       m_sDataSetCache.m_iIsFloat = false;
       m_sDataSetCache.m_iIsSigned = true;
       break;
   }
-  
   m_sDataSetCache.m_vRange = m_pDataset.getRange(modality);
   
   IIO::Semantic semantic = m_pDataset.getSemantic(modality);
@@ -221,6 +232,9 @@ m_bVisibilityUpdated(false)
     default : throw TrinityError("Invalid bit width", __FILE__, __LINE__);
   }
   
+  createGLResources();
+  if (!isValid()) return;
+  
   // fill the pool slot information
   const Vec3ui slotLayout = poolSize/m_maxTotalBrickSize;
   m_vPoolSlotData.reserve(slotLayout.volume());
@@ -243,59 +257,8 @@ m_bVisibilityUpdated(false)
     iOffset += GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, i).volume();
   }
   
-  createGLResources();
-  if (!isValid()) return;
-  
-  // duplicate LoD size for efficient access
-  m_LoDInfoCache.resize(m_pDataset.getModalityCount());
-  for (uint32_t modality = 0; modality < m_LoDInfoCache.size(); modality++) {
-    m_LoDInfoCache[modality].resize(m_pDataset.getLODLevelCount(modality));
-    for (uint32_t lod = 0; lod < m_LoDInfoCache[modality].size(); lod++) {
-      m_LoDInfoCache[modality][lod] = m_pDataset.getBrickLayout(lod, modality);
-    }
-  }
-  
-  
-  // duplicate minmax scalar data from dataset for efficient access
-  m_minMaxScalar.resize(m_iTotalBrickCount);
-  m_minMaxGradient.resize(m_iTotalBrickCount);
-  m_brickVoxelCounts.resize(m_iTotalBrickCount);
-  for (uint32_t i = 0; i < m_minMaxScalar.size(); i++) {
-    Vec4ui const vBrickID = getVectorBrickID(i);
-    
-    BrickKey const key = IndexFrom4D(m_LoDInfoCache,modality,vBrickID,
-                                     m_currentTimestep);
-    MinMaxBlock imme = m_pDataset.getMaxMinForKey(key);
-    m_minMaxScalar[i].min = imme.minScalar;
-    m_minMaxScalar[i].max = imme.maxScalar;
-    m_minMaxGradient[i].min = imme.minGradient;
-    m_minMaxGradient[i].max = imme.maxGradient;
-    m_brickVoxelCounts[i] = m_pDataset.getBrickVoxelCounts(key);
-  }
-  
-  
-  switch (m_eDebugMode) {
-    default:
-    case DM_NONE:
-    {
-      // we can process 7500 bricks/ms (1500 running debug build)
-      uint32_t const iAsyncUpdaterThreshold = 7500 * 5;
-    }
-      break;
-    case DM_BUSY:
-      
-      break;
-    case DM_SYNC:
-      // if we want to disable the async updater we just don't instantiate it
-      // WARNING("Forcing always synchronous metadata updates, async worker is disabled.");
-      break;
-    case DM_NOEMPTYSPACELEAPING:
-      //WARNING("Visibility computation is DISABLED, disabling empty space leaping.");
-      break;
-  }
   m_brickGetterThread = mocca::make_unique<LambdaThread>(std::bind(&GLVolumePool::brickGetterFunc, this, std::placeholders::_1, std::placeholders::_2));
   m_brickGetterThread->startThread();
-  
 }
 
 
@@ -747,9 +710,9 @@ void GLVolumePool::uploadFirstBrick(const BrickKey& bkey) {
   uploadFirstBrick(vVoxelCount, vUploadMem->data());
 }
 
-void GLVolumePool::uploadFirstBrick(const Vec3ui& m_vVoxelSize, const void* pData) {
+void GLVolumePool::uploadFirstBrick(const Vec3ui& vVoxelCount, const void* pData) {
   uint32_t iLastBrickIndex = *(m_vLoDOffsetTable.end()-1);
-  uploadBrick(iLastBrickIndex, m_vVoxelSize, pData, m_vPoolSlotData.size()-1, (std::numeric_limits<uint64_t>::max)());
+  uploadBrick(iLastBrickIndex, vVoxelCount, pData, m_vPoolSlotData.size()-1, (std::numeric_limits<uint64_t>::max)());
 }
 
 bool GLVolumePool::uploadBrick(const BrickElemInfo& metaData, const void* pData) {
@@ -1506,7 +1469,7 @@ Vec4ui GLVolumePool::RecomputeVisibility(const VisibilityState& visibility,
 {
   // (totalProcessedBrickCount, emptyBrickCount, childEmptyBrickCount)
   Vec4ui vEmptyBrickCount(0, 0, 0, 0);
-  if (m_eDebugMode == DM_NOEMPTYSPACELEAPING) {
+  if (!m_metaDataInitialized || m_eDebugMode == DM_NOEMPTYSPACELEAPING) {
     m_bVisibilityUpdated = true;
     return vEmptyBrickCount;
   }
@@ -1617,8 +1580,7 @@ void GLVolumePool::requestBricks(const std::vector<Vec4ui>& vBrickIDs,
 {
   LINFO("Requesting:" << vBrickIDs.size() << " brick(s)");
   
-  if (!vBrickIDs.empty())
-  {
+  if (!vBrickIDs.empty()) {
     prepareForPaging();
     
     if (!m_bVisibilityUpdated) {
@@ -1794,6 +1756,10 @@ void GLVolumePool::brickGetterFunc(Predicate pContinue,
                                    LambdaThread::Interface& threadInterface) {
   LINFO("brickGetterThread starting");
   
+  initMetaData();
+  
+  LINFO("init complete");
+  
   size_t todoCount = 0;
   if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
     todoCount = m_requestTodo.size();
@@ -1855,4 +1821,58 @@ void GLVolumePool::brickGetterFunc(Predicate pContinue,
     
   }
   LINFO("brickGetterThread terminating");
+}
+
+
+void GLVolumePool::initMetaData() {
+  
+  // duplicate LoD size for efficient access
+  m_LoDInfoCache.resize(m_pDataset.getModalityCount());
+  for (uint32_t modality = 0; modality < m_LoDInfoCache.size(); modality++) {
+    m_LoDInfoCache[modality].resize(m_pDataset.getLODLevelCount(modality));
+    for (uint32_t lod = 0; lod < m_LoDInfoCache[modality].size(); lod++) {
+      m_LoDInfoCache[modality][lod] = m_pDataset.getBrickLayout(lod, modality);
+    }
+  }
+  
+  
+  // duplicate minmax scalar data from dataset for efficient access
+  m_minMaxScalar.resize(m_iTotalBrickCount);
+  m_minMaxGradient.resize(m_iTotalBrickCount);
+  m_brickVoxelCounts.resize(m_iTotalBrickCount);
+  for (uint32_t i = 0; i < m_minMaxScalar.size(); i++) {
+    Vec4ui const vBrickID = getVectorBrickID(i);
+    
+    BrickKey const key = IndexFrom4D(m_LoDInfoCache,m_currentModality,
+                                     vBrickID, m_currentTimestep);
+    MinMaxBlock imme = m_pDataset.getMaxMinForKey(key);
+    m_minMaxScalar[i].min = imme.minScalar;
+    m_minMaxScalar[i].max = imme.maxScalar;
+    m_minMaxGradient[i].min = imme.minGradient;
+    m_minMaxGradient[i].max = imme.maxGradient;
+    m_brickVoxelCounts[i] = m_pDataset.getBrickVoxelCounts(key);
+  }
+  
+  
+  switch (m_eDebugMode) {
+    default:
+    case DM_NONE:
+    {
+      // we can process 7500 bricks/ms (1500 running debug build)
+      uint32_t const iAsyncUpdaterThreshold = 7500 * 5;
+    }
+      break;
+    case DM_BUSY:
+      
+      break;
+    case DM_SYNC:
+      // if we want to disable the async updater we just don't instantiate it
+      // WARNING("Forcing always synchronous metadata updates, async worker is disabled.");
+      break;
+    case DM_NOEMPTYSPACELEAPING:
+      //WARNING("Visibility computation is DISABLED, disabling empty space leaping.");
+      break;
+  }
+  
+  m_metaDataInitialized = true;
 }

@@ -86,6 +86,7 @@ public:
   void disable() const;
   
   bool isValid() const;
+  bool isMetaDataReady() const {return m_metaDataInitialized;}
   
   enum MissingBrickStrategy {
     OnlyNeeded,
@@ -183,6 +184,7 @@ protected:
                    size_t iInsertPos, uint64_t iTimeOfCreation);
   
   
+  bool                          m_metaDataInitialized;
   std::vector<BrickRequest>     m_requestTodo;
   std::vector<BrickRequest>     m_requestDone;
   std::vector<std::shared_ptr<std::vector<uint8_t>>> m_requestStorage;
@@ -190,6 +192,7 @@ protected:
   CriticalSection               m_brickDataCS;
   std::unique_ptr<LambdaThread> m_brickGetterThread;
   
+  void initMetaData();
   void brickGetterFunc(Predicate pContinue,
                        LambdaThread::Interface& threadInterface);
   
