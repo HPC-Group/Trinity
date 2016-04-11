@@ -46,10 +46,10 @@ static Vec3ui GetLoDSize(const Vec3ui& volumeSize, uint32_t iLoD) {
 }
 
 // TODO: replace this function with dataset API call
-static Vec3f GetFloatBrickLayout(const Vec3ui& volumeSize,
+static FLOATVECTOR3 GetFloatBrickLayout(const Vec3ui& volumeSize,
                                         const Vec3ui& maxInnerBrickSize,
                                         uint32_t iLoD) {
-  Vec3f baseBrickCount(float(volumeSize.x)/maxInnerBrickSize.x,
+  FLOATVECTOR3 baseBrickCount(float(volumeSize.x)/maxInnerBrickSize.x,
                               float(volumeSize.y)/maxInnerBrickSize.y,
                               float(volumeSize.z)/maxInnerBrickSize.z);
   
@@ -82,6 +82,15 @@ BrickKey IndexFrom4D(const std::vector <std::vector<Vec3ui>>& loDInfoCache,
   return k;
 }
 
+// TODO: replace this function with dataset API call
+static Vec3ui GetBrickLayout(const Vec3ui& volumeSize,
+                             const Vec3ui& maxInnerBrickSize,
+                             uint32_t iLoD) {
+  Vec3ui baseBrickCount(uint32_t(ceil(double(volumeSize.x)/maxInnerBrickSize.x)),
+                        uint32_t(ceil(double(volumeSize.y)/maxInnerBrickSize.y)),
+                        uint32_t(ceil(double(volumeSize.z)/maxInnerBrickSize.z)));
+  return GetLoDSize(baseBrickCount, iLoD);
+}
 
 GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
                            trinity::IIO& pDataset,
@@ -232,8 +241,7 @@ m_bVisibilityUpdated(false)
   m_vLoDOffsetTable.resize(m_iLoDCount);
   for (uint32_t i = 0;i<m_vLoDOffsetTable.size();++i) {
     m_vLoDOffsetTable[i] = iOffset;
-    iOffset += m_pDataset.getBrickLayout(i, m_currentModality).volume();
- //   iOffset += GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, i).volume();
+    iOffset += GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, i).volume();
   }
   
   createGLResources();
@@ -297,14 +305,14 @@ uint32_t GLVolumePool::getLoDCount() const {
 }
 
 uint32_t GLVolumePool::getIntegerBrickID(const Vec4ui& vBrickID) const {
-  Vec3ui bricks = m_pDataset.getBrickLayout(vBrickID.w, m_currentModality); //GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, vBrickID.w);
+  Vec3ui bricks = GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, vBrickID.w);
   return vBrickID.x + vBrickID.y * bricks.x + vBrickID.z * bricks.x * bricks.y + m_vLoDOffsetTable[vBrickID.w];
 }
 
 Vec4ui GLVolumePool::getVectorBrickID(uint32_t iBrickID) const {
   auto up = std::upper_bound(m_vLoDOffsetTable.cbegin(), m_vLoDOffsetTable.cend(), iBrickID);
   uint32_t lod = uint32_t(up - m_vLoDOffsetTable.cbegin()) - 1;
-  Vec3ui bricks = m_pDataset.getBrickLayout(lod, m_currentModality); ;// GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, lod);
+  Vec3ui bricks = GetBrickLayout(m_volumeSize, m_maxInnerBrickSize, lod);
   iBrickID -= m_vLoDOffsetTable[lod];
   
   return Vec4ui(iBrickID % bricks.x,
@@ -358,7 +366,7 @@ std::string GLVolumePool::getShaderFragment(uint32_t iMetaTextureUnit,
   else
     ss << "#version 420 compatibility\n";
   
-  Vec3f poolAspect(m_pPoolDataTexture->GetSize());
+  FLOATVECTOR3 poolAspect(m_pPoolDataTexture->GetSize());
   poolAspect /= poolAspect.minVal();
   
   // get the maximum precision for floats (larger precisions would just append
@@ -425,7 +433,7 @@ std::string GLVolumePool::getShaderFragment(uint32_t iMetaTextureUnit,
     ss << "uniform uint vLODOffset[2] = uint[]("
     << "uint(" << m_vLoDOffsetTable[0] << "), uint(0));\n"
     << "uniform vec3 vLODLayout[2] = vec3[](\n";
-    Vec3f vLoDSize = GetFloatBrickLayout(m_volumeSize,
+    FLOATVECTOR3 vLoDSize = GetFloatBrickLayout(m_volumeSize,
                                                 m_maxInnerBrickSize, 0);
     ss << "  vec3(" << vLoDSize.x << ", " << vLoDSize.y << ", "
     << vLoDSize.z << "), // Level \n"
@@ -767,8 +775,8 @@ bool GLVolumePool::isBrickResident(const Vec4ui& vBrickID) const {
   return false;
 }
 
-void GLVolumePool::enable(float fLoDFactor, const Vec3f& vExtend,
-                          const Vec3f& /*vAspect */,
+void GLVolumePool::enable(float fLoDFactor, const FLOATVECTOR3& vExtend,
+                          const FLOATVECTOR3& /*vAspect */,
                           GLProgramPtr pShaderProgram) const {
   //m_pPoolMetadataTexture->Bind(m_iMetaTextureUnit);
   //m_pPoolDataTexture->Bind(m_iDataTextureUnit);
@@ -867,7 +875,7 @@ void GLVolumePool::createGLResources() {
 #endif
   // last element in the offset table contains all bricks until the
   // last level + that last level itself contains one brick
-  m_iTotalBrickCount = *(m_vLoDOffsetTable.end() - 1) + 1;
+  m_iTotalBrickCount = *(m_vLoDOffsetTable.end()-1)+1;
   
   Vec3ui vTexSize;
   try {
@@ -1025,7 +1033,7 @@ Vec4ui GLVolumePool::RecomputeVisibilityForOctree(const VisibilityState& visibil
   uint32_t const iContinue = 75; // we'll just get 1500 bricks/ms running a debug build
 #endif
   uint32_t const iLoDCount = getLoDCount();
-  Vec3ui iChildLayout = m_pDataset.getBrickLayout(0, m_currentModality);   // GetBrickLayout(getVolumeSize(), getMaxInnerBrickSize(), 0);
+  Vec3ui iChildLayout = GetBrickLayout(getVolumeSize(), getMaxInnerBrickSize(), 0);
   
   // evaluate child visibility for finest level
   for (uint32_t z = 0; z < iChildLayout.z; z++) {
@@ -1053,7 +1061,7 @@ Vec4ui GLVolumePool::RecomputeVisibilityForOctree(const VisibilityState& visibil
   // walk up hierarchy (from finest to coarsest level) and propagate child empty visibility
   for (uint32_t iLoD = 1; iLoD < iLoDCount; iLoD++)
   {
-    Vec3ui const iLayout = m_pDataset.getBrickLayout(iLoD, m_currentModality); // GetBrickLayout(getVolumeSize(), getMaxInnerBrickSize(), iLoD);
+    Vec3ui const iLayout = GetBrickLayout(getVolumeSize(), getMaxInnerBrickSize(), iLoD);
     
     // process even-sized volume
     Vec3ui const iEvenLayout = iChildLayout / 2;
