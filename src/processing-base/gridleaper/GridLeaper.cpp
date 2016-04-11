@@ -958,7 +958,7 @@ const uint64_t GridLeaper::getFreeGPUMemory(){
     freememory /= 2;
     if (freememory < 0){
       LWARNINGC("GridLeaper", "not enough free VRAM.");
-      return 0;
+      return DEFAULT_GPU_MEM;
     }
     
     LINFOC("GridLeaper", "available VRAM in kb: " << freememory);

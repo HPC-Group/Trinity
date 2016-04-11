@@ -1826,6 +1826,8 @@ void GLVolumePool::brickGetterFunc(Predicate pContinue,
 
 void GLVolumePool::initMetaData() {
   
+  LINFO("Metadata init starting");
+  
   // duplicate LoD size for efficient access
   m_LoDInfoCache.resize(m_pDataset.getModalityCount());
   for (uint32_t modality = 0; modality < m_LoDInfoCache.size(); modality++) {
@@ -1873,6 +1875,8 @@ void GLVolumePool::initMetaData() {
       //WARNING("Visibility computation is DISABLED, disabling empty space leaping.");
       break;
   }
+  
+  LINFO("Metadata init complete");
   
   m_metaDataInitialized = true;
 }
