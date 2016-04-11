@@ -15,7 +15,7 @@ public:
 
     bool connect() const;
     void sendRequest(const Request& request) const;
-    std::unique_ptr<Reply> getReply(const std::chrono::milliseconds& = TIMEOUT_REPLY) const;
+    std::unique_ptr<Reply> getReply() const;
     mocca::net::Endpoint getEndpoint() const;
 
 private:

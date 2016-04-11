@@ -36,8 +36,8 @@ void AbstractSession::run() {
         LDEBUG("Initiated session of type " << typeid(*this).name() << " with connection ID " << *m_controlConnection->connectionID());
     }
 
-    performThreadSpecificInit();
     try {
+        performThreadSpecificInit();
         while (!isInterrupted()) {
             auto message = m_controlConnection->receive();
             if (!message.empty()) {
