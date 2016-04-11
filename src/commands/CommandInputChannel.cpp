@@ -40,7 +40,7 @@ mocca::net::Endpoint CommandInputChannel::getEndpoint() const {
 }
 
 std::unique_ptr<Reply> CommandInputChannel::getReply(const std::chrono::milliseconds& ms) const {
-    auto serialReply = m_mainChannel->receive(ms);
+    auto serialReply = m_mainChannel->receive();
     if (serialReply.empty()) {
         throw TrinityError("(chn) no reply arrived", __FILE__, __LINE__);
     }

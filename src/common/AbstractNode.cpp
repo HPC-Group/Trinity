@@ -20,7 +20,7 @@ void AbstractNode::run() {
     while (!isInterrupted()) {
         try {
             // receive request
-            auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_REPLY);
+            auto msgEnvelope = m_aggregator->receive(trinity::TIMEOUT_DEFAULT);
             if (!msgEnvelope.isNull()) {
                 auto env = msgEnvelope.release();
                 auto request = Request::createFromMessage(env.message);
