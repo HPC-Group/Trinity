@@ -34,6 +34,28 @@ public:
     mocca::net::Message writeMessage() const override;
 
 private:
+    class MessageBuf : public std::basic_streambuf<char, std::char_traits<char>> {
+    public:
+        MessageBuf(std::vector<uint8_t>& vec)
+            : m_vec(vec) {
+            vec.clear();
+            auto casted = reinterpret_cast<char*>(vec.data());
+            setp(casted, casted);
+        }
+
+        int overflow(int ch) override {
+            if (ch != traits_type::eof()) {
+                m_vec.push_back(ch);
+                pbump(1);
+                return ch;
+            }
+            return traits_type::eof();
+        }
+
+    private:
+        std::vector<uint8_t>& m_vec;
+    };
+
     using SharedDataVec = std::vector<std::shared_ptr<std::vector<uint8_t>>>;
     JsonWriter(std::shared_ptr<SharedDataVec> binary);
 

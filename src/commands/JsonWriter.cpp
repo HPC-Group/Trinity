@@ -108,12 +108,11 @@ void JsonWriter::appendBinary(std::shared_ptr<std::vector<uint8_t>> binary) {
 }
 
 mocca::net::Message JsonWriter::writeMessage() const {
-    JsonCpp::FastWriter writer;
-    std::string str = writer.write(m_root);
     auto jsonData = std::make_shared<std::vector<uint8_t>>();
-    jsonData->resize(str.size());
-    // FIXME: this copy might be avoided by using JsonCpp::StreamWriter and streaming the json directly into the vector
-    std::copy(begin(str), end(str), begin(*jsonData));
+    MessageBuf buf(*jsonData);
+    std::ostream os(&buf);
+    JsonCpp::StyledStreamWriter streamWriter;
+    streamWriter.write(os, m_root);
     mocca::net::Message message;
     message.push_back(jsonData);
     for (auto& sharedData : *m_binary) {
