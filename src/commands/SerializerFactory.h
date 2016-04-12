@@ -23,10 +23,4 @@ public:
     std::unique_ptr<ISerialWriter> createWriter() const override;
     std::unique_ptr<ISerialReader> createReader(const mocca::net::Message &message) const override;
 };
-
-class SimpleStringSerializerFactory : public ISerializerFactory {
-public:
-    std::unique_ptr<ISerialWriter> createWriter() const override;
-    std::unique_ptr<ISerialReader> createReader(const mocca::net::Message &message) const override;
-};
 }
