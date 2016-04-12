@@ -52,6 +52,11 @@ private:
             return traits_type::eof();
         }
 
+        std::streamsize xsputn(const char_type* s, std::streamsize count) {
+            m_vec.insert(end(m_vec), s, s + count);
+            return count;
+        }
+
     private:
         std::vector<uint8_t>& m_vec;
     };
