@@ -16,7 +16,6 @@ public:
     IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint);
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
     Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
-    MinMaxBlock getMaxMinForKey(const BrickKey&) const override;
     uint64_t getLODLevelCount(uint64_t modality) const override;
     uint64_t getNumberOfTimesteps() const override;
     Core::Math::Vec3ui64 getDomainSize(uint64_t lod, uint64_t modality) const override;
@@ -41,7 +40,7 @@ public:
     std::string getUserDefinedSemantic(uint64_t modality) const override;
     Core::Math::Vec3f getDomainScale(uint64_t modality) const override;
     Core::Math::Vec3f getFloatBrickLayout(uint64_t lod, uint64_t modality) const override;
-    std::vector<MinMaxBlock> getBrickMaxMin(uint64_t modality, uint64_t timestep) const override;
+    std::vector<BrickMetaData> getBrickMetaData(uint64_t modality, uint64_t timestep) const override;
     /* AUTOGEN IOInterfaceOverride */
 
 private:

@@ -77,17 +77,6 @@ std::unique_ptr<Reply> GetMaxUsedBrickSizesHdl::execute() {
     return mocca::make_unique<GetMaxUsedBrickSizesReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-GetMaxMinForKeyHdl::GetMaxMinForKeyHdl(const GetMaxMinForKeyRequest& request, IOSession* session)
-    : m_request(request)
-    , m_session(session) {}
-
-std::unique_ptr<Reply> GetMaxMinForKeyHdl::execute() {
-    auto brickKey = m_request.getParams().getBrickKey();
-    auto minMax = m_session->getIO().getMaxMinForKey(brickKey);
-    GetMaxMinForKeyCmd::ReplyParams params(minMax);
-    return mocca::make_unique<GetMaxMinForKeyReply>(params, m_request.getRid(), m_session->getSid());
-}
-
 GetNumberOfTimestepsHdl::GetNumberOfTimestepsHdl(const GetNumberOfTimestepsRequest& request, IOSession* session)
     : m_request(request)
     , m_session(session) {}
@@ -306,17 +295,6 @@ std::unique_ptr<Reply> GetFloatBrickLayoutHdl::execute() {
     return mocca::make_unique<GetFloatBrickLayoutReply>(params, m_request.getRid(), m_session->getSid());
 }
 
-GetBrickMaxMinHdl::GetBrickMaxMinHdl(const GetBrickMaxMinRequest& request, IOSession* session)
-    : m_request(request)
-    , m_session(session) {}
-
-std::unique_ptr<Reply> GetBrickMaxMinHdl::execute() {
-    auto modality = m_request.getParams().getModality();
-    auto timestep = m_request.getParams().getTimestep();
-    GetBrickMaxMinCmd::ReplyParams params(m_session->getIO().getBrickMaxMin(modality, timestep));
-    return mocca::make_unique<GetBrickMaxMinReply>(params, m_request.getRid(), m_session->getSid());
-}
-
 GetRootsHdl::GetRootsHdl(const GetRootsRequest& request, IONode* node)
     : m_request(request)
     , m_node(node) {}
@@ -324,6 +302,16 @@ GetRootsHdl::GetRootsHdl(const GetRootsRequest& request, IONode* node)
 std::unique_ptr<Reply> GetRootsHdl::execute() {
     GetRootsCmd::ReplyParams params(m_node->getRoots());
     return mocca::make_unique<GetRootsReply>(params, m_request.getRid(), m_request.getSid());
+}
+
+GetBrickMetaDataHdl::GetBrickMetaDataHdl(const GetBrickMetaDataRequest& request, IOSession* session)
+    : m_request(request)
+    , m_session(session) {}
+
+std::unique_ptr<Reply> GetBrickMetaDataHdl::execute() {
+    GetBrickMetaDataCmd::ReplyParams params(
+        m_session->getIO().getBrickMetaData(m_request.getParams().getModality(), m_request.getParams().getTimestep()));
+    return mocca::make_unique<GetBrickMetaDataReply>(params, m_request.getRid(), m_session->getSid());
 }
 
 /* AUTOGEN IOCommandHandlerImpl */

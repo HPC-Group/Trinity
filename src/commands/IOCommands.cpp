@@ -260,60 +260,6 @@ Core::Math::Vec3ui64 GetMaxUsedBrickSizesCmd::ReplyParams::getMaxUsedBrickSizes(
     return m_maxUsedBrickSizes;
 }
 
-////////////// GetMaxMinForKeyCmd //////////////
-
-VclType GetMaxMinForKeyCmd::Type = VclType::GetMaxMinForKey;
-
-GetMaxMinForKeyCmd::RequestParams::RequestParams(const BrickKey& brickKey)
-    : m_brickKey(brickKey) {}
-
-void GetMaxMinForKeyCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.appendObject("brickKey", m_brickKey);
-}
-
-void GetMaxMinForKeyCmd::RequestParams::deserialize(const ISerialReader& reader) {
-    m_brickKey = reader.getSerializable<BrickKey>("brickKey");
-}
-
-bool GetMaxMinForKeyCmd::RequestParams::equals(const GetMaxMinForKeyCmd::RequestParams& other) const {
-    return m_brickKey == other.m_brickKey;
-}
-
-std::string GetMaxMinForKeyCmd::RequestParams::toString() const {
-    std::stringstream stream;
-    stream << "brickKey: " << m_brickKey;
-    return stream.str();
-}
-
-BrickKey GetMaxMinForKeyCmd::RequestParams::getBrickKey() const {
-    return m_brickKey;
-}
-
-GetMaxMinForKeyCmd::ReplyParams::ReplyParams(const MinMaxBlock& minMaxBlock)
-    : m_minMaxBock(minMaxBlock) {}
-
-void GetMaxMinForKeyCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.appendObject("minMaxBlock", m_minMaxBock);
-}
-
-void GetMaxMinForKeyCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_minMaxBock = reader.getSerializable<MinMaxBlock>("minMaxBlock");
-}
-
-bool GetMaxMinForKeyCmd::ReplyParams::equals(const GetMaxMinForKeyCmd::ReplyParams& other) const {
-    return m_minMaxBock == other.m_minMaxBock;
-}
-
-std::string GetMaxMinForKeyCmd::ReplyParams::toString() const {
-    std::stringstream stream;
-    stream << m_minMaxBock;
-    return stream.str();
-}
-
-MinMaxBlock GetMaxMinForKeyCmd::ReplyParams::getMinMaxBlock() const {
-    return m_minMaxBock;
-}
-
 ////////////// GetNumberOfTimestepsCmd //////////////
 
 VclType GetNumberOfTimestepsCmd::Type = VclType::GetNumberOfTimesteps;
@@ -1504,67 +1450,6 @@ std::string GetFloatBrickLayoutCmd::ReplyParams::toString() const {
     return stream.str();
 }
 
-////////////// GetBrickMaxMinCmd //////////////
-
-VclType GetBrickMaxMinCmd::Type = VclType::GetBrickMaxMin;
-
-GetBrickMaxMinCmd::RequestParams::RequestParams(uint64_t modality, uint64_t timestep)
-    : m_modality(modality), m_timestep(timestep) {}
-
-void GetBrickMaxMinCmd::RequestParams::serialize(ISerialWriter& writer) const {
-    writer.appendInt("modality", m_modality);
-    writer.appendInt("timestep", m_timestep);
-}
-
-void GetBrickMaxMinCmd::RequestParams::deserialize(const ISerialReader& reader) {
-    m_modality = reader.getUInt64("modality");
-    m_timestep = reader.getUInt64("timestep");
-}
-
-bool GetBrickMaxMinCmd::RequestParams::equals(const GetBrickMaxMinCmd::RequestParams& other) const {
-    return m_modality == other.m_modality && m_timestep == other.m_timestep;
-}
-
-std::string GetBrickMaxMinCmd::RequestParams::toString() const {
-    std::stringstream stream;
-    stream << "modality: " << m_modality << "; timestep: " << m_timestep;
-    return stream.str();
-}
-
-uint64_t GetBrickMaxMinCmd::RequestParams::getModality() const {
-    return m_modality;
-}
-
-uint64_t GetBrickMaxMinCmd::RequestParams::getTimestep() const {
-    return m_timestep;
-}
-
-
-GetBrickMaxMinCmd::ReplyParams::ReplyParams(const std::vector<MinMaxBlock>& result)
-    : m_result(result) {}
-
-void GetBrickMaxMinCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.appendObjectVec("result", mocca::transformToBasePtrVec<ISerializable>(begin(m_result), end(m_result)));
-}
-
-void GetBrickMaxMinCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_result = reader.getSerializableVec<MinMaxBlock>("result");
-}
-
-bool GetBrickMaxMinCmd::ReplyParams::equals(const GetBrickMaxMinCmd::ReplyParams& other) const {
-    return m_result == other.m_result;
-}
-
-std::vector<MinMaxBlock> GetBrickMaxMinCmd::ReplyParams::getResult() const {
-    return m_result;
-}
-
-std::string GetBrickMaxMinCmd::ReplyParams::toString() const {
-    std::stringstream stream;
-    stream << "result: " << m_result;
-    return stream.str();
-}
-
 ////////////// GetRootsCmd //////////////
 
 VclType GetRootsCmd::Type = VclType::GetRoots;
@@ -1605,6 +1490,67 @@ std::string GetRootsCmd::ReplyParams::toString() const {
     std::stringstream stream;
     stream << "result: ";
     ::operator<<(stream, m_result);
+    return stream.str();
+}
+
+////////////// GetBrickMetaDataCmd //////////////
+
+VclType GetBrickMetaDataCmd::Type = VclType::GetBrickMetaData;
+
+GetBrickMetaDataCmd::RequestParams::RequestParams(uint64_t modality, uint64_t timestep)
+    : m_modality(modality)
+    , m_timestep(timestep) {}
+
+void GetBrickMetaDataCmd::RequestParams::serialize(ISerialWriter& writer) const {
+    writer.appendInt("modality", m_modality);
+    writer.appendInt("timestep", m_timestep);
+}
+
+void GetBrickMetaDataCmd::RequestParams::deserialize(const ISerialReader& reader) {
+    m_modality = reader.getUInt64("modality");
+    m_timestep = reader.getUInt64("timestep");
+}
+
+bool GetBrickMetaDataCmd::RequestParams::equals(const GetBrickMetaDataCmd::RequestParams& other) const {
+    return m_modality == other.m_modality && m_timestep == other.m_timestep;
+}
+
+uint64_t GetBrickMetaDataCmd::RequestParams::getModality() const {
+    return m_modality;
+}
+
+uint64_t GetBrickMetaDataCmd::RequestParams::getTimestep() const {
+    return m_timestep;
+}
+
+std::string GetBrickMetaDataCmd::RequestParams::toString() const {
+    std::stringstream stream;
+    stream << "modality: " << m_modality << "; timestep: " << m_timestep;
+    return stream.str();
+}
+
+GetBrickMetaDataCmd::ReplyParams::ReplyParams(const std::vector<BrickMetaData>& result)
+    : m_result(result) {}
+
+void GetBrickMetaDataCmd::ReplyParams::serialize(ISerialWriter& writer) const {
+    writer.appendObjectVec("result", mocca::transformToBasePtrVec<ISerializable>(begin(m_result), end(m_result)));
+}
+
+void GetBrickMetaDataCmd::ReplyParams::deserialize(const ISerialReader& reader) {
+    m_result = reader.getSerializableVec<BrickMetaData>("result");
+}
+
+bool GetBrickMetaDataCmd::ReplyParams::equals(const GetBrickMetaDataCmd::ReplyParams& other) const {
+    return m_result == other.m_result;
+}
+
+std::vector<BrickMetaData> GetBrickMetaDataCmd::ReplyParams::getResult() const {
+    return m_result;
+}
+
+std::string GetBrickMetaDataCmd::ReplyParams::toString() const {
+    std::stringstream stream;
+    stream << "result: " << m_result;
     return stream.str();
 }
 
@@ -1680,19 +1626,6 @@ std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::Reques
     return os << obj.toString();
 }
 std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::ReplyParams& obj) {
-    return os << obj.toString();
-}
-
-bool operator==(const GetMaxMinForKeyCmd::RequestParams& lhs, const GetMaxMinForKeyCmd::RequestParams& rhs) {
-    return lhs.equals(rhs);
-}
-bool operator==(const GetMaxMinForKeyCmd::ReplyParams& lhs, const GetMaxMinForKeyCmd::ReplyParams& rhs) {
-    return lhs.equals(rhs);
-}
-std::ostream& operator<<(std::ostream& os, const GetMaxMinForKeyCmd::RequestParams& obj) {
-    return os << obj.toString();
-}
-std::ostream& operator<<(std::ostream& os, const GetMaxMinForKeyCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 
@@ -2000,19 +1933,6 @@ std::ostream& operator<<(std::ostream& os, const GetFloatBrickLayoutCmd::ReplyPa
     return os << obj.toString();
 }
 
-bool operator==(const GetBrickMaxMinCmd::RequestParams& lhs, const GetBrickMaxMinCmd::RequestParams& rhs) {
-    return lhs.equals(rhs);
-}
-std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::RequestParams& obj) {
-    return os << obj.toString();
-}
-bool operator==(const GetBrickMaxMinCmd::ReplyParams& lhs, const GetBrickMaxMinCmd::ReplyParams& rhs) {
-    return lhs.equals(rhs);
-}
-std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::ReplyParams& obj) {
-    return os << obj.toString();
-}
-
 bool operator==(const GetRootsCmd::RequestParams& lhs, const GetRootsCmd::RequestParams& rhs) {
     return lhs.equals(rhs);
 }
@@ -2023,6 +1943,19 @@ bool operator==(const GetRootsCmd::ReplyParams& lhs, const GetRootsCmd::ReplyPar
     return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetRootsCmd::ReplyParams& obj) {
+    return os << obj.toString();
+}
+
+bool operator==(const GetBrickMetaDataCmd::RequestParams& lhs, const GetBrickMetaDataCmd::RequestParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickMetaDataCmd::RequestParams& obj) {
+    return os << obj.toString();
+}
+bool operator==(const GetBrickMetaDataCmd::ReplyParams& lhs, const GetBrickMetaDataCmd::ReplyParams& rhs) {
+    return lhs.equals(rhs);
+}
+std::ostream& operator<<(std::ostream& os, const GetBrickMetaDataCmd::ReplyParams& obj) {
     return os << obj.toString();
 }
 

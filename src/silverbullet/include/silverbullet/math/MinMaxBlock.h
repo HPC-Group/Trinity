@@ -1,12 +1,10 @@
 #pragma once
 
-#include "commands/ISerializable.h"
-
 #include <algorithm>
 #include <limits>
 
 /// Stores minimum and maximum data for a block of data.
-class MinMaxBlock : public trinity::SerializableTemplate<MinMaxBlock> {
+class MinMaxBlock {
 public:
     double minScalar;
     double maxScalar;
@@ -34,13 +32,4 @@ public:
     minGradient = std::min(minGradient, other.minGradient);
     maxGradient = std::max(maxGradient, other.maxGradient);
   }
-
-  void serialize(trinity::ISerialWriter& writer) const;
-  void deserialize(const trinity::ISerialReader& reader);
-
-  bool equals(const MinMaxBlock& other) const;
-  std::string toString() const;
 };
-
-bool operator==(const MinMaxBlock& lhs, const MinMaxBlock& rhs);
-std::ostream& operator<<(std::ostream& os, const MinMaxBlock& obj);

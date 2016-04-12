@@ -70,8 +70,6 @@ std::unique_ptr<Reply> Reply::createReplyInternal(const ISerialReader& reader) {
         return reader.getSerializablePtr<GetMaxBrickSizeReply>("rep");
     } else if (type == GetMaxUsedBrickSizesReply::Ifc::Type) {
         return reader.getSerializablePtr<GetMaxUsedBrickSizesReply>("rep");
-    } else if (type == GetMaxMinForKeyReply::Ifc::Type) {
-        return reader.getSerializablePtr<GetMaxMinForKeyReply>("rep");
     } else if (type == GetNumberOfTimestepsReply::Ifc::Type) {
         return reader.getSerializablePtr<GetNumberOfTimestepsReply>("rep");
     } else if (type == GetDomainSizeReply::Ifc::Type) {
@@ -116,10 +114,10 @@ std::unique_ptr<Reply> Reply::createReplyInternal(const ISerialReader& reader) {
         return reader.getSerializablePtr<GetDomainScaleReply>("rep");
     } else if (type == GetFloatBrickLayoutReply::Ifc::Type) {
         return reader.getSerializablePtr<GetFloatBrickLayoutReply>("rep");
-    } else if (type == GetBrickMaxMinReply::Ifc::Type) {
-        return reader.getSerializablePtr<GetBrickMaxMinReply>("rep");
     } else if (type == GetRootsReply::Ifc::Type) {
         return reader.getSerializablePtr<GetRootsReply>("rep");
+    } else if (type == GetBrickMetaDataReply::Ifc::Type) {
+        return reader.getSerializablePtr<GetBrickMetaDataReply>("rep");
     }
     /* AUTOGEN IOReplyFactoryEntry */
 

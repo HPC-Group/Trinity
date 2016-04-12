@@ -42,9 +42,6 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetMaxUsedBrickSizes:
         return mocca::make_unique<GetMaxUsedBrickSizesHdl>(static_cast<const GetMaxUsedBrickSizesRequest&>(request), session);
         break;
-    case VclType::GetMaxMinForKey:
-        return mocca::make_unique<GetMaxMinForKeyHdl>(static_cast<const GetMaxMinForKeyRequest&>(request), session);
-        break;
     case VclType::GetNumberOfTimesteps:
         return mocca::make_unique<GetNumberOfTimestepsHdl>(static_cast<const GetNumberOfTimestepsRequest&>(request), session);
         break;
@@ -113,8 +110,8 @@ std::unique_ptr<ICommandHandler> IOSessionCommandFactory::createHandler(const Re
     case VclType::GetFloatBrickLayout:
         return mocca::make_unique<GetFloatBrickLayoutHdl>(static_cast<const GetFloatBrickLayoutRequest&>(request), session);
         break;
-    case VclType::GetBrickMaxMin:
-        return mocca::make_unique<GetBrickMaxMinHdl>(static_cast<const GetBrickMaxMinRequest&>(request), session);
+    case VclType::GetBrickMetaData:
+        return mocca::make_unique<GetBrickMetaDataHdl>(static_cast<const GetBrickMetaDataRequest&>(request), session);
         break;
     /* AUTOGEN IOCommandFactoryEntry */
     default:

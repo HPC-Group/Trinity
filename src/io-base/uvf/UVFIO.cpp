@@ -71,10 +71,6 @@ Vec3ui64 UVFIO::getMaxUsedBrickSizes() const {
   return Vec3ui64(m_dataset->GetMaxUsedBrickSizes());
 }
 
-MinMaxBlock UVFIO::getMaxMinForKey(const BrickKey& key) const {
-  return m_dataset->GetMaxMinForKey(key);
-}
-
 uint64_t UVFIO::getLODLevelCount(uint64_t modality) const {
   return m_dataset->GetLODLevelCount();
 }
@@ -131,24 +127,6 @@ Vec3f UVFIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
     floatBrickLayout.z -= floatBrickLayout.z * std::numeric_limits<float>::epsilon();
   
   return floatBrickLayout;
-}
-
-std::vector<MinMaxBlock> UVFIO::getBrickMaxMin(uint64_t modality, uint64_t timestep) const {
-  uint64_t iTotalBrickCount = getTotalBrickCount(modality);
-  std::vector<MinMaxBlock> result(iTotalBrickCount);
-  
-  uint64_t levelCount = getLODLevelCount(modality);
-  
-  size_t i = 0;
-  for (uint32_t lod = 0; lod < levelCount; lod++) {
-    uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
-    for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
-      BrickKey const key(modality, timestep, lod, indexInLodCount);
-      result[i++] = getMaxMinForKey(key);
-    }
-  }
-  
-  return result;
 }
 
 Vec3ui UVFIO::getBrickLayout(uint64_t lod, uint64_t modality) const {
@@ -256,6 +234,42 @@ std::shared_ptr<std::vector<uint8_t>> UVFIO::getBrick(const BrickKey& key, bool&
 
 Vec3ui UVFIO::getBrickVoxelCounts(const BrickKey& key) const {
   return m_dataset->GetBrickVoxelCounts(key);
+}
+
+std::vector<BrickMetaData> UVFIO::getBrickMetaData(uint64_t modality, uint64_t timestep) const {
+    // TODO: implement
+
+    /* OLD IMPLEMENTATION OF getMaxMinForKey
+
+    return m_dataset->GetMaxMinForKey(key);
+    
+    */
+
+
+    /*  OLD IMPLEMENTATION OF getBrickMaxMin
+
+
+      uint64_t iTotalBrickCount = getTotalBrickCount(modality);
+      std::vector<MinMaxBlock> result(iTotalBrickCount);
+  
+      uint64_t levelCount = getLODLevelCount(modality);
+  
+      size_t i = 0;
+      for (uint32_t lod = 0; lod < levelCount; lod++) {
+        uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
+        for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
+          BrickKey const key(modality, timestep, lod, indexInLodCount);
+          result[i++] = getMaxMinForKey(key);
+        }
+      }
+  
+      return result;
+    
+    */
+
+
+
+    return std::vector<BrickMetaData>();
 }
 
 IIO::ValueType UVFIO::getType(uint64_t modality) const {

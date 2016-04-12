@@ -57,32 +57,6 @@ Vec3ui64 FractalIO::getMaxUsedBrickSizes() const {
   }
 }
 
-MinMaxBlock FractalIO::getMaxMinForKey(const BrickKey& key) const {
-  // TODO: compute gradients and fill 3rd and 4th parameters accordingly
-  
-  uint8_t min = 255, max = 0;
-#ifdef CACHE_BRICKS
-  if (m_bc.getMaxMin(key,min, max)) {
-    return MinMaxBlock(min, max, 0, 1);
-  }
-#endif
-
-  if (!m_bFlat) {
-    bool success;
-    auto data = getBrick(key, success);
-    
-    for (uint8_t v : *data) {
-      if (v < min) min = v;
-      if (v > max) max = v;
-      if (min == 0 && max == 255) break;
-    }
-    
-    return MinMaxBlock(min, max, 0, 1);
-  } else {
-    return MinMaxBlock(0, 255, 0, 1);
-  }
-}
-
 uint64_t FractalIO::getLODLevelCount(uint64_t modality) const {
   if (modality != 0 )
     throw TrinityError("invalid modality", __FILE__, __LINE__);
@@ -194,6 +168,65 @@ Vec3ui FractalIO::getBrickVoxelCounts(const BrickKey& key) const {
   }
 }
 
+std::vector<BrickMetaData> FractalIO::getBrickMetaData(uint64_t modality, uint64_t timestep) const {
+    // TODO: implement
+
+    /* OLD IMPLEMENTATION OF getMaxMinForKey
+
+    // TODO: compute gradients and fill 3rd and 4th parameters accordingly
+
+    uint8_t min = 255, max = 0;
+#ifdef CACHE_BRICKS
+    if (m_bc.getMaxMin(key, min, max)) {
+        return MinMaxBlock(min, max, 0, 1);
+    }
+#endif
+
+    if (!m_bFlat) {
+        bool success;
+        auto data = getBrick(key, success);
+
+        for (uint8_t v : *data) {
+            if (v < min) min = v;
+            if (v > max) max = v;
+            if (min == 0 && max == 255) break;
+        }
+
+        return MinMaxBlock(min, max, 0, 1);
+    }
+    else {
+        return MinMaxBlock(0, 255, 0, 1);
+    }
+
+    */
+
+    
+    
+    
+    
+    /* OLD IMPLEMENTATION OF getBrickMaxMin
+    
+      uint64_t iTotalBrickCount = getTotalBrickCount(modality);
+      std::vector<MinMaxBlock> result(iTotalBrickCount);
+
+      uint64_t levelCount = getLODLevelCount(modality);
+
+      size_t i = 0;
+      for (uint32_t lod = 0; lod < levelCount; lod++) {
+        uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
+        for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
+          BrickKey const key(modality, timestep, lod, indexInLodCount);
+          result[i++] = getMaxMinForKey(key);
+        }
+      }
+
+      return result;
+
+    */
+
+    return std::vector<BrickMetaData>();
+}
+
 Vec3f FractalIO::getBrickExtents(const BrickKey& key) const {
   if (!m_bFlat) {
     return m_vLODTable[key.lod].m_vAspect;
@@ -211,24 +244,6 @@ Vec3f FractalIO::getFloatBrickLayout(uint64_t lod, uint64_t modality) const {
   } else {
     return Vec3f(1.0f, 1.0f, 1.0f);
   }
-}
-
-std::vector<MinMaxBlock> FractalIO::getBrickMaxMin(uint64_t modality, uint64_t timestep) const {
-  uint64_t iTotalBrickCount = getTotalBrickCount(modality);
-  std::vector<MinMaxBlock> result(iTotalBrickCount);
-  
-  uint64_t levelCount = getLODLevelCount(modality);
-  
-  size_t i = 0;
-  for (uint32_t lod = 0; lod < levelCount; lod++) {
-    uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
-    for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
-      BrickKey const key(modality, timestep, lod, indexInLodCount);
-      result[i++] = getMaxMinForKey(key);
-    }
-  }
-  
-  return result;
 }
 
 Vec3ui FractalIO::getBrickLayout(uint64_t lod, uint64_t modality) const {

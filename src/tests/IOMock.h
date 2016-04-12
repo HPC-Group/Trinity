@@ -7,7 +7,6 @@ public:
     MOCK_CONST_METHOD1(getLODLevelCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD0(getMaxBrickSize, Core::Math::Vec3ui64());
     MOCK_CONST_METHOD0(getMaxUsedBrickSizes, Core::Math::Vec3ui64());
-    MOCK_CONST_METHOD1(getMaxMinForKey, MinMaxBlock(const BrickKey&));
     MOCK_CONST_METHOD0(getNumberOfTimesteps, uint64_t());
     MOCK_CONST_METHOD2(getDomainSize, Core::Math::Vec3ui64(const uint64_t, const uint64_t));
     MOCK_CONST_METHOD1(getDomainScale, Core::Math::Vec3f(uint64_t));
@@ -15,10 +14,10 @@ public:
     MOCK_CONST_METHOD0(getBrickOverlapSize, Core::Math::Vec3ui());
     MOCK_CONST_METHOD1(getLargestSingleBrickLOD, uint64_t(uint64_t));
     MOCK_CONST_METHOD1(getBrickVoxelCounts, Core::Math::Vec3ui(const BrickKey&));
+    MOCK_CONST_METHOD2(getBrickMetaData, std::vector<trinity::BrickMetaData>(uint64_t, uint64_t));
     MOCK_CONST_METHOD1(getBrickExtents, Core::Math::Vec3f(const BrickKey&));
     MOCK_CONST_METHOD2(getBrickLayout, Core::Math::Vec3ui(uint64_t, uint64_t));
     MOCK_CONST_METHOD2(getFloatBrickLayout, Core::Math::Vec3f(uint64_t, uint64_t));
-    MOCK_CONST_METHOD2(getBrickMaxMin, std::vector<MinMaxBlock>(uint64_t, uint64_t));
     MOCK_CONST_METHOD0(getModalityCount, uint64_t());
     MOCK_CONST_METHOD1(getComponentCount, uint64_t(uint64_t));
     MOCK_CONST_METHOD1(getRange, Core::Math::Vec2f(uint64_t));

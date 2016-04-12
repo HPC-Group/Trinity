@@ -1,5 +1,6 @@
 #pragma once
 
+#include "commands/BrickMetaData.h"
 #include "commands/IOData.h"
 #include "commands/ISerializable.h"
 #include "commands/Reply.h"
@@ -231,52 +232,6 @@ std::ostream& operator<<(std::ostream& os, const GetMaxUsedBrickSizesCmd::ReplyP
 
 using GetMaxUsedBrickSizesRequest = RequestTemplate<GetMaxUsedBrickSizesCmd>;
 using GetMaxUsedBrickSizesReply = ReplyTemplate<GetMaxUsedBrickSizesCmd>;
-
-struct GetMaxMinForKeyCmd {
-    static VclType Type;
-
-    class RequestParams : public SerializableTemplate<RequestParams> {
-    public:
-        RequestParams() = default;
-        explicit RequestParams(const BrickKey& brickKey);
-
-        void serialize(ISerialWriter& writer) const override;
-        void deserialize(const ISerialReader& reader) override;
-
-        std::string toString() const;
-        bool equals(const RequestParams& other) const;
-
-        BrickKey getBrickKey() const;
-
-    private:
-        BrickKey m_brickKey;
-    };
-
-    class ReplyParams : public SerializableTemplate<ReplyParams> {
-    public:
-        ReplyParams() = default;
-        explicit ReplyParams(const MinMaxBlock& minMaxBlock);
-
-        void serialize(ISerialWriter& writer) const override;
-        void deserialize(const ISerialReader& reader) override;
-
-        std::string toString() const;
-        bool equals(const ReplyParams& other) const;
-
-        MinMaxBlock getMinMaxBlock() const;
-
-    private:
-        MinMaxBlock m_minMaxBock;
-    };
-};
-
-bool operator==(const GetMaxMinForKeyCmd::RequestParams& lhs, const GetMaxMinForKeyCmd::RequestParams& rhs);
-bool operator==(const GetMaxMinForKeyCmd::ReplyParams& lhs, const GetMaxMinForKeyCmd::ReplyParams& rhs);
-std::ostream& operator<<(std::ostream& os, const GetMaxMinForKeyCmd::RequestParams& obj);
-std::ostream& operator<<(std::ostream& os, const GetMaxMinForKeyCmd::ReplyParams& obj);
-
-using GetMaxMinForKeyRequest = RequestTemplate<GetMaxMinForKeyCmd>;
-using GetMaxMinForKeyReply = ReplyTemplate<GetMaxMinForKeyCmd>;
 
 struct GetNumberOfTimestepsCmd {
     static VclType Type;
@@ -1303,54 +1258,6 @@ bool operator==(const GetFloatBrickLayoutCmd::ReplyParams& lhs, const GetFloatBr
 std::ostream& operator<<(std::ostream& os, const GetFloatBrickLayoutCmd::ReplyParams& obj);
 using GetFloatBrickLayoutReply = ReplyTemplate<GetFloatBrickLayoutCmd>;
 
-struct GetBrickMaxMinCmd {
-    static VclType Type;
-
-    class RequestParams : public SerializableTemplate<RequestParams> {
-    public:
-        RequestParams() = default;
-        RequestParams(uint64_t modality, uint64_t timestep);
-
-        void serialize(ISerialWriter& writer) const override;
-        void deserialize(const ISerialReader& reader) override;
-
-        uint64_t getModality() const;
-        uint64_t getTimestep() const;
-
-        std::string toString() const;
-        bool equals(const RequestParams& other) const;
-
-    private:
-        uint64_t m_modality;
-        uint64_t m_timestep;
-    };
-
-    class ReplyParams : public SerializableTemplate<ReplyParams> {
-    public:
-        ReplyParams() = default;
-        ReplyParams(const std::vector<MinMaxBlock>& result);
-
-        void serialize(ISerialWriter& writer) const override;
-        void deserialize(const ISerialReader& reader) override;
-
-        std::string toString() const;
-        bool equals(const ReplyParams& other) const;
-
-        std::vector<MinMaxBlock> getResult() const;
-
-    private:
-        std::vector<MinMaxBlock> m_result;
-    };
-};
-
-bool operator==(const GetBrickMaxMinCmd::RequestParams& lhs, const GetBrickMaxMinCmd::RequestParams& rhs);
-std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::RequestParams& obj);
-using GetBrickMaxMinRequest = RequestTemplate<GetBrickMaxMinCmd>;
-
-bool operator==(const GetBrickMaxMinCmd::ReplyParams& lhs, const GetBrickMaxMinCmd::ReplyParams& rhs);
-std::ostream& operator<<(std::ostream& os, const GetBrickMaxMinCmd::ReplyParams& obj);
-using GetBrickMaxMinReply = ReplyTemplate<GetBrickMaxMinCmd>;
-
 struct GetRootsCmd {
     static VclType Type;
 
@@ -1390,6 +1297,54 @@ using GetRootsRequest = RequestTemplate<GetRootsCmd>;
 bool operator==(const GetRootsCmd::ReplyParams& lhs, const GetRootsCmd::ReplyParams& rhs);
 std::ostream& operator<<(std::ostream& os, const GetRootsCmd::ReplyParams& obj);
 using GetRootsReply = ReplyTemplate<GetRootsCmd>;
+
+struct GetBrickMetaDataCmd {
+    static VclType Type;
+
+    class RequestParams : public SerializableTemplate<RequestParams> {
+    public:
+        RequestParams() = default;
+        RequestParams(uint64_t modality, uint64_t timestep);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const RequestParams& other) const;
+
+        uint64_t getModality() const;
+        uint64_t getTimestep() const;
+
+    private:
+        uint64_t m_modality;
+        uint64_t m_timestep;
+    };
+
+    class ReplyParams : public SerializableTemplate<ReplyParams> {
+    public:
+        ReplyParams() = default;
+        ReplyParams(const std::vector<BrickMetaData>& result);
+
+        void serialize(ISerialWriter& writer) const override;
+        void deserialize(const ISerialReader& reader) override;
+
+        std::string toString() const;
+        bool equals(const ReplyParams& other) const;
+
+        std::vector<BrickMetaData> getResult() const;
+
+    private:
+        std::vector<BrickMetaData> m_result;
+    };
+};
+
+bool operator==(const GetBrickMetaDataCmd::RequestParams& lhs, const GetBrickMetaDataCmd::RequestParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBrickMetaDataCmd::RequestParams& obj);
+using GetBrickMetaDataRequest = RequestTemplate<GetBrickMetaDataCmd>;
+
+bool operator==(const GetBrickMetaDataCmd::ReplyParams& lhs, const GetBrickMetaDataCmd::ReplyParams& rhs);
+std::ostream& operator<<(std::ostream& os, const GetBrickMetaDataCmd::ReplyParams& obj);
+using GetBrickMetaDataReply = ReplyTemplate<GetBrickMetaDataCmd>;
 
 /* AUTOGEN CommandHeader */
 }

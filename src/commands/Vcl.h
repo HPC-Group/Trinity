@@ -59,7 +59,6 @@ enum class VclType {
     GetActiveTimestep,
     GetMaxBrickSize,
     GetMaxUsedBrickSizes,
-    GetMaxMinForKey,
     GetNumberOfTimesteps,
     GetDomainSize,
     GetModalityCountProc,
@@ -106,8 +105,8 @@ enum class VclType {
     GetFloatBrickLayout,
     SetUserViewMatrix,
     SetUserWorldMatrix,
-    GetBrickMaxMin,
     GetRoots,
+    GetBrickMetaData,
     /* AUTOGEN VclEnumEntry */
     First = InitRenderer,
     Last = GetDomainSize,
@@ -155,7 +154,6 @@ private:
         m_cmdMap.insert("ZoomCamera", VclType::ZoomCamera);
         m_cmdMap.insert("GetMaxBrickSize", VclType::GetMaxBrickSize);
         m_cmdMap.insert("GetMaxUsedBrickSizes", VclType::GetMaxUsedBrickSizes);
-        m_cmdMap.insert("GetMaxMinForKey", VclType::GetMaxMinForKey);
         m_cmdMap.insert("GetNumberOfTimesteps", VclType::GetNumberOfTimesteps);
         m_cmdMap.insert("GetDomainSize", VclType::GetDomainSize);
         m_cmdMap.insert("GetTransformation", VclType::GetTransformation);
@@ -227,8 +225,8 @@ private:
         m_cmdMap.insert("GetFloatBrickLayout", VclType::GetFloatBrickLayout);
         m_cmdMap.insert("SetUserViewMatrix", VclType::SetUserViewMatrix);
         m_cmdMap.insert("SetUserWorldMatrix", VclType::SetUserWorldMatrix);
-        m_cmdMap.insert("GetBrickMaxMin", VclType::GetBrickMaxMin);
         m_cmdMap.insert("GetRoots", VclType::GetRoots);
+        m_cmdMap.insert("GetBrickMetaData", VclType::GetBrickMetaData);
         /* AUTOGEN VclMapEntry */
 
         assertCompleteLanguage();

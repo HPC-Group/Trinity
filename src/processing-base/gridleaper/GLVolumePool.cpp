@@ -258,7 +258,7 @@ m_bVisibilityUpdated(false)
     
     BrickKey const key = IndexFrom4D(m_LoDInfoCache,modality,vBrickID,
                                      m_currentTimestep);
-    MinMaxBlock imme = m_pDataset.getMaxMinForKey(key);
+    MinMaxBlock imme; /* = m_pDataset.getMaxMinForKey(key); */ // TODO: replace with getBrickMetaData
     m_minMaxScalar[i].min = imme.minScalar;
     m_minMaxScalar[i].max = imme.maxScalar;
     m_minMaxGradient[i].min = imme.minGradient;
@@ -1488,7 +1488,7 @@ Vec4ui GLVolumePool::recomputeVisibility(const VisibilityState& visibility,
                                        vBrickID,
                                        m_currentTimestep);
       
-      MinMaxBlock imme = m_pDataset.getMaxMinForKey(key);
+      MinMaxBlock imme; /* = m_pDataset.getMaxMinForKey(key); */ // TODO: replace with getBrickMetaData
       m_minMaxScalar[iBrickID].min = imme.minScalar;
       m_minMaxScalar[iBrickID].max = imme.maxScalar;
       m_minMaxGradient[iBrickID].min = imme.minGradient;

@@ -131,8 +131,6 @@ std::unique_ptr<Request> Request::createRequestInternal(const ISerialReader& rea
         return reader.getSerializablePtr<GetMaxBrickSizeRequest>("req");
     } else if (type == GetMaxUsedBrickSizesRequest::Ifc::Type) {
         return reader.getSerializablePtr<GetMaxUsedBrickSizesRequest>("req");
-    } else if (type == GetMaxMinForKeyRequest::Ifc::Type) {
-        return reader.getSerializablePtr<GetMaxMinForKeyRequest>("req");
     } else if (type == GetNumberOfTimestepsRequest::Ifc::Type) {
         return reader.getSerializablePtr<GetNumberOfTimestepsRequest>("req");
     } else if (type == GetDomainSizeRequest::Ifc::Type) {
@@ -177,10 +175,10 @@ std::unique_ptr<Request> Request::createRequestInternal(const ISerialReader& rea
         return reader.getSerializablePtr<GetDomainScaleRequest>("req");
     } else if (type == GetFloatBrickLayoutRequest::Ifc::Type) {
         return reader.getSerializablePtr<GetFloatBrickLayoutRequest>("req");
-    } else if (type == GetBrickMaxMinRequest::Ifc::Type) {
-        return reader.getSerializablePtr<GetBrickMaxMinRequest>("req");
     } else if (type == GetRootsRequest::Ifc::Type) {
         return reader.getSerializablePtr<GetRootsRequest>("req");
+    } else if (type == GetBrickMetaDataRequest::Ifc::Type) {
+        return reader.getSerializablePtr<GetBrickMetaDataRequest>("req");
     }
     /* AUTOGEN IORequestFactoryEntry */
 

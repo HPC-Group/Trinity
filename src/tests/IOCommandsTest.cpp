@@ -2,6 +2,7 @@
 
 #include "commands/ErrorCommands.h"
 #include "commands/IOCommands.h"
+#include "commands/BrickMetaData.h"
 #include "commands/ProcessingCommands.h"
 #include "commands/TransferFunction1D.h"
 #include "commands/Vcl.h"
@@ -158,37 +159,10 @@ TEST_F(IOCommandsTest, BrickKey) {
     ASSERT_EQ(target, result);
 }
 
-TEST_F(IOCommandsTest, MinMaxBlock) {
-    MinMaxBlock target{1.0, 2.0, 3.0, 4.0};
+TEST_F(IOCommandsTest, BrickMetaData) {
+    BrickMetaData target(1.0, 2.0, 3.0, 4.0, Core::Math::Vec3ui(55, 6, 7));
     auto result = trinity::testing::writeAndRead(target);
     ASSERT_EQ(target, result);
-}
-
-TEST_F(IOCommandsTest, GetMaxMinForKeyCmd) {
-    {
-        BrickKey key(1, 2, 3, 4);
-        GetMaxMinForKeyCmd::RequestParams target(key);
-        auto result = trinity::testing::writeAndRead(target);
-        ASSERT_EQ(target, result);
-    }
-    {
-        MinMaxBlock minMax(1.0, 2.0, 3.0, 4.0);
-        GetMaxMinForKeyCmd::ReplyParams target(minMax);
-        auto result = trinity::testing::writeAndRead(target);
-        ASSERT_EQ(target, result);
-    }
-}
-
-TEST_F(IOCommandsTest, GetMaxMinForKeyReqRep) {
-    auto session = createMockSession();
-    EXPECT_CALL(static_cast<const IOMock&>(session->getIO()), getMaxMinForKey(BrickKey(1, 2, 3, 4)))
-        .Times(1)
-        .WillOnce(Return(MinMaxBlock(1.0, 2.0, 3.0, 4.0)));
-
-    GetMaxMinForKeyCmd::RequestParams requestParams(BrickKey(1, 2, 3, 4));
-    GetMaxMinForKeyRequest request(requestParams, 1, 2);
-    auto reply = trinity::testing::handleRequest<GetMaxMinForKeyHdl>(request, session.get());
-    ASSERT_EQ(MinMaxBlock(1.0, 2.0, 3.0, 4.0), reply.getParams().getMinMaxBlock());
 }
 
 TEST_F(IOCommandsTest, GetNumberOfTimestepsCmd) {

@@ -62,17 +62,6 @@ private:
     IOSession* m_session;
 };
 
-class GetMaxMinForKeyHdl : public ICommandHandler {
-public:
-    GetMaxMinForKeyHdl(const GetMaxMinForKeyRequest& request, IOSession* session);
-
-    std::unique_ptr<Reply> execute() override;
-
-private:
-    GetMaxMinForKeyRequest m_request;
-    IOSession* m_session;
-};
-
 class GetNumberOfTimestepsHdl : public ICommandHandler {
 public:
     GetNumberOfTimestepsHdl(const GetNumberOfTimestepsRequest& request, IOSession* session);
@@ -326,17 +315,6 @@ private:
     IOSession* m_session;
 };
 
-class GetBrickMaxMinHdl : public ICommandHandler {
-public:
-    GetBrickMaxMinHdl(const GetBrickMaxMinRequest& request, IOSession* session);
-
-    std::unique_ptr<Reply> execute() override;
-
-private:
-    GetBrickMaxMinRequest m_request;
-    IOSession* m_session;
-};
-
 class GetRootsHdl : public ICommandHandler {
 public:
     GetRootsHdl(const GetRootsRequest& request, IONode* node);
@@ -346,6 +324,17 @@ public:
 private:
     GetRootsRequest m_request;
     IONode* m_node;
+};
+
+class GetBrickMetaDataHdl : public ICommandHandler {
+public:
+    GetBrickMetaDataHdl(const GetBrickMetaDataRequest& request, IOSession* session);
+
+    std::unique_ptr<Reply> execute() override;
+
+private:
+    GetBrickMetaDataRequest m_request;
+    IOSession* m_session;
 };
 
 /* AUTOGEN IOCommandHandlerHeader */

@@ -32,13 +32,6 @@ Core::Math::Vec3ui64 IOSessionProxy::getMaxUsedBrickSizes() const {
     return reply->getParams().getMaxUsedBrickSizes();
 }
 
-MinMaxBlock IOSessionProxy::getMaxMinForKey(const BrickKey& brickKey) const {
-    GetMaxMinForKeyCmd::RequestParams params(brickKey);
-    GetMaxMinForKeyRequest request(params, IDGenerator::nextID(), m_remoteSid);
-    auto reply = sendRequestChecked(m_inputChannel, request);
-    return reply->getParams().getMinMaxBlock();
-}
-
 uint64_t IOSessionProxy::getLODLevelCount(uint64_t modality) const {
     GetLODLevelCountCmd::RequestParams params(modality);
     GetLODLevelCountRequest request(params, IDGenerator::nextID(), m_remoteSid);
@@ -209,9 +202,9 @@ Core::Math::Vec3f IOSessionProxy::getFloatBrickLayout(uint64_t lod, uint64_t mod
     return reply->getParams().getResult();
 }
 
-std::vector<MinMaxBlock> IOSessionProxy::getBrickMaxMin(uint64_t modality, uint64_t timestep) const {
-    GetBrickMaxMinCmd::RequestParams params(modality, timestep);
-    GetBrickMaxMinRequest request(params, IDGenerator::nextID(), m_remoteSid);
+std::vector<BrickMetaData> IOSessionProxy::getBrickMetaData(uint64_t modality, uint64_t timestep) const {
+    GetBrickMetaDataCmd::RequestParams params(modality, timestep);
+    GetBrickMetaDataRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
     return reply->getParams().getResult();
 }
