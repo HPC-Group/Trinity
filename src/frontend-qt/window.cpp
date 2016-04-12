@@ -105,8 +105,8 @@ void Window::on_PRconnectIP_clicked() {
 void Window::update() {
     if (m_initDone && m_renderer) {
         auto frame = m_renderer->getVisStream()->get();
-        if (frame != nullptr) {
-            m_ui->openGLWidget->setData(m_renderWidth, m_renderHeight, frame->data());
+        if (!frame.empty()) {
+            m_ui->openGLWidget->setData(m_renderWidth, m_renderHeight, frame.data());
             m_ui->openGLWidget->repaint();
         }
         m_renderer->proceedRendering();

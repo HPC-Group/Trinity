@@ -10,7 +10,6 @@
 
 #include <cstdint>
 #include <vector>
-#include <memory>
 
 namespace trinity {
   
@@ -41,8 +40,8 @@ public:
   void setFastUpsampling(bool fastUpsampling);
   bool getFastUpsampling() const;
   
-  std::unique_ptr<std::vector<uint8_t>> decode(const std::vector<uint8_t>& jpeg) const;
-  std::unique_ptr<std::vector<uint8_t>> decode(const std::vector<uint8_t>& jpeg, int& width, int& height) const;
+  std::vector<uint8_t> decode(const std::vector<uint8_t>& jpeg) const;
+  std::vector<uint8_t> decode(const std::vector<uint8_t>& jpeg, int& width, int& height) const;
 
 private:
   void * m_handle;

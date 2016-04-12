@@ -10,7 +10,6 @@
 
 #include "JPEGDecoder.h"
 #include "mocca/log/LogManager.h"
-#include "mocca/base/Memory.h"
 
 using namespace trinity;
 using namespace mocca;
@@ -54,12 +53,12 @@ bool JPEGDecoder::getFastUpsampling() const {
     return m_flags & TJFLAG_FASTUPSAMPLE;
 }
 
-std::unique_ptr<std::vector<uint8_t>> JPEGDecoder::decode(const std::vector<uint8_t>& jpeg) const {
+std::vector<uint8_t> JPEGDecoder::decode(const std::vector<uint8_t>& jpeg) const {
     int width, height;
     return decode(jpeg, width, height);
 }
 
-std::unique_ptr<std::vector<uint8_t>> JPEGDecoder::decode(const std::vector<uint8_t>& jpeg, int& width, int& height) const {
+std::vector<uint8_t> JPEGDecoder::decode(const std::vector<uint8_t>& jpeg, int& width, int& height) const {
     // libjpeg-turbo 1.4.2 doc promises to not modify the src buffer but does not decalre it as const
     // libjpeg-turbo 1.5 which is still in beta fixes this issue
     unsigned char* src = const_cast<unsigned char*>(jpeg.data());
@@ -69,20 +68,20 @@ std::unique_ptr<std::vector<uint8_t>> JPEGDecoder::decode(const std::vector<uint
 
     if (success != 0) {
         LERROR("turbojpeg: " << tjGetErrorStr());
-        return nullptr;
+        return std::vector<uint8_t>();
     }
 
     //  LINFO("decoding: " << width << "x" << height << " subsampling " << subsampling << " colorspace " << colorspace);
 
     int pitch = width * tjPixelSize[m_format];
     size_t size = pitch * height;
-    auto raw = mocca::make_unique<std::vector<uint8_t>>(size);
+    std::vector<uint8_t> raw(size);
 
-    success = tjDecompress2(m_handle, src, jpeg.size(), raw->data(), width, pitch, height, m_format, m_flags);
+    success = tjDecompress2(m_handle, src, jpeg.size(), raw.data(), width, pitch, height, m_format, m_flags);
 
     if (success != 0) {
         LERROR("turbojpeg: " << tjGetErrorStr());
-        return nullptr;
+        return std::vector<uint8_t>();
     }
 
     //  LINFO("raw: " << raw.size() << " bytes, jpeg: " << jpeg.size() << " bytes, compression ratio: " << (float)raw.size()/jpeg.size());

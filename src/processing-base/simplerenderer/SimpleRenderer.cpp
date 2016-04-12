@@ -293,8 +293,9 @@ void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
     m_targetBinder->Unbind();
   }
   
-  auto frame = mocca::make_unique<std::vector<uint8_t>>(m_bufferData.data()->data(), m_bufferData.data()->data() + m_bufferData.size() * 4 * sizeof(uint8_t));
-  getVisStream()->put(std::move(frame));
+  Frame f1(m_bufferData.size() * 4 * sizeof(uint8_t));
+  std::memcpy(f1.data(), m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
+  getVisStream()->put(std::move(f1));
 }
 
 bool SimpleRenderer::isIdle() {

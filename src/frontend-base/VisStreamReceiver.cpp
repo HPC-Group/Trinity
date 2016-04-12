@@ -69,7 +69,7 @@ void VisStreamReceiver::run() {
                 auto frame = jpeg.decode(*bytepacket[0]);
                 m_visStream->put(std::move(frame));
 #else
-                m_visStream->put(std::make_unique<Frame>(std::move(*bytepacket[0])));
+                m_visStream->put(std::move(*bytepacket[0]));
 #endif
             }
             

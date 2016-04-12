@@ -52,10 +52,10 @@ void VisStreamSender::run() {
         }
 
         auto frame = m_visStream->get();
-        if (m_connection->isConnected() && frame != nullptr) {
+        if (m_connection->isConnected() && !frame.empty()) {
             try {
                 auto const& params = m_visStream->getStreamingParams();
-                auto encodedFrame = jpeg.encode(*frame, params.getResX(), params.getResY());
+                auto encodedFrame = jpeg.encode(frame, params.getResX(), params.getResY());
                 
 				if (encodedFrame != nullptr) {
                     mocca::net::Message message;
