@@ -38,7 +38,7 @@ protected:
     };
 };
 
-typedef ::testing::Types<JsonSerializerFactory/*, SimpleStringSerializerFactory*/> MyTypes; // fixme dmc
+typedef ::testing::Types<JsonSerializerFactory> MyTypes;
 TYPED_TEST_CASE(SerialObjectTest, MyTypes);
 
 TYPED_TEST(SerialObjectTest, BasicTypes) {
@@ -88,7 +88,6 @@ TYPED_TEST(SerialObjectTest, SubObjects) {
 
 TYPED_TEST(SerialObjectTest, SerializationError) {
     std::string str = "this is not a serialized object";
-    // fixme: doesn't work with SimpleStringReader
     ASSERT_THROW(JsonReader{str}, TrinityError);
 }
 
