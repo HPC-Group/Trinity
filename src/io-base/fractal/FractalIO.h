@@ -80,6 +80,7 @@ namespace trinity {
     
     boolVec isLastBrick(const BrickKey& key) const;
     
+    BrickMetaData getMetaForKey(const BrickKey& key) const;
     
     void computeLODInfo();
     

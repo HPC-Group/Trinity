@@ -236,40 +236,26 @@ Vec3ui UVFIO::getBrickVoxelCounts(const BrickKey& key) const {
   return m_dataset->GetBrickVoxelCounts(key);
 }
 
-std::vector<BrickMetaData> UVFIO::getBrickMetaData(uint64_t modality, uint64_t timestep) const {
-    // TODO: implement
-
-    /* OLD IMPLEMENTATION OF getMaxMinForKey
-
-    return m_dataset->GetMaxMinForKey(key);
-    
-    */
-
-
-    /*  OLD IMPLEMENTATION OF getBrickMaxMin
-
-
-      uint64_t iTotalBrickCount = getTotalBrickCount(modality);
-      std::vector<MinMaxBlock> result(iTotalBrickCount);
+std::vector<BrickMetaData> UVFIO::getBrickMetaData(uint64_t modality,
+                                                   uint64_t timestep) const {
+  uint64_t iTotalBrickCount = getTotalBrickCount(modality);
+  std::vector<BrickMetaData> result(iTotalBrickCount);
   
-      uint64_t levelCount = getLODLevelCount(modality);
+  uint64_t levelCount = getLODLevelCount(modality);
   
-      size_t i = 0;
-      for (uint32_t lod = 0; lod < levelCount; lod++) {
-        uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
-        for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
-          BrickKey const key(modality, timestep, lod, indexInLodCount);
-          result[i++] = getMaxMinForKey(key);
-        }
-      }
+  size_t i = 0;
+  for (uint32_t lod = 0; lod < levelCount; lod++) {
+    uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
+    for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
+      const BrickKey key(modality, timestep, lod, indexInLodCount);
+      const MinMaxBlock mmb = m_dataset->GetMaxMinForKey(key);
+      result[i++] = BrickMetaData(mmb.minScalar, mmb.maxScalar,
+                                  mmb.minGradient, mmb. maxGradient,
+                                  m_dataset->GetBrickVoxelCounts(key));
+    }
+  }
   
-      return result;
-    
-    */
-
-
-
-    return std::vector<BrickMetaData>();
+  return result;  
 }
 
 IIO::ValueType UVFIO::getType(uint64_t modality) const {

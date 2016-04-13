@@ -40,11 +40,6 @@ public:
     SkipTwoLevels
   };
   
-  struct MinMax {
-    double min;
-    double max;
-  };
-
   struct BrickRequest {
     Core::Math::Vec4ui ID;
     BrickKey key;
@@ -130,15 +125,15 @@ protected:
   
   bool m_bVisibilityUpdated;
 
-  std::vector<uint32_t>     m_brickMetadata;  // ref by iBrickID, size of total brick count + some unused 2d texture padding
+  std::vector<uint32_t>     m_brickStatus;  // ref by iBrickID, size of total brick count + some unused 2d texture padding
   std::vector<PoolSlotData> m_vPoolSlotData;   // size of available pool slots
   std::vector<uint32_t>     m_vLoDOffsetTable; // size of LoDs, stores index sums, level 0 is finest
   
   size_t m_currentModality;
   size_t m_currentTimestep;
-  std::vector<MinMax> m_minMaxScalar;   // accelerates access to minmax scalar information, gets constructed in c'tor
-  std::vector<MinMax> m_minMaxGradient; // accelerates access to minmax gradient information, gets constructed on first access to safe some mem
-  std::vector<Vec3ui> m_brickVoxelCounts;
+  
+  
+  std::vector<trinity::BrickMetaData> m_brickMetadataCache;
   
   
   std::vector <std::vector<Core::Math::Vec3ui>> m_LoDInfoCache;
@@ -150,7 +145,7 @@ protected:
   uint32_t getIntegerBrickID(const Core::Math::Vec4ui& vBrickID) const; // x, y , z, lod (w) to iBrickID
   Core::Math::Vec4ui getVectorBrickID(uint32_t iBrickID) const;
   Vec3ui getBrickVoxelCounts(const Core::Math::Vec4ui& key) const {
-    return m_brickVoxelCounts[getIntegerBrickID(key)];
+    return m_brickMetadataCache[getIntegerBrickID(key)].voxelSize;
   }
   
   void uploadFirstBrick(const Core::Math::Vec3ui& m_vVoxelSize,
