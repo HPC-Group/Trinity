@@ -215,7 +215,6 @@ m_bVisibilityUpdated(false)
   
   // first, try to create the volume
   const Vec3ui poolSize = createGLVolume(GPUMemorySizeInByte);
-  if (!isValid()) return;
   
   // fill the pool slot information
   const Vec3ui slotLayout = poolSize/m_maxTotalBrickSize;
@@ -253,9 +252,12 @@ m_bVisibilityUpdated(false)
   
   
   // duplicate metadata from dataset for efficient access
+  LINFO("receiving brick metadata");
   m_brickMetadataCache =  m_dataset.getBrickMetaData(m_currentModality,
                                                       m_currentTimestep);
   
+  LINFO("metadata transfer complete");
+
   switch (m_eDebugMode) {
     default:
     case DM_NONE:
