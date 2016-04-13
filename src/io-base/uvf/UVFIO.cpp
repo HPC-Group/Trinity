@@ -247,7 +247,7 @@ std::vector<BrickMetaData> UVFIO::getBrickMetaData(uint64_t modality,
   for (uint32_t lod = 0; lod < levelCount; lod++) {
     uint64_t indexInLodCount = getBrickLayout(lod, modality).volume();
     for (uint32_t indexInLod = 0; indexInLod < indexInLodCount; indexInLod++) {
-      const BrickKey key(modality, timestep, lod, indexInLodCount);
+      const BrickKey key(modality, timestep, lod, indexInLod);
       const MinMaxBlock mmb = m_dataset->GetMaxMinForKey(key);
       result[i++] = BrickMetaData(mmb.minScalar, mmb.maxScalar,
                                   mmb.minGradient, mmb. maxGradient,
