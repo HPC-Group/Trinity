@@ -54,8 +54,6 @@ namespace trinity {
     
     void computeEyeToModelMatrix();
     
-    Core::Math::Vec3ui calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,
-                                               const uint64_t reduction);
     const uint64_t getFreeGPUMemory();
     
     Core::Math::Vec4ui RecomputeBrickVisibility(bool bForceSynchronousUpdate);

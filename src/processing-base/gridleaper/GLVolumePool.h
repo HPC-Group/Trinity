@@ -56,7 +56,7 @@ public:
   };
   
   /// @throws Tuvok::Exception on init error
-  GLVolumePool(const Core::Math::Vec3ui& poolSize, trinity::IIO& pDataset,
+  GLVolumePool(uint64_t GPUMemorySizeInByte, trinity::IIO& pDataset,
                uint64_t modality,
                GLenum filter, bool bUseGLCore=true, DebugMode dm=DM_NONE);
   virtual ~GLVolumePool();
@@ -100,11 +100,10 @@ public:
   
   
 protected:
-  trinity::IIO& m_pDataset;
+  trinity::IIO& m_dataset;
   GLTexture3DPtr m_pPoolMetadataTexture;
   GLTexture3DPtr m_pPoolDataTexture;
   Core::Math::Vec3ui m_vPoolCapacity;
-  Core::Math::Vec3ui m_poolSize;
   Core::Math::Vec3ui m_maxInnerBrickSize;
   Core::Math::Vec3ui m_maxTotalBrickSize;
   Core::Math::Vec3ui m_volumeSize;
@@ -154,6 +153,7 @@ protected:
   void uploadMetadataTexture();
   void uploadMetadataTexel(uint32_t iBrickID);
   
+  Core::Math::Vec3ui createGLVolume(uint64_t GPUMemorySizeInByte);
   void createGLResources();
   void freeGLResources();
   
@@ -200,5 +200,12 @@ protected:
   Core::Math::Vec4ui RecomputeVisibilityForOctree(const VisibilityState& visibility
   //Tuvok::ThreadClass::PredicateFunction pContinue = Tuvok::ThreadClass::PredicateFunction()
   );
+  
+  Core::Math::Vec3ui calculateVolumePoolSize(const trinity::IIO::ValueType type,
+                                             const trinity::IIO::Semantic semantic,
+                                             const Core::Math::Vec3ui vMaxBS,
+                                             const uint64_t iMaxBrickCount,
+                                             const uint64_t GPUMemorySizeInByte,
+                                             const uint64_t reduction);
   
 };

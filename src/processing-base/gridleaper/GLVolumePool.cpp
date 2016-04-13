@@ -91,22 +91,21 @@ static Vec3ui GetBrickLayout(const Vec3ui& volumeSize,
   return GetLoDSize(baseBrickCount, iLoD);
 }
 
-GLVolumePool::GLVolumePool(const Vec3ui& poolSize,
-                           trinity::IIO& pDataset,
+GLVolumePool::GLVolumePool(uint64_t GPUMemorySizeInByte,
+                           IIO& pDataset,
                            uint64_t modality,
                            GLenum filter,
                            bool bUseGLCore,
                            DebugMode dm)
-: m_pDataset(pDataset)
+: m_dataset(pDataset)
 , m_pPoolMetadataTexture(NULL),
 m_pPoolDataTexture(NULL),
 m_vPoolCapacity(0,0,0),
-m_poolSize(poolSize),
-m_maxInnerBrickSize(Vec3ui(m_pDataset.getMaxUsedBrickSizes()) -
-                    Vec3ui(m_pDataset.getBrickOverlapSize()) * 2),
-m_maxTotalBrickSize(m_pDataset.getMaxUsedBrickSizes()),
-m_volumeSize(m_pDataset.getDomainSize(0,modality)),
-m_iLoDCount(uint32_t(m_pDataset.getLargestSingleBrickLOD(0)+1)),
+m_maxInnerBrickSize(Vec3ui(m_dataset.getMaxUsedBrickSizes()) -
+                    Vec3ui(m_dataset.getBrickOverlapSize()) * 2),
+m_maxTotalBrickSize(m_dataset.getMaxUsedBrickSizes()),
+m_volumeSize(m_dataset.getDomainSize(0,modality)),
+m_iLoDCount(uint32_t(m_dataset.getLargestSingleBrickLOD(0)+1)),
 m_filter(filter),
 m_iTimeOfCreation(2),
 m_iMetaTextureUnit(0),
@@ -119,7 +118,7 @@ m_bVisibilityUpdated(false)
 , m_eDebugMode(dm)
 , m_brickGetterThread(nullptr)
 {
-  trinity::IIO::ValueType type = m_pDataset.getType(modality);
+  trinity::IIO::ValueType type = m_dataset.getType(m_currentModality);
   
   switch(type){
     case IIO::ValueType::T_FLOAT :  m_sDataSetCache.m_iBitWidth = 32;
@@ -164,9 +163,9 @@ m_bVisibilityUpdated(false)
       break;
   }
   
-  m_sDataSetCache.m_vRange = m_pDataset.getRange(modality);
+  m_sDataSetCache.m_vRange = m_dataset.getRange(modality);
   
-  IIO::Semantic semantic = m_pDataset.getSemantic(modality);
+  IIO::Semantic semantic = m_dataset.getSemantic(modality);
   switch(semantic) {
     case IIO::Semantic::Scalar  : m_sDataSetCache.m_iCompCount = 1;break;
     case IIO::Semantic::Vector  : m_sDataSetCache.m_iCompCount = 3;break;
@@ -214,6 +213,10 @@ m_bVisibilityUpdated(false)
     default : throw TrinityError("Invalid bit width", __FILE__, __LINE__);
   }
   
+  // first, try to create the volume
+  const Vec3ui poolSize = createGLVolume(GPUMemorySizeInByte);
+  if (!isValid()) return;
+  
   // fill the pool slot information
   const Vec3ui slotLayout = poolSize/m_maxTotalBrickSize;
   m_vPoolSlotData.reserve(slotLayout.volume());
@@ -240,17 +243,17 @@ m_bVisibilityUpdated(false)
   if (!isValid()) return;
   
   // duplicate LoD size for efficient access
-  m_LoDInfoCache.resize(m_pDataset.getModalityCount());
+  m_LoDInfoCache.resize(m_dataset.getModalityCount());
   for (uint32_t modality = 0; modality < m_LoDInfoCache.size(); modality++) {
-    m_LoDInfoCache[modality].resize(m_pDataset.getLODLevelCount(modality));
+    m_LoDInfoCache[modality].resize(m_dataset.getLODLevelCount(modality));
     for (uint32_t lod = 0; lod < m_LoDInfoCache[modality].size(); lod++) {
-      m_LoDInfoCache[modality][lod] = m_pDataset.getBrickLayout(lod, modality);
+      m_LoDInfoCache[modality][lod] = m_dataset.getBrickLayout(lod, modality);
     }
   }
   
   
   // duplicate metadata from dataset for efficient access
-  m_brickMetadataCache =  m_pDataset.getBrickMetaData(m_currentModality,
+  m_brickMetadataCache =  m_dataset.getBrickMetaData(m_currentModality,
                                                       m_currentTimestep);
   
   switch (m_eDebugMode) {
@@ -695,12 +698,12 @@ void GLVolumePool::uploadBrick(uint32_t iBrickID, const Vec3ui& vVoxelSize, cons
 
 void GLVolumePool::uploadFirstBrick(const BrickKey& bkey) {
   
-  const Vec3ui vVoxelCount = m_pDataset.getBrickVoxelCounts(bkey);
+  const Vec3ui vVoxelCount = m_dataset.getBrickVoxelCounts(bkey);
   
   //StackTimer poolGetBrick(PERF_POOL_GET_BRICK);
   
   bool success;
-  auto vUploadMem = m_pDataset.getBrick(bkey, success);
+  auto vUploadMem = m_dataset.getBrick(bkey, success);
   
   if (!success) {
     LERROR("Error getting first brick: " << bkey);
@@ -797,21 +800,50 @@ static Vec3ui Fit1DIndexTo3DArray(uint64_t maxIdx, uint32_t maxArraySize) {
   return texSize;
 }
 
-void GLVolumePool::createGLResources() {
-  GLvoid *pixels = 0;
-  m_pPoolDataTexture = std::make_shared<GLTexture3D>(m_poolSize.x, m_poolSize.y,
-                                                     m_poolSize.z,
-                                                     m_internalformat, m_format,
-                                                     m_type,
-                                                     pixels,
-                                                     m_filter,
-                                                     m_filter);
-  if (!m_pPoolDataTexture->isValid()) {
-    m_pPoolDataTexture->Delete();
-    m_pPoolDataTexture = nullptr;
-    return;
-  }
+Core::Math::Vec3ui GLVolumePool::createGLVolume(uint64_t GPUMemorySizeInByte) {
+  // this code requires some explanation:
+  // since it's impossible to figure out what 3D textures we can create
+  // we simply try with an initial guess and if that fails sucessively
+  // reduce the size until we sucessfully create a 3D texture
+  Core::Math::Vec3ui poolSize;
+  uint64_t reduction = 0;
+  const IIO::ValueType type = m_dataset.getType(m_currentModality);
+  const IIO::Semantic semantic = m_dataset.getSemantic(m_currentModality);
+  const Vec3ui vMaxBS = Vec3ui(m_dataset.getMaxUsedBrickSizes());
+  const uint64_t iMaxBrickCount = m_dataset.getTotalBrickCount(m_currentModality);
+  do {
+    poolSize = calculateVolumePoolSize(type,
+                                                          semantic,
+                                                          vMaxBS,
+                                                          iMaxBrickCount,
+                                                          GPUMemorySizeInByte,
+                                                          reduction);
+    
+    GLvoid *pixels = 0;
+    m_pPoolDataTexture = std::make_shared<GLTexture3D>(poolSize.x, poolSize.y,
+                                                       poolSize.z,
+                                                       m_internalformat,
+                                                       m_format,
+                                                       m_type,
+                                                       pixels,
+                                                       m_filter,
+                                                       m_filter);
+    if (!m_pPoolDataTexture->isValid()) {
+      m_pPoolDataTexture->Delete();
+      m_pPoolDataTexture = nullptr;
+      
+      if (reduction >= GPUMemorySizeInByte) break;
+    } else {
+      LDEBUGC("GLVolumePool", "Reduced memory usage by " <<
+              reduction/(1024*1024) << " MB to create volume");
+    }
+    reduction += 1024*1024*10;  // reduce by 10 MB in each iteration
+  } while (m_pPoolDataTexture==nullptr);
   
+  return poolSize;
+}
+
+void GLVolumePool::createGLResources() {
   m_vPoolCapacity = Vec3ui(m_pPoolDataTexture->GetSize().x/m_maxTotalBrickSize.x,
                            m_pPoolDataTexture->GetSize().y/m_maxTotalBrickSize.y,
                            m_pPoolDataTexture->GetSize().z/m_maxTotalBrickSize.z);
@@ -1463,7 +1495,7 @@ Vec4ui GLVolumePool::recomputeVisibility(const VisibilityState& visibility,
     m_currentTimestep = iTimestep;
     m_currentModality = modality;
     
-    m_brickMetadataCache =  m_pDataset.getBrickMetaData(m_currentModality,
+    m_brickMetadataCache =  m_dataset.getBrickMetaData(m_currentModality,
                                                         m_currentTimestep);
     
   }
@@ -1516,7 +1548,7 @@ Vec4ui GLVolumePool::recomputeVisibility(const VisibilityState& visibility,
   if (vEmptyBrickCount.x != m_iTotalBrickCount) {
     //WARNING("%u of %u bricks were processed during synchronous visibility recomputation!");
   }
-  uint32_t const iLeafBrickCount = m_pDataset.getBrickLayout(0, 0).volume();
+  uint32_t const iLeafBrickCount = m_dataset.getBrickLayout(0, 0).volume();
   uint32_t const iInternalBrickCount = m_iTotalBrickCount - iLeafBrickCount == 0 ? 1 : m_iTotalBrickCount - iLeafBrickCount;  // avoid division by zero
   
   
@@ -1761,7 +1793,7 @@ void GLVolumePool::brickGetterFunc(Predicate pContinue,
     
     // now request the brick (outside the lock)
     bool success;
-    auto vUploadMem = m_pDataset.getBrick(b.key, success);
+    auto vUploadMem = m_dataset.getBrick(b.key, success);
     if (!success) {
       LERROR("Error getting brick" << b.key);
       continue;
@@ -1793,4 +1825,98 @@ void GLVolumePool::brickGetterFunc(Predicate pContinue,
     
   }
   LINFO("brickGetterThread terminating");
+}
+
+Vec3ui GLVolumePool::calculateVolumePoolSize(const IIO::ValueType type,
+                                             const IIO::Semantic semantic,
+                                             const Vec3ui vMaxBS,
+                                             const uint64_t iMaxBrickCount,
+                                             const uint64_t GPUMemorySizeInByte,
+                                             const uint64_t reduction){
+  
+  
+  uint64_t elementSize = 0;
+  
+  // TODO: replace this switch-madness with more reasonable code
+  switch(semantic){
+    case IIO::Semantic::Scalar : elementSize = 1; break;
+    case IIO::Semantic::Vector : elementSize = 3; break;
+    case IIO::Semantic::Color  : elementSize = 4; break;
+  }
+  switch(type){
+    case  IIO::ValueType::T_INT8 :
+    case  IIO::ValueType::T_UINT8 : break;
+    case  IIO::ValueType::T_INT16 :
+    case  IIO::ValueType::T_UINT16 : elementSize *= 2; break;
+    case  IIO::ValueType::T_INT32 :
+    case  IIO::ValueType::T_UINT32 :
+    case  IIO::ValueType::T_FLOAT : elementSize *= 4; break;
+    case  IIO::ValueType::T_INT64 :
+    case  IIO::ValueType::T_UINT64 :
+    case  IIO::ValueType::T_DOUBLE : elementSize *= 8; break;
+  }
+  
+  
+  // Compute the pool size as a (almost) cubed texture that fits
+  // into the user specified GPU mem, is a multiple of the bricksize
+  // and is no bigger than what OpenGL tells us is possible
+  
+  //Fake workaround for first :x \todo fix this
+  uint64_t GPUmemoryInByte = GPUMemorySizeInByte-reduction;
+  
+  GLint iMaxVolumeDims;
+  glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &iMaxVolumeDims);
+  const uint64_t iMaxGPUMem = GPUmemoryInByte;
+  
+  const uint64_t iMaxVoxelCount = iMaxGPUMem / elementSize;
+  const uint64_t r3Voxels = uint64_t(pow(double(iMaxVoxelCount), 1.0 / 3.0));
+  Vec3ui maxBricksForGPU;
+  
+  // round the starting input size (r3Voxels) to the closest multiple brick size
+  // to guarantee as cubic as possible volume pools and to better fill the
+  // available amount of memory
+  // (e.g. it creates a 1024x512x1536 pool instead of a 512x2048x512 pool for
+  // a brick size of 512^3 and 3.4 GB available memory)
+  uint64_t multipleOfBrickSizeThatFitsInX = uint64_t(((float)r3Voxels / vMaxBS.x) + 0.5f) *vMaxBS.x;
+  if (multipleOfBrickSizeThatFitsInX > uint64_t(iMaxVolumeDims))
+    multipleOfBrickSizeThatFitsInX = (iMaxVolumeDims / vMaxBS.x)*vMaxBS.x;
+  maxBricksForGPU.x = std::max<uint32_t>(vMaxBS.x,(uint32_t)multipleOfBrickSizeThatFitsInX);
+  
+  uint64_t multipleOfBrickSizeThatFitsInY = ((iMaxVoxelCount / (maxBricksForGPU.x*maxBricksForGPU.x)) / vMaxBS.y)*vMaxBS.y;
+  if (multipleOfBrickSizeThatFitsInY > uint64_t(iMaxVolumeDims))
+    multipleOfBrickSizeThatFitsInY = (iMaxVolumeDims / vMaxBS.y)*vMaxBS.y;
+  maxBricksForGPU.y = std::max<uint32_t>(vMaxBS.y, (uint32_t)multipleOfBrickSizeThatFitsInY);
+  
+  uint64_t multipleOfBrickSizeThatFitsInZ = ((iMaxVoxelCount / (maxBricksForGPU.x*maxBricksForGPU.y)) / vMaxBS.z)*vMaxBS.z;
+  if (multipleOfBrickSizeThatFitsInZ > uint64_t(iMaxVolumeDims))
+    multipleOfBrickSizeThatFitsInZ = (iMaxVolumeDims / vMaxBS.z)*vMaxBS.z;
+  maxBricksForGPU.z = std::max<uint32_t>(vMaxBS.z, (uint32_t)multipleOfBrickSizeThatFitsInZ);
+  
+  // the max brick layout required by the dataset
+  const uint64_t r3Bricks = uint64_t(pow(double(iMaxBrickCount), 1.0 / 3.0));
+  Vec3ui64 maxBricksForDataset;
+  
+  multipleOfBrickSizeThatFitsInX = vMaxBS.x*r3Bricks;
+  if (multipleOfBrickSizeThatFitsInX > uint64_t(iMaxVolumeDims))
+    multipleOfBrickSizeThatFitsInX = (iMaxVolumeDims / vMaxBS.x)*vMaxBS.x;
+  maxBricksForDataset.x = (uint32_t)multipleOfBrickSizeThatFitsInX;
+  
+  multipleOfBrickSizeThatFitsInY = vMaxBS.y*uint64_t(ceil(float(iMaxBrickCount) / ((maxBricksForDataset.x / vMaxBS.x) * (maxBricksForDataset.x / vMaxBS.x))));
+  if (multipleOfBrickSizeThatFitsInY > uint64_t(iMaxVolumeDims))
+    multipleOfBrickSizeThatFitsInY = (iMaxVolumeDims / vMaxBS.y)*vMaxBS.y;
+  maxBricksForDataset.y = (uint32_t)multipleOfBrickSizeThatFitsInY;
+  
+  multipleOfBrickSizeThatFitsInZ = vMaxBS.z*uint64_t(ceil(float(iMaxBrickCount) / ((maxBricksForDataset.x / vMaxBS.x) * (maxBricksForDataset.y / vMaxBS.y))));
+  if (multipleOfBrickSizeThatFitsInZ > uint64_t(iMaxVolumeDims))
+    multipleOfBrickSizeThatFitsInZ = (iMaxVolumeDims / vMaxBS.z)*vMaxBS.z;
+  maxBricksForDataset.z = (uint32_t)multipleOfBrickSizeThatFitsInZ;
+  
+  // now use the smaller of the two layouts, normally that
+  // would be the maxBricksForGPU but for small datasets that
+  // can be rendered entirely in-core we may need less space
+  const Vec3ui poolSize = (maxBricksForDataset.volume() < Vec3ui64(maxBricksForGPU).volume())
+  ? Vec3ui(maxBricksForDataset)
+  : maxBricksForGPU;
+  
+  return poolSize;
 }

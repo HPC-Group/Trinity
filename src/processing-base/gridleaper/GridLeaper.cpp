@@ -415,21 +415,10 @@ void GridLeaper::initHashTable() {
 void GridLeaper::initVolumePool(uint64_t gpuMemorySizeInByte) {
   //CalculateUsedGPUMemory();
   
-  
-  // this code requires some explanation:
-  // since it's impossible to figure out what 3D textures we can create
-  // we simply try with an initial guess and if that fails sucessively
-  // reduce the size until we sucessfully create a 3D pool
-  uint64_t reduction = 0;
-  do {
-    Vec3ui poolSize = calculateVolumePoolSize(gpuMemorySizeInByte,reduction);
-
-    m_volumePool = mocca::make_unique<GLVolumePool>(poolSize,
-                                                    *m_io,
-                                                    m_activeModality,
-                                                    GL_LINEAR);
-    reduction += 1024*1024*10;  // reduce by 10 MB in each iteration
-  } while (!m_volumePool->isValid());
+  m_volumePool = mocca::make_unique<GLVolumePool>(gpuMemorySizeInByte,
+                                                  *m_io,
+                                                  m_activeModality,
+                                                  GL_LINEAR);
   
 
   if (m_volumePool){
@@ -792,96 +781,6 @@ void GridLeaper::swapToNextBuffer(){
 #ifdef GLGRIDLEAPER_DEBUGVIEW
   std::swap(m_pFBODebug, m_pFBODebugNext);
 #endif
-}
-
-Core::Math::Vec3ui GridLeaper::calculateVolumePoolSize(const uint64_t GPUMemorySizeInByte,
-                                                       const uint64_t reduction){
-  uint64_t elementSize = 0;
-
-  // TODO: replace this switch-madness with more reasonable code
-  switch(m_semantic){
-    case IIO::Semantic::Scalar : elementSize = 1; break;
-    case IIO::Semantic::Vector : elementSize = 3; break;
-    case IIO::Semantic::Color  : elementSize = 4; break;
-  }
-  switch(m_type){
-    case  IIO::ValueType::T_INT8 :
-    case  IIO::ValueType::T_UINT8 : elementSize *= 8; break;
-    case  IIO::ValueType::T_INT16 :
-    case  IIO::ValueType::T_UINT16 : elementSize *= 16; break;
-    case  IIO::ValueType::T_INT32 :
-    case  IIO::ValueType::T_UINT32 :
-    case  IIO::ValueType::T_FLOAT : elementSize *= 32; break;
-    case  IIO::ValueType::T_INT64 :
-    case  IIO::ValueType::T_UINT64 :
-    case  IIO::ValueType::T_DOUBLE : elementSize *= 64; break;
-  }
-
-  const Vec3ui vMaxBS = Vec3ui(m_io->getMaxUsedBrickSizes());
-
-  // Compute the pool size as a (almost) cubed texture that fits
-  // into the user specified GPU mem, is a multiple of the bricksize
-  // and is no bigger than what OpenGL tells us is possible
-
-  //Fake workaround for first :x \todo fix this
-  uint64_t GPUmemoryInByte = GPUMemorySizeInByte-reduction;
-
-  GLint iMaxVolumeDims;
-  glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &iMaxVolumeDims);
-  const uint64_t iMaxGPUMem = GPUmemoryInByte;
-
-  const uint64_t iMaxVoxelCount = iMaxGPUMem / (elementSize / 8);
-  const uint64_t r3Voxels = uint64_t(pow(double(iMaxVoxelCount), 1.0 / 3.0));
-  Vec3ui maxBricksForGPU;
-
-  // round the starting input size (r3Voxels) to the closest multiple brick size
-  // to guarantee as cubic as possible volume pools and to better fill the
-  // available amount of memory
-  // (e.g. it creates a 1024x512x1536 pool instead of a 512x2048x512 pool for
-  // a brick size of 512^3 and 3.4 GB available memory)
-  uint64_t multipleOfBrickSizeThatFitsInX = uint64_t(((float)r3Voxels / vMaxBS.x) + 0.5f) *vMaxBS.x;
-  if (multipleOfBrickSizeThatFitsInX > uint64_t(iMaxVolumeDims))
-    multipleOfBrickSizeThatFitsInX = (iMaxVolumeDims / vMaxBS.x)*vMaxBS.x;
-  maxBricksForGPU.x = std::max<uint32_t>(vMaxBS.x,(uint32_t)multipleOfBrickSizeThatFitsInX);
-
-  uint64_t multipleOfBrickSizeThatFitsInY = ((iMaxVoxelCount / (maxBricksForGPU.x*maxBricksForGPU.x)) / vMaxBS.y)*vMaxBS.y;
-  if (multipleOfBrickSizeThatFitsInY > uint64_t(iMaxVolumeDims))
-    multipleOfBrickSizeThatFitsInY = (iMaxVolumeDims / vMaxBS.y)*vMaxBS.y;
-  maxBricksForGPU.y = std::max<uint32_t>(vMaxBS.y, (uint32_t)multipleOfBrickSizeThatFitsInY);
-
-  uint64_t multipleOfBrickSizeThatFitsInZ = ((iMaxVoxelCount / (maxBricksForGPU.x*maxBricksForGPU.y)) / vMaxBS.z)*vMaxBS.z;
-  if (multipleOfBrickSizeThatFitsInZ > uint64_t(iMaxVolumeDims))
-    multipleOfBrickSizeThatFitsInZ = (iMaxVolumeDims / vMaxBS.z)*vMaxBS.z;
-  maxBricksForGPU.z = std::max<uint32_t>(vMaxBS.z, (uint32_t)multipleOfBrickSizeThatFitsInZ);
-
-  // the max brick layout required by the dataset
-  const uint64_t iMaxBrickCount = m_io->getTotalBrickCount(m_activeModality);
-  const uint64_t r3Bricks = uint64_t(pow(double(iMaxBrickCount), 1.0 / 3.0));
-  Vec3ui64 maxBricksForDataset;
-
-  multipleOfBrickSizeThatFitsInX = vMaxBS.x*r3Bricks;
-  if (multipleOfBrickSizeThatFitsInX > uint64_t(iMaxVolumeDims))
-    multipleOfBrickSizeThatFitsInX = (iMaxVolumeDims / vMaxBS.x)*vMaxBS.x;
-  maxBricksForDataset.x = (uint32_t)multipleOfBrickSizeThatFitsInX;
-
-  multipleOfBrickSizeThatFitsInY = vMaxBS.y*uint64_t(ceil(float(iMaxBrickCount) / ((maxBricksForDataset.x / vMaxBS.x) * (maxBricksForDataset.x / vMaxBS.x))));
-  if (multipleOfBrickSizeThatFitsInY > uint64_t(iMaxVolumeDims))
-    multipleOfBrickSizeThatFitsInY = (iMaxVolumeDims / vMaxBS.y)*vMaxBS.y;
-  maxBricksForDataset.y = (uint32_t)multipleOfBrickSizeThatFitsInY;
-
-  multipleOfBrickSizeThatFitsInZ = vMaxBS.z*uint64_t(ceil(float(iMaxBrickCount) / ((maxBricksForDataset.x / vMaxBS.x) * (maxBricksForDataset.y / vMaxBS.y))));
-  if (multipleOfBrickSizeThatFitsInZ > uint64_t(iMaxVolumeDims))
-    multipleOfBrickSizeThatFitsInZ = (iMaxVolumeDims / vMaxBS.z)*vMaxBS.z;
-  maxBricksForDataset.z = (uint32_t)multipleOfBrickSizeThatFitsInZ;
-
-  // now use the smaller of the two layouts, normally that
-  // would be the maxBricksForGPU but for small datasets that
-  // can be rendered entirely in-core we may need less space
-  const Vec3ui poolSize = (maxBricksForDataset.volume() < Vec3ui64(maxBricksForGPU).volume())
-  ? Vec3ui(maxBricksForDataset)
-  : maxBricksForGPU;
-
-  return poolSize;
 }
 
 Vec4ui GridLeaper::RecomputeBrickVisibility(bool bForceSynchronousUpdate) {
