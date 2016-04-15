@@ -2,10 +2,10 @@
 #include "ui_mainwindow.h"
 #include <iostream>
 
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QTimer>
 #include <QWheelEvent>
-#include <QMessageBox>
 
 #include "mocca/log/LogManager.h"
 #include "mocca/net/NetworkError.h"
@@ -13,9 +13,6 @@
 #include "commands/Vcl.h"
 #include "common/TrinityError.h"
 #include "connectionSinglton.h"
-
-#define renderer ConnectionSingleton::getInstance().renderer()
-#define ready ConnectionSingleton::getInstance().isReady()
 
 using namespace std;
 using namespace mocca::net;
@@ -40,20 +37,20 @@ MainWindow::~MainWindow() {
 
 static float rot = 0.0f;
 void MainWindow::update() {
-    if (!ready) {
+    if (!ConnectionSingleton::getInstance().isReady()) {
         return;
     }
 
+    auto& renderer = ConnectionSingleton::getInstance().renderer();
     try {
         auto frame = renderer.getVisStream()->get();
         if (!frame.empty()) {
             ui->openGLWidget->setData(renderer.getVisStream()->getStreamingParams().getResX(),
-                renderer.getVisStream()->getStreamingParams().getResY(), frame.data());
+                                      renderer.getVisStream()->getStreamingParams().getResY(), frame.data());
             ui->openGLWidget->repaint();
         }
         renderer.proceedRendering();
-    }
-    catch (const mocca::net::ConnectionClosedError&) {
+    } catch (const mocca::net::ConnectionClosedError&) {
         QMessageBox::warning(this, "Connection Closed", "Connection to processing node has been lost.");
         ConnectionSingleton::getInstance().reset();
     }
@@ -64,32 +61,35 @@ void MainWindow::on_actionTrinity_triggered() {
 }
 
 void MainWindow::on_actionPrev_triggered() {
-  const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount()-1;
-  if (m_iCurrent1DIndex > 0)
-    m_iCurrent1DIndex--;
-  else
-    m_iCurrent1DIndex = maxIndex;
-  
-  renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
+    auto& renderer = ConnectionSingleton::getInstance().renderer();
+    const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount() - 1;
+    if (m_iCurrent1DIndex > 0)
+        m_iCurrent1DIndex--;
+    else
+        m_iCurrent1DIndex = maxIndex;
+
+    renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
 }
 
 void MainWindow::on_actionNext_triggered() {
-  const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount()-1;
-  if (m_iCurrent1DIndex < maxIndex)
-    m_iCurrent1DIndex++;
-  else
-    m_iCurrent1DIndex = 0;
-  
-  renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
+    auto& renderer = ConnectionSingleton::getInstance().renderer();
+    const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount() - 1;
+    if (m_iCurrent1DIndex < maxIndex)
+        m_iCurrent1DIndex++;
+    else
+        m_iCurrent1DIndex = 0;
+
+    renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
 }
 
 void MainWindow::wheelEvent(QWheelEvent* event) {
-    if (!ready) {
+    if (!ConnectionSingleton::getInstance().isReady()) {
         return;
     }
 
     static float isoValue = 0;
     isoValue += event->delta() / 2400.f;
+    auto& renderer = ConnectionSingleton::getInstance().renderer();
     renderer.setIsoValue(0, isoValue);
 }
 
@@ -99,7 +99,7 @@ void MainWindow::mousePressEvent(QMouseEvent* event) {
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event) {
-    if (!ready) {
+    if (!ConnectionSingleton::getInstance().isReady()) {
         return;
     }
 
@@ -107,9 +107,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     float deltaY = (m_mousePosY - event->localPos().y()) / 200.f;
     if (event->buttons() & Qt::RightButton) {
         Core::Math::Vec3f vec(-deltaX, deltaY, .0f);
+        auto& renderer = ConnectionSingleton::getInstance().renderer();
         renderer.moveCamera(vec);
     } else if (event->buttons() & Qt::LeftButton) {
         Core::Math::Vec3f vec(-deltaY, -deltaX, .0f);
+        auto& renderer = ConnectionSingleton::getInstance().renderer();
         renderer.rotateScene(vec);
     }
     m_mousePosX = event->localPos().x();
