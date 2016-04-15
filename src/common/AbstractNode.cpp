@@ -1,7 +1,9 @@
 #include "common/AbstractNode.h"
 
+#include "commands/ErrorCommands.h"
 #include "commands/Reply.h"
 #include "common/NetConfig.h"
+#include "common/TrinityError.h"
 
 #include "mocca/log/LogManager.h"
 
@@ -24,14 +26,22 @@ void AbstractNode::run() {
             if (!msgEnvelope.isNull()) {
                 auto env = msgEnvelope.release();
                 auto request = Request::createFromMessage(env.message);
-                //LINFO("request: " << *request);
+                // LINFO("request: " << *request);
                 // handle request
                 auto handler = createHandler(*request);
-                auto reply = handler->execute();
+                std::unique_ptr<Reply> reply = nullptr;
+                try {
+                    reply = handler->execute();
+                } catch (const TrinityError& err) {
+                    ErrorCmd::ReplyParams replyParams(err.what());
+                    auto errorReply = mocca::make_unique<ErrorReply>(replyParams, request->getRid(), request->getSid());
+                    auto serialReply = Reply::createMessage(*errorReply);
+                    m_aggregator->send(mocca::net::MessageEnvelope(std::move(serialReply), env.connectionID));
+                }
                 if (reply != nullptr) {
                     // send reply
                     auto serialReply = Reply::createMessage(*reply);
-                    //LINFO("reply: " << *reply);
+                    // LINFO("reply: " << *reply);
                     m_aggregator->send(mocca::net::MessageEnvelope(std::move(serialReply), env.connectionID));
                 }
             }

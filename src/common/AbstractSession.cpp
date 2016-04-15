@@ -1,5 +1,8 @@
 #include "common/AbstractSession.h"
 
+#include "commands/ErrorCommands.h"
+#include "common/TrinityError.h"
+
 #include "mocca/base/Error.h"
 #include "mocca/base/StringTools.h"
 #include "mocca/log/LogManager.h"
@@ -44,7 +47,15 @@ void AbstractSession::run() {
                 auto request = Request::createFromMessage(message);
                 // LINFO("request: " << *request);
                 auto handler = createHandler(*request);
-                auto reply = handler->execute();
+                std::unique_ptr<Reply> reply = nullptr;
+                try {
+                    reply = handler->execute();
+                } catch (const TrinityError& err) {
+                    ErrorCmd::ReplyParams replyParams(err.what());
+                    auto errorReply = mocca::make_unique<ErrorReply>(replyParams, request->getRid(), m_sid);
+                    auto serialReply = Reply::createMessage(*errorReply);
+                    m_controlConnection->send(std::move(serialReply));
+                }
                 if (reply != nullptr) { // not tested yet
                     auto serialReply = Reply::createMessage(*reply);
                     m_controlConnection->send(std::move(serialReply));
