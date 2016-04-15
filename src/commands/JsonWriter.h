@@ -52,7 +52,7 @@ private:
             return traits_type::eof();
         }
 
-        std::streamsize xsputn(const char_type* s, std::streamsize count) {
+        std::streamsize xsputn(const char_type* s, std::streamsize count) override {
             m_vec.insert(end(m_vec), s, s + count);
             return count;
         }
