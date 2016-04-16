@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 class MemBlockPool {
 public:
@@ -15,8 +15,12 @@ private:
         void operator()(std::vector<uint8_t>* p) const;
     };
 
-    MemBlockPool() = default;
+    MemBlockPool();
+    ~MemBlockPool();
+
+    inline bool isDestructing() const;
 
 private:
     std::vector<MemBlock> m_pool;
+    bool m_destruct;
 };
