@@ -15,12 +15,8 @@ private:
         void operator()(std::vector<uint8_t>* p) const;
     };
 
-    MemBlockPool();
-    ~MemBlockPool();
-
-    inline bool isDestructing() const;
+    MemBlockPool() = default;
 
 private:
-    std::vector<MemBlock> m_pool;
-    bool m_destruct;
+    std::vector<std::unique_ptr<std::vector<uint8_t>>> m_pool;
 };

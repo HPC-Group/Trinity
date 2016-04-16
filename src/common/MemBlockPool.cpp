@@ -2,18 +2,6 @@
 
 #include "mocca/log/LogManager.h"
 
-MemBlockPool::MemBlockPool()
-    : m_destruct(false) {}
-
-MemBlockPool::~MemBlockPool() {
-    m_destruct = true;
-    m_pool.clear();
-}
-
-bool MemBlockPool::isDestructing() const {
-    return m_destruct;
-}
-
 MemBlockPool& MemBlockPool::instance() {
     static MemBlockPool pool;
     return pool;
@@ -22,9 +10,9 @@ MemBlockPool& MemBlockPool::instance() {
 MemBlockPool::MemBlock MemBlockPool::get(size_t capacity) {
     for (auto it = begin(m_pool); it != end(m_pool); ++it) {
         if ((*it)->capacity() >= capacity) {
-            auto block = *it;
+            auto block = std::move(*it);
             m_pool.erase(it);
-            return block;
+            return MemBlock(block.release(), Deleter());
         }
     }
     LDEBUG("MemBlockPool: new block with capacity " << capacity);
@@ -34,11 +22,7 @@ MemBlockPool::MemBlock MemBlockPool::get(size_t capacity) {
 }
 
 void MemBlockPool::Deleter::operator()(std::vector<uint8_t>* p) const {
-    if (!MemBlockPool::instance().isDestructing()) {
-        MemBlock recycled(p, Deleter());
-        recycled->clear();
-        MemBlockPool::instance().m_pool.push_back(recycled);
-    } else {
-        delete p;
-    }
+    p->clear();
+    std::unique_ptr<std::vector<uint8_t>> ptr(p);
+    MemBlockPool::instance().m_pool.push_back(std::move(ptr));
 }
