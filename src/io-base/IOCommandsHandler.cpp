@@ -306,7 +306,7 @@ GetBrickMetaDataHdl::GetBrickMetaDataHdl(const GetBrickMetaDataRequest& request,
 std::unique_ptr<Reply> GetBrickMetaDataHdl::execute() {
     GetBrickMetaDataCmd::ReplyParams params(
         m_session->getIO().getBrickMetaData(m_request.getParams().getModality(), m_request.getParams().getTimestep()));
-    return mocca::make_unique<GetBrickMetaDataReply>(params, m_request.getRid(), m_session->getSid());
+    return mocca::make_unique<GetBrickMetaDataReply>(std::move(params), m_request.getRid(), m_session->getSid());
 }
 
 /* AUTOGEN IOCommandHandlerImpl */

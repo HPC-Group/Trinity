@@ -64,12 +64,13 @@ public:
     using Ifc = Interface;
 
     ReplyTemplate() = default;
-    ReplyTemplate(const ReplyParams& params, int rid, int sid, std::shared_ptr<const std::vector<uint8_t>> binary = nullptr)
+    ReplyTemplate(ReplyParams params, int rid, int sid, std::shared_ptr<const std::vector<uint8_t>> binary = nullptr)
         : Reply(rid, sid, binary)
-        , m_params(params) {}
+        , m_params(std::move(params)) {}
 
     VclType getType() const override { return Interface::Type; }
-    const ReplyParams& getParams() const { return m_params; } // returning reference for performance reasons, be careful!
+    ReplyParams getParams() const & { return m_params; }
+    ReplyParams getParams() && { return std::move(m_params); }
 
     std::unique_ptr<ISerializable> clone() const override { return mocca::make_unique<ReplyTemplate<Interface>>(*this); }
 

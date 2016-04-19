@@ -127,7 +127,7 @@ std::shared_ptr<std::vector<uint8_t>> IOSessionProxy::getBrick(const BrickKey& b
     GetBrickCmd::RequestParams params(brickKey);
     GetBrickRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
-    const auto& replyParams = reply->getParams();
+    const auto replyParams = reply->getParams();
     success = replyParams.getSuccess();
     return replyParams.getBrick();
 }
@@ -206,7 +206,7 @@ std::vector<BrickMetaData> IOSessionProxy::getBrickMetaData(uint64_t modality, u
     GetBrickMetaDataCmd::RequestParams params(modality, timestep);
     GetBrickMetaDataRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
-    return reply->getParams().getResult();
+    return std::move(*reply).getParams().getResult();
 }
 
 /* AUTOGEN IOSessionProxyImpl */

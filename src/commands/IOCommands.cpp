@@ -1529,8 +1529,8 @@ std::string GetBrickMetaDataCmd::RequestParams::toString() const {
     return stream.str();
 }
 
-GetBrickMetaDataCmd::ReplyParams::ReplyParams(const std::vector<BrickMetaData>& result)
-    : m_result(result) {}
+GetBrickMetaDataCmd::ReplyParams::ReplyParams(std::vector<BrickMetaData> result)
+    : m_result(std::move(result)) {}
 
 void GetBrickMetaDataCmd::ReplyParams::serialize(ISerialWriter& writer) const {
     writer.appendObjectVec("result", mocca::transformToBasePtrVec<ISerializable>(begin(m_result), end(m_result)));
@@ -1544,13 +1544,14 @@ bool GetBrickMetaDataCmd::ReplyParams::equals(const GetBrickMetaDataCmd::ReplyPa
     return m_result == other.m_result;
 }
 
-std::vector<BrickMetaData> GetBrickMetaDataCmd::ReplyParams::getResult() const {
-    return m_result;
+
+std::vector<BrickMetaData> GetBrickMetaDataCmd::ReplyParams::getResult() && {
+    return std::move(m_result);
 }
 
 std::string GetBrickMetaDataCmd::ReplyParams::toString() const {
     std::stringstream stream;
-    stream << "result: " << m_result;
+    ::operator<<(stream, m_result); // ugly, but necessary because of namespaces
     return stream.str();
 }
 

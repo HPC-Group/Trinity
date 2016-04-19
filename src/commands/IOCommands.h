@@ -1323,7 +1323,7 @@ struct GetBrickMetaDataCmd {
     class ReplyParams : public SerializableTemplate<ReplyParams> {
     public:
         ReplyParams() = default;
-        ReplyParams(const std::vector<BrickMetaData>& result);
+        ReplyParams(std::vector<BrickMetaData> result);
 
         void serialize(ISerialWriter& writer) const override;
         void deserialize(const ISerialReader& reader) override;
@@ -1331,7 +1331,7 @@ struct GetBrickMetaDataCmd {
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
-        std::vector<BrickMetaData> getResult() const;
+        std::vector<BrickMetaData> getResult() &&;
 
     private:
         std::vector<BrickMetaData> m_result;
