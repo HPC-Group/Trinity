@@ -1544,8 +1544,7 @@ bool GetBrickMetaDataCmd::ReplyParams::equals(const GetBrickMetaDataCmd::ReplyPa
     return m_result == other.m_result;
 }
 
-
-std::vector<BrickMetaData> GetBrickMetaDataCmd::ReplyParams::getResult() && {
+std::vector<BrickMetaData> GetBrickMetaDataCmd::ReplyParams::releaseResult() {
     return std::move(m_result);
 }
 

@@ -1331,7 +1331,7 @@ struct GetBrickMetaDataCmd {
         std::string toString() const;
         bool equals(const ReplyParams& other) const;
 
-        std::vector<BrickMetaData> getResult() &&;
+        std::vector<BrickMetaData> releaseResult();
 
     private:
         std::vector<BrickMetaData> m_result;

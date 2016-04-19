@@ -206,7 +206,7 @@ std::vector<BrickMetaData> IOSessionProxy::getBrickMetaData(uint64_t modality, u
     GetBrickMetaDataCmd::RequestParams params(modality, timestep);
     GetBrickMetaDataRequest request(params, IDGenerator::nextID(), m_remoteSid);
     auto reply = sendRequestChecked(m_inputChannel, request);
-    return std::move(*reply).getParams().getResult();
+    return reply->releaseParams().releaseResult();
 }
 
 /* AUTOGEN IOSessionProxyImpl */

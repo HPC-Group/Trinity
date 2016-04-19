@@ -69,8 +69,8 @@ public:
         , m_params(std::move(params)) {}
 
     VclType getType() const override { return Interface::Type; }
-    ReplyParams getParams() const & { return m_params; }
-    ReplyParams getParams() && { return std::move(m_params); }
+    ReplyParams getParams() const { return m_params; }
+    ReplyParams releaseParams() { return std::move(m_params); }
 
     std::unique_ptr<ISerializable> clone() const override { return mocca::make_unique<ReplyTemplate<Interface>>(*this); }
 
