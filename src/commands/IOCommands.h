@@ -1329,7 +1329,6 @@ struct GetBrickMetaDataCmd {
         void deserialize(const ISerialReader& reader) override;
 
         std::string toString() const;
-        bool equals(const ReplyParams& other) const;
 
         std::vector<BrickMetaData> releaseResult();
 
@@ -1342,7 +1341,6 @@ bool operator==(const GetBrickMetaDataCmd::RequestParams& lhs, const GetBrickMet
 std::ostream& operator<<(std::ostream& os, const GetBrickMetaDataCmd::RequestParams& obj);
 using GetBrickMetaDataRequest = RequestTemplate<GetBrickMetaDataCmd>;
 
-bool operator==(const GetBrickMetaDataCmd::ReplyParams& lhs, const GetBrickMetaDataCmd::ReplyParams& rhs);
 std::ostream& operator<<(std::ostream& os, const GetBrickMetaDataCmd::ReplyParams& obj);
 using GetBrickMetaDataReply = ReplyTemplate<GetBrickMetaDataCmd>;
 

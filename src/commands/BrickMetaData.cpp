@@ -5,38 +5,34 @@
 
 using namespace trinity;
 
-void BrickMetaData::serialize(ISerialWriter& writer) const {
-    writer.appendDouble("minScalar", minScalar);
-    writer.appendDouble("maxScalar", maxScalar);
-    writer.appendDouble("minGradient", minGradient);
-    writer.appendDouble("maxGradient", maxGradient);
-    writer.appendObject("voxelSize", voxelSize);
+std::shared_ptr<std::vector<uint8_t>> BrickMetaData::createBinary(const std::vector<BrickMetaData>& metaDataVec) {
+    auto binary = std::make_shared<std::vector<uint8_t>>();
+    binary->reserve(metaDataVec.size() * (4 * sizeof(double) + 3 * sizeof(uint32_t))); // FIXME: use constexpr instead (requires VS2015)
+    for (const auto& metaData : metaDataVec) {
+        mocca::net::appendToMessagePart(*binary, metaData.minScalar);
+        mocca::net::appendToMessagePart(*binary, metaData.maxScalar);
+        mocca::net::appendToMessagePart(*binary, metaData.minGradient);
+        mocca::net::appendToMessagePart(*binary, metaData.maxGradient);
+        mocca::net::appendToMessagePart(*binary, metaData.voxelSize.x);
+        mocca::net::appendToMessagePart(*binary, metaData.voxelSize.y);
+        mocca::net::appendToMessagePart(*binary, metaData.voxelSize.z);
+    }
+    return binary;
 }
 
-void BrickMetaData::deserialize(const ISerialReader& reader) {
-    minScalar = reader.getDouble("minScalar");
-    maxScalar = reader.getDouble("maxScalar");
-    minGradient = reader.getDouble("minGradient");
-    maxGradient = reader.getDouble("maxGradient");
-    voxelSize = reader.getSerializable<Core::Math::Vec3ui>("voxelSize");
-}
-
-bool BrickMetaData::equals(const BrickMetaData& other) const {
-    return minScalar == other.minScalar && maxScalar == other.maxScalar && minGradient == other.minGradient &&
-           maxGradient == other.maxGradient && voxelSize == other.voxelSize;
-}
-
-std::string BrickMetaData::toString() const {
-    std::stringstream stream;
-    stream << "minScalar: " << minScalar << "; maxScalar: " << maxScalar << "; minGradient: " << minGradient
-           << "; maxGradient: " << maxGradient << "; voxelSize: " << voxelSize;
-    return stream.str();
-}
-
-bool trinity::operator==(const BrickMetaData& lhs, const BrickMetaData& rhs) {
-    return lhs.equals(rhs);
-}
-
-std::ostream& trinity::operator<<(std::ostream& os, const BrickMetaData& obj) {
-    return os << obj.toString();
+std::vector<BrickMetaData> BrickMetaData::createFromBinary(std::shared_ptr<std::vector<uint8_t>> binary) {
+    std::vector<BrickMetaData> result;
+    size_t numElements = binary->size() / (4 * sizeof(double) + 3 * sizeof(uint32_t)); // FIXME: use constexpr instead (requires VS2015)
+    const uint8_t* ptr = binary->data();
+    for (size_t i = 0; i < numElements; ++i) {
+        result.push_back(BrickMetaData());
+        ptr = mocca::net::readFromMessagePart(ptr, result.back().minScalar);
+        ptr = mocca::net::readFromMessagePart(ptr, result.back().maxScalar);
+        ptr = mocca::net::readFromMessagePart(ptr, result.back().minGradient);
+        ptr = mocca::net::readFromMessagePart(ptr, result.back().maxGradient);
+        ptr = mocca::net::readFromMessagePart(ptr, result.back().voxelSize.x);
+        ptr = mocca::net::readFromMessagePart(ptr, result.back().voxelSize.y);
+        ptr = mocca::net::readFromMessagePart(ptr, result.back().voxelSize.z);
+    }
+    return result;
 }

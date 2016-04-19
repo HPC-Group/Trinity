@@ -174,7 +174,7 @@ BrickMetaData FractalIO::getMetaForKey(const BrickKey& key) const {
   uint8_t min = 255, max = 0;
 #ifdef CACHE_BRICKS
   if (m_bc.getMaxMin(key, min, max)) {
-    return BrickMetaData(min, max, 0, 1, getBrickVoxelCounts(key));
+      return BrickMetaData{ static_cast<double>(min), static_cast<double>(max), 0.0, 1.0, getBrickVoxelCounts(key) };
   }
 #endif
   if (!m_bFlat) {
@@ -187,10 +187,10 @@ BrickMetaData FractalIO::getMetaForKey(const BrickKey& key) const {
       if (min == 0 && max == 255) break;
     }
     
-    return BrickMetaData(min, max, 0, 1, getBrickVoxelCounts(key));
+    return BrickMetaData{ static_cast<double>(min), static_cast<double>(max), 0.0, 1.0, getBrickVoxelCounts(key) };
   }
   else {
-    return BrickMetaData(0, 255, 0, 1, getBrickVoxelCounts(key));
+      return BrickMetaData{ 0.0, 255.0, 0.0, 1.0, getBrickVoxelCounts(key) };
   }
 }
 

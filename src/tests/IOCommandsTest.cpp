@@ -159,12 +159,6 @@ TEST_F(IOCommandsTest, BrickKey) {
     ASSERT_EQ(target, result);
 }
 
-TEST_F(IOCommandsTest, BrickMetaData) {
-    BrickMetaData target(1.0, 2.0, 3.0, 4.0, Core::Math::Vec3ui(55, 6, 7));
-    auto result = trinity::testing::writeAndRead(target);
-    ASSERT_EQ(target, result);
-}
-
 TEST_F(IOCommandsTest, GetNumberOfTimestepsCmd) {
     {
         GetNumberOfTimestepsCmd::RequestParams target;

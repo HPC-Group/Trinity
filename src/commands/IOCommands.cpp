@@ -1533,15 +1533,11 @@ GetBrickMetaDataCmd::ReplyParams::ReplyParams(std::vector<BrickMetaData> result)
     : m_result(std::move(result)) {}
 
 void GetBrickMetaDataCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.appendObjectVec("result", mocca::transformToBasePtrVec<ISerializable>(begin(m_result), end(m_result)));
+    writer.appendBinary(BrickMetaData::createBinary(m_result));
 }
 
 void GetBrickMetaDataCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_result = reader.getSerializableVec<BrickMetaData>("result");
-}
-
-bool GetBrickMetaDataCmd::ReplyParams::equals(const GetBrickMetaDataCmd::ReplyParams& other) const {
-    return m_result == other.m_result;
+    m_result = BrickMetaData::createFromBinary(reader.getBinary()[0]);
 }
 
 std::vector<BrickMetaData> GetBrickMetaDataCmd::ReplyParams::releaseResult() {
@@ -1550,7 +1546,7 @@ std::vector<BrickMetaData> GetBrickMetaDataCmd::ReplyParams::releaseResult() {
 
 std::string GetBrickMetaDataCmd::ReplyParams::toString() const {
     std::stringstream stream;
-    ::operator<<(stream, m_result); // ugly, but necessary because of namespaces
+    stream << "result: (binary data)";
     return stream.str();
 }
 
@@ -1951,9 +1947,6 @@ bool operator==(const GetBrickMetaDataCmd::RequestParams& lhs, const GetBrickMet
 }
 std::ostream& operator<<(std::ostream& os, const GetBrickMetaDataCmd::RequestParams& obj) {
     return os << obj.toString();
-}
-bool operator==(const GetBrickMetaDataCmd::ReplyParams& lhs, const GetBrickMetaDataCmd::ReplyParams& rhs) {
-    return lhs.equals(rhs);
 }
 std::ostream& operator<<(std::ostream& os, const GetBrickMetaDataCmd::ReplyParams& obj) {
     return os << obj.toString();
