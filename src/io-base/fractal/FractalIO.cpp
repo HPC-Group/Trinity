@@ -341,6 +341,7 @@ std::shared_ptr<std::vector<uint8_t>> FractalIO::getBrick(const BrickKey& key, b
   }
   
   auto data = MemBlockPool::instance().get(brickSize);
+  data->resize(brickSize);
 
 #ifdef CACHE_BRICKS
   if (m_bc.getBrick<uint8_t>(key, *data)) {

@@ -16,7 +16,7 @@ MemBlockPool::MemBlock MemBlockPool::get(size_t capacity) {
         }
     }
     LDEBUG("MemBlockPool: new block with capacity " << capacity);
-    MemBlock block(new std::vector<uint8_t>(capacity), Deleter());
+    MemBlock block(new std::vector<uint8_t>(), Deleter());
     block->reserve(capacity);
     return block;
 }
