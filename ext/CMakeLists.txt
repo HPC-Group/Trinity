@@ -1,4 +1,5 @@
 add_subdirectory(libjpeg-turbo)
+add_subdirectory(c-blosc-1.8.1)
 
 # old rainer stuff
 # find_package(zlib QUIET)
