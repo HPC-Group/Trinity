@@ -7,8 +7,10 @@
  ****************************************************************/
 
 #include "JPEGEncoder.h"
-#include <turbojpeg.h>
+
 #include "mocca/log/LogManager.h"
+
+#include "libjpeg-turbo/turbojpeg.h"
 
 using namespace trinity;
 using namespace mocca;

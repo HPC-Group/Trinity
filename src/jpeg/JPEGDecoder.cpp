@@ -6,10 +6,11 @@
  *
  ****************************************************************/
 
-#include <turbojpeg.h>
-
 #include "JPEGDecoder.h"
+
 #include "mocca/log/LogManager.h"
+
+#include "libjpeg-turbo/turbojpeg.h"
 
 using namespace trinity;
 using namespace mocca;

@@ -41,6 +41,11 @@ add_executable(iobase
 				$<TARGET_OBJECTS:silverbullet>
 				$<TARGET_OBJECTS:jsoncpp>)
 
+TARGET_LINK_LIBRARIES(iobase lzma)
+TARGET_LINK_LIBRARIES(iobase bzip2)
+TARGET_LINK_LIBRARIES(iobase lz4)
+TARGET_LINK_LIBRARIES(iobase zlib)
+
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(iobase Shlwapi.lib)
 ENDIF ()

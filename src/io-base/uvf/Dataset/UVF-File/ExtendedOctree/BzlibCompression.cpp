@@ -5,7 +5,7 @@
 #include "BzlibCompression.h"
 
 extern "C" {
-#include "ext/bzip2/bzlib.h"
+#include "bzip2/bzlib.h"
 }
 
 namespace {

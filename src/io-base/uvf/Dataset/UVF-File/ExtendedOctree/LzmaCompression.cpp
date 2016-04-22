@@ -5,8 +5,8 @@
 #include "LzmaCompression.h"
 
 extern "C" {
-#include "ext/lzma/LzmaEnc.h"
-#include "ext/lzma/LzmaDec.h"
+#include "lzma/LzmaEnc.h"
+#include "lzma/LzmaDec.h"
 }
 
 static void* AllocForLzma(void* /*p*/, size_t size) { return malloc(size); }

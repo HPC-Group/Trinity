@@ -31,6 +31,10 @@ add_executable(tests ${TRINITY_TEST_HEADER} ${TRINITY_TEST_SOURCE}
 
 target_link_libraries(tests gmock)
 target_link_libraries(tests turbojpeg-static)
+TARGET_LINK_LIBRARIES(tests lzma)
+TARGET_LINK_LIBRARIES(tests bzip2)
+TARGET_LINK_LIBRARIES(tests lz4)
+TARGET_LINK_LIBRARIES(tests zlib)
 
 TARGET_LINK_LIBRARIES(tests ${OPENGL_LIBRARIES})
 IF (UNIX AND NOT APPLE)

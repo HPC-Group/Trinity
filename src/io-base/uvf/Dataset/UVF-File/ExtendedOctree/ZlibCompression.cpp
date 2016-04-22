@@ -1,7 +1,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <limits>
-#include "ext/zlib/zlib.h"
+#include "zlib/zlib.h"
 #include "../nonstd.h"
 #include "ZlibCompression.h"
 

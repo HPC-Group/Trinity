@@ -6,8 +6,8 @@
 #include "Lz4Compression.h"
 
 extern "C" {
-  #include "ext/lz4/lz4.h"
-  #include "ext/lz4/lz4hc.h"
+  #include "lz4/lz4.h"
+  #include "lz4/lz4hc.h"
 }
 
 size_t lz4Compress(std::shared_ptr<uint8_t> src, size_t uncompressedBytes,

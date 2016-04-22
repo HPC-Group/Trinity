@@ -1,9 +1,4 @@
 include(PlatformSpecific)
-include(Macros)
-
-set_property(GLOBAL PROPERTY USE_FOLDERS on)
-
-include_directories(${PROJECT_SOURCE_DIR}/ext/libjpeg-turbo)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
