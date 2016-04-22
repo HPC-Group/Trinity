@@ -121,7 +121,7 @@ mocca::net::Message JsonWriter::writeMessage() const {
     for (auto& sharedData : *m_binary) {
         auto compressed = MemBlockPool::instance().get(sharedData->size() + BLOSC_MAX_OVERHEAD);
         compressed->resize(sharedData->size() + BLOSC_MAX_OVERHEAD);
-        auto resSize = blosc_compress_ctx(5, 1, sizeof(uint8_t), sharedData->size(), sharedData->data(), compressed->data(), compressed->size(), "blosclz", 0, 6);
+        auto resSize = blosc_compress_ctx(4, 1, 16, sharedData->size(), sharedData->data(), compressed->data(), compressed->size(), "blosclz", 0, 6);
         message.push_back(compressed);
     }
     return message;
