@@ -97,16 +97,16 @@ option(PREFER_EXTERNAL_ZLIB
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 
-if(NOT DEACTIVATE_LZ4)
-    if(PREFER_EXTERNAL_LZ4)
-        find_package(LZ4)
-    else()
-        message(STATUS "Using LZ4 internal sources.")
-    endif(PREFER_EXTERNAL_LZ4)
+#if(NOT DEACTIVATE_LZ4)
+#    if(PREFER_EXTERNAL_LZ4)
+#	    find_package(LZ4)
+#    else()
+#        message(STATUS "Using LZ4 internal sources.")
+#    endif(PREFER_EXTERNAL_LZ4)
     # HAVE_LZ4 will be set to true because even if the library is
     # not found, we will use the included sources for it
-    set(HAVE_LZ4 TRUE)
-endif(NOT DEACTIVATE_LZ4)
+#    set(HAVE_LZ4 TRUE)
+#endif(NOT DEACTIVATE_LZ4)
 
 if(NOT DEACTIVATE_SNAPPY)
     if(PREFER_EXTERNAL_SNAPPY)
@@ -119,21 +119,21 @@ if(NOT DEACTIVATE_SNAPPY)
     set(HAVE_SNAPPY TRUE)
 endif(NOT DEACTIVATE_SNAPPY)
 
-if(NOT DEACTIVATE_ZLIB)
+#if(NOT DEACTIVATE_ZLIB)
     # import the ZLIB_ROOT environment variable to help finding the zlib library
-    if(PREFER_EXTERNAL_ZLIB)
-        set(ZLIB_ROOT $ENV{ZLIB_ROOT})
-        find_package(ZLIB)
-        if (NOT ZLIB_FOUND )
-            message(STATUS "No zlib found.  Using internal sources.")
-        endif (NOT ZLIB_FOUND )
-    else()
-        message(STATUS "Using zlib internal sources.")
-    endif(PREFER_EXTERNAL_ZLIB)
+#    if(PREFER_EXTERNAL_ZLIB)
+#        set(ZLIB_ROOT $ENV{ZLIB_ROOT})
+#        find_package(ZLIB)
+#        if (NOT ZLIB_FOUND )
+#            message(STATUS "No zlib found.  Using internal sources.")
+#        endif (NOT ZLIB_FOUND )
+#    else()
+#        message(STATUS "Using zlib internal sources.")
+#    endif(PREFER_EXTERNAL_ZLIB)
     # HAVE_ZLIB will be set to true because even if the library is not found,
     # we will use the included sources for it
-    set(HAVE_ZLIB TRUE)
-endif(NOT DEACTIVATE_ZLIB)
+#    set(HAVE_ZLIB TRUE)
+#endif(NOT DEACTIVATE_ZLIB)
 
 # create the config.h file
 configure_file ("blosc/config.h.in"  "blosc/config.h" )

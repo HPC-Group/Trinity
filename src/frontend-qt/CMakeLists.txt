@@ -34,6 +34,7 @@ TARGET_LINK_LIBRARIES(qtfrontend turbojpeg-static)
 TARGET_LINK_LIBRARIES(qtfrontend Qt5::Widgets)
 TARGET_LINK_LIBRARIES(qtfrontend Qt5::OpenGL)
 TARGET_LINK_LIBRARIES(qtfrontend ${OPENGL_LIBRARIES})
+TARGET_LINK_LIBRARIES(qtfrontend blosc_static)
 
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(qtfrontend Shlwapi.lib)

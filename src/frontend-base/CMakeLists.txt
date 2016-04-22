@@ -21,6 +21,7 @@ add_executable(frontendbase
 				$<TARGET_OBJECTS:jsoncpp>)
 
 TARGET_LINK_LIBRARIES(frontendbase turbojpeg-static)
+TARGET_LINK_LIBRARIES(frontendbase blosc_static)
 
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(frontendbase Shlwapi.lib)

@@ -1,6 +1,9 @@
 #include "commands/JsonWriter.h"
 
+#include "common/MemBlockPool.h"
 #include "commands/ISerializable.h"
+
+#include "blosc/blosc/blosc.h"
 
 using namespace trinity;
 
@@ -116,7 +119,10 @@ mocca::net::Message JsonWriter::writeMessage() const {
     mocca::net::Message message;
     message.push_back(jsonData);
     for (auto& sharedData : *m_binary) {
-        message.push_back(sharedData);
+        auto compressed = MemBlockPool::instance().get(sharedData->size() + BLOSC_MAX_OVERHEAD);
+        compressed->resize(sharedData->size() + BLOSC_MAX_OVERHEAD);
+        auto resSize = blosc_compress_ctx(5, 1, sizeof(uint8_t), sharedData->size(), sharedData->data(), compressed->data(), compressed->size(), "blosclz", 0, 6);
+        message.push_back(compressed);
     }
     return message;
 }

@@ -32,6 +32,7 @@ file(COPY ${SHADERS} DESTINATION ${CMAKE_BINARY_DIR}/src/processing-base/)
 
 TARGET_LINK_LIBRARIES(processingbase ${OPENGL_LIBRARIES})
 TARGET_LINK_LIBRARIES(processingbase turbojpeg-static)
+TARGET_LINK_LIBRARIES(processingbase blosc_static)
 IF (UNIX AND NOT APPLE)
 	TARGET_LINK_LIBRARIES(processingbase EGL ${CMAKE_DL_LIBS})
 ENDIF()

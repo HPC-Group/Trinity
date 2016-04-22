@@ -2,6 +2,9 @@
 
 #include "commands/ISerializable.h"
 #include "common/TrinityError.h"
+#include "common/MemBlockPool.h"
+
+#include "blosc/blosc/blosc.h"
 
 #include <algorithm>
 #include <cstring>
@@ -20,7 +23,12 @@ JsonReader::JsonReader(const std::string& json) {
 JsonReader::JsonReader(const mocca::net::Message& message) {
     std::string json(reinterpret_cast<const char*>(message[0]->data()), message[0]->size());
     for (unsigned int i = 1; i < message.size(); ++i) {
-        m_binary.push_back(message[i]);
+        size_t uncompressedSize, compressedSize, blockSize;
+        blosc_cbuffer_sizes(message[i]->data(), &uncompressedSize, &compressedSize, &blockSize);
+        auto uncompressed = MemBlockPool::instance().get(uncompressedSize);
+        uncompressed->resize(uncompressedSize);
+        blosc_decompress_ctx(message[i]->data(), uncompressed->data(), uncompressedSize, 5);
+        m_binary.push_back(uncompressed);
     }
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {

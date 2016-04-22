@@ -35,6 +35,7 @@ TARGET_LINK_LIBRARIES(frontend-qt-waschk turbojpeg-static)
 TARGET_LINK_LIBRARIES(frontend-qt-waschk Qt5::Widgets)
 TARGET_LINK_LIBRARIES(frontend-qt-waschk Qt5::OpenGL)
 TARGET_LINK_LIBRARIES(frontend-qt-waschk ${OPENGL_LIBRARIES})
+TARGET_LINK_LIBRARIES(frontend-qt-waschk blosc_static)
 
 IF (WIN32)
 	TARGET_LINK_LIBRARIES(frontend-qt-waschk Shlwapi.lib)
