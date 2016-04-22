@@ -370,7 +370,7 @@ using namespace Core::IO;
 
     std::string ShaderDescriptor::getFragmentSource() const{
       std::string source;
-      for(int i = 0; i < si->fragment.size();++i){
+      for(size_t i = 0; i < si->fragment.size();++i){
         if(std::get<1>(si->fragment[i]) == SHADER_FRAGMENT_STRING){
           source.append(si->fragment[i].first);
         }else if(std::get<1>(si->fragment[i]) == SHADER_FRAGMENT_DISK){
@@ -383,7 +383,7 @@ using namespace Core::IO;
 
     std::string ShaderDescriptor::getVertexSource() const{
       std::string source;
-      for(int i = 0; i < si->vertex.size();++i){
+      for(size_t i = 0; i < si->vertex.size();++i){
         if(std::get<1>(si->vertex[i]) == SHADER_VERTEX_STRING){
           source.append(si->vertex[i].first);
         }else if(std::get<1>(si->vertex[i]) == SHADER_VERTEX_DISK){

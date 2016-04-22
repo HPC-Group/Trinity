@@ -272,10 +272,10 @@ TransferFunction1D FractalIO::getDefault1DTransferFunction(uint64_t index) const
   // create a transfer function with 4 different ramps
   // resulting in a smooth image with color shifts
   TransferFunction1D tf(256);
-  tf.setStdFunction(center, 0.3, 0, false);
-  tf.setStdFunction(center, 0.1, 1, true);
-  tf.setStdFunction(center, 0.8, 2, true);
-  tf.setStdFunction(center, 0.9, 3, false);
+  tf.setStdFunction(center, 0.3f, 0, false);
+  tf.setStdFunction(center, 0.1f, 1, true);
+  tf.setStdFunction(center, 0.8f, 2, true);
+  tf.setStdFunction(center, 0.9f, 3, false);
   return tf;
 }
 

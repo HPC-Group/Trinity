@@ -44,7 +44,7 @@ void GLHashTable::initGL() {
   try {
     m_texSize = fit1DIndexTo2DArray(m_iTableSize, gpumax);
     LDEBUGC("GLHashTable", "Hashtable texture size "<< m_texSize);
-  } catch (std::runtime_error const& e) {
+  } catch (std::runtime_error const&) {
     // this is very unlikely but not impossible
     //T_ERROR(e.what());
     throw;

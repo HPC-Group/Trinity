@@ -50,7 +50,7 @@ void JPEGDecoder::setFastUpsampling(bool fastUpsampling) {
 }
 
 bool JPEGDecoder::getFastUpsampling() const {
-    return m_flags & TJFLAG_FASTUPSAMPLE;
+    return (m_flags & TJFLAG_FASTUPSAMPLE) != 0;
 }
 
 std::vector<uint8_t> JPEGDecoder::decode(const std::vector<uint8_t>& jpeg) const {
