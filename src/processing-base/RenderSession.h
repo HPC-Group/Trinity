@@ -11,15 +11,14 @@
 #include "common/AbstractSession.h"
 #include "common/IOSessionProxy.h"
 #include "common/IRenderer.h"
-#include "processing-base/VisStreamSender.h"
 #include "processing-base/ProcessingCommandFactory.h"
-
+#include "processing-base/VisStreamSender.h"
 
 namespace trinity {
 class RenderSession : public AbstractSession {
 public:
-    RenderSession(const VclType& rendererType, const StreamingParams& params,
-                  const std::string& protocol, std::unique_ptr<IOSessionProxy> ioSession);
+    RenderSession(const VclType& rendererType, const StreamingParams& params, const std::string& protocol,
+                  std::unique_ptr<IOSessionProxy> ioSession);
     RenderSession(const std::string& protocol, std::unique_ptr<IRenderer> renderer);
     ~RenderSession();
 

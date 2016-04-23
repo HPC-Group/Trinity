@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/Enums.h"
 #include "commands/ICommandHandler.h"
 #include "commands/Request.h"
 
@@ -16,7 +17,7 @@ namespace trinity {
 class AbstractSession : public mocca::Runnable {
 
 public:
-    AbstractSession(const std::string& protocol);
+    AbstractSession(const std::string& protocol, CompressionMode compressionMode);
     virtual ~AbstractSession();
 
     int getSid() const { return m_sid; }
@@ -30,6 +31,7 @@ private:
 
 private:
     int m_sid;
+    CompressionMode m_compressionMode;
     std::unique_ptr<mocca::net::IMessageConnectionAcceptor> m_acceptor;
     std::unique_ptr<mocca::net::IMessageConnection> m_controlConnection;
 

@@ -1,8 +1,8 @@
 #include "commands/JsonReader.h"
 
 #include "commands/ISerializable.h"
-#include "common/TrinityError.h"
 #include "common/MemBlockPool.h"
+#include "common/TrinityError.h"
 
 #include "blosc/blosc/blosc.h"
 
@@ -13,22 +13,32 @@
 
 using namespace trinity;
 
-JsonReader::JsonReader(const std::string& json) {
+mocca::net::MessagePart trinity::BinaryNullReader::read(mocca::net::MessagePart part) {
+    return part;
+}
+
+mocca::net::MessagePart trinity::BinaryDecompressReader::read(mocca::net::MessagePart part) {
+    size_t uncompressedSize, compressedSize, blockSize;
+    blosc_cbuffer_sizes(part->data(), &uncompressedSize, &compressedSize, &blockSize);
+    auto uncompressed = MemBlockPool::instance().get(uncompressedSize);
+    uncompressed->resize(uncompressedSize);
+    blosc_decompress_ctx(part->data(), uncompressed->data(), uncompressedSize, 5);
+    return uncompressed;
+}
+
+JsonReader::JsonReader(const std::string& json)
+    : m_binaryReader(mocca::make_unique<BinaryNullReader>()) {
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {
         throw TrinityError("Error parsing JSON: " + reader.getFormattedErrorMessages(), __FILE__, __LINE__);
     }
 }
 
-JsonReader::JsonReader(const mocca::net::Message& message) {
+JsonReader::JsonReader(const mocca::net::Message& message, std::unique_ptr<BinaryReader> binaryReader)
+    : m_binaryReader(std::move(binaryReader)) {
     std::string json(reinterpret_cast<const char*>(message[0]->data()), message[0]->size());
     for (unsigned int i = 1; i < message.size(); ++i) {
-        size_t uncompressedSize, compressedSize, blockSize;
-        blosc_cbuffer_sizes(message[i]->data(), &uncompressedSize, &compressedSize, &blockSize);
-        auto uncompressed = MemBlockPool::instance().get(uncompressedSize);
-        uncompressed->resize(uncompressedSize);
-        blosc_decompress_ctx(message[i]->data(), uncompressed->data(), uncompressedSize, 5);
-        m_binary.push_back(uncompressed);
+        m_binary.push_back(m_binaryReader->read(message[i]));
     }
     JsonCpp::Reader reader;
     if (!reader.parse(json, m_root)) {

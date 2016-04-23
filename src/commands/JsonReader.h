@@ -8,11 +8,25 @@
 
 namespace trinity {
 
+class BinaryReader {
+public:
+    virtual mocca::net::MessagePart read(mocca::net::MessagePart part) = 0;
+};
+
+class BinaryNullReader : public BinaryReader {
+public:
+    mocca::net::MessagePart read(mocca::net::MessagePart part) override;
+};
+
+class BinaryDecompressReader : public BinaryReader {
+public:
+    mocca::net::MessagePart read(mocca::net::MessagePart part) override;
+};
+
 class JsonReader : public ISerialReader {
 public:
-
     JsonReader(const std::string& json);
-    JsonReader(const mocca::net::Message& message);
+    JsonReader(const mocca::net::Message& message, std::unique_ptr<BinaryReader> binaryReader);
 
     float getFloat(const std::string& key) const override;
     double getDouble(const std::string& key) const override;
@@ -32,15 +46,17 @@ public:
     std::vector<std::string> getStringVec(const std::string& key) const override;
 
     SharedDataVec getBinary() const override;
-    
+
 private:
     JsonReader(const JsonCpp::Value& root, SharedDataVec binary);
 
     void getSerializableImpl(const std::string& key, ISerializable& prototype) const override;
-    std::vector<std::unique_ptr<ISerializable>> getSerializableVecImpl(const std::string& key, const ISerializable& prototype) const override;
+    std::vector<std::unique_ptr<ISerializable>> getSerializableVecImpl(const std::string& key,
+                                                                       const ISerializable& prototype) const override;
 
 private:
     JsonCpp::Value m_root;
     SharedDataVec m_binary;
+    std::unique_ptr<BinaryReader> m_binaryReader;
 };
 }

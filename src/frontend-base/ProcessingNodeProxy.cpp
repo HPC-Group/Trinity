@@ -9,7 +9,7 @@
 using namespace trinity;
 
 ProcessingNodeProxy::ProcessingNodeProxy(const mocca::net::Endpoint& ep)
-    : m_inputChannel(ep) {
+    : m_inputChannel(ep, CompressionMode::Uncompressed) {
     LINFO("(f) creating processing node proxy for " + ep.toString());
     if (!connectInputChannel(m_inputChannel)) {
         throw TrinityError("Error connecting to processing node", __FILE__, __LINE__);

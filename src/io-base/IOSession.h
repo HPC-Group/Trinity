@@ -18,7 +18,7 @@
 namespace trinity {
 class IOSession : public AbstractSession {
 public:
-    IOSession(const std::string& protocol, std::unique_ptr<IIO> io);
+    IOSession(const std::string& protocol, CompressionMode compressionMode, std::unique_ptr<IIO> io);
 
     const IIO& getIO() const { return *m_io; }
     

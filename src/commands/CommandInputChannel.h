@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/Enums.h"
 #include "commands/Reply.h"
 #include "commands/Request.h"
 #include "common/NetConfig.h"
@@ -11,7 +12,7 @@ namespace trinity {
 class CommandInputChannel {
 
 public:
-    CommandInputChannel(const mocca::net::Endpoint& endpoint);
+    CommandInputChannel(const mocca::net::Endpoint& endpoint, CompressionMode compressionMode);
 
     bool connect() const;
     void sendRequest(const Request& request) const;
@@ -20,6 +21,7 @@ public:
 
 private:
     mocca::net::Endpoint m_endpoint;
+    CompressionMode m_compressionMode;
     mutable std::unique_ptr<mocca::net::IMessageConnection> m_mainChannel;
 };
 }

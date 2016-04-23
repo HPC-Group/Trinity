@@ -1,12 +1,13 @@
 #include "processing-base/ProcessingNode.h"
 
-#include "mocca/net/NetworkError.h"
 #include "mocca/log/LogManager.h"
+#include "mocca/net/NetworkError.h"
 
 using namespace trinity;
 
-ProcessingNode::ProcessingNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, AbstractNode::ExecutionMode executionMode)
-    : AbstractNode(std::move(aggregator), executionMode) {}
+ProcessingNode::ProcessingNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, AbstractNode::ExecutionMode executionMode,
+                               CompressionMode compressionMode)
+    : AbstractNode(std::move(aggregator), executionMode, compressionMode) {}
 
 ProcessingNode::~ProcessingNode() {
     join();
@@ -36,12 +37,10 @@ void ProcessingNode::handleSessionErrors() {
         try {
             (*it)->rethrowException();
             ++it;
-        }
-        catch (const mocca::net::NetworkError& err) {
+        } catch (const mocca::net::NetworkError& err) {
             LWARNING("(p) session terminated because of a network error: " << err.what());
             it = m_sessions.erase(it);
-        }
-        catch (...) {
+        } catch (...) {
             LDEBUG("(p) error in session detected");
             setException(std::current_exception());
         }

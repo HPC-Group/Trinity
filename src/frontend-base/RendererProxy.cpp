@@ -11,7 +11,7 @@ using namespace trinity;
 RendererProxy::RendererProxy(std::shared_ptr<VisStream> s, mocca::net::Endpoint controlEndpoint, mocca::net::Endpoint visEndpoint,
                              unsigned int sid)
     : IRenderer(s)
-    , m_inputChannel(controlEndpoint)
+    , m_inputChannel(controlEndpoint, CompressionMode::Uncompressed)
     , m_visReceiver(std::move(visEndpoint), s)
     , m_remoteSid(sid) {
     if (!connectInputChannel(m_inputChannel)) {

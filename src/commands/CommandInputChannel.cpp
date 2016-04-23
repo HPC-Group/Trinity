@@ -10,8 +10,8 @@
 
 using namespace trinity;
 
-CommandInputChannel::CommandInputChannel(const mocca::net::Endpoint& endpoint)
-    : m_endpoint(endpoint) {}
+CommandInputChannel::CommandInputChannel(const mocca::net::Endpoint& endpoint, CompressionMode compressionMode)
+    : m_endpoint(endpoint), m_compressionMode(compressionMode) {}
 
 bool CommandInputChannel::connect() const {
     try {
@@ -29,7 +29,7 @@ void CommandInputChannel::sendRequest(const Request& request) const {
     if (!m_mainChannel)
         throw TrinityError("(chn) cannot send command: channel not connected", __FILE__, __LINE__);
     try {
-        m_mainChannel->send(Request::createMessage(request));
+        m_mainChannel->send(Request::createMessage(request, m_compressionMode));
     } catch (const mocca::net::NetworkError& err) {
         LERROR("(chn) cannot send request: " << err.what());
     }
@@ -44,5 +44,5 @@ std::unique_ptr<Reply> CommandInputChannel::getReply() const {
     if (serialReply.empty()) {
         throw TrinityError("(chn) no reply arrived", __FILE__, __LINE__);
     }
-    return Reply::createFromMessage(serialReply);
+    return Reply::createFromMessage(serialReply, m_compressionMode);
 }

@@ -10,7 +10,7 @@
 using namespace trinity;
 
 IONodeProxy::IONodeProxy(const mocca::net::Endpoint& ep)
-    : m_inputChannel(ep) {
+    : m_inputChannel(ep, CompressionMode::Uncompressed) {
     if (!connectInputChannel(m_inputChannel)) {
         throw TrinityError("Error connecting to IO node", __FILE__, __LINE__);
     }
@@ -19,6 +19,7 @@ IONodeProxy::IONodeProxy(const mocca::net::Endpoint& ep)
 std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(const std::string& fileId, bool useLoopback) {
     std::string protocol = useLoopback ? trinity::ioLoopbackEndpoint().protocol : m_inputChannel.getEndpoint().protocol;
     std::string machine = useLoopback ? trinity::ioLoopbackEndpoint().machine : m_inputChannel.getEndpoint().machine;
+    auto compressionMode = useLoopback ? CompressionMode::Uncompressed : CompressionMode::Compressed;
 
     InitIOSessionCmd::RequestParams params(protocol, fileId);
     InitIOSessionRequest request(params, IDGenerator::nextID(), 0);
@@ -28,7 +29,7 @@ std::unique_ptr<IOSessionProxy> IONodeProxy::initIO(const std::string& fileId, b
     // BIG TODO HERE!!!
     mocca::net::Endpoint controlEndpoint(protocol, machine, reply->getParams().getControlPort());   
 
-    return mocca::make_unique<IOSessionProxy>(reply->getSid(), controlEndpoint);
+    return mocca::make_unique<IOSessionProxy>(reply->getSid(), controlEndpoint, compressionMode);
 }
 
 std::vector<IOData> IONodeProxy::listFiles(const std::string& dirID) const {

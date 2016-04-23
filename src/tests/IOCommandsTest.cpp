@@ -18,14 +18,15 @@
 using namespace trinity;
 using namespace ::testing;
 
-
 class IOCommandsTest : public ::testing::Test {
 protected:
     IOCommandsTest() { mocca::net::ConnectionFactorySelector::addDefaultFactories(); }
 
     virtual ~IOCommandsTest() { mocca::net::ConnectionFactorySelector::removeAll(); }
 
-    std::unique_ptr<IOSession> createMockSession() { return mocca::make_unique<IOSession>("loopback", mocca::make_unique<IOMock>()); }
+    std::unique_ptr<IOSession> createMockSession() {
+        return mocca::make_unique<IOSession>("loopback", CompressionMode::Uncompressed, mocca::make_unique<IOMock>());
+    }
 };
 
 TEST_F(IOCommandsTest, InitIOSessionCmd) {

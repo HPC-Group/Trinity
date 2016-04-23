@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/Enums.h"
 #include "commands/ICommandHandler.h"
 #include "commands/Request.h"
 
@@ -16,7 +17,7 @@ public:
     // Indicates if IO node and processing node are executed combined in the same process or in separate processes
     enum class ExecutionMode { Separate, Combined };
 
-    AbstractNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, ExecutionMode executionMode);
+    AbstractNode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, ExecutionMode executionMode, CompressionMode compressionMode);
     ~AbstractNode();
 
     ExecutionMode executionMode() const;
@@ -31,5 +32,6 @@ private:
 private:
     std::unique_ptr<mocca::net::ConnectionAggregator> m_aggregator;
     ExecutionMode m_executionMode;
+    CompressionMode m_compressionMode;
 };
 }

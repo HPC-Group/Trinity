@@ -6,9 +6,24 @@
 
 namespace trinity {
 
+class BinaryWriter {
+public:
+    virtual mocca::net::MessagePart write(mocca::net::MessagePart part) = 0;
+};
+
+class BinaryNullWriter : public BinaryWriter {
+public:
+    mocca::net::MessagePart write(mocca::net::MessagePart part) override;
+};
+
+class BinaryCompressWriter : public BinaryWriter {
+public:
+    mocca::net::MessagePart write(mocca::net::MessagePart part) override;
+};
+
 class JsonWriter : public ISerialWriter {
 public:
-    JsonWriter();
+    JsonWriter(std::unique_ptr<BinaryWriter> binaryWriter);
 
     void appendFloat(const std::string& key, float value) override;
     void appendDouble(const std::string& key, double value) override;
@@ -67,5 +82,6 @@ private:
 private:
     JsonCpp::Value m_root;
     std::shared_ptr<SharedDataVec> m_binary;
+    std::unique_ptr<BinaryWriter> m_binaryWriter;
 };
 }

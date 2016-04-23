@@ -11,8 +11,8 @@
 
 using namespace trinity;
 
-IOSession::IOSession(const std::string& protocol, std::unique_ptr<IIO> io)
-    : AbstractSession(protocol), m_io(std::move(io)) {
+IOSession::IOSession(const std::string& protocol, CompressionMode compressionMode, std::unique_ptr<IIO> io)
+    : AbstractSession(protocol, compressionMode), m_io(std::move(io)) {
 }
 
 std::unique_ptr<ICommandHandler> IOSession::createHandler(const Request& request) {

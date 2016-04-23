@@ -21,9 +21,9 @@ TEST_F(RequestTest, GetType) {
 TEST_F(RequestTest, Serialization) {
     SetIsoValueCmd::RequestParams requestParams(2, 3.14f);
     SetIsoValueRequest request(requestParams, 0, 0);
-    auto serialized = Request::createMessage(request);
+    auto serialized = Request::createMessage(request, CompressionMode::Uncompressed);
 
-    auto result = Request::createFromMessage(serialized);
+    auto result = Request::createFromMessage(serialized, CompressionMode::Uncompressed);
     auto castedResult = dynamic_cast<SetIsoValueRequest*>(result.get());
     ASSERT_TRUE(castedResult != nullptr);
     ASSERT_EQ(3.14f, castedResult->getParams().getIsoValue());
@@ -36,9 +36,9 @@ TEST_F(RequestTest, GetBrickWithMessage) {
     binary->push_back(0xCC);
     GetBrickCmd::ReplyParams replyParams(binary, true);
     GetBrickReply reply(replyParams, 0, 0);
-    auto serialized = Reply::createMessage(reply);
+    auto serialized = Reply::createMessage(reply, CompressionMode::Uncompressed);
 
-    auto result = Reply::createFromMessage(serialized);
+    auto result = Reply::createFromMessage(serialized, CompressionMode::Uncompressed);
     auto castedResult = dynamic_cast<GetBrickReply*>(result.get());
     ASSERT_TRUE(castedResult != nullptr);
     ASSERT_EQ(true, castedResult->getParams().getSuccess());

@@ -1,14 +1,25 @@
 #include "commands/JsonWriter.h"
 
-#include "common/MemBlockPool.h"
 #include "commands/ISerializable.h"
+#include "common/MemBlockPool.h"
 
 #include "blosc/blosc/blosc.h"
 
 using namespace trinity;
 
-JsonWriter::JsonWriter()
-    : m_binary(std::make_shared<SharedDataVec>()) {}
+mocca::net::MessagePart trinity::BinaryNullWriter::write(mocca::net::MessagePart part) {
+    return part;
+}
+
+mocca::net::MessagePart trinity::BinaryCompressWriter::write(mocca::net::MessagePart part) {
+    auto compressed = MemBlockPool::instance().get(part->size() + BLOSC_MAX_OVERHEAD);
+    compressed->resize(part->size() + BLOSC_MAX_OVERHEAD);
+    blosc_compress_ctx(4, 1, 16, part->size(), part->data(), compressed->data(), compressed->size(), "blosclz", 0, 6);
+    return compressed;
+}
+
+JsonWriter::JsonWriter(std::unique_ptr<BinaryWriter> binaryWriter)
+    : m_binary(std::make_shared<SharedDataVec>()), m_binaryWriter(std::move(binaryWriter)) {}
 
 JsonWriter::JsonWriter(std::shared_ptr<SharedDataVec> binary)
     : m_binary(binary) {}
@@ -100,7 +111,7 @@ void JsonWriter::appendStringVec(const std::string& key, const std::vector<std::
 void JsonWriter::appendObjectVec(const std::string& key, const std::vector<ISerializable*>& vec) {
     m_root[key] = JsonCpp::Value(JsonCpp::arrayValue);
     for (uint32_t i = 0; i < vec.size(); ++i) {
-        JsonWriter subObject;
+        JsonWriter subObject(m_binary);
         vec[i]->serialize(subObject);
         m_root[key][i] = subObject.m_root;
     }
@@ -119,10 +130,7 @@ mocca::net::Message JsonWriter::writeMessage() const {
     mocca::net::Message message;
     message.push_back(jsonData);
     for (auto& sharedData : *m_binary) {
-        auto compressed = MemBlockPool::instance().get(sharedData->size() + BLOSC_MAX_OVERHEAD);
-        compressed->resize(sharedData->size() + BLOSC_MAX_OVERHEAD);
-        auto resSize = blosc_compress_ctx(4, 1, 16, sharedData->size(), sharedData->data(), compressed->data(), compressed->size(), "blosclz", 0, 6);
-        message.push_back(compressed);
+        message.push_back(m_binaryWriter->write(sharedData));
     }
     return message;
 }

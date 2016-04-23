@@ -13,7 +13,7 @@ namespace trinity {
 class IOSessionProxy : public IIO {
 
 public:
-    IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint);
+    IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint, CompressionMode compressionMode);
     Core::Math::Vec3ui64 getMaxBrickSize() const override;
     Core::Math::Vec3ui64 getMaxUsedBrickSizes() const override;
     uint64_t getLODLevelCount(uint64_t modality) const override;

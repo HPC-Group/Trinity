@@ -10,8 +10,8 @@
 
 using namespace trinity;
 
-IOSessionProxy::IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint)
-    : m_inputChannel(ioEndpoint)
+IOSessionProxy::IOSessionProxy(const int remoteSid, const mocca::net::Endpoint& ioEndpoint, CompressionMode compressionMode)
+    : m_inputChannel(ioEndpoint, compressionMode)
     , m_remoteSid(remoteSid) {
     if (!connectInputChannel(m_inputChannel)) {
         throw TrinityError("Error connecting to IO session", __FILE__, __LINE__);

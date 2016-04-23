@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/Enums.h"
 #include "commands/ISerialReader.h"
 #include "commands/ISerialWriter.h"
 #include "commands/ISerializable.h"
@@ -28,8 +29,8 @@ public:
     int getRid() const { return m_rid; }
     int getSid() const { return m_sid; }
 
-    static std::unique_ptr<Request> createFromMessage(const mocca::net::Message& message);
-    static mocca::net::Message createMessage(const Request& request);
+    static std::unique_ptr<Request> createFromMessage(const mocca::net::Message& message, CompressionMode compressionMode);
+    static mocca::net::Message createMessage(const Request& request, CompressionMode compressionMode);
 
 private:
     static std::unique_ptr<Request> createRequestInternal(const ISerialReader& reader);
