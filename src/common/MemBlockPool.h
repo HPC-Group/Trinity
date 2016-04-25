@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <mutex>
 
 class MemBlockPool {
 public:
@@ -19,4 +20,6 @@ private:
 
 private:
     std::vector<std::unique_ptr<std::vector<uint8_t>>> m_pool;
+    std::vector<size_t> m_capacities;
+    std::mutex m_mutex;
 };
