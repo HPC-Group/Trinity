@@ -7,6 +7,7 @@
 #include "io-base/IOSession.h"
 
 #include "mocca/base/Memory.h"
+#include "mocca/net/ConnectionFactorySelector.h"
 
 using namespace trinity;
 
@@ -21,7 +22,10 @@ std::unique_ptr<Reply> InitIOSessionHdl::execute() {
 
     auto requestParams = m_request.getParams();
 
-    auto compressionMode = m_node->executionMode() == AbstractNode::ExecutionMode::Separate ? CompressionMode::Compressed : CompressionMode::Uncompressed;
+    auto compressionMode = m_node->executionMode() == AbstractNode::ExecutionMode::Combined &&
+                                   requestParams.getProtocol() == mocca::net::ConnectionFactorySelector::loopback()
+                               ? CompressionMode::Uncompressed
+                               : CompressionMode::Compressed;
     auto fileID = requestParams.getFileId();
     auto& listData = m_node->getListDataForID(fileID);
     auto session = mocca::make_unique<IOSession>(requestParams.getProtocol(), compressionMode, listData.createIO(fileID));
