@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>connectionSettings</class>
- <widget class="QWidget" name="connectionSettings">
+ <class>ConnectionWidget</class>
+ <widget class="QWidget" name="ConnectionWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -495,7 +495,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="io_hostname">
+          <widget class="QLineEdit" name="hostnameIO">
            <property name="text">
             <string>192.168.0.1</string>
            </property>
@@ -509,7 +509,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           </widget>
          </item>
          <item row="0" column="3">
-          <widget class="QLineEdit" name="io_port">
+          <widget class="QLineEdit" name="portIO">
            <property name="text">
             <string>6678</string>
            </property>
@@ -519,7 +519,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="io_connect">
+       <widget class="QPushButton" name="connectIO">
         <property name="text">
          <string>browse</string>
         </property>
@@ -542,7 +542,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="3" column="0">
-       <widget class="QPushButton" name="proc_connect">
+       <widget class="QPushButton" name="connectProc">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -583,7 +583,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="proc_hostname">
+          <widget class="QLineEdit" name="hostnameProc">
            <property name="text">
             <string>192.168.0.1</string>
            </property>
@@ -597,7 +597,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="proc_port">
+          <widget class="QLineEdit" name="portProc">
            <property name="text">
             <string>8678</string>
            </property>
@@ -638,10 +638,10 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="proc_width"/>
+          <widget class="QLineEdit" name="widthProc"/>
          </item>
          <item>
-          <widget class="QLineEdit" name="proc_height"/>
+          <widget class="QLineEdit" name="heightProc"/>
          </item>
         </layout>
        </widget>

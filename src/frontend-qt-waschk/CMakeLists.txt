@@ -5,7 +5,6 @@ file(GLOB TRINITYDEMOFRONTEND_HEADER ${CMAKE_CURRENT_LIST_DIR}/*.h)
 CreateSourceGroups("${TRINITYDEMOFRONTEND_HEADER}" ${CMAKE_CURRENT_LIST_DIR})
 CreateSourceGroups("${TRINITYDEMOFRONTEND_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
 
-
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
@@ -15,8 +14,8 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)  
 find_package(OpenGL REQUIRED)
 
-QT5_WRAP_UI(UIS_HDRS mainwindow.ui)
-QT5_WRAP_UI(UIS_HDRS connectionsettings.ui)
+QT5_WRAP_UI(UIS_HDRS MainWindow.ui)
+QT5_WRAP_UI(UIS_HDRS ConnectionWidget.ui)
 
 add_executable(frontend-qt-waschk 
 			${TRINITYDEMOFRONTEND_SOURCE} 
@@ -27,7 +26,7 @@ add_executable(frontend-qt-waschk
 			$<TARGET_OBJECTS:commands>
 			$<TARGET_OBJECTS:silverbullet>
 			$<TARGET_OBJECTS:frontendbaselib>
-		    	$<TARGET_OBJECTS:jsoncpp>
+		    $<TARGET_OBJECTS:jsoncpp>
 		   	$<TARGET_OBJECTS:tripeg>
 			$<TARGET_OBJECTS:opengl-base>)
 

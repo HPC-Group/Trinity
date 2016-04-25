@@ -1,5 +1,4 @@
-#ifndef OPENGLWIDGET_H
-#define OPENGLWIDGET_H
+#pragma once
 
 #include <QOpenGLBuffer>
 #include <QOpenGLFunctions>
@@ -30,5 +29,3 @@ private:
     QOpenGLShaderProgram* m_program;
     QOpenGLBuffer m_vbo;
 };
-
-#endif // OPENGLWIDGET_H

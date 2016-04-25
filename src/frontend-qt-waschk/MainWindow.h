@@ -1,12 +1,12 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QMainWindow>
-#include <memory>
-
-#include "connectionsettings.h"
+#pragma once
 
 #include "frontend-base/ProcessingNodeProxy.h"
+
+#include "ConnectionWidget.h"
+
+#include <QMainWindow>
+
+#include <memory>
 
 namespace Ui {
 class MainWindow;
@@ -36,10 +36,8 @@ private slots:
 
 private:
     Ui::MainWindow* m_ui;
-    std::unique_ptr<connectionSettings> m_settings;
+    std::unique_ptr<ConnectionWidget> m_settings;
     int m_mousePosX;
     int m_mousePosY;
     uint64_t m_iCurrent1DIndex;
 };
-
-#endif // MAINWINDOW_H

@@ -57,7 +57,7 @@ void MainWindow::update() {
 }
 
 void MainWindow::on_actionTrinity_triggered() {
-    m_settings = mocca::make_unique<connectionSettings>(m_ui->openGLWidget->width(), m_ui->openGLWidget->height(), this);
+    m_settings = mocca::make_unique<ConnectionWidget>(m_ui->openGLWidget->width(), m_ui->openGLWidget->height(), this);
 }
 
 void MainWindow::on_actionPrev_triggered() {
