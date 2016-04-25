@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Connections.h"
+
 #include <QWidget>
 
 #include <string>
@@ -13,15 +15,16 @@ class ConnectionWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit ConnectionWidget(unsigned int glWidth = 800, unsigned int glHeight = 600, QWidget* parent = 0);
+    explicit ConnectionWidget(unsigned int glWidth, unsigned int glHeight, Connections& connections, QWidget* parent = 0);
     ~ConnectionWidget();
 
 private slots:
-    void on_io_connect_clicked();
-    void on_proc_connect_clicked();
+    void on_connectProc_clicked();
+    void on_connectIO_clicked();
 
     void enableWidgets();
 
 private:
     Ui::ConnectionWidget* m_ui;
+    Connections& m_connections;
 };

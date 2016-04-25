@@ -6,13 +6,10 @@
 #include "common/IONodeProxy.h"
 #include "frontend-base/ProcessingNodeProxy.h"
 
-class ConnectionSingleton {
+class Connections {
 public:
-    static ConnectionSingleton& getInstance() {
-        static ConnectionSingleton instance;
-        return instance;
-    }
-
+    Connections();
+    
     trinity::IONodeProxy* ioNode();
     trinity::ProcessingNodeProxy& processingNode();
     trinity::RendererProxy& renderer();
@@ -29,9 +26,6 @@ public:
     void setRendererType(const trinity::VclType& renderer);
 
     void reset();
-
-private:
-    ConnectionSingleton();
 
 private:
     std::unique_ptr<trinity::ProcessingNodeProxy> m_processingNode;

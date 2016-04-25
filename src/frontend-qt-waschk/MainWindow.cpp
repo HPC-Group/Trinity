@@ -1,18 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <iostream>
+
+#include "commands/Vcl.h"
+#include "common/TrinityError.h"
+
+#include "mocca/log/LogManager.h"
+#include "mocca/net/NetworkError.h"
 
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QTimer>
 #include <QWheelEvent>
 
-#include "mocca/log/LogManager.h"
-#include "mocca/net/NetworkError.h"
-
-#include "commands/Vcl.h"
-#include "common/TrinityError.h"
-#include "connectionSinglton.h"
+#include <iostream>
 
 using namespace std;
 using namespace mocca::net;
@@ -37,11 +37,11 @@ MainWindow::~MainWindow() {
 
 static float rot = 0.0f;
 void MainWindow::update() {
-    if (!ConnectionSingleton::getInstance().isReady()) {
+    if (!m_connections.isReady()) {
         return;
     }
 
-    auto& renderer = ConnectionSingleton::getInstance().renderer();
+    auto& renderer = m_connections.renderer();
     try {
         auto frame = renderer.getVisStream()->get();
         if (!frame.empty()) {
@@ -52,16 +52,16 @@ void MainWindow::update() {
         renderer.proceedRendering();
     } catch (const mocca::net::ConnectionClosedError&) {
         QMessageBox::warning(this, "Connection Closed", "Connection to processing node has been lost.");
-        ConnectionSingleton::getInstance().reset();
+        m_connections.reset();
     }
 }
 
 void MainWindow::on_actionTrinity_triggered() {
-    m_settings = mocca::make_unique<ConnectionWidget>(m_ui->openGLWidget->width(), m_ui->openGLWidget->height(), this);
+    m_settings = mocca::make_unique<ConnectionWidget>(m_ui->openGLWidget->width(), m_ui->openGLWidget->height(), m_connections, this);
 }
 
 void MainWindow::on_actionPrev_triggered() {
-    auto& renderer = ConnectionSingleton::getInstance().renderer();
+    auto& renderer = m_connections.renderer();
     const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount() - 1;
     if (m_iCurrent1DIndex > 0) {
         m_iCurrent1DIndex--;
@@ -73,7 +73,7 @@ void MainWindow::on_actionPrev_triggered() {
 }
 
 void MainWindow::on_actionNext_triggered() {
-    auto& renderer = ConnectionSingleton::getInstance().renderer();
+    auto& renderer = m_connections.renderer();
     const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount() - 1;
     if (m_iCurrent1DIndex < maxIndex)
         m_iCurrent1DIndex++;
@@ -84,13 +84,13 @@ void MainWindow::on_actionNext_triggered() {
 }
 
 void MainWindow::wheelEvent(QWheelEvent* event) {
-    if (!ConnectionSingleton::getInstance().isReady()) {
+    if (!m_connections.isReady()) {
         return;
     }
 
     static float isoValue = 0;
     isoValue += event->delta() / 2400.f;
-    auto& renderer = ConnectionSingleton::getInstance().renderer();
+    auto& renderer = m_connections.renderer();
     renderer.setIsoValue(0, isoValue);
 }
 
@@ -100,7 +100,7 @@ void MainWindow::mousePressEvent(QMouseEvent* event) {
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event) {
-    if (!ConnectionSingleton::getInstance().isReady()) {
+    if (!m_connections.isReady()) {
         return;
     }
 
@@ -108,11 +108,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     float deltaY = (m_mousePosY - event->localPos().y()) / 200.f;
     if (event->buttons() & Qt::RightButton) {
         Core::Math::Vec3f vec(-deltaX, deltaY, .0f);
-        auto& renderer = ConnectionSingleton::getInstance().renderer();
+        auto& renderer = m_connections.renderer();
         renderer.moveCamera(vec);
     } else if (event->buttons() & Qt::LeftButton) {
         Core::Math::Vec3f vec(-deltaY, -deltaX, .0f);
-        auto& renderer = ConnectionSingleton::getInstance().renderer();
+        auto& renderer = m_connections.renderer();
         renderer.rotateScene(vec);
     }
     m_mousePosX = event->localPos().x();
@@ -120,11 +120,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void MainWindow::on_actionToggleRenderer_triggered() {
-    if (ConnectionSingleton::getInstance().getRendererType() == trinity::VclType::SimpleRenderer) {
-        ConnectionSingelton.setRendererType(trinity::VclType::GridLeapingRenderer);
+    if (m_connections.getRendererType() == trinity::VclType::SimpleRenderer) {
+        m_connections.setRendererType(trinity::VclType::GridLeapingRenderer);
         m_ui->actionToggleRenderer->setText(QString("current renderer : GridLeaper"));
     } else {
-        ConnectionSingelton.setRendererType(trinity::VclType::SimpleRenderer);
+        m_connections.setRendererType(trinity::VclType::SimpleRenderer);
         m_ui->actionToggleRenderer->setText(QString("current renderer : SimpleRenderer"));
     }
 }

@@ -3,6 +3,7 @@
 #include "frontend-base/ProcessingNodeProxy.h"
 
 #include "ConnectionWidget.h"
+#include "Connections.h"
 
 #include <QMainWindow>
 
@@ -25,17 +26,14 @@ public:
 
 private slots:
     void update();
-
     void on_actionTrinity_triggered();
-
     void on_actionPrev_triggered();
-
     void on_actionNext_triggered();
-
     void on_actionToggleRenderer_triggered();
 
 private:
     Ui::MainWindow* m_ui;
+    Connections m_connections;
     std::unique_ptr<ConnectionWidget> m_settings;
     int m_mousePosX;
     int m_mousePosY;
