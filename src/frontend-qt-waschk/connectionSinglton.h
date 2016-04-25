@@ -32,10 +32,10 @@ public:
 
 private:
     ConnectionSingleton();
-    ~ConnectionSingleton();
 
-    std::unique_ptr<trinity::ProcessingNodeProxy> _processingNode;
-    std::unique_ptr<trinity::IONodeProxy> _ioNode;
+private:
+    std::unique_ptr<trinity::ProcessingNodeProxy> m_processingNode;
+    std::unique_ptr<trinity::IONodeProxy> m_ioNode;
     std::unique_ptr<trinity::RendererProxy> m_renderer;
     bool m_initDone;
 

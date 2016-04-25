@@ -8,31 +8,32 @@
 
 OpenGLWidget::OpenGLWidget(QWidget* parent)
     : QOpenGLWidget(parent)
-    , texture(nullptr)
-    , program(nullptr) {}
+    , m_texture(nullptr)
+    , m_program(nullptr) {}
 
 void OpenGLWidget::setData(int width, int height, unsigned char* data) {
-    if (!data)
+    if (!data) {
         return;
-
-    if (texture == 0 || width != texture->width() || height != texture->height()) {
-        texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
-        texture->create();
-        texture->setSize(width, height);
-        texture->setFormat(QOpenGLTexture::RGBA8_UNorm);
-        texture->setMipLevels(1);
-        texture->allocateStorage();
-        texture->setWrapMode(QOpenGLTexture::ClampToEdge);
-        texture->setMinificationFilter(QOpenGLTexture::Linear);
-        texture->setMagnificationFilter(QOpenGLTexture::Linear);
     }
 
-    texture->setData(QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, data);
+    if (m_texture == 0 || width != m_texture->width() || height != m_texture->height()) {
+        m_texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
+        m_texture->create();
+        m_texture->setSize(width, height);
+        m_texture->setFormat(QOpenGLTexture::RGBA8_UNorm);
+        m_texture->setMipLevels(1);
+        m_texture->allocateStorage();
+        m_texture->setWrapMode(QOpenGLTexture::ClampToEdge);
+        m_texture->setMinificationFilter(QOpenGLTexture::Linear);
+        m_texture->setMagnificationFilter(QOpenGLTexture::Linear);
+    }
+
+    m_texture->setData(QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, data);
 }
 
 OpenGLWidget::~OpenGLWidget() {
-    delete texture;
-    delete program;
+    delete m_texture;
+    delete m_program;
 }
 
 void OpenGLWidget::createShaderProgram() {
@@ -57,19 +58,19 @@ void OpenGLWidget::createShaderProgram() {
                        "}\n";
     fshader->compileSourceCode(fsrc);
 
-    program = new QOpenGLShaderProgram;
-    program->addShader(vshader);
-    program->addShader(fshader);
-    program->bindAttributeLocation("vertex", PROGRAM_VERTEX_ATTRIBUTE);
-    program->bindAttributeLocation("texCoord", PROGRAM_TEXCOORD_ATTRIBUTE);
-    program->link();
+    m_program = new QOpenGLShaderProgram;
+    m_program->addShader(vshader);
+    m_program->addShader(fshader);
+    m_program->bindAttributeLocation("vertex", PROGRAM_VERTEX_ATTRIBUTE);
+    m_program->bindAttributeLocation("texCoord", PROGRAM_TEXCOORD_ATTRIBUTE);
+    m_program->link();
 
-    program->bind();
-    program->setUniformValue("texture", 0);
-    program->enableAttributeArray(PROGRAM_VERTEX_ATTRIBUTE);
-    program->enableAttributeArray(PROGRAM_TEXCOORD_ATTRIBUTE);
-    program->setAttributeBuffer(PROGRAM_VERTEX_ATTRIBUTE, GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
-    program->setAttributeBuffer(PROGRAM_TEXCOORD_ATTRIBUTE, GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
+    m_program->bind();
+    m_program->setUniformValue("texture", 0);
+    m_program->enableAttributeArray(PROGRAM_VERTEX_ATTRIBUTE);
+    m_program->enableAttributeArray(PROGRAM_TEXCOORD_ATTRIBUTE);
+    m_program->setAttributeBuffer(PROGRAM_VERTEX_ATTRIBUTE, GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
+    m_program->setAttributeBuffer(PROGRAM_TEXCOORD_ATTRIBUTE, GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
 }
 
 void OpenGLWidget::createVBO() {
@@ -90,9 +91,9 @@ void OpenGLWidget::createVBO() {
         vertData.append(texCoord[i][1]);
     }
 
-    vbo.create();
-    vbo.bind();
-    vbo.allocate(vertData.constData(), vertData.count() * sizeof(GLfloat));
+    m_vbo.create();
+    m_vbo.bind();
+    m_vbo.allocate(vertData.constData(), vertData.count() * sizeof(GLfloat));
 }
 
 void OpenGLWidget::initializeGL() {
@@ -106,8 +107,8 @@ void OpenGLWidget::initializeGL() {
 void OpenGLWidget::paintGL() {
     // devicePixelRatio is needed for retina displays
     glViewport(0, 0, this->width() * devicePixelRatio(), this->height() * devicePixelRatio());
-    if (texture) {
-        texture->bind(0);
+    if (m_texture) {
+        m_texture->bind(0);
         glDrawArrays(GL_TRIANGLES, 0, 3);
     } else {
         glClearColor(0, 0, 0, 1);

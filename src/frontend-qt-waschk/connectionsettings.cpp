@@ -11,23 +11,23 @@
 
 connectionSettings::connectionSettings(unsigned int glWidth, unsigned int glHeight, QWidget* parent)
     : QWidget(parent)
-    , ui(new Ui::connectionSettings) {
-    ui->setupUi(this);
+    , m_ui(new Ui::connectionSettings) {
+    m_ui->setupUi(this);
     show();
 
-    ui->proc_width->setText(QString(std::to_string(glWidth).c_str()));
-    ui->proc_height->setText(QString(std::to_string(glHeight).c_str()));
+    m_ui->proc_width->setText(QString(std::to_string(glWidth).c_str()));
+    m_ui->proc_height->setText(QString(std::to_string(glHeight).c_str()));
 }
 
 connectionSettings::~connectionSettings() {
-    delete ui;
+    delete m_ui;
 }
 
 void connectionSettings::on_io_connect_clicked() {
     try {
-        ConnectionSingleton::getInstance().connectIO(ui->io_hostname->text().toStdString(), ui->io_port->text().toStdString());
-        ui->fileView->setModel(new IODataModel(*ConnectionSingleton::getInstance().ioNode(), this));
-        connect(ui->fileView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this,
+        ConnectionSingleton::getInstance().connectIO(m_ui->io_hostname->text().toStdString(), m_ui->io_port->text().toStdString());
+        m_ui->fileView->setModel(new IODataModel(*ConnectionSingleton::getInstance().ioNode(), this));
+        connect(m_ui->fileView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this,
                 SLOT(enableWidgets()));
     } catch (const std::runtime_error& err) {
         this->close();
@@ -37,12 +37,13 @@ void connectionSettings::on_io_connect_clicked() {
 
 void connectionSettings::on_proc_connect_clicked() {
     try {
-        ConnectionSingleton::getInstance().connectProcessing(ui->proc_hostname->text().toStdString(), ui->proc_port->text().toStdString());
+        ConnectionSingleton::getInstance().connectProcessing(m_ui->proc_hostname->text().toStdString(),
+                                                             m_ui->proc_port->text().toStdString());
 
-        std::string dataID = ui->fileView->currentIndex().data(Qt::UserRole + 1).value<trinity::IOData*>()->getFileId();
+        std::string dataID = m_ui->fileView->currentIndex().data(Qt::UserRole + 1).value<trinity::IOData*>()->getFileId();
 
-        ConnectionSingleton::getInstance().initRenderer(ui->io_hostname->text().toStdString(), ui->io_port->text().toStdString(),
-                                                        ui->proc_width->text().toInt(), ui->proc_height->text().toInt(), dataID);
+        ConnectionSingleton::getInstance().initRenderer(m_ui->io_hostname->text().toStdString(), m_ui->io_port->text().toStdString(),
+                                                        m_ui->proc_width->text().toInt(), m_ui->proc_height->text().toInt(), dataID);
 
         this->close();
     } catch (const std::runtime_error& err) {
@@ -52,8 +53,8 @@ void connectionSettings::on_proc_connect_clicked() {
 }
 
 void connectionSettings::enableWidgets() {
-    auto index = ui->fileView->currentIndex();
-    bool hasChildren = ui->fileView->model()->hasChildren(index);
+    auto index = m_ui->fileView->currentIndex();
+    bool hasChildren = m_ui->fileView->model()->hasChildren(index);
     auto ioData = index.data(Qt::UserRole + 1).value<trinity::IOData*>();
-    ui->proc_connect->setEnabled(io != nullptr && !hasChildren && ioData != nullptr);
+    m_ui->proc_connect->setEnabled(io != nullptr && !hasChildren && ioData != nullptr);
 }

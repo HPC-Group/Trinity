@@ -20,10 +20,10 @@ using namespace trinity;
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , settings(nullptr)
+    , m_ui(new Ui::MainWindow)
+    , m_settings(nullptr)
     , m_iCurrent1DIndex(0) {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
     this->setWindowTitle("Trinty Demo");
 
     QTimer* timer = new QTimer(this);
@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget* parent)
 }
 
 MainWindow::~MainWindow() {
-    delete ui;
+    delete m_ui;
 }
 
 static float rot = 0.0f;
@@ -45,9 +45,9 @@ void MainWindow::update() {
     try {
         auto frame = renderer.getVisStream()->get();
         if (!frame.empty()) {
-            ui->openGLWidget->setData(renderer.getVisStream()->getStreamingParams().getResX(),
-                                      renderer.getVisStream()->getStreamingParams().getResY(), frame.data());
-            ui->openGLWidget->repaint();
+            m_ui->openGLWidget->setData(renderer.getVisStream()->getStreamingParams().getResX(),
+                                        renderer.getVisStream()->getStreamingParams().getResY(), frame.data());
+            m_ui->openGLWidget->repaint();
         }
         renderer.proceedRendering();
     } catch (const mocca::net::ConnectionClosedError&) {
@@ -57,16 +57,17 @@ void MainWindow::update() {
 }
 
 void MainWindow::on_actionTrinity_triggered() {
-    settings = mocca::make_unique<connectionSettings>(ui->openGLWidget->width(), ui->openGLWidget->height(), this);
+    m_settings = mocca::make_unique<connectionSettings>(m_ui->openGLWidget->width(), m_ui->openGLWidget->height(), this);
 }
 
 void MainWindow::on_actionPrev_triggered() {
     auto& renderer = ConnectionSingleton::getInstance().renderer();
     const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount() - 1;
-    if (m_iCurrent1DIndex > 0)
+    if (m_iCurrent1DIndex > 0) {
         m_iCurrent1DIndex--;
-    else
+    } else {
         m_iCurrent1DIndex = maxIndex;
+    }
 
     renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
 }
@@ -121,9 +122,9 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
 void MainWindow::on_actionToggleRenderer_triggered() {
     if (ConnectionSingleton::getInstance().getRendererType() == trinity::VclType::SimpleRenderer) {
         ConnectionSingelton.setRendererType(trinity::VclType::GridLeapingRenderer);
-        ui->actionToggleRenderer->setText(QString("current renderer : GridLeaper"));
+        m_ui->actionToggleRenderer->setText(QString("current renderer : GridLeaper"));
     } else {
         ConnectionSingelton.setRendererType(trinity::VclType::SimpleRenderer);
-        ui->actionToggleRenderer->setText(QString("current renderer : SimpleRenderer"));
+        m_ui->actionToggleRenderer->setText(QString("current renderer : SimpleRenderer"));
     }
 }

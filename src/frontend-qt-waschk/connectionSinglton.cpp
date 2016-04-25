@@ -6,17 +6,11 @@ using namespace mocca::net;
 static int reconnectInSec = 5;
 
 ConnectionSingleton::ConnectionSingleton()
-    : _ioNode(nullptr)
-    , _processingNode(nullptr)
+    : m_ioNode(nullptr)
+    , m_processingNode(nullptr)
     , m_renderer(nullptr)
     , m_initDone(false)
     , m_rendererType(trinity::VclType::GridLeapingRenderer) {}
-
-ConnectionSingleton::~ConnectionSingleton() {
-    _ioNode = nullptr;
-    _processingNode = nullptr;
-    m_renderer = nullptr;
-}
 
 trinity::VclType ConnectionSingleton::getRendererType() const {
     return m_rendererType;
@@ -27,11 +21,11 @@ void ConnectionSingleton::setRendererType(const trinity::VclType& renderer) {
 }
 
 trinity::IONodeProxy* ConnectionSingleton::ioNode() {
-    return _ioNode.get();
+    return m_ioNode.get();
 }
 
 trinity::ProcessingNodeProxy& ConnectionSingleton::processingNode() {
-    return *_processingNode;
+    return *m_processingNode;
 }
 trinity::RendererProxy& ConnectionSingleton::renderer() {
     return *m_renderer;
@@ -40,14 +34,14 @@ trinity::RendererProxy& ConnectionSingleton::renderer() {
 void ConnectionSingleton::connectIO(const std::string& hostname, const std::string& port) {
     std::cout << hostname << " " << port << std::endl;
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), hostname, port);
-    _ioNode = std::unique_ptr<trinity::IONodeProxy>(new trinity::IONodeProxy(endpointIO));
+    m_ioNode = std::unique_ptr<trinity::IONodeProxy>(new trinity::IONodeProxy(endpointIO));
 }
 
 void ConnectionSingleton::connectProcessing(const std::string& hostname, const std::string& port) {
     std::cout << hostname << " " << port << std::endl;
     Endpoint endpoint(ConnectionFactorySelector::tcpPrefixed(), hostname, port);
 
-    _processingNode = std::unique_ptr<trinity::ProcessingNodeProxy>(new trinity::ProcessingNodeProxy(endpoint));
+    m_processingNode = std::unique_ptr<trinity::ProcessingNodeProxy>(new trinity::ProcessingNodeProxy(endpoint));
 }
 
 void ConnectionSingleton::initRenderer(const std::string& iohostname, const std::string& ioport, const uint32_t width,
@@ -56,7 +50,7 @@ void ConnectionSingleton::initRenderer(const std::string& iohostname, const std:
     trinity::StreamingParams params(width, height);
 
     Endpoint endpointIO(ConnectionFactorySelector::tcpPrefixed(), iohostname, ioport);
-    m_renderer = _processingNode->initRenderer(m_rendererType, fileId, endpointIO, params);
+    m_renderer = m_processingNode->initRenderer(m_rendererType, fileId, endpointIO, params);
     m_renderer->startRendering();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));

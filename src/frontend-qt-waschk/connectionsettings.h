@@ -23,7 +23,7 @@ private slots:
     void enableWidgets();
 
 private:
-    Ui::connectionSettings* ui;
+    Ui::connectionSettings* m_ui;
 };
 
 #endif // CONNECTIONSETTINGS_H
