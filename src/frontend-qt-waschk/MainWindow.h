@@ -3,7 +3,6 @@
 #include "frontend-base/ProcessingNodeProxy.h"
 
 #include "ConnectionWidget.h"
-#include "Connections.h"
 
 #include <QMainWindow>
 
@@ -32,9 +31,12 @@ private slots:
     void on_actionToggleRenderer_triggered();
 
 private:
+    void resetRenderer();
+
+private:
     Ui::MainWindow* m_ui;
-    Connections m_connections;
-    std::unique_ptr<ConnectionWidget> m_settings;
+    trinity::VclType m_rendererType;
+    std::unique_ptr<trinity::RendererProxy> m_renderer;
     int m_mousePosX;
     int m_mousePosY;
     uint64_t m_iCurrent1DIndex;

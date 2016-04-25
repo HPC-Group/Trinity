@@ -12,8 +12,6 @@
 #include <QTimer>
 #include <QWheelEvent>
 
-#include <iostream>
-
 using namespace std;
 using namespace mocca::net;
 using namespace trinity;
@@ -21,7 +19,7 @@ using namespace trinity;
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
-    , m_settings(nullptr)
+    , m_rendererType(VclType::GridLeapingRenderer)
     , m_iCurrent1DIndex(0) {
     m_ui->setupUi(this);
     this->setWindowTitle("Trinty Demo");
@@ -37,61 +35,64 @@ MainWindow::~MainWindow() {
 
 static float rot = 0.0f;
 void MainWindow::update() {
-    if (!m_connections.isReady()) {
+    if (!m_renderer) {
         return;
     }
 
-    auto& renderer = m_connections.renderer();
     try {
-        auto frame = renderer.getVisStream()->get();
+        auto frame = m_renderer->getVisStream()->get();
         if (!frame.empty()) {
-            m_ui->openGLWidget->setData(renderer.getVisStream()->getStreamingParams().getResX(),
-                                        renderer.getVisStream()->getStreamingParams().getResY(), frame.data());
+            m_ui->openGLWidget->setData(m_renderer->getVisStream()->getStreamingParams().getResX(),
+                                        m_renderer->getVisStream()->getStreamingParams().getResY(), frame.data());
             m_ui->openGLWidget->repaint();
         }
-        renderer.proceedRendering();
+        m_renderer->proceedRendering();
     } catch (const mocca::net::ConnectionClosedError&) {
+        resetRenderer();
         QMessageBox::warning(this, "Connection Closed", "Connection to processing node has been lost.");
-        m_connections.reset();
     }
 }
 
 void MainWindow::on_actionTrinity_triggered() {
-    m_settings = mocca::make_unique<ConnectionWidget>(m_ui->openGLWidget->width(), m_ui->openGLWidget->height(), m_connections, this);
+    ConnectionWidget dlg(m_ui->openGLWidget->width(), m_ui->openGLWidget->height(), m_rendererType, this);
+    dlg.move(geometry().x(), geometry().y() + m_ui->toolBar->height());
+    dlg.exec();
+    m_renderer = std::move(dlg.getRenderer());
+    if (m_renderer) {
+        m_renderer->startRendering();
+    }
 }
 
 void MainWindow::on_actionPrev_triggered() {
-    auto& renderer = m_connections.renderer();
-    const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount() - 1;
+    const uint64_t maxIndex = m_renderer->getDefault1DTransferFunctionCount() - 1;
     if (m_iCurrent1DIndex > 0) {
         m_iCurrent1DIndex--;
     } else {
         m_iCurrent1DIndex = maxIndex;
     }
 
-    renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
+    m_renderer->set1DTransferFunction(m_renderer->getDefault1DTransferFunction(m_iCurrent1DIndex));
 }
 
 void MainWindow::on_actionNext_triggered() {
-    auto& renderer = m_connections.renderer();
-    const uint64_t maxIndex = renderer.getDefault1DTransferFunctionCount() - 1;
-    if (m_iCurrent1DIndex < maxIndex)
+    const uint64_t maxIndex = m_renderer->getDefault1DTransferFunctionCount() - 1;
+    if (m_iCurrent1DIndex < maxIndex) {
         m_iCurrent1DIndex++;
-    else
+    } else {
         m_iCurrent1DIndex = 0;
+    }
 
-    renderer.set1DTransferFunction(renderer.getDefault1DTransferFunction(m_iCurrent1DIndex));
+    m_renderer->set1DTransferFunction(m_renderer->getDefault1DTransferFunction(m_iCurrent1DIndex));
 }
 
 void MainWindow::wheelEvent(QWheelEvent* event) {
-    if (!m_connections.isReady()) {
+    if (!m_renderer) {
         return;
     }
 
     static float isoValue = 0;
     isoValue += event->delta() / 2400.f;
-    auto& renderer = m_connections.renderer();
-    renderer.setIsoValue(0, isoValue);
+    m_renderer->setIsoValue(0, isoValue);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent* event) {
@@ -100,7 +101,7 @@ void MainWindow::mousePressEvent(QMouseEvent* event) {
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event) {
-    if (!m_connections.isReady()) {
+    if (!m_renderer) {
         return;
     }
 
@@ -108,23 +109,25 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event) {
     float deltaY = (m_mousePosY - event->localPos().y()) / 200.f;
     if (event->buttons() & Qt::RightButton) {
         Core::Math::Vec3f vec(-deltaX, deltaY, .0f);
-        auto& renderer = m_connections.renderer();
-        renderer.moveCamera(vec);
+        m_renderer->moveCamera(vec);
     } else if (event->buttons() & Qt::LeftButton) {
         Core::Math::Vec3f vec(-deltaY, -deltaX, .0f);
-        auto& renderer = m_connections.renderer();
-        renderer.rotateScene(vec);
+        m_renderer->rotateScene(vec);
     }
     m_mousePosX = event->localPos().x();
     m_mousePosY = event->localPos().y();
 }
 
 void MainWindow::on_actionToggleRenderer_triggered() {
-    if (m_connections.getRendererType() == trinity::VclType::SimpleRenderer) {
-        m_connections.setRendererType(trinity::VclType::GridLeapingRenderer);
+    if (m_rendererType == VclType::SimpleRenderer) {
+        m_rendererType = VclType::GridLeapingRenderer;
         m_ui->actionToggleRenderer->setText(QString("current renderer : GridLeaper"));
     } else {
-        m_connections.setRendererType(trinity::VclType::SimpleRenderer);
+        m_rendererType = VclType::SimpleRenderer;
         m_ui->actionToggleRenderer->setText(QString("current renderer : SimpleRenderer"));
     }
+}
+
+void MainWindow::resetRenderer() {
+    m_renderer = nullptr;
 }
