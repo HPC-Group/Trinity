@@ -50,14 +50,14 @@ size_t lz4Compress(std::shared_ptr<uint8_t> src, size_t uncompressedBytes,
   return compressedBytes;
 }
 
-void lz4Decompress(std::shared_ptr<uint8_t> src, std::shared_ptr<uint8_t>& dst,
+void lz4Decompress(const uint8_t* src, std::shared_ptr<uint8_t>& dst,
                    size_t uncompressedBytes)
 {
   if (uncompressedBytes > size_t(LZ4_MAX_INPUT_SIZE))
     throw std::runtime_error("Expected output data too big for LZ4 (max LZ4_MAX_INPUT_SIZE)");
 
   int const outputSize = static_cast<int>(uncompressedBytes);
-  int readBytes = LZ4_decompress_fast((const char*)src.get(),
+  int readBytes = LZ4_decompress_fast((const char*)src,
                                  (char*)dst.get(),
                                  outputSize);
   if (readBytes < 0)

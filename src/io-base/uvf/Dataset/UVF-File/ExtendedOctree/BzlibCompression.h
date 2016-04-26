@@ -12,7 +12,7 @@
   @param  uncompressedBytes number of bytes available and expected in 'dst'
   @throws std::runtime_error if something fails
   */
-void bzDecompress(std::shared_ptr<uint8_t> src, size_t compressedBytes,
+void bzDecompress(const uint8_t* src, size_t compressedBytes,
                   std::shared_ptr<uint8_t>& dst, size_t uncompressedBytes);
 
 /**

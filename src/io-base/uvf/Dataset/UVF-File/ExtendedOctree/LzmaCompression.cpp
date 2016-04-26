@@ -127,14 +127,14 @@ size_t lzmaCompress(std::shared_ptr<uint8_t> src, size_t uncompressedBytes,
   return compressedBytes;
 }
 
-void lzmaDecompress(std::shared_ptr<uint8_t> src, std::shared_ptr<uint8_t>& dst,
+void lzmaDecompress(const uint8_t* src, std::shared_ptr<uint8_t>& dst,
                     size_t uncompressedBytes,
                     std::array<uint8_t, 5> const& encodedProps)
 {
   ELzmaStatus status;
   SizeT bytes = uncompressedBytes;
   SRes res = LzmaDecode(dst.get(), &bytes,
-                        src.get(), &bytes,
+                        src, &bytes,
                         &encodedProps[0], LZMA_PROPS_SIZE,
                         LZMA_FINISH_END,
                         &status,

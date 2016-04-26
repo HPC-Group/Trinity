@@ -31,6 +31,8 @@
 #include "Lz4Compression.h"
 #include "BzlibCompression.h"
 
+#include "common/MemBlockPool.h"
+
 ExtendedOctree::ExtendedOctree() :
   m_eComponentType(CT_UINT8), 
   m_iComponentCount(0), 
@@ -323,25 +325,26 @@ void ExtendedOctree::GetBrickData(uint8_t* pData, uint64_t index) const {
     this->GetComponentCount() *
     this->GetComponentTypeSize();
 
-  std::shared_ptr<uint8_t> buf(new uint8_t[uncompressedSize],
-                               nonstd::DeleteArray<uint8_t>());
+  auto buf = MemBlockPool::instance().get(uncompressedSize);
+  buf->resize(uncompressedSize);
+
   std::shared_ptr<uint8_t> out(pData, nonstd::null_deleter());
 
   m_pLargeRAWFile->SeekPos(m_iOffset+m_vTOC[size_t(index)].m_iOffset);
-  m_pLargeRAWFile->ReadRAW(buf.get(), m_vTOC[size_t(index)].m_iLength);
+  m_pLargeRAWFile->ReadRAW(buf.get()->data(), m_vTOC[size_t(index)].m_iLength);
 
   switch (m_vTOC[size_t(index)].m_eCompression) {
   case CT_ZLIB:
     //zDecompress(buf, out, uncompressedSize);
     break;
   case CT_LZMA:
-    lzmaDecompress(buf, out, uncompressedSize, m_lzmaProps);
+    lzmaDecompress(buf.get()->data(), out, uncompressedSize, m_lzmaProps);
     break;
   case CT_LZ4:
-    lz4Decompress(buf, out, uncompressedSize);
+    lz4Decompress(buf.get()->data(), out, uncompressedSize);
     break;
   case CT_BZLIB:
-    bzDecompress(buf, size_t(m_vTOC[size_t(index)].m_iLength),
+    bzDecompress(buf.get()->data(), size_t(m_vTOC[size_t(index)].m_iLength),
                  out, uncompressedSize);
     break;
   case CT_LZHAM:

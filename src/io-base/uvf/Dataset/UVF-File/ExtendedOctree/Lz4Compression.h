@@ -11,7 +11,7 @@
   @param  uncompressedBytes number of bytes available and expected in 'dst'
   @throws std::runtime_error if something fails
   */
-void lz4Decompress(std::shared_ptr<uint8_t> src, std::shared_ptr<uint8_t>& dst,
+void lz4Decompress(const uint8_t* src, std::shared_ptr<uint8_t>& dst,
                    size_t uncompressedBytes);
 
 /**

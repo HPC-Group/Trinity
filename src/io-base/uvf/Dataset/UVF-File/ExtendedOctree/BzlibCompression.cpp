@@ -56,7 +56,7 @@ size_t bzCompress(std::shared_ptr<uint8_t> src, size_t uncompressedBytes,
     return upperBound; // compressed bytes
 }
 
-void bzDecompress(std::shared_ptr<uint8_t> src,
+void bzDecompress(const uint8_t* src,
                   size_t compressedBytes,
                   std::shared_ptr<uint8_t>& dst,
                   size_t uncompressedBytes)
@@ -64,7 +64,7 @@ void bzDecompress(std::shared_ptr<uint8_t> src,
   unsigned int outputSize = static_cast<unsigned int>(uncompressedBytes);
   int res = BZ2_bzBuffToBuffDecompress((char*)dst.get(),
                                        &outputSize,
-                                       (char*)src.get(),
+                                       (char*)src,
                                        static_cast<unsigned int>(compressedBytes),
                                        0, 0);
   if (res != BZ_OK)

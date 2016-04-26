@@ -22,7 +22,7 @@ void lzmaProperties(std::array<uint8_t, 5>& encodedProps,
   @param  encodedProps encoded LZMA properties header
   @throws std::runtime_error if something fails
   */
-void lzmaDecompress(std::shared_ptr<uint8_t> src, std::shared_ptr<uint8_t>& dst,
+void lzmaDecompress(const uint8_t* src, std::shared_ptr<uint8_t>& dst,
                     size_t uncompressedBytes,
                     std::array<uint8_t, 5> const& encodedProps);
 

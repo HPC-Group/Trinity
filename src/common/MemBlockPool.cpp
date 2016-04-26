@@ -22,7 +22,9 @@ MemBlockPool::MemBlock MemBlockPool::get(size_t capacity) {
             return MemBlock(block.release(), Deleter());
         }
     }
-    LDEBUG("MemBlockPool: new block with capacity " << capacity);
+    static size_t total = 0;
+    total += capacity;
+    LDEBUG("MemBlockPool: new block with capacity " << capacity << " (total pool size: " << total << ")");
     MemBlock block(new std::vector<uint8_t>(), Deleter());
     block->reserve(capacity);
     return block;
