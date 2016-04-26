@@ -63,7 +63,11 @@ m_isIdle(true)
 }
 
 void GridLeaper::deleteContext() {
-  m_texTransferFunc = nullptr;
+  if (m_texTransferFunc) {
+    m_texTransferFunc->Delete();
+    m_texTransferFunc = nullptr;
+  }
+
   //m_texTransfer2DFunc = nullptr;
   
   m_targetBinder = nullptr;
