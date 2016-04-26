@@ -23,7 +23,7 @@ add_subdirectory(combined)
 option(TRINITY_BUILD_FRONTEND "Build frontends for trinity" off)
 
 if (TRINITY_BUILD_FRONTEND)
-    add_subdirectory(frontend-qt-waschk)
+    add_subdirectory(frontend-qt)
 endif()
 
 

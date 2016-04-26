@@ -17,7 +17,7 @@ find_package(OpenGL REQUIRED)
 QT5_WRAP_UI(UIS_HDRS MainWindow.ui)
 QT5_WRAP_UI(UIS_HDRS ConnectionWidget.ui)
 
-add_executable(frontend-qt-waschk 
+add_executable(frontend-qt 
 			${TRINITYDEMOFRONTEND_SOURCE} 
 			${TRINITYDEMOFRONTEND_HEADER} 
 			${UIS_HDRS}
@@ -30,19 +30,17 @@ add_executable(frontend-qt-waschk
 		   	$<TARGET_OBJECTS:tripeg>
 			$<TARGET_OBJECTS:opengl-base>)
 
-TARGET_LINK_LIBRARIES(frontend-qt-waschk turbojpeg-static)
-TARGET_LINK_LIBRARIES(frontend-qt-waschk Qt5::Widgets)
-TARGET_LINK_LIBRARIES(frontend-qt-waschk Qt5::OpenGL)
-TARGET_LINK_LIBRARIES(frontend-qt-waschk ${OPENGL_LIBRARIES})
-TARGET_LINK_LIBRARIES(frontend-qt-waschk blosc_static)
+TARGET_LINK_LIBRARIES(frontend-qt turbojpeg-static)
+TARGET_LINK_LIBRARIES(frontend-qt Qt5::Widgets)
+TARGET_LINK_LIBRARIES(frontend-qt Qt5::OpenGL)
+TARGET_LINK_LIBRARIES(frontend-qt ${OPENGL_LIBRARIES})
+TARGET_LINK_LIBRARIES(frontend-qt blosc_static)
 
 IF (WIN32)
-	TARGET_LINK_LIBRARIES(frontend-qt-waschk Shlwapi.lib)
+	TARGET_LINK_LIBRARIES(frontend-qt Shlwapi.lib)
 ENDIF ()
 
-#qt5_use_modules(frontend-qt-waschk Widgets OpenGL)
-
 file(GLOB UIELEMENTS ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css ${CMAKE_CURRENT_SOURCE_DIR}/web_icon.png)
-file(COPY ${UIELEMENTS} DESTINATION ${CMAKE_BINARY_DIR}/src/frontend-qt-waschk/)
+file(COPY ${UIELEMENTS} DESTINATION ${CMAKE_BINARY_DIR}/src/frontend/)
 
-SET_TARGET_PROPERTIES(frontend-qt-waschk PROPERTIES FOLDER "trinity")
+SET_TARGET_PROPERTIES(frontend-qt PROPERTIES FOLDER "trinity")
