@@ -68,8 +68,13 @@ void GridLeaper::deleteContext() {
     m_texTransferFunc = nullptr;
   }
 
-  //m_texTransfer2DFunc = nullptr;
-  
+  /*
+  if (m_texTransfer2DFunc) {
+    m_texTransfer2DFunc->Delete();
+    m_texTransfer2DFunc = nullptr;
+  }
+  */
+
   m_targetBinder = nullptr;
   m_bBox = nullptr;
   m_nearPlane = nullptr;

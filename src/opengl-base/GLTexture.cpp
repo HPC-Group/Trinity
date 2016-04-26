@@ -25,10 +25,10 @@ GLTexture::~GLTexture() {
   /*! \todo We'd like to call ::Delete() here, but we're not guaranteed to be
    *        in the correct context.  Instead, we'll make sure the texture was
    *        previously Deleted, or at least never initialized. */
-  //assert(m_iGLID == UINT32_INVALID);
-
-  if (m_iGLID != UINT32_INVALID)
-    LWARNING("~GLTexture destructor called but OpenGL resource is not freed");
+  if (m_iGLID != UINT32_INVALID) {
+    LWARNING("GLTexture destructor called but OpenGL " <<
+             "resource is not freed (ID=" << m_iGLID << ")");
+  }
 }
 
 void GLTexture::Delete() {
