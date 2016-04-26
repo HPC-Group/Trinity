@@ -766,6 +766,7 @@ GLVolumePool::~GLVolumePool() {
   }
   
   freeGLResources();
+  LINFO("shutdown GLVolumePool");
 }
 
 static Vec3ui Fit1DIndexTo3DArray(uint64_t maxIdx, uint32_t maxArraySize) {
@@ -1665,6 +1666,11 @@ bool GLVolumePool::isValid() const {
 }
 
 void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>& request) {
+
+
+  /*
+  METHOD 1: add requests to queue
+
   for (size_t j = 0;j<request.size();++j) {
     
     if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
@@ -1702,12 +1708,33 @@ void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>
     }
     
   }
+  */
+
+  // METHOD 2: replace requests in queue
+  {
+    SCOPEDLOCK(m_brickDataCS);
+    std::vector<BrickRequest> requestTodo;
+    for (size_t j = 0;j<request.size();++j) {
+      bool found = false;
+      for (size_t i = 0;i<m_requestTodo.size();++i) {
+        if (m_requestTodo[i] == request[j]) {
+          found = true;
+          break;
+        }
+      }
+      if (!found)
+        requestTodo.push_back(request[j]);
+    }
+    m_requestTodo = requestTodo;
+  }
+  m_brickGetterThread->resume();
+
 }
 
 uint32_t GLVolumePool::uploadBricks() {
   uint32_t iPagedBricks = 0;
-  
-  
+
+
   // Method 1: get the bricks request by request
   do {
     std::shared_ptr<std::vector<uint8_t>> data = nullptr;

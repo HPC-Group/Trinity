@@ -5,7 +5,6 @@
 #include "Threads.h"
 
 #include <opengl-base/OpenGLincludes.h>
-#include <opengl-base/GLTexture2D.h>
 #include <opengl-base/GLTexture3D.h>
 
 #include <silverbullet/time/Timer.h>

@@ -67,6 +67,9 @@ void GridLeaper::deleteContext() {
   //m_texTransfer2DFunc = nullptr;
   
   m_targetBinder = nullptr;
+  m_bBox = nullptr;
+  m_nearPlane = nullptr;
+
   m_resultBuffer = nullptr;
   m_pFBORayStart = nullptr;
   m_pFBORayStartNext = nullptr;
@@ -81,9 +84,6 @@ void GridLeaper::deleteContext() {
   
   m_volumePool = nullptr;
   m_hashTable = nullptr;
-  
-  m_bBox = nullptr;
-  m_nearPlane = nullptr;
 
   m_activeShaderProgram = nullptr;
   

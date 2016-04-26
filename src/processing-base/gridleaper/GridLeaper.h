@@ -71,8 +71,7 @@ namespace trinity {
     
     std::unique_ptr<GLVolumeBox>      m_bBox;
     std::unique_ptr<GLRenderPlane>    m_nearPlane;
-    std::shared_ptr<OpenGlHeadlessContext> m_context;
-    
+
     std::unique_ptr<GLVolumePool>     m_volumePool;
     std::unique_ptr<GLHashTable>      m_hashTable;
     
@@ -107,7 +106,9 @@ namespace trinity {
     std::shared_ptr<GLRenderTexture>       m_pFBODebug;
     std::shared_ptr<GLRenderTexture>       m_pFBODebugNext;
 #endif
-    
+
+    std::shared_ptr<OpenGlHeadlessContext> m_context;
+
     VisibilityState                         m_visibilityState;
     
     float                           m_fLODFactor;
