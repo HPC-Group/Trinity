@@ -1732,8 +1732,9 @@ void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>
   m_brickGetterThread->resume();
 */
 
-  LINFO(actualRequests << " new requests");
-
+  LINFO(actualRequests << " new requests, " <<
+        request.size()-actualRequests <<
+        " already known");
 }
 
 uint32_t GLVolumePool::uploadBricks() {
