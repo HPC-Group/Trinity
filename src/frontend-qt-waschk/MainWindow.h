@@ -5,6 +5,7 @@
 #include "ConnectionWidget.h"
 
 #include <QMainWindow>
+#include <QTimer>
 
 #include <memory>
 
@@ -36,6 +37,7 @@ private:
 private:
     Ui::MainWindow* m_ui;
     trinity::VclType m_rendererType;
+    QTimer m_repaintTimer;
     std::unique_ptr<trinity::RendererProxy> m_renderer;
     int m_mousePosX;
     int m_mousePosY;

@@ -22,28 +22,21 @@ MainWindow::MainWindow(QWidget* parent)
     , m_rendererType(VclType::GridLeapingRenderer)
     , m_iCurrent1DIndex(0) {
     m_ui->setupUi(this);
-    this->setWindowTitle("Trinty Demo");
-
-    QTimer* timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(10);
+    this->setWindowTitle("Trinty Demo");;
 }
 
 MainWindow::~MainWindow() {
     delete m_ui;
 }
 
-static float rot = 0.0f;
 void MainWindow::update() {
-    if (!m_renderer) {
-        return;
-    }
-
+    auto& visStream = *m_renderer->getVisStream();
+    int resX = visStream.getStreamingParams().getResX();
+    int resY = visStream.getStreamingParams().getResY();
     try {
-        auto frame = m_renderer->getVisStream()->get();
+        auto frame = visStream.get();
         if (!frame.empty()) {
-            m_ui->openGLWidget->setData(m_renderer->getVisStream()->getStreamingParams().getResX(),
-                                        m_renderer->getVisStream()->getStreamingParams().getResY(), frame.data());
+            m_ui->openGLWidget->setData(resX, resY, frame.data());
             m_ui->openGLWidget->repaint();
         }
         m_renderer->proceedRendering();
@@ -54,11 +47,14 @@ void MainWindow::update() {
 }
 
 void MainWindow::on_actionTrinity_triggered() {
+    resetRenderer();
     ConnectionWidget dlg(m_ui->openGLWidget->width(), m_ui->openGLWidget->height(), m_rendererType, this);
     dlg.move(geometry().x(), geometry().y() + m_ui->toolBar->height());
     dlg.exec();
     m_renderer = std::move(dlg.getRenderer());
     if (m_renderer) {
+        connect(&m_repaintTimer, SIGNAL(timeout()), this, SLOT(update()));
+        m_repaintTimer.start(10);
         m_renderer->startRendering();
     }
 }
@@ -129,5 +125,6 @@ void MainWindow::on_actionToggleRenderer_triggered() {
 }
 
 void MainWindow::resetRenderer() {
+    m_repaintTimer.stop();
     m_renderer = nullptr;
 }
