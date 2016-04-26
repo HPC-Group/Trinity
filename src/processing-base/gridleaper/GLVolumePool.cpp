@@ -1667,7 +1667,7 @@ bool GLVolumePool::isValid() const {
 
 void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>& request) {
 
-
+  size_t actualRequests = 0;
   // METHOD 1: add requests to queue
 
   for (size_t j = 0;j<request.size();++j) {
@@ -1700,6 +1700,7 @@ void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>
       
       m_requestTodo.push_back(request[j]);
       m_brickDataCS.unlock();
+      actualRequests++;
 
       m_brickGetterThread->resume();
     } else {
@@ -1707,6 +1708,7 @@ void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>
     }
     
   }
+
 
   /*
   // METHOD 2: replace requests in queue
@@ -1725,9 +1727,13 @@ void GLVolumePool::requestBricksFromGetterThread(const std::vector<BrickRequest>
         requestTodo.push_back(request[j]);
     }
     m_requestTodo = requestTodo;
+    actualRequests = m_requestTodo.size();
   }
   m_brickGetterThread->resume();
 */
+
+  LINFO(actualRequests << " new requests");
+
 }
 
 uint32_t GLVolumePool::uploadBricks() {
