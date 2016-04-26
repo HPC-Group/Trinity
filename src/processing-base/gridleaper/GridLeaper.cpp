@@ -499,7 +499,10 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     GL_CHECK_EXT();
 
   } else {
-    if (paintlevel == IRenderer::PaintLevel::PL_RECOMPOSE) compose();
+    if (paintlevel == IRenderer::PaintLevel::PL_RECOMPOSE) {
+      swapToNextBuffer();
+      compose();
+    }
   }
   GL_CHECK_EXT();
 }
