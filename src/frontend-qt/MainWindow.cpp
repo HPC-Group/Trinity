@@ -22,7 +22,8 @@ MainWindow::MainWindow(QWidget* parent)
     , m_rendererType(VclType::GridLeapingRenderer)
     , m_iCurrent1DIndex(0) {
     m_ui->setupUi(this);
-    this->setWindowTitle("Trinty Demo");;
+    this->setWindowTitle("Trinty Demo");
+    m_repaintTimer.setTimerType(Qt::PreciseTimer);
 }
 
 MainWindow::~MainWindow() {
@@ -125,6 +126,10 @@ void MainWindow::on_actionToggleRenderer_triggered() {
 }
 
 void MainWindow::resetRenderer() {
+    if (m_renderer) {
+        m_renderer->stopRendering();
+    }
+    disconnect(&m_repaintTimer, SIGNAL(timeout()), 0, 0);
     m_repaintTimer.stop();
     m_renderer = nullptr;
 }
