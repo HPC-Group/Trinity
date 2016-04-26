@@ -14,7 +14,7 @@ struct BrickMetaData {
     double maxGradient;
     Core::Math::Vec3ui voxelSize;
 
-    static std::shared_ptr<std::vector<uint8_t>> createBinary(const std::vector<BrickMetaData>& metaDataVec);
-    static std::vector<BrickMetaData> createFromBinary(std::shared_ptr<std::vector<uint8_t>> binary);
+    static std::vector<std::shared_ptr<std::vector<uint8_t>>> createBinary(const std::vector<BrickMetaData>& metaDataVec);
+    static std::vector<BrickMetaData> createFromBinary(const std::vector<std::shared_ptr<std::vector<uint8_t>>>& binary);
 };
 }

@@ -1533,11 +1533,15 @@ GetBrickMetaDataCmd::ReplyParams::ReplyParams(std::vector<BrickMetaData> result)
     : m_result(std::move(result)) {}
 
 void GetBrickMetaDataCmd::ReplyParams::serialize(ISerialWriter& writer) const {
-    writer.appendBinary(BrickMetaData::createBinary(m_result));
+    auto binary = BrickMetaData::createBinary(m_result);
+    for (const auto& b : binary) {
+        writer.appendBinary(b);
+    }
 }
 
 void GetBrickMetaDataCmd::ReplyParams::deserialize(const ISerialReader& reader) {
-    m_result = BrickMetaData::createFromBinary(reader.getBinary()[0]);
+    auto binary = reader.getBinary();
+    m_result = BrickMetaData::createFromBinary(binary);
 }
 
 std::vector<BrickMetaData> GetBrickMetaDataCmd::ReplyParams::releaseResult() {
