@@ -1,4 +1,4 @@
-#include "frontend-qt/IODataModel.h"
+#include "frontend-qt-waschk/IODataModel.h"
 
 IODataModel::IODataModel(const trinity::IONodeProxy& ioNode, QObject* parent)
     : m_ioNode(ioNode) {
