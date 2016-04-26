@@ -24,7 +24,7 @@ m_strPrefixName(strPrefixName),
 m_maxBrickCount(maxBrickCount),
 m_iTableSize(iTableSize),
 m_iRehashCount(iRehashCount),
-m_pHashTableTex(NULL),
+m_pHashTableTex(nullptr),
 m_bUseGLCore(bUseGLCore),
 m_iMountPoint(0)
 {
@@ -33,6 +33,7 @@ m_iMountPoint(0)
 
 GLHashTable::~GLHashTable() {
   freeGL();
+  LINFO("shutdown ~GLHashTable");
 }
 
 void GLHashTable::initGL() {
@@ -205,8 +206,7 @@ std::string GLHashTable::getShaderFragment(uint32_t iMountPoint) {
 void GLHashTable::freeGL() {
   if (m_pHashTableTex) {
     m_pHashTableTex->Delete();
-    m_pHashTableTex.reset();
-    m_pHashTableTex = NULL;
+    m_pHashTableTex = nullptr;
   }
 }
 

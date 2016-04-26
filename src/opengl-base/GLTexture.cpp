@@ -7,6 +7,8 @@
 
 #include "GLProgram.h"
 
+#include <mocca/log/LogManager.h>
+
 GLTexture::GLTexture(GLint internalformat, GLenum format,
                      GLenum type, GLint iMagFilter,
                      GLint iMinFilter) : 
@@ -24,6 +26,9 @@ GLTexture::~GLTexture() {
    *        in the correct context.  Instead, we'll make sure the texture was
    *        previously Deleted, or at least never initialized. */
   //assert(m_iGLID == UINT32_INVALID);
+
+  if (m_iGLID != UINT32_INVALID)
+    LWARNING("~GLTexture destructor called but OpenGL resource is not freed");
 }
 
 void GLTexture::Delete() {
