@@ -14,7 +14,8 @@ mocca::net::MessagePart trinity::BinaryNullWriter::write(mocca::net::MessagePart
 mocca::net::MessagePart trinity::BinaryCompressWriter::write(mocca::net::MessagePart part) {
     auto compressed = MemBlockPool::instance().get(part->size() + BLOSC_MAX_OVERHEAD);
     compressed->resize(part->size() + BLOSC_MAX_OVERHEAD);
-    blosc_compress_ctx(4, 1, 16, part->size(), part->data(), compressed->data(), compressed->size(), "blosclz", 0, 6);
+    auto compressedSize = blosc_compress_ctx(7, 1, 256, part->size(), part->data(), compressed->data(), compressed->size(), "blosclz", 0, 6);
+    compressed->resize(compressedSize);
     return compressed;
 }
 
