@@ -1630,8 +1630,6 @@ void GLVolumePool::requestBricks(const std::vector<Vec4ui>& vBrickIDs,
     LDEBUGC("GLVolumePool","async visibility update completed for "
             << m_iTotalBrickCount << " bricks");
   }
-  
-  LINFO("Bricks processed");
 }
 
 void GLVolumePool::freeGLResources() {
@@ -1718,6 +1716,8 @@ uint32_t GLVolumePool::uploadBricks() {
     if (m_brickDataCS.lock(asyncGetThreadWaitSecs)) {
       if (m_requestDone.empty()) {
         m_brickDataCS.unlock();
+
+        LINFO(iPagedBricks << " bricks uploaded");
         return iPagedBricks;
       }
       
@@ -1728,6 +1728,7 @@ uint32_t GLVolumePool::uploadBricks() {
       m_brickDataCS.unlock();
       
     } else {
+      LINFO(iPagedBricks << " bricks uploaded");
       return iPagedBricks;
     }
     

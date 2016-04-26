@@ -461,8 +461,8 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     case IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE :
       RecomputeBrickVisibility(false);
     case IRenderer::PaintLevel::PL_REDRAW :
-	  computeEyeToModelMatrix();
-	  fillRayEntryBuffer();
+      computeEyeToModelMatrix();
+      fillRayEntryBuffer();
       m_isIdle = false;
     case IRenderer::PaintLevel::PL_CONTINUE :
     case IRenderer::PaintLevel::PL_RECOMPOSE :
@@ -471,22 +471,22 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
 
   if(!m_isIdle){
     m_volumePool->uploadBricks();
-                               
+
     m_hashTable->clearData();
 
     GL_CHECK_EXT();
 
     raycast();
-	
+
     GL_CHECK_EXT();
     // compose (sends data to frontend)
     compose();
     GL_CHECK_EXT();
 
-	swapToNextBuffer();
+    swapToNextBuffer();
 
-  GL_CHECK_EXT();
-  // update volumepool
+    GL_CHECK_EXT();
+    // update volumepool
     std::vector<Vec4ui> hash = m_hashTable->getData();
     GL_CHECK_EXT();
 
@@ -502,7 +502,6 @@ void GridLeaper::paintInternal(PaintLevel paintlevel) {
     if (paintlevel == IRenderer::PaintLevel::PL_RECOMPOSE) compose();
   }
   GL_CHECK_EXT();
-
 }
 
 
