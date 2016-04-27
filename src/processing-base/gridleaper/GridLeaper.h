@@ -61,8 +61,6 @@ namespace trinity {
     void selectShader();
     void setupRaycastShader();
     
-    std::vector<uint8_t>  m_bufferData;
-    
     std::unique_ptr<GLTexture1D>      m_texTransferFunc;
     //	std::unique_ptr<GLTexture2D>      m_texTransfer2DFunc;
     

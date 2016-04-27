@@ -76,7 +76,6 @@ void SimpleRenderer::resizeFramebuffer() {
   
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
-  m_bufferData.resize(width * height);
   LINFO("(p) resolution: " << width << " x " << height);
   
   initFrameBuffers();
@@ -210,92 +209,89 @@ void SimpleRenderer::initFrameBuffers() {
 }
 
 void SimpleRenderer::paintInternal(PaintLevel paintlevel) {
-  
-  if (!m_context || !m_backfaceShader || !m_texVolume || !m_texTransferFunc) {
-    LERROR("(p) incomplete OpenGL initialization");
-    return;
-  }
-  
-  m_context->makeCurrent();
-  
-  if (paintlevel == IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE ||
-      paintlevel == IRenderer::PaintLevel::PL_REDRAW)  {
-    
-    const uint32_t width = m_visStream->getStreamingParams().getResX();
-    const uint32_t height = m_visStream->getStreamingParams().getResY();
-    GL_CHECK(glViewport(0, 0, width, height));
 
-    /*
-     DEBUG CODE
-    Mat4f world;
-    Mat4f rotx, roty;
-    rotx.RotationX(m_isoValue[0]);
-    roty.RotationY(m_isoValue[0] * 1.14f);
-    world = rotx * roty;
-     */
-    
-    
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
-    
-    m_texTransferFunc->Bind(0);
-    m_texVolume->Bind(1);
-    
-    // pass 1: backface (i.e. ray exit coordinates)
-    
-    m_targetBinder->Bind(m_backfaceBuffer);
-    m_backfaceBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
-    
-    Core::Math::Mat4f scale, shift;
-    scale.Scaling(1.0f/m_vExtend.x,1.0f/m_vExtend.y,1.0f/m_vExtend.z);
-    shift.Translation(0.5f,0.5f,0.5f);
-    
-    m_backfaceShader->Enable();
-    m_backfaceShader->Set("projectionMatrix", m_projection);
-    m_backfaceShader->Set("viewMatrix", m_view);
-    m_backfaceShader->Set("worldMatrix", m_domainTransform*m_model);
-    m_backfaceShader->Set("posToTex", scale*shift);
-    m_bBox->paint();
-    m_backfaceShader->Disable();
-    
-    
-    // pass 2: raycasting
-    
-    m_backfaceBuffer->Read(2);
-    
-    m_targetBinder->Bind(m_resultBuffer);
-    glCullFace(GL_BACK);
-    
-    m_resultBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
-    
-    m_raycastShader->Enable();
-    m_raycastShader->Set("projectionMatrix", m_projection);
-    m_raycastShader->Set("viewMatrix", m_view);
-    m_raycastShader->Set("worldMatrix", m_domainTransform*m_model);
-    m_raycastShader->Set("posToTex", scale*shift);
-    m_raycastShader->Set("transferFuncScaleValue", m_1DTFScale);
-    
-    m_raycastShader->ConnectTextureID("transferfunc", 0);
-    m_raycastShader->ConnectTextureID("volume", 1);
-    m_raycastShader->ConnectTextureID("rayExit", 2);
-    
-    m_bBox->paint();
-    m_raycastShader->Disable();
-    
-    m_backfaceBuffer->FinishRead();
-    //auto t1 = std::chrono::high_resolution_clock::now();
-    m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
-    //auto t2 = std::chrono::high_resolution_clock::now();
-    //LINFO("Time " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
-    
-    m_targetBinder->Unbind();
-  }
-  
-  Frame f1(m_bufferData.size() * 4 * sizeof(uint8_t));
-  std::memcpy(f1.data(), m_bufferData.data(), m_bufferData.size() * 4 * sizeof(uint8_t));
-  getVisStream()->put(std::move(f1));
+    if (!m_context || !m_backfaceShader || !m_texVolume || !m_texTransferFunc) {
+        LERROR("(p) incomplete OpenGL initialization");
+        return;
+    }
+
+    m_context->makeCurrent();
+
+    if (paintlevel == IRenderer::PaintLevel::PL_REDRAW_VISIBILITY_CHANGE || paintlevel == IRenderer::PaintLevel::PL_REDRAW) {
+
+        const uint32_t width = m_visStream->getStreamingParams().getResX();
+        const uint32_t height = m_visStream->getStreamingParams().getResY();
+        GL_CHECK(glViewport(0, 0, width, height));
+
+        /*
+         DEBUG CODE
+        Mat4f world;
+        Mat4f rotx, roty;
+        rotx.RotationX(m_isoValue[0]);
+        roty.RotationY(m_isoValue[0] * 1.14f);
+        world = rotx * roty;
+         */
+
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+
+        m_texTransferFunc->Bind(0);
+        m_texVolume->Bind(1);
+
+        // pass 1: backface (i.e. ray exit coordinates)
+
+        m_targetBinder->Bind(m_backfaceBuffer);
+        m_backfaceBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
+
+        Core::Math::Mat4f scale, shift;
+        scale.Scaling(1.0f / m_vExtend.x, 1.0f / m_vExtend.y, 1.0f / m_vExtend.z);
+        shift.Translation(0.5f, 0.5f, 0.5f);
+
+        m_backfaceShader->Enable();
+        m_backfaceShader->Set("projectionMatrix", m_projection);
+        m_backfaceShader->Set("viewMatrix", m_view);
+        m_backfaceShader->Set("worldMatrix", m_domainTransform * m_model);
+        m_backfaceShader->Set("posToTex", scale * shift);
+        m_bBox->paint();
+        m_backfaceShader->Disable();
+
+        // pass 2: raycasting
+
+        m_backfaceBuffer->Read(2);
+
+        m_targetBinder->Bind(m_resultBuffer);
+        glCullFace(GL_BACK);
+
+        m_resultBuffer->ClearPixels(0.0f, 0.0f, 0.0f, 0.0f);
+
+        m_raycastShader->Enable();
+        m_raycastShader->Set("projectionMatrix", m_projection);
+        m_raycastShader->Set("viewMatrix", m_view);
+        m_raycastShader->Set("worldMatrix", m_domainTransform * m_model);
+        m_raycastShader->Set("posToTex", scale * shift);
+        m_raycastShader->Set("transferFuncScaleValue", m_1DTFScale);
+
+        m_raycastShader->ConnectTextureID("transferfunc", 0);
+        m_raycastShader->ConnectTextureID("volume", 1);
+        m_raycastShader->ConnectTextureID("rayExit", 2);
+
+        m_bBox->paint();
+        m_raycastShader->Disable();
+
+        m_backfaceBuffer->FinishRead();
+        // auto t1 = std::chrono::high_resolution_clock::now();
+        Frame frame(width * height * 4);
+        m_resultBuffer->ReadBackPixels(0, 0, width, height, frame.data());
+        // auto t2 = std::chrono::high_resolution_clock::now();
+        // LINFO("Time " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
+
+        m_targetBinder->Unbind();
+        getVisStream()->put(std::move(frame));
+    } else {
+        getVisStream()->put(Frame());
+    }
 }
 
 bool SimpleRenderer::isIdle() {

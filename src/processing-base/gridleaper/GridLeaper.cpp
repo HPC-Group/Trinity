@@ -148,7 +148,6 @@ void GridLeaper::resizeFramebuffer() {
 
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
-  m_bufferData.resize(width * height * 4);
 
   const float fScreenSpaceError = 0.5f;
 
@@ -637,16 +636,16 @@ void GridLeaper::compose(){
 
   const uint32_t width = m_visStream->getStreamingParams().getResX();
   const uint32_t height = m_visStream->getStreamingParams().getResY();
-  m_resultBuffer->ReadBackPixels(0, 0, width, height, m_bufferData.data());
+
+  Frame frame(width * height * 4);
+  m_resultBuffer->ReadBackPixels(0, 0, width, height, frame.data());
 
   GL_CHECK_EXT();
 
   m_targetBinder->Unbind();
   GL_CHECK_EXT();
 
-  Frame f1;
-  f1.assign(begin(m_bufferData), end(m_bufferData));
-  getVisStream()->put(std::move(f1));
+  getVisStream()->put(std::move(frame));
 }
 
 
