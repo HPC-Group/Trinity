@@ -1,0 +1,15 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+Standard: Cpp11
+UseTab: Never
+ColumnLimit: 140
+DerivePointerAlignment: false
+PointerAlignment: Left
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: Inline
+BreakConstructorInitializersBeforeComma : true
+NamespaceIndentation: None
+MaxEmptyLinesToKeep: 1
+AlignAfterOpenBracket: Align

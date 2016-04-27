@@ -1,0 +1,31 @@
+FILE(GLOB FRONTENDBASE_HEADER ${CMAKE_CURRENT_LIST_DIR}/*.h)
+FILE(GLOB FRONTENDBASE_SOURCE ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+
+CreateSourceGroups("${FRONTENDBASE_HEADER}" ${CMAKE_CURRENT_LIST_DIR})
+CreateSourceGroups("${FRONTENDBASE_SOURCE}" ${CMAKE_CURRENT_LIST_DIR})
+
+
+list(REMOVE_ITEM FRONTENDBASE_SOURCE ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
+
+add_library(frontendbaselib OBJECT ${FRONTENDBASE_HEADER} ${FRONTENDBASE_SOURCE})
+
+add_executable(frontendbase 
+				${CMAKE_CURRENT_LIST_DIR}/main.cpp
+				${FRONTENDBASE_HEADER} 
+				${FRONTENDBASE_SOURCE}
+				$<TARGET_OBJECTS:mocca>
+				$<TARGET_OBJECTS:common>
+				$<TARGET_OBJECTS:commands>
+				$<TARGET_OBJECTS:silverbullet>
+				$<TARGET_OBJECTS:tripeg>
+				$<TARGET_OBJECTS:jsoncpp>)
+
+TARGET_LINK_LIBRARIES(frontendbase turbojpeg-static)
+TARGET_LINK_LIBRARIES(frontendbase blosc_static)
+
+IF (WIN32)
+	TARGET_LINK_LIBRARIES(frontendbase Shlwapi.lib)
+ENDIF ()
+
+SET_TARGET_PROPERTIES(frontendbase PROPERTIES FOLDER "trinity")
+SET_TARGET_PROPERTIES(frontendbaselib PROPERTIES FOLDER "lib")

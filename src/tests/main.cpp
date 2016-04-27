@@ -1,27 +1,20 @@
-#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 
-/*
-#include "logging/logmanager.h"
-#include "logging/consolelog.h"
-#include "logging/htmllog.h"
-#include "logging/textlog.h"
-*/
+#include "mocca/log/ConsoleLog.h"
+#include "mocca/log/LogManager.h"
 
-//using namespace ghoul::logging;
 
 int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
 
-	/*
+    using mocca::LogManager;
+#ifdef TRINITY_TEST_LOGGING
     LogManager::initialize(LogManager::LogLevel::Debug, true);
+#else
+    LogManager::initialize(LogManager::LogLevel::NoLog, true);
+#endif
+    auto log = new mocca::ConsoleLog();
+    LogMgr.addLog(log);
 
-    Log* html = new HTMLLog("testlog.html");
-    Log* text = new TextLog("testlog.txt");
-    Log* console = new ConsoleLog();
-    LogMgr.addLog(html);
-    LogMgr.addLog(text);
-    LogMgr.addLog(console);
-    */
-
-    ::testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }

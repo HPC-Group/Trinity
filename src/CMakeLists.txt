@@ -1,61 +1,34 @@
-set(SOURCE_ROOT_DIR ${TRINITY_ROOT_DIR}/src)
-# for now, we will keep our headers at the same location
-set(HEADER_ROOT_DIR ${TRINITY_ROOT_DIR}/src)
+include(PlatformSpecific)
 
-# global visibility
-include_directories(
-					${TRINITY_ROOT_DIR}/ext/ghoul/include/
-					${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/)
-
-add_subdirectory(tools)
-add_subdirectory(renderer)
-add_subdirectory(IO)
-add_subdirectory(core)
-
-INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src)
-#INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src/pushframework/include)
-
-#add_subdirectory(pushframework)
-#add_subdirectory(websocketprotocol)
-
-########## Ghoul Objects +++++++++++>
-
-file(GLOB GHOUL_SOURCE ${TRINITY_ROOT_DIR}/ext/ghoul/src/logging/*.cpp
-					   ${TRINITY_ROOT_DIR}/ext/ghoul/src/cmdparser/*.cpp)
-file(GLOB GHOUL_HEADER ${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/logging/*.h
-					   ${TRINITY_ROOT_DIR}/ext/ghoul/include/ghoul/cmdparser/*.h)
-
-add_library(ghoul ${GHOUL_SOURCE} ${GHOUL_HEADER})
-
-
-######### MOCCA +++++++>
-
-INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src)
-INCLUDE_DIRECTORIES(${TRINITY_ROOT_DIR}/src/mocca/include)
+include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base/GL)
+include_directories(${PROJECT_SOURCE_DIR}/src/silverbullet/include)
 
 # level 0 modules
-ADD_SUBDIRECTORY(mocca)
+add_subdirectory(mocca)
+add_subdirectory(commands)
+add_subdirectory(common)
+add_subdirectory(jpeg)
+add_subdirectory(silverbullet)
+add_subdirectory(io-base)
+add_subdirectory(frontend-base)
+add_subdirectory(opengl-base)
+add_subdirectory(processing-base)
+add_subdirectory(thirdparty)
+add_subdirectory(combined)
 
 
-########## Tests +++++++++++>
+option(TRINITY_BUILD_FRONTEND "Build frontends for trinity" off)
 
-# then we could add some tests
-if (TRINITY_HAVE_TESTS)
-
-file(GLOB TEST_SOURCE 	${SOURCE_ROOT_DIR}/tests/*cpp )
-file(GLOB TEST_HEADER 	${HEADER_ROOT_DIR}/tests/*.h )
-
-set(TEST_DEPENDENCIES 	${TEST_DEPENDENCIES} 
-						gtest)
-
-add_executable(testsuite	${TEST_SOURCE} 
-							${TEST_HEADER} 
-							#$<TARGET_OBJECTS:ghoul>
-							)
+if (TRINITY_BUILD_FRONTEND)
+    add_subdirectory(frontend-qt)
+endif()
 
 
-#set_target_properties(testsuite PROPERTIES COMPILE_DEFINITIONS "GATE_STATIC")
-target_link_libraries(testsuite ${TEST_DEPENDENCIES} gtest gmock gtest_main)
-add_test( testsuite testsuite )  
-install(TARGETS testsuite DESTINATION bin)
-endif ()
+
+option(TRINITY_BUILD_TESTS "Build tests for trinity" on)
+if (TRINITY_BUILD_TESTS)
+    add_subdirectory(tests)
+endif()

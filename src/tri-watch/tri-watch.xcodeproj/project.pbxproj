@@ -1,0 +1,880 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5580164D1C16F99C00420EDF /* ConnectionAggregator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163A1C16F99C00420EDF /* ConnectionAggregator.cpp */; };
+		5580164E1C16F99C00420EDF /* Endpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163B1C16F99C00420EDF /* Endpoint.cpp */; };
+		5580164F1C16F99C00420EDF /* LoopbackConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163C1C16F99C00420EDF /* LoopbackConnection.cpp */; };
+		558016501C16F99C00420EDF /* LoopbackConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163D1C16F99C00420EDF /* LoopbackConnectionAcceptor.cpp */; };
+		558016511C16F99C00420EDF /* LoopbackNetworkService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163E1C16F99C00420EDF /* LoopbackNetworkService.cpp */; };
+		558016521C16F99C00420EDF /* MoccaConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163F1C16F99C00420EDF /* MoccaConnection.cpp */; };
+		558016531C16F99C00420EDF /* MoccaConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016401C16F99C00420EDF /* MoccaConnectionAcceptor.cpp */; };
+		558016541C16F99C00420EDF /* MoccaNetworkService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016411C16F99C00420EDF /* MoccaNetworkService.cpp */; };
+		558016551C16F99C00420EDF /* NetworkServiceLocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016421C16F99C00420EDF /* NetworkServiceLocator.cpp */; };
+		558016561C16F99C00420EDF /* PhysicalConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016431C16F99C00420EDF /* PhysicalConnection.cpp */; };
+		558016571C16F99C00420EDF /* Sockets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016441C16F99C00420EDF /* Sockets.cpp */; };
+		558016581C16F99C00420EDF /* TCPConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016451C16F99C00420EDF /* TCPConnection.cpp */; };
+		558016591C16F99C00420EDF /* TCPConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016461C16F99C00420EDF /* TCPConnectionAcceptor.cpp */; };
+		5580165A1C16F99C00420EDF /* TCPNetworkAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016471C16F99C00420EDF /* TCPNetworkAddress.cpp */; };
+		5580165B1C16F99C00420EDF /* TCPNetworkService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016481C16F99C00420EDF /* TCPNetworkService.cpp */; };
+		5580165C1C16F99C00420EDF /* WSConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016491C16F99C00420EDF /* WSConnection.cpp */; };
+		5580165D1C16F99C00420EDF /* WSConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580164A1C16F99C00420EDF /* WSConnectionAcceptor.cpp */; };
+		5580165E1C16F99C00420EDF /* WSHandshake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580164B1C16F99C00420EDF /* WSHandshake.cpp */; };
+		5580165F1C16F99C00420EDF /* WSNetworkService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580164C1C16F99C00420EDF /* WSNetworkService.cpp */; };
+		558016641C16F9A500420EDF /* ByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016611C16F9A500420EDF /* ByteArray.cpp */; };
+		558016651C16F9A500420EDF /* CommandLineParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016621C16F9A500420EDF /* CommandLineParser.cpp */; };
+		558016661C16F9A500420EDF /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016631C16F9A500420EDF /* Thread.cpp */; };
+		5580166F1C16FAB200420EDF /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016691C16FAB200420EDF /* base64.cpp */; };
+		558016701C16FAB200420EDF /* license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5580166C1C16FAB200420EDF /* license.txt */; };
+		558016711C16FAB200420EDF /* sha1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580166D1C16FAB200420EDF /* sha1.cpp */; };
+		5580167A1C16FB0600420EDF /* CallbackLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016731C16FB0600420EDF /* CallbackLog.cpp */; };
+		5580167B1C16FB0600420EDF /* ConsoleLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016741C16FB0600420EDF /* ConsoleLog.cpp */; };
+		5580167C1C16FB0600420EDF /* HTMLLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016751C16FB0600420EDF /* HTMLLog.cpp */; };
+		5580167D1C16FB0600420EDF /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016761C16FB0600420EDF /* Log.cpp */; };
+		5580167E1C16FB0600420EDF /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016771C16FB0600420EDF /* LogManager.cpp */; };
+		5580167F1C16FB0600420EDF /* StreamLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016781C16FB0600420EDF /* StreamLog.cpp */; };
+		558016801C16FB0600420EDF /* TextLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016791C16FB0600420EDF /* TextLog.cpp */; };
+		558016861C16FCA500420EDF /* ProcessingPrx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016821C16FCA500420EDF /* ProcessingPrx.cpp */; };
+		558016871C16FCA500420EDF /* RendererPrx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016841C16FCA500420EDF /* RendererPrx.cpp */; };
+		558016941C17055B00420EDF /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 558016931C17055B00420EDF /* WatchConnectivity.framework */; };
+		558016961C171F5D00420EDF /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 558016951C171F5C00420EDF /* WatchConnectivity.framework */; };
+		558016971C17201D00420EDF /* ProcessingPrx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016821C16FCA500420EDF /* ProcessingPrx.cpp */; };
+		558016981C17201D00420EDF /* RendererPrx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016841C16FCA500420EDF /* RendererPrx.cpp */; };
+		558016991C17201D00420EDF /* CallbackLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016731C16FB0600420EDF /* CallbackLog.cpp */; };
+		5580169A1C17201D00420EDF /* ConsoleLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016741C16FB0600420EDF /* ConsoleLog.cpp */; };
+		5580169B1C17201D00420EDF /* HTMLLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016751C16FB0600420EDF /* HTMLLog.cpp */; };
+		5580169C1C17201D00420EDF /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016761C16FB0600420EDF /* Log.cpp */; };
+		5580169D1C17201D00420EDF /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016771C16FB0600420EDF /* LogManager.cpp */; };
+		5580169E1C17201D00420EDF /* StreamLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016781C16FB0600420EDF /* StreamLog.cpp */; };
+		5580169F1C17201D00420EDF /* TextLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016791C16FB0600420EDF /* TextLog.cpp */; };
+		558016A01C17201D00420EDF /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016691C16FAB200420EDF /* base64.cpp */; };
+		558016A11C17201D00420EDF /* sha1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580166D1C16FAB200420EDF /* sha1.cpp */; };
+		558016A21C17201D00420EDF /* ByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016611C16F9A500420EDF /* ByteArray.cpp */; };
+		558016A31C17201D00420EDF /* CommandLineParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016621C16F9A500420EDF /* CommandLineParser.cpp */; };
+		558016A41C17201D00420EDF /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016631C16F9A500420EDF /* Thread.cpp */; };
+		558016A51C17201D00420EDF /* ConnectionAggregator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163A1C16F99C00420EDF /* ConnectionAggregator.cpp */; };
+		558016A61C17201D00420EDF /* Endpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163B1C16F99C00420EDF /* Endpoint.cpp */; };
+		558016A71C17201D00420EDF /* LoopbackConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163C1C16F99C00420EDF /* LoopbackConnection.cpp */; };
+		558016A81C17201D00420EDF /* LoopbackConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163D1C16F99C00420EDF /* LoopbackConnectionAcceptor.cpp */; };
+		558016A91C17201D00420EDF /* LoopbackNetworkService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163E1C16F99C00420EDF /* LoopbackNetworkService.cpp */; };
+		558016AA1C17201D00420EDF /* MoccaConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580163F1C16F99C00420EDF /* MoccaConnection.cpp */; };
+		558016AB1C17201D00420EDF /* MoccaConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016401C16F99C00420EDF /* MoccaConnectionAcceptor.cpp */; };
+		558016AC1C17201D00420EDF /* MoccaNetworkService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016411C16F99C00420EDF /* MoccaNetworkService.cpp */; };
+		558016AD1C17201D00420EDF /* NetworkServiceLocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016421C16F99C00420EDF /* NetworkServiceLocator.cpp */; };
+		558016AE1C17201D00420EDF /* PhysicalConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016431C16F99C00420EDF /* PhysicalConnection.cpp */; };
+		558016AF1C17201D00420EDF /* Sockets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016441C16F99C00420EDF /* Sockets.cpp */; };
+		558016B01C17201D00420EDF /* TCPConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016451C16F99C00420EDF /* TCPConnection.cpp */; };
+		558016B11C17201D00420EDF /* TCPConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016461C16F99C00420EDF /* TCPConnectionAcceptor.cpp */; };
+		558016B21C17201D00420EDF /* TCPNetworkAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016471C16F99C00420EDF /* TCPNetworkAddress.cpp */; };
+		558016B31C17201D00420EDF /* TCPNetworkService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016481C16F99C00420EDF /* TCPNetworkService.cpp */; };
+		558016B41C17201D00420EDF /* WSConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 558016491C16F99C00420EDF /* WSConnection.cpp */; };
+		558016B51C17201D00420EDF /* WSConnectionAcceptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580164A1C16F99C00420EDF /* WSConnectionAcceptor.cpp */; };
+		558016B61C17201D00420EDF /* WSHandshake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580164B1C16F99C00420EDF /* WSHandshake.cpp */; };
+		558016B71C17201D00420EDF /* WSNetworkService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5580164C1C16F99C00420EDF /* WSNetworkService.cpp */; };
+		55EDF0C51C135E6100AC5995 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 55EDF0C41C135E6100AC5995 /* main.m */; };
+		55EDF0C81C135E6100AC5995 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 55EDF0C71C135E6100AC5995 /* AppDelegate.m */; };
+		55EDF0CB1C135E6100AC5995 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55EDF0CA1C135E6100AC5995 /* ViewController.mm */; };
+		55EDF0CE1C135E6100AC5995 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55EDF0CC1C135E6100AC5995 /* Main.storyboard */; };
+		55EDF0D01C135E6100AC5995 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55EDF0CF1C135E6100AC5995 /* Assets.xcassets */; };
+		55EDF0D31C135E6100AC5995 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55EDF0D11C135E6100AC5995 /* LaunchScreen.storyboard */; };
+		55EDF0D81C135E6100AC5995 /* tri-watch WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 55EDF0D71C135E6100AC5995 /* tri-watch WatchKit App.app */; };
+		55EDF0DE1C135E6100AC5995 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55EDF0DC1C135E6100AC5995 /* Interface.storyboard */; };
+		55EDF0E01C135E6100AC5995 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55EDF0DF1C135E6100AC5995 /* Assets.xcassets */; };
+		55EDF0E71C135E6100AC5995 /* tri-watch WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 55EDF0E61C135E6100AC5995 /* tri-watch WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		55EDF0EF1C135E6100AC5995 /* InterfaceController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55EDF0EE1C135E6100AC5995 /* InterfaceController.mm */; };
+		55EDF0F21C135E6100AC5995 /* ExtensionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 55EDF0F11C135E6100AC5995 /* ExtensionDelegate.m */; };
+		55EDF0F51C135E6100AC5995 /* NotificationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55EDF0F41C135E6100AC5995 /* NotificationController.m */; };
+		55EDF0F71C135E6100AC5995 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55EDF0F61C135E6100AC5995 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		55EDF0D91C135E6100AC5995 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55EDF0B81C135E6100AC5995 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55EDF0D61C135E6100AC5995;
+			remoteInfo = "tri-watch WatchKit App";
+		};
+		55EDF0E81C135E6100AC5995 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55EDF0B81C135E6100AC5995 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55EDF0E51C135E6100AC5995;
+			remoteInfo = "tri-watch WatchKit Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		55EDF0FE1C135E6100AC5995 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				55EDF0E71C135E6100AC5995 /* tri-watch WatchKit Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55EDF1021C135E6100AC5995 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				55EDF0D81C135E6100AC5995 /* tri-watch WatchKit App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5580163A1C16F99C00420EDF /* ConnectionAggregator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionAggregator.cpp; sourceTree = "<group>"; };
+		5580163B1C16F99C00420EDF /* Endpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Endpoint.cpp; sourceTree = "<group>"; };
+		5580163C1C16F99C00420EDF /* LoopbackConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoopbackConnection.cpp; sourceTree = "<group>"; };
+		5580163D1C16F99C00420EDF /* LoopbackConnectionAcceptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoopbackConnectionAcceptor.cpp; sourceTree = "<group>"; };
+		5580163E1C16F99C00420EDF /* LoopbackNetworkService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoopbackNetworkService.cpp; sourceTree = "<group>"; };
+		5580163F1C16F99C00420EDF /* MoccaConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoccaConnection.cpp; sourceTree = "<group>"; };
+		558016401C16F99C00420EDF /* MoccaConnectionAcceptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoccaConnectionAcceptor.cpp; sourceTree = "<group>"; };
+		558016411C16F99C00420EDF /* MoccaNetworkService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoccaNetworkService.cpp; sourceTree = "<group>"; };
+		558016421C16F99C00420EDF /* NetworkServiceLocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkServiceLocator.cpp; sourceTree = "<group>"; };
+		558016431C16F99C00420EDF /* PhysicalConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhysicalConnection.cpp; sourceTree = "<group>"; };
+		558016441C16F99C00420EDF /* Sockets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sockets.cpp; sourceTree = "<group>"; };
+		558016451C16F99C00420EDF /* TCPConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPConnection.cpp; sourceTree = "<group>"; };
+		558016461C16F99C00420EDF /* TCPConnectionAcceptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPConnectionAcceptor.cpp; sourceTree = "<group>"; };
+		558016471C16F99C00420EDF /* TCPNetworkAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPNetworkAddress.cpp; sourceTree = "<group>"; };
+		558016481C16F99C00420EDF /* TCPNetworkService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPNetworkService.cpp; sourceTree = "<group>"; };
+		558016491C16F99C00420EDF /* WSConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WSConnection.cpp; sourceTree = "<group>"; };
+		5580164A1C16F99C00420EDF /* WSConnectionAcceptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WSConnectionAcceptor.cpp; sourceTree = "<group>"; };
+		5580164B1C16F99C00420EDF /* WSHandshake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WSHandshake.cpp; sourceTree = "<group>"; };
+		5580164C1C16F99C00420EDF /* WSNetworkService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WSNetworkService.cpp; sourceTree = "<group>"; };
+		558016611C16F9A500420EDF /* ByteArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ByteArray.cpp; sourceTree = "<group>"; };
+		558016621C16F9A500420EDF /* CommandLineParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineParser.cpp; sourceTree = "<group>"; };
+		558016631C16F9A500420EDF /* Thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Thread.cpp; sourceTree = "<group>"; };
+		558016691C16FAB200420EDF /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
+		5580166A1C16FAB200420EDF /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		5580166C1C16FAB200420EDF /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
+		5580166D1C16FAB200420EDF /* sha1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sha1.cpp; sourceTree = "<group>"; };
+		5580166E1C16FAB200420EDF /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
+		558016731C16FB0600420EDF /* CallbackLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackLog.cpp; sourceTree = "<group>"; };
+		558016741C16FB0600420EDF /* ConsoleLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsoleLog.cpp; sourceTree = "<group>"; };
+		558016751C16FB0600420EDF /* HTMLLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLLog.cpp; sourceTree = "<group>"; };
+		558016761C16FB0600420EDF /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
+		558016771C16FB0600420EDF /* LogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogManager.cpp; sourceTree = "<group>"; };
+		558016781C16FB0600420EDF /* StreamLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamLog.cpp; sourceTree = "<group>"; };
+		558016791C16FB0600420EDF /* TextLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextLog.cpp; sourceTree = "<group>"; };
+		558016821C16FCA500420EDF /* ProcessingPrx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProcessingPrx.cpp; path = "../frontend-dummy/ProcessingPrx.cpp"; sourceTree = "<group>"; };
+		558016831C16FCA500420EDF /* ProcessingPrx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessingPrx.h; path = "../frontend-dummy/ProcessingPrx.h"; sourceTree = "<group>"; };
+		558016841C16FCA500420EDF /* RendererPrx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RendererPrx.cpp; path = "../frontend-dummy/RendererPrx.cpp"; sourceTree = "<group>"; };
+		558016851C16FCA500420EDF /* RendererPrx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RendererPrx.h; path = "../frontend-dummy/RendererPrx.h"; sourceTree = "<group>"; };
+		558016931C17055B00420EDF /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
+		558016951C171F5C00420EDF /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS2.0.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		55EDF0C01C135E6100AC5995 /* tri-watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tri-watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		55EDF0C41C135E6100AC5995 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		55EDF0C61C135E6100AC5995 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		55EDF0C71C135E6100AC5995 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		55EDF0C91C135E6100AC5995 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		55EDF0CA1C135E6100AC5995 /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
+		55EDF0CD1C135E6100AC5995 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		55EDF0CF1C135E6100AC5995 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		55EDF0D21C135E6100AC5995 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		55EDF0D41C135E6100AC5995 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		55EDF0D71C135E6100AC5995 /* tri-watch WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tri-watch WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		55EDF0DD1C135E6100AC5995 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		55EDF0DF1C135E6100AC5995 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		55EDF0E11C135E6100AC5995 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		55EDF0E61C135E6100AC5995 /* tri-watch WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "tri-watch WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		55EDF0EC1C135E6100AC5995 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
+		55EDF0ED1C135E6100AC5995 /* InterfaceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InterfaceController.h; sourceTree = "<group>"; };
+		55EDF0EE1C135E6100AC5995 /* InterfaceController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InterfaceController.mm; sourceTree = "<group>"; };
+		55EDF0F01C135E6100AC5995 /* ExtensionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtensionDelegate.h; sourceTree = "<group>"; };
+		55EDF0F11C135E6100AC5995 /* ExtensionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExtensionDelegate.m; sourceTree = "<group>"; };
+		55EDF0F31C135E6100AC5995 /* NotificationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationController.h; sourceTree = "<group>"; };
+		55EDF0F41C135E6100AC5995 /* NotificationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationController.m; sourceTree = "<group>"; };
+		55EDF0F61C135E6100AC5995 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		55EDF0F81C135E6100AC5995 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		55EDF0BD1C135E6100AC5995 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				558016941C17055B00420EDF /* WatchConnectivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55EDF0E31C135E6100AC5995 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				558016961C171F5D00420EDF /* WatchConnectivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		558016381C16F82700420EDF /* mocca-ios */ = {
+			isa = PBXGroup;
+			children = (
+				558016721C16FB0600420EDF /* log */,
+				558016671C16FAB200420EDF /* thirdparty */,
+				558016601C16F9A500420EDF /* base */,
+				558016391C16F99C00420EDF /* net */,
+			);
+			name = "mocca-ios";
+			sourceTree = "<group>";
+		};
+		558016391C16F99C00420EDF /* net */ = {
+			isa = PBXGroup;
+			children = (
+				5580163A1C16F99C00420EDF /* ConnectionAggregator.cpp */,
+				5580163B1C16F99C00420EDF /* Endpoint.cpp */,
+				5580163C1C16F99C00420EDF /* LoopbackConnection.cpp */,
+				5580163D1C16F99C00420EDF /* LoopbackConnectionAcceptor.cpp */,
+				5580163E1C16F99C00420EDF /* LoopbackNetworkService.cpp */,
+				5580163F1C16F99C00420EDF /* MoccaConnection.cpp */,
+				558016401C16F99C00420EDF /* MoccaConnectionAcceptor.cpp */,
+				558016411C16F99C00420EDF /* MoccaNetworkService.cpp */,
+				558016421C16F99C00420EDF /* NetworkServiceLocator.cpp */,
+				558016431C16F99C00420EDF /* PhysicalConnection.cpp */,
+				558016441C16F99C00420EDF /* Sockets.cpp */,
+				558016451C16F99C00420EDF /* TCPConnection.cpp */,
+				558016461C16F99C00420EDF /* TCPConnectionAcceptor.cpp */,
+				558016471C16F99C00420EDF /* TCPNetworkAddress.cpp */,
+				558016481C16F99C00420EDF /* TCPNetworkService.cpp */,
+				558016491C16F99C00420EDF /* WSConnection.cpp */,
+				5580164A1C16F99C00420EDF /* WSConnectionAcceptor.cpp */,
+				5580164B1C16F99C00420EDF /* WSHandshake.cpp */,
+				5580164C1C16F99C00420EDF /* WSNetworkService.cpp */,
+			);
+			name = net;
+			path = ../mocca/src/net;
+			sourceTree = "<group>";
+		};
+		558016601C16F9A500420EDF /* base */ = {
+			isa = PBXGroup;
+			children = (
+				558016611C16F9A500420EDF /* ByteArray.cpp */,
+				558016621C16F9A500420EDF /* CommandLineParser.cpp */,
+				558016631C16F9A500420EDF /* Thread.cpp */,
+			);
+			name = base;
+			path = ../mocca/src/base;
+			sourceTree = "<group>";
+		};
+		558016671C16FAB200420EDF /* thirdparty */ = {
+			isa = PBXGroup;
+			children = (
+				558016681C16FAB200420EDF /* base64 */,
+				5580166B1C16FAB200420EDF /* sha1 */,
+			);
+			name = thirdparty;
+			path = ../mocca/src/thirdparty;
+			sourceTree = "<group>";
+		};
+		558016681C16FAB200420EDF /* base64 */ = {
+			isa = PBXGroup;
+			children = (
+				558016691C16FAB200420EDF /* base64.cpp */,
+				5580166A1C16FAB200420EDF /* base64.h */,
+			);
+			path = base64;
+			sourceTree = "<group>";
+		};
+		5580166B1C16FAB200420EDF /* sha1 */ = {
+			isa = PBXGroup;
+			children = (
+				5580166C1C16FAB200420EDF /* license.txt */,
+				5580166D1C16FAB200420EDF /* sha1.cpp */,
+				5580166E1C16FAB200420EDF /* sha1.h */,
+			);
+			path = sha1;
+			sourceTree = "<group>";
+		};
+		558016721C16FB0600420EDF /* log */ = {
+			isa = PBXGroup;
+			children = (
+				558016731C16FB0600420EDF /* CallbackLog.cpp */,
+				558016741C16FB0600420EDF /* ConsoleLog.cpp */,
+				558016751C16FB0600420EDF /* HTMLLog.cpp */,
+				558016761C16FB0600420EDF /* Log.cpp */,
+				558016771C16FB0600420EDF /* LogManager.cpp */,
+				558016781C16FB0600420EDF /* StreamLog.cpp */,
+				558016791C16FB0600420EDF /* TextLog.cpp */,
+			);
+			name = log;
+			path = ../mocca/src/log;
+			sourceTree = "<group>";
+		};
+		558016811C16FC8F00420EDF /* frontend */ = {
+			isa = PBXGroup;
+			children = (
+				558016821C16FCA500420EDF /* ProcessingPrx.cpp */,
+				558016831C16FCA500420EDF /* ProcessingPrx.h */,
+				558016841C16FCA500420EDF /* RendererPrx.cpp */,
+				558016851C16FCA500420EDF /* RendererPrx.h */,
+			);
+			name = frontend;
+			sourceTree = "<group>";
+		};
+		55EDF0B71C135E6100AC5995 = {
+			isa = PBXGroup;
+			children = (
+				558016951C171F5C00420EDF /* WatchConnectivity.framework */,
+				558016931C17055B00420EDF /* WatchConnectivity.framework */,
+				558016811C16FC8F00420EDF /* frontend */,
+				558016381C16F82700420EDF /* mocca-ios */,
+				55EDF0C21C135E6100AC5995 /* tri-watch */,
+				55EDF0DB1C135E6100AC5995 /* tri-watch WatchKit App */,
+				55EDF0EA1C135E6100AC5995 /* tri-watch WatchKit Extension */,
+				55EDF0C11C135E6100AC5995 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		55EDF0C11C135E6100AC5995 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				55EDF0C01C135E6100AC5995 /* tri-watch.app */,
+				55EDF0D71C135E6100AC5995 /* tri-watch WatchKit App.app */,
+				55EDF0E61C135E6100AC5995 /* tri-watch WatchKit Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		55EDF0C21C135E6100AC5995 /* tri-watch */ = {
+			isa = PBXGroup;
+			children = (
+				55EDF0C61C135E6100AC5995 /* AppDelegate.h */,
+				55EDF0C71C135E6100AC5995 /* AppDelegate.m */,
+				55EDF0C91C135E6100AC5995 /* ViewController.h */,
+				55EDF0CA1C135E6100AC5995 /* ViewController.mm */,
+				55EDF0CC1C135E6100AC5995 /* Main.storyboard */,
+				55EDF0CF1C135E6100AC5995 /* Assets.xcassets */,
+				55EDF0D11C135E6100AC5995 /* LaunchScreen.storyboard */,
+				55EDF0D41C135E6100AC5995 /* Info.plist */,
+				55EDF0C31C135E6100AC5995 /* Supporting Files */,
+			);
+			path = "tri-watch";
+			sourceTree = "<group>";
+		};
+		55EDF0C31C135E6100AC5995 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				55EDF0C41C135E6100AC5995 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		55EDF0DB1C135E6100AC5995 /* tri-watch WatchKit App */ = {
+			isa = PBXGroup;
+			children = (
+				55EDF0DC1C135E6100AC5995 /* Interface.storyboard */,
+				55EDF0DF1C135E6100AC5995 /* Assets.xcassets */,
+				55EDF0E11C135E6100AC5995 /* Info.plist */,
+			);
+			path = "tri-watch WatchKit App";
+			sourceTree = "<group>";
+		};
+		55EDF0EA1C135E6100AC5995 /* tri-watch WatchKit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				55EDF0ED1C135E6100AC5995 /* InterfaceController.h */,
+				55EDF0EE1C135E6100AC5995 /* InterfaceController.mm */,
+				55EDF0F01C135E6100AC5995 /* ExtensionDelegate.h */,
+				55EDF0F11C135E6100AC5995 /* ExtensionDelegate.m */,
+				55EDF0F31C135E6100AC5995 /* NotificationController.h */,
+				55EDF0F41C135E6100AC5995 /* NotificationController.m */,
+				55EDF0F61C135E6100AC5995 /* Assets.xcassets */,
+				55EDF0F81C135E6100AC5995 /* Info.plist */,
+				55EDF0EB1C135E6100AC5995 /* Supporting Files */,
+			);
+			path = "tri-watch WatchKit Extension";
+			sourceTree = "<group>";
+		};
+		55EDF0EB1C135E6100AC5995 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				55EDF0EC1C135E6100AC5995 /* PushNotificationPayload.apns */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		55EDF0BF1C135E6100AC5995 /* tri-watch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 55EDF1031C135E6100AC5995 /* Build configuration list for PBXNativeTarget "tri-watch" */;
+			buildPhases = (
+				55EDF0BC1C135E6100AC5995 /* Sources */,
+				55EDF0BD1C135E6100AC5995 /* Frameworks */,
+				55EDF0BE1C135E6100AC5995 /* Resources */,
+				55EDF1021C135E6100AC5995 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				55EDF0DA1C135E6100AC5995 /* PBXTargetDependency */,
+			);
+			name = "tri-watch";
+			productName = "tri-watch";
+			productReference = 55EDF0C01C135E6100AC5995 /* tri-watch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		55EDF0D61C135E6100AC5995 /* tri-watch WatchKit App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 55EDF0FF1C135E6100AC5995 /* Build configuration list for PBXNativeTarget "tri-watch WatchKit App" */;
+			buildPhases = (
+				55EDF0D51C135E6100AC5995 /* Resources */,
+				55EDF0FE1C135E6100AC5995 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				55EDF0E91C135E6100AC5995 /* PBXTargetDependency */,
+			);
+			name = "tri-watch WatchKit App";
+			productName = "tri-watch WatchKit App";
+			productReference = 55EDF0D71C135E6100AC5995 /* tri-watch WatchKit App.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		55EDF0E51C135E6100AC5995 /* tri-watch WatchKit Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 55EDF0FB1C135E6100AC5995 /* Build configuration list for PBXNativeTarget "tri-watch WatchKit Extension" */;
+			buildPhases = (
+				55EDF0E21C135E6100AC5995 /* Sources */,
+				55EDF0E31C135E6100AC5995 /* Frameworks */,
+				55EDF0E41C135E6100AC5995 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "tri-watch WatchKit Extension";
+			productName = "tri-watch WatchKit Extension";
+			productReference = 55EDF0E61C135E6100AC5995 /* tri-watch WatchKit Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		55EDF0B81C135E6100AC5995 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = "Andrey Krekhov";
+				TargetAttributes = {
+					55EDF0BF1C135E6100AC5995 = {
+						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = AGGLT799KB;
+					};
+					55EDF0D61C135E6100AC5995 = {
+						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = AGGLT799KB;
+					};
+					55EDF0E51C135E6100AC5995 = {
+						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = AGGLT799KB;
+					};
+				};
+			};
+			buildConfigurationList = 55EDF0BB1C135E6100AC5995 /* Build configuration list for PBXProject "tri-watch" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 55EDF0B71C135E6100AC5995;
+			productRefGroup = 55EDF0C11C135E6100AC5995 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				55EDF0BF1C135E6100AC5995 /* tri-watch */,
+				55EDF0D61C135E6100AC5995 /* tri-watch WatchKit App */,
+				55EDF0E51C135E6100AC5995 /* tri-watch WatchKit Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		55EDF0BE1C135E6100AC5995 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				558016701C16FAB200420EDF /* license.txt in Resources */,
+				55EDF0D31C135E6100AC5995 /* LaunchScreen.storyboard in Resources */,
+				55EDF0D01C135E6100AC5995 /* Assets.xcassets in Resources */,
+				55EDF0CE1C135E6100AC5995 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55EDF0D51C135E6100AC5995 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55EDF0E01C135E6100AC5995 /* Assets.xcassets in Resources */,
+				55EDF0DE1C135E6100AC5995 /* Interface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55EDF0E41C135E6100AC5995 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55EDF0F71C135E6100AC5995 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		55EDF0BC1C135E6100AC5995 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				558016571C16F99C00420EDF /* Sockets.cpp in Sources */,
+				558016871C16FCA500420EDF /* RendererPrx.cpp in Sources */,
+				5580164F1C16F99C00420EDF /* LoopbackConnection.cpp in Sources */,
+				558016711C16FAB200420EDF /* sha1.cpp in Sources */,
+				558016591C16F99C00420EDF /* TCPConnectionAcceptor.cpp in Sources */,
+				5580167B1C16FB0600420EDF /* ConsoleLog.cpp in Sources */,
+				558016511C16F99C00420EDF /* LoopbackNetworkService.cpp in Sources */,
+				5580165F1C16F99C00420EDF /* WSNetworkService.cpp in Sources */,
+				558016861C16FCA500420EDF /* ProcessingPrx.cpp in Sources */,
+				558016801C16FB0600420EDF /* TextLog.cpp in Sources */,
+				558016531C16F99C00420EDF /* MoccaConnectionAcceptor.cpp in Sources */,
+				558016561C16F99C00420EDF /* PhysicalConnection.cpp in Sources */,
+				558016501C16F99C00420EDF /* LoopbackConnectionAcceptor.cpp in Sources */,
+				5580166F1C16FAB200420EDF /* base64.cpp in Sources */,
+				558016641C16F9A500420EDF /* ByteArray.cpp in Sources */,
+				558016521C16F99C00420EDF /* MoccaConnection.cpp in Sources */,
+				5580165A1C16F99C00420EDF /* TCPNetworkAddress.cpp in Sources */,
+				5580164D1C16F99C00420EDF /* ConnectionAggregator.cpp in Sources */,
+				5580165E1C16F99C00420EDF /* WSHandshake.cpp in Sources */,
+				558016661C16F9A500420EDF /* Thread.cpp in Sources */,
+				5580165B1C16F99C00420EDF /* TCPNetworkService.cpp in Sources */,
+				55EDF0CB1C135E6100AC5995 /* ViewController.mm in Sources */,
+				55EDF0C81C135E6100AC5995 /* AppDelegate.m in Sources */,
+				5580164E1C16F99C00420EDF /* Endpoint.cpp in Sources */,
+				5580167D1C16FB0600420EDF /* Log.cpp in Sources */,
+				558016581C16F99C00420EDF /* TCPConnection.cpp in Sources */,
+				558016651C16F9A500420EDF /* CommandLineParser.cpp in Sources */,
+				558016551C16F99C00420EDF /* NetworkServiceLocator.cpp in Sources */,
+				5580167F1C16FB0600420EDF /* StreamLog.cpp in Sources */,
+				5580167A1C16FB0600420EDF /* CallbackLog.cpp in Sources */,
+				5580167C1C16FB0600420EDF /* HTMLLog.cpp in Sources */,
+				5580165D1C16F99C00420EDF /* WSConnectionAcceptor.cpp in Sources */,
+				5580167E1C16FB0600420EDF /* LogManager.cpp in Sources */,
+				55EDF0C51C135E6100AC5995 /* main.m in Sources */,
+				558016541C16F99C00420EDF /* MoccaNetworkService.cpp in Sources */,
+				5580165C1C16F99C00420EDF /* WSConnection.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55EDF0E21C135E6100AC5995 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				558016971C17201D00420EDF /* ProcessingPrx.cpp in Sources */,
+				558016981C17201D00420EDF /* RendererPrx.cpp in Sources */,
+				558016991C17201D00420EDF /* CallbackLog.cpp in Sources */,
+				5580169A1C17201D00420EDF /* ConsoleLog.cpp in Sources */,
+				5580169B1C17201D00420EDF /* HTMLLog.cpp in Sources */,
+				5580169C1C17201D00420EDF /* Log.cpp in Sources */,
+				5580169D1C17201D00420EDF /* LogManager.cpp in Sources */,
+				5580169E1C17201D00420EDF /* StreamLog.cpp in Sources */,
+				5580169F1C17201D00420EDF /* TextLog.cpp in Sources */,
+				558016A01C17201D00420EDF /* base64.cpp in Sources */,
+				558016A11C17201D00420EDF /* sha1.cpp in Sources */,
+				558016A21C17201D00420EDF /* ByteArray.cpp in Sources */,
+				558016A31C17201D00420EDF /* CommandLineParser.cpp in Sources */,
+				558016A41C17201D00420EDF /* Thread.cpp in Sources */,
+				558016A51C17201D00420EDF /* ConnectionAggregator.cpp in Sources */,
+				558016A61C17201D00420EDF /* Endpoint.cpp in Sources */,
+				558016A71C17201D00420EDF /* LoopbackConnection.cpp in Sources */,
+				558016A81C17201D00420EDF /* LoopbackConnectionAcceptor.cpp in Sources */,
+				558016A91C17201D00420EDF /* LoopbackNetworkService.cpp in Sources */,
+				558016AA1C17201D00420EDF /* MoccaConnection.cpp in Sources */,
+				558016AB1C17201D00420EDF /* MoccaConnectionAcceptor.cpp in Sources */,
+				558016AC1C17201D00420EDF /* MoccaNetworkService.cpp in Sources */,
+				558016AD1C17201D00420EDF /* NetworkServiceLocator.cpp in Sources */,
+				558016AE1C17201D00420EDF /* PhysicalConnection.cpp in Sources */,
+				558016AF1C17201D00420EDF /* Sockets.cpp in Sources */,
+				558016B01C17201D00420EDF /* TCPConnection.cpp in Sources */,
+				558016B11C17201D00420EDF /* TCPConnectionAcceptor.cpp in Sources */,
+				558016B21C17201D00420EDF /* TCPNetworkAddress.cpp in Sources */,
+				558016B31C17201D00420EDF /* TCPNetworkService.cpp in Sources */,
+				558016B41C17201D00420EDF /* WSConnection.cpp in Sources */,
+				558016B51C17201D00420EDF /* WSConnectionAcceptor.cpp in Sources */,
+				558016B61C17201D00420EDF /* WSHandshake.cpp in Sources */,
+				558016B71C17201D00420EDF /* WSNetworkService.cpp in Sources */,
+				55EDF0F21C135E6100AC5995 /* ExtensionDelegate.m in Sources */,
+				55EDF0EF1C135E6100AC5995 /* InterfaceController.mm in Sources */,
+				55EDF0F51C135E6100AC5995 /* NotificationController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		55EDF0DA1C135E6100AC5995 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55EDF0D61C135E6100AC5995 /* tri-watch WatchKit App */;
+			targetProxy = 55EDF0D91C135E6100AC5995 /* PBXContainerItemProxy */;
+		};
+		55EDF0E91C135E6100AC5995 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55EDF0E51C135E6100AC5995 /* tri-watch WatchKit Extension */;
+			targetProxy = 55EDF0E81C135E6100AC5995 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		55EDF0CC1C135E6100AC5995 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				55EDF0CD1C135E6100AC5995 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		55EDF0D11C135E6100AC5995 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				55EDF0D21C135E6100AC5995 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		55EDF0DC1C135E6100AC5995 /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				55EDF0DD1C135E6100AC5995 /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		55EDF0F91C135E6100AC5995 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		55EDF0FA1C135E6100AC5995 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		55EDF0FC1C135E6100AC5995 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "tri-watch WatchKit Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrey.tri-watch.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				USER_HEADER_SEARCH_PATHS = "/Users/krekhov/Projects/trinity/branches/vaas/src/mocca/include /Users/krekhov/Projects/trinity/branches/vaas/src/mocca/src/thirdparty /Users/krekhov/Projects/trinity/branches/vaas/src";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		55EDF0FD1C135E6100AC5995 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "tri-watch WatchKit Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrey.tri-watch.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				USER_HEADER_SEARCH_PATHS = "/Users/krekhov/Projects/trinity/branches/vaas/src/mocca/include /Users/krekhov/Projects/trinity/branches/vaas/src/mocca/src/thirdparty /Users/krekhov/Projects/trinity/branches/vaas/src";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		55EDF1001C135E6100AC5995 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				IBSC_MODULE = tri_watch_WatchKit_Extension;
+				INFOPLIST_FILE = "tri-watch WatchKit App/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrey.tri-watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				USER_HEADER_SEARCH_PATHS = "";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		55EDF1011C135E6100AC5995 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				IBSC_MODULE = tri_watch_WatchKit_Extension;
+				INFOPLIST_FILE = "tri-watch WatchKit App/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrey.tri-watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				USER_HEADER_SEARCH_PATHS = "";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		55EDF1041C135E6100AC5995 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "tri-watch/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrey.tri-watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "/Users/krekhov/Projects/trinity/branches/vaas/src/mocca/include /Users/krekhov/Projects/trinity/branches/vaas/src/mocca/src/thirdparty /Users/krekhov/Projects/trinity/branches/vaas/src";
+			};
+			name = Debug;
+		};
+		55EDF1051C135E6100AC5995 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "tri-watch/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "andrey.tri-watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "/Users/krekhov/Projects/trinity/branches/vaas/src/mocca/include /Users/krekhov/Projects/trinity/branches/vaas/src/mocca/src/thirdparty /Users/krekhov/Projects/trinity/branches/vaas/src";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		55EDF0BB1C135E6100AC5995 /* Build configuration list for PBXProject "tri-watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55EDF0F91C135E6100AC5995 /* Debug */,
+				55EDF0FA1C135E6100AC5995 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55EDF0FB1C135E6100AC5995 /* Build configuration list for PBXNativeTarget "tri-watch WatchKit Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55EDF0FC1C135E6100AC5995 /* Debug */,
+				55EDF0FD1C135E6100AC5995 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55EDF0FF1C135E6100AC5995 /* Build configuration list for PBXNativeTarget "tri-watch WatchKit App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55EDF1001C135E6100AC5995 /* Debug */,
+				55EDF1011C135E6100AC5995 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55EDF1031C135E6100AC5995 /* Build configuration list for PBXNativeTarget "tri-watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55EDF1041C135E6100AC5995 /* Debug */,
+				55EDF1051C135E6100AC5995 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 55EDF0B81C135E6100AC5995 /* Project object */;
+}

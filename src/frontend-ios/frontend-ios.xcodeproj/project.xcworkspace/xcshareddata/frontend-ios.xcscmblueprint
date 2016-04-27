@@ -1,0 +1,37 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "d21111eb-5840-4a8f-b421-6474c1277627",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "2ba7c523-1b2b-4c1b-b753-6ed2505edfa1++9751" : {
+
+    },
+    "d21111eb-5840-4a8f-b421-6474c1277627" : {
+      "DVTSourceControlWorkingCopyRepositoryBranchesLocationKey" : "branches",
+      "DVTSourceControlWorkingCopyRepositoryTagsLocationKey" : "tags",
+      "DVTSourceControlWorkingCopyRepositoryPrimaryBranchLocationKey" : "trunk"
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "2ba7c523-1b2b-4c1b-b753-6ed2505edfa1++9751" : 0,
+    "d21111eb-5840-4a8f-b421-6474c1277627" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "AA02605D-3144-4827-B892-457D91FB109E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "2ba7c523-1b2b-4c1b-b753-6ed2505edfa1++9751" : "trinity\/branches\/vaas\/src\/mocca\/",
+    "d21111eb-5840-4a8f-b421-6474c1277627" : "trinity\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "frontend-ios",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "branches\/vaas\/src\/frontend-ios\/frontend-ios.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn+ssh:\/\/134.91.11.160\/var\/svn\/mocca",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "2ba7c523-1b2b-4c1b-b753-6ed2505edfa1++9751"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn+ssh:\/\/134.91.11.160\/var\/svn\/trinity",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "d21111eb-5840-4a8f-b421-6474c1277627"
+    }
+  ]
+}
