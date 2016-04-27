@@ -56,11 +56,6 @@ VclType Vcl::toType(const std::string& str) const {
     return m_cmdMap.getByFirst(str);
 }
 
-std::string Vcl::toString(const int errorCode) const {
-    auto it = m_errorCodeMap.find(errorCode);
-    return it->second;
-}
-
 uint32_t IDGenerator::nextID() {
     static uint32_t id = 0;
     return id++;

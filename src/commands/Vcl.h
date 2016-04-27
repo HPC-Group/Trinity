@@ -25,10 +25,7 @@ enum class VclType {
     GetLODLevelCount,
     ListFiles,
     InitIOSession,
-    StreamingParams,
     IOData,
-    TrinityFile,
-    TrinityDirectory,
     InitContext,
     ZoomCamera,
     Paint,
@@ -140,14 +137,11 @@ private:
         m_cmdMap.insert("SimpleRenderer", VclType::SimpleRenderer);
         m_cmdMap.insert("GridLeapingRenderer", VclType::GridLeapingRenderer);
         m_cmdMap.insert("TrinityError", VclType::TrinityError);
-        m_cmdMap.insert("StreamingParams", VclType::StreamingParams);
         m_cmdMap.insert("SetIsoValue", VclType::SetIsoValue);
         m_cmdMap.insert("InitIOSession", VclType::InitIOSession);
         m_cmdMap.insert("ListFiles", VclType::ListFiles);
         m_cmdMap.insert("GetLODLevelCount", VclType::GetLODLevelCount);
         m_cmdMap.insert("FractalIO", VclType::FractalIO);
-        m_cmdMap.insert("TrinityDirectory", VclType::TrinityDirectory);
-        m_cmdMap.insert("TrinityFile", VclType::TrinityFile);
         m_cmdMap.insert("IOData", VclType::IOData);
         m_cmdMap.insert("InitContext", VclType::InitContext);
         m_cmdMap.insert("Paint", VclType::Paint);
@@ -233,7 +227,6 @@ private:
     }
 
     mocca::BidirectionalMap<std::string, VclType> m_cmdMap;
-    std::map<int, std::string> m_errorCodeMap;
     void assertCompleteLanguage() const;
 };
 
