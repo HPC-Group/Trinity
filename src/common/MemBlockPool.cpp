@@ -1,8 +1,28 @@
 #include "common/MemBlockPool.h"
 
 #include "mocca/log/LogManager.h"
+#include "mocca/base/Memory.h"
 
 #include <algorithm>
+
+MemBlockPool::MemBlockPool() {
+    std::vector<std::pair<size_t, size_t>> initialSizes{
+        { 16, 512 * 1024 },
+        { 64, 1024 * 1024 },
+        { 64, 2 * 1024 * 1024 },
+        { 32, 4 * 1024 * 1024 },
+        { 16, 8 * 1024 * 1024 },
+        { 4, 16 * 1024 * 1024 }
+    };
+    for (const auto& s : initialSizes) {
+        for (size_t i = 0; i < s.first; ++i) {
+            m_capacities.push_back(s.second);
+            auto block = mocca::make_unique<std::vector<uint8_t>>();
+            block->reserve(s.second);
+            m_pool.push_back(std::move(block));
+        }
+    }
+}
 
 MemBlockPool& MemBlockPool::instance() {
     static MemBlockPool pool;
@@ -22,10 +42,8 @@ MemBlockPool::MemBlock MemBlockPool::get(size_t capacity) {
             return MemBlock(block.release(), Deleter());
         }
     }
-    static size_t total = 0;
-    total += capacity;
-    LDEBUG("MemBlockPool: new block with capacity " << capacity << " (total pool size: " << total << ")");
-    MemBlock block(new std::vector<uint8_t>(), Deleter());
+    LDEBUG("MemBlockPool: Could not satisfy request for block of size " << capacity);
+    MemBlock block = std::make_shared<std::vector<uint8_t>>();
     block->reserve(capacity);
     return block;
 }

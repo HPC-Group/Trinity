@@ -16,10 +16,10 @@ private:
         void operator()(std::vector<uint8_t>* p) const;
     };
 
-    MemBlockPool() = default;
+    MemBlockPool();
 
 private:
-    std::vector<std::unique_ptr<std::vector<uint8_t>>> m_pool;
     std::vector<size_t> m_capacities;
+    std::vector<std::unique_ptr<std::vector<uint8_t>>> m_pool;
     std::mutex m_mutex;
 };
