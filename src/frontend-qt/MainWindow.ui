@@ -518,8 +518,8 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
   </action>
   <action name="actionTrinity">
    <property name="icon">
-    <iconset>
-     <normaloff>web_icon.png</normaloff>web_icon.png</iconset>
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/web_icon.png</normaloff>:/icons/web_icon.png</iconset>
    </property>
    <property name="text">
     <string>Trinity</string>
@@ -549,6 +549,8 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
    <header>openglwidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
