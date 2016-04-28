@@ -6,6 +6,8 @@
 namespace trinity {
 class UVFListData : public IListData {
 public:
+    UVFListData(const std::string& basePath);
+
     // IListData interface implementation
     bool containsIOData(const std::string& dirOrFileID) const override;
     std::vector<IOData> listData(const std::string& dirID) const override;
@@ -13,5 +15,8 @@ public:
     std::string getRoot() const override;
 
     bool stripListerID(std::string& id) const;
+
+private:
+    const std::string m_basePath;
 };
 }

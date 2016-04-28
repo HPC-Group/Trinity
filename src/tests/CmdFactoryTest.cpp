@@ -4,6 +4,7 @@
 #include "common/TrinityError.h"
 #include "io-base/IONode.h"
 #include "io-base/IOSession.h"
+#include "io-base/FractalListData.h"
 #include "processing-base/ProcessingCommandFactory.h"
 #include "processing-base/ProcessingNode.h"
 #include "processing-base/RenderSession.h"
@@ -43,7 +44,9 @@ TEST_F(CmdFactoryTest, RendererExecTest) {
     std::unique_ptr<ConnectionAggregator> ioAggregator(
         new ConnectionAggregator(std::move(ioAcceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
 
-    IONode ioNode(std::move(ioAggregator));
+    std::vector<std::unique_ptr<IListData>> listData;
+    listData.push_back(mocca::make_unique<FractalListData>());
+    IONode ioNode(std::move(ioAggregator), std::move(listData));
     ioNode.start();
 
     StreamingParams streamingParams(2048, 1000);

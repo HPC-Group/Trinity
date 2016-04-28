@@ -19,7 +19,7 @@
 // nontrivial)
 
 #define UVFDataPrefix std::string("UVFData")
-#define UVFSearchRoot std::string(".")
+
 
 
 // compile this lister with the VALIDATE_FILES to check a
@@ -33,16 +33,20 @@ using namespace trinity;
 using namespace Core::IO::FileTools;
 using namespace Core::StringTools;
 
+trinity::UVFListData::UVFListData(const std::string& basePath)
+    : m_basePath(basePath)
+{}
+
 bool UVFListData::stripListerID(std::string& id) const {
   if (id == UVFDataPrefix) {
-    id = UVFSearchRoot;
+    id = m_basePath;
     return true;
   }
   
   if (id.find(UVFDataPrefix+"@") == 0) {
     id = id.substr((UVFDataPrefix+"@").length());
     if (id.empty())
-      id = UVFSearchRoot;
+      id = m_basePath;
     return true;
   } else {
     return false;

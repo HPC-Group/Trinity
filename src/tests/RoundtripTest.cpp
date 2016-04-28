@@ -5,6 +5,7 @@
 #include "frontend-base/ProcessingNodeProxy.h"
 #include "io-base/IONode.h"
 #include "io-base/IOSession.h"
+#include "io-base/FractalListData.h"
 #include "processing-base/ProcessingNode.h"
 #include "processing-base/RenderSession.h"
 
@@ -42,7 +43,9 @@ std::unique_ptr<IONode> createIONode(const std::string& port) {
 
     std::unique_ptr<ConnectionAggregator> aggregator(
         new ConnectionAggregator(std::move(acceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
-    return mocca::make_unique<IONode>(std::move(aggregator));
+    std::vector<std::unique_ptr<IListData>> listData;
+    listData.push_back(mocca::make_unique<FractalListData>());
+    return mocca::make_unique<IONode>(std::move(aggregator), std::move(listData));
 }
 
 TEST_F(NodeTest, StartProcessingNodeTest) {

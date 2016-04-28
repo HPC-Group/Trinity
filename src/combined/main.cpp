@@ -4,6 +4,7 @@
 #include <memory>
 #include <thread>
 
+#include "mocca/base/CommandLineParser.h"
 #include "mocca/base/ContainerTools.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/HTMLLog.h"
@@ -11,7 +12,9 @@
 #include "mocca/net/ConnectionFactorySelector.h"
 #include "mocca/net/Endpoint.h"
 
+#include "io-base/FractalListData.h"
 #include "io-base/IONode.h"
+#include "io-base/UVFListData.h"
 #include "processing-base/ProcessingNode.h"
 
 #include <silverbullet/base/DetectEnv.h>
@@ -44,8 +47,27 @@ void init() {
     ConnectionFactorySelector::addDefaultFactories();
 }
 
-int main(int argc, char** argv) {
+mocca::CommandLineParser::Option uvfDataPathOption(std::string& path) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--uvfPath";
+    option.help = "path to uvf files (default: ./)";
+    option.callback = [&](const std::string& value) { path = value; };
+    return option;
+}
+
+int main(int argc, const char** argv) {
     init();
+
+    mocca::CommandLineParser parser;
+    std::string uvfDataPath = ".";
+    parser.addOption(uvfDataPathOption(uvfDataPath));
+
+    try {
+        parser.parse(argc, argv);
+    } catch (const mocca::CommandLineParser::ParserError& err) {
+        std::cerr << err.what() << std::endl;
+        std::exit(0);
+    }
 
     Endpoint ioTCPEp(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(ioTCPPort));
     Endpoint ioWSEp(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(ioWSPort));
@@ -62,7 +84,12 @@ int main(int argc, char** argv) {
 
     std::unique_ptr<ConnectionAggregator> ioAggregator(
         new ConnectionAggregator(std::move(ioAcceptors), ConnectionAggregator::DisconnectStrategy::RemoveConnection));
-    IONode ioNode(std::move(ioAggregator), AbstractNode::ExecutionMode::Combined);
+
+    std::vector<std::unique_ptr<IListData>> listData;
+    listData.push_back(mocca::make_unique<FractalListData>());
+    listData.push_back(mocca::make_unique<UVFListData>(uvfDataPath));
+
+    IONode ioNode(std::move(ioAggregator), std::move(listData), AbstractNode::ExecutionMode::Combined);
     ioNode.start();
 
     std::unique_ptr<ConnectionAggregator> procAggregator(

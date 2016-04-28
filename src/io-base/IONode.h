@@ -10,7 +10,7 @@ class IONode : public AbstractNode {
 
 public:
     IONode(); // use for testing purposes only!!
-    IONode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator,
+    IONode(std::unique_ptr<mocca::net::ConnectionAggregator> aggregator, std::vector<std::unique_ptr<IListData>> listData,
            AbstractNode::ExecutionMode executionMode = AbstractNode::ExecutionMode::Separate);
     ~IONode();
 

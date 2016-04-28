@@ -9,6 +9,7 @@
 #include "common/TrinityError.h"
 #include "io-base/IOCommandFactory.h"
 #include "io-base/IOCommandsHandler.h"
+#include "io-base/FractalListData.h"
 
 #include "tests/IOMock.h"
 #include "tests/TestUtils.h"
@@ -90,7 +91,9 @@ TEST_F(IOCommandsTest, ListFilesCmd) {
 }
 
 TEST_F(IOCommandsTest, ListFilesReqRep) {
-    auto ioNode = mocca::make_unique<IONode>();
+    std::vector<std::unique_ptr<IListData>> listData;
+    listData.push_back(mocca::make_unique<FractalListData>());
+    auto ioNode = mocca::make_unique<IONode>(nullptr, std::move(listData));
     {
         ListFilesCmd::RequestParams requestParams("FractalData@3");
         ListFilesRequest request(requestParams, 1, 2);
