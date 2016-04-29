@@ -94,7 +94,7 @@ option(PREFER_EXTERNAL_SNAPPY
 option(PREFER_EXTERNAL_ZLIB
     "Find and use external zlib library instead of included sources." ON)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 
 #if(NOT DEACTIVATE_LZ4)
