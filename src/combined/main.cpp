@@ -22,11 +22,6 @@
 using namespace trinity;
 using namespace mocca::net;
 
-static int ioTCPPort = 6678;
-static int ioWSPort = 6679;
-static int procTCPPort = 8678;
-static int procWSPort = 8679;
-
 std::atomic<bool> exitFlag{false};
 
 void exitHandler(int s) {
@@ -55,12 +50,54 @@ mocca::CommandLineParser::Option uvfDataPathOption(std::string& path) {
     return option;
 }
 
+mocca::CommandLineParser::Option IoTcpPortOption(int16_t& port) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--IoTcpPort";
+    option.help = "TCP port for IO (default: 6678)";
+    option.callback = [&](const std::string& value) { port = std::stoi(value); };
+    return option;
+}
+
+mocca::CommandLineParser::Option IoWsPortOption(int16_t& port) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--IoWsPPort";
+    option.help = "WebSocket port for IO (default: 6679)";
+    option.callback = [&](const std::string& value) { port = std::stoi(value); };
+    return option;
+}
+
+mocca::CommandLineParser::Option ProcTcpPortOption(int16_t& port) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--ProcTcpPort";
+    option.help = "TCP port for processing (default: 8678)";
+    option.callback = [&](const std::string& value) { port = std::stoi(value); };
+    return option;
+}
+
+mocca::CommandLineParser::Option ProcWsPortOption(int16_t& port) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--ProcWsPort";
+    option.help = "WebSocket port for processing (default: 8679)";
+    option.callback = [&](const std::string& value) { port = std::stoi(value); };
+    return option;
+}
+
 int main(int argc, const char** argv) {
     init();
+
+    int16_t ioTcpPort = 6678;
+    int16_t ioWsPort = 6679;
+    int16_t procTcpPort = 8678;
+    int16_t procWsPort = 8679;
 
     mocca::CommandLineParser parser;
     std::string uvfDataPath = ".";
     parser.addOption(uvfDataPathOption(uvfDataPath));
+    parser.addOption(IoTcpPortOption(ioTcpPort));
+    parser.addOption(IoWsPortOption(ioWsPort));
+    parser.addOption(ProcTcpPortOption(procTcpPort));
+    parser.addOption(ProcWsPortOption(procWsPort));
+
 
     try {
         parser.parse(argc, argv);
@@ -69,10 +106,10 @@ int main(int argc, const char** argv) {
         std::exit(0);
     }
 
-    Endpoint ioTCPEp(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(ioTCPPort));
-    Endpoint ioWSEp(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(ioWSPort));
-    Endpoint procTCPEp(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(procTCPPort));
-    Endpoint procWSEp(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(procWSPort));
+    Endpoint ioTCPEp(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(ioTcpPort));
+    Endpoint ioWSEp(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(ioWsPort));
+    Endpoint procTCPEp(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(procTcpPort));
+    Endpoint procWSEp(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(procWsPort));
 
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> ioAcceptors = mocca::makeUniquePtrVec<IMessageConnectionAcceptor>(
         ConnectionFactorySelector::bind(ioTCPEp), ConnectionFactorySelector::bind(ioWSEp),

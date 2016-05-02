@@ -21,8 +21,6 @@
 using namespace trinity;
 using namespace mocca::net;
 
-static int feTCPPort = 6678;
-static int feWSPort = 6679;
 std::atomic<bool> exitFlag{false};
 
 void exitHandler(int s) {
@@ -51,12 +49,33 @@ mocca::CommandLineParser::Option uvfDataPathOption(std::string& path) {
     return option;
 }
 
+mocca::CommandLineParser::Option TcpPortOption(int16_t& port) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--TcpPort";
+    option.help = "TCP port (default: 6678)";
+    option.callback = [&](const std::string& value) { port = std::stoi(value); };
+    return option;
+}
+
+mocca::CommandLineParser::Option WsPortOption(int16_t& port) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--WsPort";
+    option.help = "WebSocket port (default: 6679)";
+    option.callback = [&](const std::string& value) { port = std::stoi(value); };
+    return option;
+}
+
 int main(int argc, const char** argv) {
     init();
+
+    int16_t TcpPort = 6678;
+    int16_t WsPort = 6679;
 
     mocca::CommandLineParser parser;
     std::string uvfDataPath = ".";
     parser.addOption(uvfDataPathOption(uvfDataPath));
+    parser.addOption(TcpPortOption(TcpPort));
+    parser.addOption(WsPortOption(WsPort));
 
     try {
         parser.parse(argc, argv);
@@ -66,8 +85,8 @@ int main(int argc, const char** argv) {
     }
 
     // endpoints
-    Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(feTCPPort));
-    Endpoint e2(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(feWSPort));
+    Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(TcpPort));
+    Endpoint e2(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(WsPort));
 
     // connection acceptors for the endpoints
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =

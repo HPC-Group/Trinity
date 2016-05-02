@@ -4,6 +4,7 @@
 #include <memory>
 #include <thread>
 
+#include "mocca/base/CommandLineParser.h"
 #include "mocca/base/ContainerTools.h"
 #include "mocca/log/ConsoleLog.h"
 #include "mocca/log/HTMLLog.h"
@@ -19,16 +20,28 @@
 using namespace trinity;
 using namespace mocca::net;
 
-static int feTCPPort = 8678;
-static int feWSPort = 8679;
 std::atomic<bool> exitFlag{false};
-
 
 void exitHandler(int s) {
     std::cout << "Trinity exit on signal " << std::to_string(s) << std::endl;
     exitFlag = true;
 }
 
+mocca::CommandLineParser::Option TcpPortOption(int16_t& port) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--TcpPort";
+    option.help = "TCP port (default: 8678)";
+    option.callback = [&](const std::string& value) { port = std::stoi(value); };
+    return option;
+}
+
+mocca::CommandLineParser::Option WsPortOption(int16_t& port) {
+    mocca::CommandLineParser::Option option;
+    option.key = "--WsPort";
+    option.help = "WebSocket port (default: 8679)";
+    option.callback = [&](const std::string& value) { port = std::stoi(value); };
+    return option;
+}
 
 void init() {
     using mocca::LogManager;
@@ -43,13 +56,27 @@ void init() {
     ConnectionFactorySelector::addDefaultFactories();
 }
 
-int main(int argc, char** argv) {
+int main(int argc, const char** argv) {
     init();
 
+    int16_t TcpPort = 8678;
+    int16_t WsPort = 8679;
+
+    mocca::CommandLineParser parser;
+    parser.addOption(TcpPortOption(TcpPort));
+    parser.addOption(WsPortOption(WsPort));
+
+    try {
+        parser.parse(argc, argv);
+    }
+    catch (const mocca::CommandLineParser::ParserError& err) {
+        std::cerr << err.what() << std::endl;
+        std::exit(0);
+    }
 
     // endpoints
-    Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(feTCPPort));
-    Endpoint e2(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(feWSPort));
+    Endpoint e1(ConnectionFactorySelector::tcpPrefixed(), "localhost", std::to_string(TcpPort));
+    Endpoint e2(ConnectionFactorySelector::tcpWebSocket(), "localhost", std::to_string(WsPort));
 
     // connection acceptors for the endpoints
     std::vector<std::unique_ptr<mocca::net::IMessageConnectionAcceptor>> acceptors =
