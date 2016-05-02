@@ -18,7 +18,11 @@ find_package(OpenGL REQUIRED)
 QT5_WRAP_UI(UIS_HDRS MainWindow.ui)
 QT5_WRAP_UI(UIS_HDRS ConnectionWidget.ui)
 
-add_executable(frontend-qt 
+IF(WIN32)
+	SET(GUI_TYPE WIN32)
+ENDIF(WIN32)
+
+add_executable(frontend-qt ${GUI_TYPE}
 			${TRINITYDEMOFRONTEND_SOURCE} 
 			${TRINITYDEMOFRONTEND_HEADER} 
 			${TRINITYDEMOFRONTEND_RES}
