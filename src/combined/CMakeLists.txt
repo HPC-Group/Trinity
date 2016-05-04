@@ -6,7 +6,6 @@ add_executable(combined
 				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:mocca>
 				$<TARGET_OBJECTS:silverbullet>
-				$<TARGET_OBJECTS:jsoncpp>
 				$<TARGET_OBJECTS:tripeg>
 				$<TARGET_OBJECTS:opengl-base>)
 

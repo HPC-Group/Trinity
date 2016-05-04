@@ -17,8 +17,7 @@ add_executable(frontendbase
 				$<TARGET_OBJECTS:common>
 				$<TARGET_OBJECTS:commands>
 				$<TARGET_OBJECTS:silverbullet>
-				$<TARGET_OBJECTS:tripeg>
-				$<TARGET_OBJECTS:jsoncpp>)
+				$<TARGET_OBJECTS:tripeg>)
 
 TARGET_LINK_LIBRARIES(frontendbase turbojpeg-static)
 TARGET_LINK_LIBRARIES(frontendbase blosc_static)

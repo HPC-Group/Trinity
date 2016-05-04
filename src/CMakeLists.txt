@@ -2,6 +2,7 @@ include(PlatformSpecific)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/mocca/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base)
 include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base/GL)
 include_directories(${PROJECT_SOURCE_DIR}/src/silverbullet/include)
@@ -16,7 +17,6 @@ add_subdirectory(io-base)
 add_subdirectory(frontend-base)
 add_subdirectory(opengl-base)
 add_subdirectory(processing-base)
-add_subdirectory(thirdparty)
 add_subdirectory(combined)
 
 
