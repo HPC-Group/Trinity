@@ -4,6 +4,8 @@
 
 #include "thirdparty/jsoncpp/json.h"
 
+//#define JSON_EXPORT_ENABLED
+
 namespace trinity {
 
 class BinaryWriter {

@@ -122,16 +122,31 @@ void JsonWriter::appendBinary(std::shared_ptr<std::vector<uint8_t>> binary) {
     m_binary->push_back(binary);
 }
 
+// bit hacky, but the effort won't be worth it. Should be deleted one day.
+#ifdef JSON_EXPORT_ENABLED
+#include <iostream>
+#include "mocca/log/LogManager.h"
+#endif
+
 mocca::net::Message JsonWriter::writeMessage() const {
     auto jsonData = std::make_shared<std::vector<uint8_t>>();
     MessageBuf buf(*jsonData);
     std::ostream os(&buf);
+#ifdef JSON_EXPORT_ENABLED
+    std::stringstream ss;
+#endif
     JsonCpp::StyledStreamWriter streamWriter;
     streamWriter.write(os, m_root);
+#ifdef JSON_EXPORT_ENABLED
+    streamWriter.write(ss, m_root);
+#endif
     mocca::net::Message message;
     message.push_back(jsonData);
     for (auto& sharedData : *m_binary) {
         message.push_back(m_binaryWriter->write(sharedData));
     }
+#ifdef JSON_EXPORT_ENABLED
+    LINFO(ss.str());
+#endif
     return message;
 }
