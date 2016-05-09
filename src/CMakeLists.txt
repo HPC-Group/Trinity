@@ -18,6 +18,7 @@ add_subdirectory(frontend-base)
 add_subdirectory(opengl-base)
 add_subdirectory(processing-base)
 add_subdirectory(combined)
+add_subdirectory(frontend-exporter)
 
 
 option(TRINITY_BUILD_FRONTEND "Build frontends for trinity" off)
