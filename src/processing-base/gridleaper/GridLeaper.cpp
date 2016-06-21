@@ -929,3 +929,9 @@ bool GridLeaper::proceedRendering() {
     return true;
   }
 }
+
+
+bool GridLeaper::supportsRenderMode(ERenderMode mode){
+    if(mode == ERenderMode::RM_1DTRANS || mode == ERenderMode::RM_ISOSURFACE)
+        return true;
+}
