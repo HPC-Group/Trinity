@@ -30,9 +30,9 @@
             $("#panel_requirements").hide();
             $("#div_connect_success").hide();
             $("#div_connect_failure").hide();
-            $("#io_ip").val("192.168.0.1");
+            $("#io_ip").val("134.91.11.156");
             $("#io_port").val("6678");
-            $("#proc_ip").val("192.168.0.1");
+            $("#proc_ip").val("134.91.11.156");
             $("#x_res").val(800);
             $("#y_res").val(800);
             $("#proc_port").val("8679");
@@ -96,6 +96,7 @@
         buildApplicationList: function() {
             //clear list
             $("#panel_requirements").hide();
+
             TRI_Frontend.slideCount = 0;
             var slides = $("#carousel_slides").children();
             slides[0].classList.add("active");
@@ -167,6 +168,7 @@
 	   {
            
         TRI_Frontend.dataSelected = true;
+        $("#render_panel").show();
         console.log("selected dataset " + name);
            
            if(name == "CT") {

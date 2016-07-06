@@ -140,7 +140,7 @@
 
                 </div>
                 <br>
-                <div class="panel panel-default">
+                <div id="render_panel" class="panel panel-default" style="display:none">
                     <div class="panel-heading">
                         <h3 class="panel-title">processing (renderer)</h3>
                     </div>
@@ -166,6 +166,13 @@
                         <input id="y_res" type="text" class="form-control" placeholder="8080" aria-describedby="basic-addon1">
 
                     </div>
+                    
+                    <br>
+                                <div align="center">
+                <button id="btn_connect" type="submit" class="btn btn-danger btn-medium" onclick="TRI_Frontend.connect()"> <span class="fui-image" aria-hidden="true"></span> raycaster </button>
+                                <button id="btn_connect" type="submit" class="btn btn-danger btn-medium" onclick="TRI_Frontend.connectLeaper()"> <span class="fui-image" aria-hidden="true"></span> grid leaper </button>
+            </div>
+                    <br>
                 </div>
 
 
@@ -176,11 +183,9 @@
                       <input id="connect_user" type="text" class="form-control" placeholder="Bello" aria-describedby="basic-addon1">
                     </div>
                   </div> -->
+                
             </div>
-            <div align="center">
-                <button id="btn_connect" type="submit" class="btn btn-danger btn-medium" onclick="TRI_Frontend.connect()"> <span class="fui-image" aria-hidden="true"></span> raycaster </button>
-                                <button id="btn_connect" type="submit" class="btn btn-danger btn-medium" onclick="TRI_Frontend.connectLeaper()"> <span class="fui-image" aria-hidden="true"></span> grid leaper </button>
-            </div>
+
             
             
             <p>
