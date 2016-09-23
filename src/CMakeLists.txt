@@ -1,14 +1,14 @@
 include(PlatformSpecific)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include)
-include_directories(${PROJECT_SOURCE_DIR}/src/mocca/src)
-include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base)
-include_directories(${PROJECT_SOURCE_DIR}/src/mocca/include/opengl-base/GL)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/mocca/include)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/mocca/src)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/mocca/include/opengl-base)
+include_directories(${PROJECT_SOURCE_DIR}/src/mocca/mocca/include/opengl-base/GL)
 include_directories(${PROJECT_SOURCE_DIR}/src/silverbullet/include)
 
 # level 0 modules
-add_subdirectory(mocca)
+add_subdirectory(mocca/mocca)
 add_subdirectory(commands)
 add_subdirectory(common)
 add_subdirectory(jpeg)
