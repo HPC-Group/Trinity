@@ -1,0 +1,3 @@
+[submodule "src/mocca"]
+	path = src/mocca
+	url = ../Mocca.git
