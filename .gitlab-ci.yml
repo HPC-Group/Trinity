@@ -1,0 +1,113 @@
+.artifacts:settings: &artifacts_defaults
+  expire_in: 1 month
+  paths:
+    - build
+
+### WINDOWS
+build:windows:
+  stage: build
+  tags:
+    - windows
+  before_script:
+    # - choco update
+    # - choco install -y visualcppbuildtools
+    # - choco install -y git
+    # - choco install -y cmake.portable
+    # - choco install -y nasm
+    - git submodule update --init --recursive
+  script: 
+    - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+    # - set # output env
+    - if exist build\ rmdir /s /q build\ # make sure that we really do a clean build
+    - if not exist build\ mkdir build\
+    - cd build
+    - cmake .. -G "Visual Studio 14 2015 Win64" -DNASM="C:\Program Files (x86)\NASM\nasm.exe" -DTRINITY_BUILD_FRONTEND=On -DQt5Widgets_DIR="C:\Qt\5.6\msvc2015_64\lib\cmake\Qt5Widgets" -DQt5OpenGL_DIR="C:\Qt\5.6\msvc2015_64\lib\cmake\Qt5OpenGL"
+    - msbuild vaas.sln /p:Configuration=Release /p:Platform=x64 /m
+  artifacts:
+    <<: *artifacts_defaults
+    name: "%CI_PROJECT_NAME%_%CI_BUILD_ID%_%CI_BUILD_NAME%_%CI_BUILD_REF_NAME%_%CI_BUILD_REF%"
+
+test:windows:
+  stage: test
+  tags:
+    - windows
+  dependencies:
+    - build:windows
+  script:
+    - build\src\tests\Release\tests.exe
+
+
+### LINUX
+build:linux:
+  stage: build
+  tags:
+    - linux
+    - docker
+  image: nercury/cmake-cpp:gcc-6.1
+  before_script:
+    - apt-get update
+    # - apt-get install -y cmake
+    - apt-get install -y nasm
+    - apt-get install -y libgl1-mesa-dev
+    - apt-get install -y libegl1-mesa-dev
+    - apt-get install -y libglu1-mesa-dev
+    - apt-get install -y qtbase5-dev
+    - git submodule update --init --recursive
+  script:
+    # - env # output env
+    - rm -Rf build # make sure that we really do a clean build
+    - mkdir -p build
+    - cd build
+    - cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DTRINITY_BUILD_FRONTEND=On
+    - make -j4
+  artifacts:
+    <<: *artifacts_defaults
+    name: "${CI_PROJECT_NAME}_${CI_BUILD_ID}_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}_${CI_BUILD_REF}"
+
+test:linux:
+  stage: test
+  tags:
+    - linux
+    - docker
+  image: nercury/cmake-cpp:gcc-6.1
+  before_script:
+    - apt-get update
+    - apt-get install -y libglapi-mesa
+    - apt-get install -y libegl1-mesa
+    - apt-get install -y libglu1-mesa
+  dependencies:
+    - build:linux
+  script:
+    - ./build/src/tests/tests
+
+
+### OSX
+build:osx:
+  stage: build
+  tags:
+    - osx
+  before_script:
+    # - brew update
+    # - brew install cmake
+    # - brew install nasm
+    # - brew install qt5
+    - git submodule update --init --recursive
+  script:
+    # - env # output env
+    - rm -Rf build # make sure that we really do a clean build
+    - mkdir -p build
+    - cd build
+    - cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DTRINITY_BUILD_FRONTEND=On -DQt5Widgets_DIR=/usr/local/opt/qt5/lib/cmake/Qt5Widgets -DQt5OpenGL_DIR=/usr/local/opt/qt5/lib/cmake/Qt5OpenGL
+    - make -j4
+  artifacts:
+    <<: *artifacts_defaults
+    name: "${CI_PROJECT_NAME}_${CI_BUILD_ID}_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}_${CI_BUILD_REF}"
+
+test:osx:
+  stage: test
+  tags:
+    - osx
+  dependencies:
+    - build:osx
+  script:
+    - ./build/src/tests/tests
