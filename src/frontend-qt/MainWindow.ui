@@ -546,7 +546,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
   <customwidget>
    <class>OpenGLWidget</class>
    <extends>QOpenGLWidget</extends>
-   <header>openglwidget.h</header>
+   <header>OpenGLWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

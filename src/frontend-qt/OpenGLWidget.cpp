@@ -1,4 +1,4 @@
-#include "openglwidget.h"
+#include "OpenGLWidget.h"
 
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
