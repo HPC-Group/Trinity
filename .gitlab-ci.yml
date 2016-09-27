@@ -1,16 +1,81 @@
-.artifacts:settings: &artifacts_defaults
+.artifacts:debug: &artifacts_debug
+  expire_in: 1 month
+
+.artifacts:release: &artifacts_release
   expire_in: 1 month
   paths:
     - build
 
 ### WINDOWS
-build:windows:
+.build:windows32: &build_windows32
   stage: build
   tags:
     - windows
   before_script:
     # - choco update
     # - choco install -y visualcppbuildtools
+    # - choco install -y windows-sdk-10
+    # - choco install -y git
+    # - choco install -y cmake.portable
+    # - choco install -y nasm
+    - git submodule update --init --recursive
+  script: 
+    - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+    # - set # output env
+    - if exist build\ rmdir /s /q build\ # make sure that we really do a clean build
+    - if not exist build\ mkdir build\
+    - cd build
+    - cmake .. -G "Visual Studio 14 2015" -DNASM="C:\Program Files (x86)\NASM\nasm.exe" -DTRINITY_BUILD_FRONTEND=On -DQt5Widgets_DIR="C:\Qt\5.6\msvc2015\lib\cmake\Qt5Widgets" -DQt5OpenGL_DIR="C:\Qt\5.6\msvc2015\lib\cmake\Qt5OpenGL"
+    - msbuild vaas.sln /p:Configuration="%BUILD_CONFIGURATION%" /p:Platform=Win32 /m
+
+build:windows32:debug:
+  variables:
+    BUILD_CONFIGURATION: "Debug"
+  <<: *build_windows32
+  artifacts:
+    <<: *artifacts_debug
+    name: "%CI_PROJECT_NAME%_%CI_BUILD_ID%_%CI_BUILD_NAME%_%CI_BUILD_REF_NAME%_%CI_BUILD_REF%"
+    paths:
+      - build\src\tests\Debug\tests.exe
+
+build:windows32:release:
+  variables:
+    BUILD_CONFIGURATION: "Release"
+  <<: *build_windows32
+  artifacts:
+    <<: *artifacts_release
+    name: "%CI_PROJECT_NAME%_%CI_BUILD_ID%_%CI_BUILD_NAME%_%CI_BUILD_REF_NAME%_%CI_BUILD_REF%"
+
+test:windows32:debug:
+  stage: test
+  tags:
+    - windows
+  dependencies:
+    - build:windows32:debug
+  script:
+    - build\src\tests\Debug\tests.exe
+  after_script:
+    - if exist build\ rmdir /s /q build\
+
+test:windows32:release:
+  stage: test
+  tags:
+    - windows
+  dependencies:
+    - build:windows32:release
+  script:
+    - build\src\tests\Release\tests.exe
+  after_script:
+    - if exist build\ rmdir /s /q build\
+
+.build:windows64: &build_windows64
+  stage: build
+  tags:
+    - windows
+  before_script:
+    # - choco update
+    # - choco install -y visualcppbuildtools
+    # - choco install -y windows-sdk-10
     # - choco install -y git
     # - choco install -y cmake.portable
     # - choco install -y nasm
@@ -22,23 +87,51 @@ build:windows:
     - if not exist build\ mkdir build\
     - cd build
     - cmake .. -G "Visual Studio 14 2015 Win64" -DNASM="C:\Program Files (x86)\NASM\nasm.exe" -DTRINITY_BUILD_FRONTEND=On -DQt5Widgets_DIR="C:\Qt\5.6\msvc2015_64\lib\cmake\Qt5Widgets" -DQt5OpenGL_DIR="C:\Qt\5.6\msvc2015_64\lib\cmake\Qt5OpenGL"
-    - msbuild vaas.sln /p:Configuration=Release /p:Platform=x64 /m
+    - msbuild vaas.sln /p:Configuration="%BUILD_CONFIGURATION%" /p:Platform=x64 /m
+
+build:windows64:debug:
+  variables:
+    BUILD_CONFIGURATION: "Debug"
+  <<: *build_windows64
   artifacts:
-    <<: *artifacts_defaults
+    <<: *artifacts_debug
+    name: "%CI_PROJECT_NAME%_%CI_BUILD_ID%_%CI_BUILD_NAME%_%CI_BUILD_REF_NAME%_%CI_BUILD_REF%"
+    paths:
+      - build\src\tests\Debug\tests.exe
+
+build:windows64:release:
+  variables:
+    BUILD_CONFIGURATION: "Release"
+  <<: *build_windows64
+  artifacts:
+    <<: *artifacts_release
     name: "%CI_PROJECT_NAME%_%CI_BUILD_ID%_%CI_BUILD_NAME%_%CI_BUILD_REF_NAME%_%CI_BUILD_REF%"
 
-test:windows:
+test:windows64:debug:
   stage: test
   tags:
     - windows
   dependencies:
-    - build:windows
+    - build:windows64:debug
+  script:
+    - build\src\tests\Debug\tests.exe
+  after_script:
+    - if exist build\ rmdir /s /q build\
+
+test:windows64:release:
+  stage: test
+  tags:
+    - windows
+  dependencies:
+    - build:windows64:release
   script:
     - build\src\tests\Release\tests.exe
+  after_script:
+    - if exist build\ rmdir /s /q build\
 
 
 ### LINUX
-build:linux:
+.build:linux: &build_linux
   stage: build
   tags:
     - linux
@@ -58,13 +151,28 @@ build:linux:
     - rm -Rf build # make sure that we really do a clean build
     - mkdir -p build
     - cd build
-    - cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DTRINITY_BUILD_FRONTEND=On
+    - cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE="${BUILD_CONFIGURATION}" -DTRINITY_BUILD_FRONTEND=On
     - make -j4
+
+build:linux:debug:
+  variables:
+    BUILD_CONFIGURATION: "Debug"
+  <<: *build_linux
   artifacts:
-    <<: *artifacts_defaults
+    <<: *artifacts_debug
+    name: "${CI_PROJECT_NAME}_${CI_BUILD_ID}_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}_${CI_BUILD_REF}"
+    paths:
+      - build/src/tests/tests
+
+build:linux:release:
+  variables:
+    BUILD_CONFIGURATION: "Release"
+  <<: *build_linux
+  artifacts:
+    <<: *artifacts_release
     name: "${CI_PROJECT_NAME}_${CI_BUILD_ID}_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}_${CI_BUILD_REF}"
 
-test:linux:
+test:linux:debug:
   stage: test
   tags:
     - linux
@@ -76,13 +184,33 @@ test:linux:
     - apt-get install -y libegl1-mesa
     - apt-get install -y libglu1-mesa
   dependencies:
-    - build:linux
+    - build:linux:debug
   script:
     - ./build/src/tests/tests
+  after_script:
+    - rm -Rf build
+
+test:linux:release:
+  stage: test
+  tags:
+    - linux
+    - docker
+  image: nercury/cmake-cpp:gcc-6.1
+  before_script:
+    - apt-get update
+    - apt-get install -y libglapi-mesa
+    - apt-get install -y libegl1-mesa
+    - apt-get install -y libglu1-mesa
+  dependencies:
+    - build:linux:release
+  script:
+    - ./build/src/tests/tests
+  after_script:
+    - rm -Rf build
 
 
 ### OSX
-build:osx:
+.build:osx: &build_osx
   stage: build
   tags:
     - osx
@@ -97,17 +225,45 @@ build:osx:
     - rm -Rf build # make sure that we really do a clean build
     - mkdir -p build
     - cd build
-    - cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DTRINITY_BUILD_FRONTEND=On -DQt5Widgets_DIR=/usr/local/opt/qt5/lib/cmake/Qt5Widgets -DQt5OpenGL_DIR=/usr/local/opt/qt5/lib/cmake/Qt5OpenGL
+    - cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE="${BUILD_CONFIGURATION}" -DTRINITY_BUILD_FRONTEND=On -DQt5Widgets_DIR=/usr/local/opt/qt5/lib/cmake/Qt5Widgets -DQt5OpenGL_DIR=/usr/local/opt/qt5/lib/cmake/Qt5OpenGL
     - make -j4
+
+build:osx:debug:
+  variables:
+    BUILD_CONFIGURATION: "Debug"
+  <<: *build_osx
   artifacts:
-    <<: *artifacts_defaults
+    <<: *artifacts_debug
+    name: "${CI_PROJECT_NAME}_${CI_BUILD_ID}_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}_${CI_BUILD_REF}"
+    paths:
+      - build/src/tests/tests
+
+build:osx:release:
+  variables:
+    BUILD_CONFIGURATION: "Release"
+  <<: *build_osx
+  artifacts:
+    <<: *artifacts_release
     name: "${CI_PROJECT_NAME}_${CI_BUILD_ID}_${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}_${CI_BUILD_REF}"
 
-test:osx:
+test:osx:debug:
   stage: test
   tags:
     - osx
   dependencies:
-    - build:osx
+    - build:osx:debug
   script:
     - ./build/src/tests/tests
+  after_script:
+    - rm -Rf build
+
+test:osx:release:
+  stage: test
+  tags:
+    - osx
+  dependencies:
+    - build:osx:release
+  script:
+    - ./build/src/tests/tests
+  after_script:
+    - rm -Rf build
